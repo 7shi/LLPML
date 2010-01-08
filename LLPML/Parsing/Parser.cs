@@ -11,6 +11,8 @@ namespace Girl.LLPML.Parsing
         private bool CanRead { get { return tokenizer.CanRead; } }
         private string Read() { return tokenizer.Read(); }
         private string Peek() { return tokenizer.Peek(); }
+        private void Save() { tokenizer.Save(); }
+        private void Load() { tokenizer.Load(); }
         private void Rewind() { tokenizer.Rewind(); }
 
         public Parser(Tokenizer tokenizer, BlockBase parent)

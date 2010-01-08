@@ -404,7 +404,7 @@ namespace Girl.LLPML
 
         public void AddDebug(OpCodes codes, string format, int argCount)
         {
-            codes.AddRange(new OpCode[]
+            codes.AddRange(new[]
             {
                 I386.Push(codes.Module.GetString(format)),
                 I386.Call(parent.GetFunction("printfln").First),

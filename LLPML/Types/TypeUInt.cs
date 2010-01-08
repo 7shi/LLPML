@@ -35,7 +35,7 @@ namespace Girl.LLPML
             funcs["mul"] = (codes, dest, arg) =>
             {
                 arg.AddCodes(codes, "mov", null);
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     I386.Mul(dest),
                     I386.Mov(dest, Reg32.EAX)
@@ -44,7 +44,7 @@ namespace Girl.LLPML
             funcs["div"] = (codes, dest, arg) =>
             {
                 arg.AddCodes(codes, "mov", null);
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     I386.Xchg(Reg32.EAX, dest),
                     I386.Xor(Reg32.EDX, Reg32.EDX),
@@ -55,7 +55,7 @@ namespace Girl.LLPML
             funcs["mod"] = (codes, dest, arg) =>
             {
                 arg.AddCodes(codes, "mov", null);
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     I386.Xchg(Reg32.EAX, dest),
                     I386.Xor(Reg32.EDX, Reg32.EDX),

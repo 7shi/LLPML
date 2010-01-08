@@ -81,14 +81,14 @@ namespace Girl.LLPML
             }
 
             order.AddCodes(codes, "mov", null);
-            codes.AddRange(new OpCode[]
+            codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EDX, (uint)ts),
                 I386.Imul(Reg32.EDX),
                 I386.Push(Reg32.EAX),
             });
             target.AddCodes(codes, "mov", null);
-            codes.AddRange(new OpCode[]
+            codes.AddRange(new[]
             {
                 I386.Pop(Var.DestRegister),
                 I386.Add(Var.DestRegister, Reg32.EAX),

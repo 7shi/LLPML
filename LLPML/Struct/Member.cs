@@ -10,8 +10,8 @@ namespace Girl.LLPML.Struct
 {
     public class Member : Var
     {
-        private Var target;
-        public Var Target
+        private IIntValue target;
+        public IIntValue Target
         {
             get
             {
@@ -43,7 +43,7 @@ namespace Girl.LLPML.Struct
         }
 
         public Member(Member parent, XmlTextReader xr)
-            :base(parent.parent)
+            : base(parent.parent)
         {
             this.root = parent.root;
             isRoot = false;
@@ -86,38 +86,48 @@ namespace Girl.LLPML.Struct
                 target = new Var(parent, "this");
         }
 
-        private Addr32 GetStructAddress(OpCodes codes)
+        protected Addr32 GetAddressInternal(OpCodes codes)
         {
-            var ad = target.GetAddress(codes);
-            if (target is Var || target is Index) return ad;
-            codes.Add(I386.Mov(Var.DestRegister, ad));
-            return new Addr32(Var.DestRegister);
-        }
-
-        private Addr32 GetAddressInternal(OpCodes codes)
-        {
-            Addr32 ret;
-            if (target is Struct.Member)
+            Addr32 ret = null;
+            TypeBase t = null;
+            if (target is Member)
             {
-                var tsm = target as Struct.Member;
+                var tsm = target as Member;
                 ret = tsm.GetAddressInternal(codes);
-                if (tsm.GetMember().Type.IsValue)
-                {
-                    codes.Add(I386.Mov(Var.DestRegister, ret));
-                    ret = new Addr32(Var.DestRegister);
-                }
+                t = tsm.TypeInternal;
+            }
+            else if (target is Var)
+            {
+                var tv = target as Var;
+                ret = tv.GetAddress(codes);
+                if (!(tv is Index)) t = tv.Type;
             }
             else
+                target.AddCodes(codes, "mov", null);
+            if (t != null && t.IsValue)
             {
-                ret = target.GetAddress(codes);
-                if (!(target is Index) && target.Type.IsValue)
-                {
-                    codes.Add(I386.Mov(Var.DestRegister, ret));
-                    ret = new Addr32(Var.DestRegister);
-                }
+                codes.Add(I386.Mov(Var.DestRegister, ret));
+                ret = new Addr32(Var.DestRegister);
             }
-            ret.Add(GetTargetStruct().GetOffset(name));
-            return ret;
+            var st = GetTargetStruct();
+            var offset = st.GetOffset(name);
+            if (offset >= 0)
+            {
+                if (ret == null)
+                {
+                    if (offset > 0)
+                        codes.Add(I386.Add(Reg32.EAX, (uint)offset));
+                }
+                else
+                    ret.Add(offset);
+                return ret;
+            }
+
+            if (IsFunctionInternal)
+                GetCall("").AddCodes(codes, "mov", null);
+            else
+                GetCall("get_").AddCodes(codes, "mov", null);
+            return null;
         }
 
         public override Addr32 GetAddress(OpCodes codes)
@@ -128,42 +138,48 @@ namespace Girl.LLPML.Struct
                 return GetAddressInternal(codes);
         }
 
-        public Var.Declare GetMember()
-        {
-            var st = GetTargetStruct();
-            if (st == null)
-                throw Abort("undefined member: {0}", name);
-            return st.GetMember(name);
-        }
-
         public Define GetTargetStruct()
         {
-            if (target != null) return target.GetStruct();
-            return parent.GetStruct(TargetType);
+            if (target is Member)
+                return (target as Member).GetStructInternal();
+            else if (target != null)
+                return Types.GetStruct(target.Type);
+            else
+                return parent.GetStruct(TargetType);
+        }
+
+        protected Define GetStructInternal()
+        {
+            var t = TypeInternal;
+            if (t != null) return Types.GetStruct(t);
+            return null;
         }
 
         public override Define GetStruct()
         {
-            var st = GetTargetStruct();
-            if (st == null) return null;
-            return Types.GetStruct(st.GetMember(name).Type);
+            return Child != null ? Child.GetStruct() : GetStructInternal();
         }
 
-        public override TypeBase Type
+        protected TypeBase TypeInternal
         {
             get
             {
-                if (Child == null)
-                {
-                    var m = GetMember();
-                    if (m != null) return m.Type;
-                    return null;
-                }
-                return Child.Type;
+                var st = GetTargetStruct();
+                if (st == null) return null;
+
+                var m = st.GetMember(name);
+                if (m != null) return m.Type;
+
+                var p = st.GetFunction("get_" + name);
+                if (p != null) return p.ReturnType;
+
+                return null;
             }
         }
+        public override TypeBase Type
+        { get { return Child != null ? Child.Type : TypeInternal; } }
 
-        public void Append(Struct.Member mem)
+        public void Append(Member mem)
         {
             if (Child == null)
             {
@@ -174,74 +190,109 @@ namespace Girl.LLPML.Struct
                 Child.Append(mem);
         }
 
-        private bool CheckFunction(string prefix)
+        public string GetName()
+        {
+            if (Child != null)
+                return Child.GetName();
+            return name;
+        }
+
+        public IIntValue GetTarget()
+        {
+            if (Child != null)
+                return Child.GetTarget();
+            return GetTargetInternal();
+        }
+
+        public IIntValue GetTargetInternal()
+        {
+            if (target is Member)
+                return (target as Member).Duplicate();
+            return target;
+        }
+
+        private Function GetFunction(string prefix)
         {
             var st = GetTargetStruct();
+            if (st == null) return null;
             int ret = st.GetOffset(name);
-            if (ret >= 0) return false;
-            var f = st.GetFunction(prefix + name);
-            return f != null;
+            if (ret >= 0) return null;
+            return st.GetFunction(prefix + name);
         }
 
-        private IIntValue ConvertTarget()
+        private bool CheckFunction(string prefix)
         {
-            if (this.target is Var)
-                return this.target as Var;
-            else if (this.target is Var)
-                return this.target as Var;
-            return null;
+            return GetFunction(prefix) != null;
         }
 
+        protected bool IsFunctionInternal { get { return CheckFunction(""); } }
         public bool IsFunction
         {
-            get
-            {
-                if (Child == null)
-                    return CheckFunction("");
-                return Child.IsFunction;
-            }
+            get { return Child != null ? Child.IsFunction : IsFunctionInternal; }
         }
 
+        protected bool IsSetterInternal { get { return CheckFunction("set_"); } }
         public bool IsSetter
         {
-            get
-            {
-                if (Child == null)
-                    return CheckFunction("set_");
-                return Child.IsSetter;
-            }
+            get { return Child != null ? Child.IsSetter : IsSetterInternal; }
         }
 
+        protected bool IsGetterInternal { get { return CheckFunction("get_"); } }
         public bool IsGetter
         {
-            get
+            get { return Child != null ? Child.IsGetter : IsGetterInternal; }
+        }
+
+        public Member Duplicate()
+        {
+            var m = new Member(parent, name);
+            if (target is Member)
             {
-                if (Child == null)
-                    return CheckFunction("get_");
-                return Child.IsGetter;
+                var t = (target as Member).Duplicate();
+                t.Append(m);
+                return t;
             }
+            m.Target = target;
+            return m;
+        }
+
+        protected Call GetCall(string prefix, params IIntValue[] args)
+        {
+            return new Call(parent, GetFunction(prefix), GetTargetInternal(), args);
+        }
+
+        protected void AddSetterCodesInternal(OpCodes codes, IIntValue arg)
+        {
+            GetCall("set_", arg).AddCodes(codes);
         }
 
         public void AddSetterCodes(OpCodes codes, IIntValue arg)
         {
-            var setter = new Call(parent, "set_" + name, ConvertTarget(), arg);
-            setter.AddCodes(codes);
+            if (Child != null)
+                Child.AddSetterCodes(codes, arg);
+            else
+                AddSetterCodesInternal(codes, arg);
         }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        protected void AddCodesInternal(OpCodes codes, string op, Addr32 dest)
         {
-            if (IsGetter)
-            {
-                var getter = new Call(parent, "get_" + name, ConvertTarget());
-                getter.AddCodes(codes, op, dest);
-            }
-            else if (IsFunction)
+            if (IsGetterInternal)
+                GetCall("get_").AddCodes(codes, op, dest);
+            else if (IsFunctionInternal)
             {
                 var fp = new Function.Ptr(GetTargetStruct(), name);
                 fp.AddCodes(codes, op, dest);
             }
             else
-                base.AddCodes(codes, op, dest);
+                TypeInternal.AddGetCodes(codes, op, dest, GetAddressInternal(codes));
+        }
+
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        {
+            if (Child != null)
+                Child.AddCodes(codes, op, dest);
+            else
+                AddCodesInternal(codes, op, dest);
         }
     }
 }

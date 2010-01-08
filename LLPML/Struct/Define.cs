@@ -208,7 +208,7 @@ namespace Girl.LLPML.Struct
                 Define memst = Types.GetStruct(p.Type);
                 if (memst == null || !memst.NeedsDtor) continue;
 
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     I386.Mov(Reg32.EAX, ad),
                     I386.Add(Reg32.EAX, (uint)poslist[p])

@@ -97,9 +97,8 @@ namespace Girl.LLPML
             last = virtfunc.last;
         }
 
-        public Function()
-        {
-        }
+        public Function() { }
+        public Function(BlockBase parent) : this(parent, "") { }
 
         public Function(BlockBase parent, string name)
             : base(parent)
@@ -179,7 +178,7 @@ namespace Girl.LLPML
             {
                 var st = parent as Struct.Define;
                 var offset = st.GetOffset(virtptr.Name);
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     first,
                     I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP, 4)),

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.16.20080410">
+
+<title>クイックソート</title>
+
+<include src="finish.xml" />
+<include src="ArrayList.xml" />
+
+<?llp
+ArrayList a;
+a.Add(53);
+a.Add(12);
+a.Add(90);
+a.Add(34);
+a.Add(15);
+a.Add(3);
+a.Add(25);
+
+ArrayList b;
+b |< a.QuickSort;
+
+a |> Show;
+b |> Show;
+
+function QuickSort(dest : ArrayList, src : ArrayList)
+{
+  if (src.Count == 0) return;
+  
+  var x = src.Ptr[0];
+  ArrayList less, greater;
+  for (int i = 1; i < src.Count; i++)
+  {
+    var n = src.Ptr[i];
+    if (n < x)
+      less.Add(n);
+    else
+      greater.Add(n);
+  }
+  dest |< less.QuickSort;
+  dest |< Add(x);
+  dest |< greater.QuickSort;
+}
+
+function Show(list : ArrayList)
+{
+  list.ForEachWithOrder(\(n, i) =>
+  {
+    if (i > 0) printf(", ");
+    printf("%d", n);
+  });
+  println();
+}
+?>
+
+</llpml>

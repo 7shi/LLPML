@@ -35,7 +35,7 @@ namespace Girl.LLPML
                         codes.Add(I386.Jcc(c.NotCondition, last.Address));
                 }
             }
-            codes.AddRange(new OpCode[]
+            codes.AddRange(new[]
             {
                 last,
                 I386.Mov(Reg32.EAX, (Val32)0),

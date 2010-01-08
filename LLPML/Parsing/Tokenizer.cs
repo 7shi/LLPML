@@ -9,14 +9,14 @@ namespace Girl.LLPML.Parsing
     {
         private class Data
         {
-            public int Pos, LineNumber, LinePosition;
-            public string String;
+            public int Pos;
+            public string String, Comment;
+            public SrcInfo SrcInfo;
 
-            public Data(int pos, int lineNumber, int linePosition)
+            public Data(int pos, SrcInfo si)
             {
                 Pos = pos;
-                LineNumber = lineNumber;
-                LinePosition = linePosition;
+                SrcInfo = si;
             }
         }
 
@@ -27,6 +27,7 @@ namespace Girl.LLPML.Parsing
         private Stack<int> linePositions = new Stack<int>();
         private Stack<Data> tokens = new Stack<Data>();
         private Stack<Data> results = new Stack<Data>();
+        private Stack<int> saveData = new Stack<int>();
 
         private string[] reserved;
         public string[] Reserved { set { reserved = value; } }
@@ -58,30 +59,30 @@ namespace Girl.LLPML.Parsing
 
             if (ret.String == "//")
             {
-                //var sb = new StringBuilder(ret.String);
+                var sb = new StringBuilder(ret.String);
                 for (; ; )
                 {
                     var ch = ReadChar();
                     if (ch == null || ch == '\r' || ch == '\n') break;
-                    //sb.Append(ch);
+                    sb.Append(ch);
                 }
-                //ret.String = sb.ToString();
+                ret.Comment = sb.ToString();
                 return Read();
             }
             else if (ret.String == "/*")
             {
-                //var sb = new StringBuilder(ret.String);
+                var sb = new StringBuilder(ret.String);
                 bool aster = false;
                 for (; ; )
                 {
                     var ch = ReadChar();
                     if (ch == null) break;
 
-                    //sb.Append(ch);
+                    sb.Append(ch);
                     if (aster && ch == '/') break;
                     aster = ch == '*';
                 }
-                //ret.String = sb.ToString();
+                ret.Comment = sb.ToString();
                 return Read();
             }
 
@@ -132,7 +133,7 @@ namespace Girl.LLPML.Parsing
                 if (results.Count > 0)
                 {
                     var d = results.Peek();
-                    return new SrcInfo(file, d.LineNumber, d.LinePosition);
+                    return d.SrcInfo;
                 }
                 SkipSpaces();
                 return new SrcInfo(file, lineNumber, linePosition);
@@ -217,7 +218,7 @@ namespace Girl.LLPML.Parsing
             if (results.Count > 0) return results.Pop();
 
             SkipSpaces();
-            var ret = new Data(pos, lineNumber, linePosition);
+            var ret = new Data(pos, SrcInfo);
             StringBuilder sb = new StringBuilder();
             char? ch, pre = null, str = null;
             bool isWord = true;
@@ -296,6 +297,17 @@ namespace Girl.LLPML.Parsing
         {
             return new Exception(string.Format(
                 "{0}: [{1}:{2}] {3}", file, lineNumber, linePosition, msg));
+        }
+
+        public void Save()
+        {
+            saveData.Push(tokens.Count);
+        }
+
+        public void Load()
+        {
+            var c = saveData.Pop();
+            while (tokens.Count > c) Rewind();
         }
     }
 }

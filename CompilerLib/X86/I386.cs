@@ -55,6 +55,8 @@ namespace Girl.X86
         public static OpCode Stosb() { return FromName("stosb"); }
         public static OpCode Stosw() { return FromName("stosw"); }
         public static OpCode Stosd() { return FromName("stosd"); }
+        public static OpCode Pushf() { return FromName("pushf"); }
+        public static OpCode Popf() { return FromName("popf"); }
 
         public static OpCode FromName(string op)
         {
@@ -86,6 +88,10 @@ namespace Girl.X86
                     return new OpCode(new byte[] { 0x66, 0xab });
                 case "stosd":
                     return new OpCode(new byte[] { 0xab });
+                case "pushf":
+                    return new OpCode(new byte[] { 0x9c });
+                case "popf":
+                    return new OpCode(new byte[] { 0x9d });
                 default:
                     throw new Exception("invalid operator: " + op);
             }

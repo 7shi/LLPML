@@ -28,7 +28,7 @@ namespace Girl.LLPML
 
             public Val32 GetAddress(Module m)
             {
-                var f = parent.GetFunction(name);
+                var f = GetFunction();
                 if (f == null)
                     throw Abort("undefined function: " + name);
                 return f.GetAddress(m);
@@ -49,17 +49,20 @@ namespace Girl.LLPML
                 codes.AddCodes(op, dest, v);
             }
 
+            public Function GetFunction()
+            {
+                return parent.GetFunction(name);
+            }
+
             public Function GetGetter()
             {
-                var f = parent.GetFunction(name);
-                if (f != null) return null;
+                if (GetFunction() != null) return null;
                 return parent.GetFunction("get_" + name);
             }
 
             public Function GetSetter()
             {
-                var f = parent.GetFunction(name);
-                if (f != null) return null;
+                if (GetFunction() != null) return null;
                 return parent.GetFunction("set_" + name);
             }
         }

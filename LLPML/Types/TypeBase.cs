@@ -36,7 +36,7 @@ namespace Girl.LLPML
         // get value
         public virtual void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
         {
-            codes.Add(I386.Lea(Reg32.EAX, src));
+            if (src != null) codes.Add(I386.Lea(Reg32.EAX, src));
             codes.AddCodes(op, dest);
         }
 

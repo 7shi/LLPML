@@ -225,9 +225,10 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
-            var ret = new Function(parent, name);
+            var ret = new Function(this.parent, name);
             ret.CallType = ct;
             if (Peek() == "(") ReadArgs(type, ret);
+
             var comma = Read();
             if (comma == ":")
             {
@@ -237,11 +238,13 @@ namespace Girl.LLPML.Parsing
                     Rewind();
                     throw Abort("{0}: 型が不適切です: {1}", type, ftype);
                 }
-                ret.SetReturnType(Types.GetVarType(parent, ftype));
+                ret.SetReturnType(Types.GetVarType(this.parent, ftype));
             }
             else
                 Rewind();
+
             ReadBlock(type, ret);
+
             if (!ret.Parent.AddFunction(ret))
                 throw Abort("{0}: {1}: 定義が重複しています。", type, ret.Name);
             if (type == "virtual")

@@ -54,6 +54,8 @@
     <Compile Include="Parsing\Parser.Operator.cs" />
     <Compile Include="Parsing\Parser.Sentence.cs" />
     <Compile Include="Parsing\Parser.Declare.cs" />
+    <Compile Include="Parsing\Parser.Reserved.cs" />
+    <Compile Include="Parsing\Parser.Operator.Impl.cs" />
     <Compile Include="Structure\Call.Intrinsics.cs" />
     <Compile Include="Structure\Call.SIMD.cs" />
     <Compile Include="Struct\Declare.cs" />

@@ -54,7 +54,7 @@ namespace Girl.LLPML
                 else
                 {
                     arg.AddCodes(codes, "mov", null);
-                    codes.AddRange(new OpCode[]
+                    codes.AddRange(new[]
                     {
                         I386.Mov(Reg32.EDX, (uint)Size),
                         I386.Mul(Reg32.EDX),
@@ -75,7 +75,7 @@ namespace Girl.LLPML
                 else
                 {
                     arg.AddCodes(codes, "mov", null);
-                    codes.AddRange(new OpCode[]
+                    codes.AddRange(new[]
                     {
                         I386.Mov(Reg32.EDX, (uint)Size),
                         I386.Mul(Reg32.EDX),

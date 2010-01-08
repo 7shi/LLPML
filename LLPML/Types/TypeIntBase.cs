@@ -22,7 +22,7 @@ namespace Girl.LLPML
 
             funcs["not"] = (codes, dest, arg) =>
             {
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     I386.Test(Reg32.EAX, Reg32.EAX),
                     I386.Mov(Reg32.EAX, (Val32)0),
@@ -71,7 +71,7 @@ namespace Girl.LLPML
                 OpCode l1 = new OpCode();
                 OpCode l2 = new OpCode();
                 OpCode last = new OpCode();
-                codes.AddRange(new OpCode[]
+                codes.AddRange(new[]
                 {
                     I386.Cmp(Reg32.EAX, (Val32)0),
                     I386.Jcc(Cc.E, last.Address),

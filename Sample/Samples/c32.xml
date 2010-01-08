@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.12.20080325">
+<llpml version="0.16.20080410">
 
 <title>プロパティ</title>
 
 <include src="finish.xml" />
 
 <?llp
-struct Test
+struct Test1
 {
   var value = 3;
   
@@ -21,10 +21,32 @@ struct Test
   }
 }
 
-Test t;
-printfln("t.Value = %d", t.Value);
-t.Value = 5;
-printfln("t.Value = %d", t.Value);
+Test1 t1;
+
+printfln("t1.Value = %d", t1.Value);
+t1.Value = 5;
+printfln("t1.Value = %d", t1.Value);
+
+function GetTest1 { return t1; }
+
+printfln("GetTest1().Value = %d", GetTest1().Value);
+GetTest1().Value = 7;
+printfln("GetTest1().Value = %d", GetTest1().Value);
+
+struct Test2
+{
+  function get_Test1 { return t1; }
+}
+
+Test2 t2;
+
+printfln("t2.get_Test1().Value = %d", t2.get_Test1().Value);
+t2.get_Test1().Value = 9;
+printfln("t2.get_Test1().Value = %d", t2.get_Test1().Value);
+
+printfln("t2.Test1.Value = %d", t2.Test1.Value);
+t2.Test1.Value = 11;
+printfln("t2.Test1.Value = %d", t2.Test1.Value);
 ?>
 
 </llpml>

@@ -10,7 +10,7 @@ namespace Girl.PE
     public class Module
     {
         public DOSHeader DOSHeader = new DOSHeader();
-        public OpCode[] DOSStub = new OpCode[]
+        public OpCode[] DOSStub = new[]
             {
                 I8086.Push(SegReg.CS),
                 I8086.Pop(SegReg.DS),

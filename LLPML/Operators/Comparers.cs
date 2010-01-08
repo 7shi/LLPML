@@ -30,14 +30,14 @@ namespace Girl.LLPML
                 {
                     f(codes, ad, values[i]);
                     if (i < values.Count - 1)
-                        codes.AddRange(new OpCode[]
+                        codes.AddRange(new[]
                         {
                             I386.Jcc(c.NotCondition, last.Address),
                             I386.Mov(ad, Reg32.EAX)
                         });
                 }
             }
-            codes.AddRange(new OpCode[]
+            codes.AddRange(new[]
             {
                 last,
                 I386.Mov(Reg32.EAX, (Val32)0),

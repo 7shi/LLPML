@@ -32,15 +32,10 @@ namespace Girl.LLPML
             this.args.AddRange(args);
         }
 
-        public Call(BlockBase parent, IIntValue val)
+        public Call(BlockBase parent, IIntValue val, IIntValue target, params IIntValue[] args)
             : base(parent)
         {
             this.val = val;
-        }
-
-        public Call(BlockBase parent, IIntValue val, IIntValue target, params IIntValue[] args)
-            : this(parent, val)
-        {
             this.target = target;
             this.args.AddRange(args);
         }
@@ -83,47 +78,33 @@ namespace Girl.LLPML
             });
         }
 
-        public Function GetFunction(OpCodes codes, IIntValue target, out List<IIntValue> args)
+        public IIntValue GetFunction(OpCodes codes, IIntValue target, out List<IIntValue> args)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                args = new List<IIntValue>();
+                if (target != null) args.Add(target);
+                args.AddRange(this.args);
+                if (val is Function)
+                    return val;
+                else if (val is Function.Ptr)
+                    return (val as Function.Ptr).GetFunction();
+                return null;
+            }
+
             Function ret = null;
-            bool isStatic = target is Function.Ptr;
-            if (target == null || isStatic)
+            if (target == null)
             {
                 ret = parent.GetFunction(name);
                 if (ret == null)
                     throw Abort("undefined function: {0}", name);
-                else if (ret.HasThis && !isStatic)
+                else if (ret.HasThis)
                     return GetFunction(codes, new Struct.This(parent), out args);
                 args = this.args;
                 return ret;
             }
 
-            string type = null;
-            Struct.Define st = null;
-            IIntValue arg1 = null;
-            if (target is Struct.Member)
-            {
-                st = (target as Struct.Member).GetStruct();
-                arg1 = target;
-            }
-            else if (target is Index)
-            {
-                var ad = new AddrOf(parent, target as Index);
-                st = ad.Target.GetStruct();
-                arg1 = ad;
-            }
-            else if (target is Var)
-            {
-                type = (target as Var).Type.Name;
-                st = (target as Var).GetStruct();
-                arg1 = target;
-            }
-            else
-            {
-                //throw Abort("struct instance or pointer required: " + name);
-                arg1 = target;
-            }
-            args = new List<IIntValue>();
+            Struct.Define st = Types.GetStruct(target.Type);
             if (st != null)
             {
                 ret = st.GetFunction(name);
@@ -132,66 +113,60 @@ namespace Girl.LLPML
                     var mem = st.GetMember(name);
                     if (mem != null)
                     {
+                        args = this.args;
                         var mem2 = new Struct.Member(parent, name);
-                        if (arg1 is Struct.Member)
+                        if (target is Struct.Member)
                         {
-                            var mem3 = arg1 as Struct.Member;
+                            var mem3 = (target as Struct.Member).Duplicate();
                             mem3.Append(mem2);
-                            mem2 = mem3;
+                            return mem3;
                         }
-                        else
-                            mem2.Target = arg1 as Var;
-                        AddCodes(codes, this.args, CallType.CDecl, delegate
-                        {
-                            codes.Add(I386.Call(mem2.GetAddress(codes)));
-                        });
-                        return null;
+                        mem2.Target = target;
+                        return mem2;
                     }
                 }
             }
-            if (ret == null)
-                ret = parent.GetFunction(name);
+            if (ret == null) ret = parent.GetFunction(name);
             if (ret == null)
             {
                 if (st == null)
-                    throw Abort("undefined struct: " + type);
+                    throw Abort("undefined function: " + name);
                 else
                     throw Abort("undefined method: " + st.GetMemberName(name));
             }
-            args.Add(arg1);
+            args = new List<IIntValue>();
+            args.Add(target);
             args.AddRange(this.args);
             return ret;
         }
 
         public override void AddCodes(OpCodes codes)
         {
-            if (codes == null) return;
-
-            if (name != null)
+            if (name != null && name.StartsWith("__"))
             {
-                if (name.StartsWith("__"))
+                if (AddIntrinsicCodes(codes)) return;
+                if (AddSIMDCodes(codes)) return;
+            }
+
+            var val = this.val;
+            var args = this.args;
+            var f = GetFunction(codes, target, out args);
+            if (f is Function)
+            {
+                AddCodes(codes, f as Function, args);
+                return;
+            }
+            if (f != null) val = f;
+            AddCodes(codes, args, callType, delegate
+            {
+                if (val is Var)
+                    codes.Add(I386.Call((val as Var).GetAddress(codes)));
+                else
                 {
-                    if (AddIntrinsicCodes(codes)) return;
-                    if (AddSIMDCodes(codes)) return;
+                    val.AddCodes(codes, "mov", null);
+                    codes.Add(I386.Call(Reg32.EAX));
                 }
-
-                List<IIntValue> args;
-                var f = GetFunction(codes, target, out args);
-                if (f != null) AddCodes(codes, f, args);
-            }
-            else
-            {
-                AddCodes(codes, args, callType, delegate
-                {
-                    if (val is Var)
-                        codes.Add(I386.Call((val as Var).GetAddress(codes)));
-                    else
-                    {
-                        val.AddCodes(codes, "mov", null);
-                        codes.Add(I386.Call(Reg32.EAX));
-                    }
-                });
-            }
+            });
         }
 
         protected TypeBase type;
@@ -206,13 +181,18 @@ namespace Girl.LLPML
 
                 doneInferType = true;
                 if (name == null)
-                    type = TypeVar.Instance;
+                {
+                    if (val is Function)
+                        type = (val as Function).ReturnType;
+                    else
+                        type = TypeVar.Instance;
+                }
                 else
                 {
                     List<IIntValue> args;
                     var f = GetFunction(null, target, out args);
-                    if (f != null)
-                        type = f.ReturnType;
+                    if (f is Function)
+                        type = (f as Function).ReturnType;
                     else
                         type = TypeVar.Instance;
                 }
@@ -263,6 +243,17 @@ namespace Girl.LLPML
             {
                 codes.Add(I386.Add(Reg32.ESP, (byte)(args2.Length * 4)));
             }
+        }
+
+        public void PipeForward(IIntValue arg)
+        {
+            args.Add(arg);
+        }
+
+        public void PipeBack(IIntValue arg)
+        {
+            if (target != null) args.Insert(0, target);
+            target = arg;
         }
     }
 }

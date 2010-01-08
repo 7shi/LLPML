@@ -100,7 +100,7 @@ namespace Girl.LLPML.Struct
             var st = GetStruct();
             if (!st.NeedsInit && values.Count == 0 && !st.NeedsCtor)
                 return;
-            codes.AddRange(new OpCode[]
+            codes.AddRange(new[]
             {
                 I386.Lea(Reg32.EAX, GetAddress(codes, parent)),
                 I386.Push(Reg32.EAX)
