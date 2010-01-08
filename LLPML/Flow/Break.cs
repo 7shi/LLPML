@@ -23,7 +23,7 @@ namespace Girl.LLPML
 
         public bool CanBreak()
         {
-            for (BlockBase p = Parent; p != null; p = p.Parent)
+            for (var p = Parent; p != null; p = p.Parent)
             {
                 if (p is Function) return false;
                 if (p.AcceptsBreak) return true;

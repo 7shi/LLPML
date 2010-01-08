@@ -86,7 +86,7 @@ namespace Compiler
                     {
                         var p = new Process();
                         p.StartInfo.FileName = src.Generator + ".exe";
-                        p.StartInfo.Arguments = "\"" + src.Source.FullName + "\"";
+                        p.StartInfo.Arguments = "\"" + src.Source + "\"";
                         p.StartInfo.UseShellExecute = false;
                         if (verbose)
                             Console.WriteLine("生成しています: {0} => {1}",
@@ -175,7 +175,7 @@ namespace Compiler
                     gens.Add(ext, di);
                     generators.Add(ext, new Project(dn));
                 }
-                else
+                else if (!dn.StartsWith("non-"))
                     dirs.Add(di);
             }
 
@@ -191,8 +191,8 @@ namespace Compiler
                 var adm = name + ".adm";
                 without.Add(Combine(path, adm));
                 var ai = new AdmInfo(name, path,
-                    new FileInfo(Path.Combine(fi.DirectoryName, adm)));
-                ai.Source = fi;
+                    Path.Combine(fi.DirectoryName, adm));
+                ai.Source = fi.FullName;
                 ai.Generator = generators[ext].Name;
                 srcs.Add(ai);
                 hassrc = true;
@@ -202,7 +202,7 @@ namespace Compiler
             {
                 if (without.Contains(Combine(path, fi.Name))) continue;
                 var name = Path.ChangeExtension(fi.Name, null);
-                var ai = new AdmInfo(name, path, fi);
+                var ai = new AdmInfo(name, path, fi.FullName);
                 if (name.StartsWith("exe-"))
                     exes2.Add(ai);
                 else
@@ -277,15 +277,18 @@ namespace Compiler
     {
         public string Name { get; private set; }
         public string Path { get; private set; }
-        public FileInfo FileInfo { get; private set; }
-        public FileInfo Source { get; set; }
+
+        private string fullPath;
+        public FileInfo FileInfo { get { return new FileInfo(fullPath); } }
+
+        public string Source { get; set; }
         public string Generator { get; set; }
 
-        public AdmInfo(string name, string path, FileInfo fi)
+        public AdmInfo(string name, string path, string fullPath)
         {
             Name = name;
             Path = path;
-            FileInfo = fi;
+            this.fullPath = fullPath;
         }
 
         public string FileName
@@ -295,22 +298,37 @@ namespace Compiler
 
         public string SourceName
         {
-            get { return Project.Combine(Path, Source.Name); }
+            get { return Project.Combine(Path, SourceFileInfo.Name); }
+        }
+
+        public FileInfo SourceFileInfo
+        {
+            get
+            {
+                if (Source == null) return null;
+                return new FileInfo(Source);
+            }
         }
 
         public bool NeedsBuild(DateTime exet)
         {
             if (NeedsGenerate()) return true;
-            return (FileInfo.Exists && FileInfo.LastWriteTime > exet)
-                || (Source != null && Source.LastWriteTime > exet);
+            var fi = FileInfo;
+            var sfi = SourceFileInfo;
+            return (fi.Exists && fi.LastWriteTime > exet)
+                || (sfi != null && sfi.LastWriteTime > exet);
         }
 
         public bool NeedsGenerate()
         {
-            if (Source == null) return false;
-            if (!FileInfo.Exists) return true;
-            var last = FileInfo.LastWriteTime;
-            if (Source.LastWriteTime > last) return true;
+            var sfi = SourceFileInfo;
+            if (sfi == null) return false;
+
+            var fi = FileInfo;
+            if (!fi.Exists) return true;
+
+            var last = fi.LastWriteTime;
+            if (sfi.LastWriteTime > last) return true;
             if (File.GetLastWriteTime(Generator + ".exe") > last) return true;
             return false;
         }

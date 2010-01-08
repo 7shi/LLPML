@@ -58,7 +58,22 @@ printfln("test_a[0] = %x", test_a[0]);
 class StringMember
 {
 	var Name = "name";
+	function Test { printfln(__FUNCTION__); }
 }
 
 var smem = new StringMember;
 printfln("smem.Name.Length = %d", smem.Name.Length);
+
+var delg = \ => printfln("smem.Name.Length = %d", smem.Name.Length);
+delg();
+
+
+class InitTest
+{
+	init();
+	var a : object;
+	function init { a = new object; }
+}
+
+var it = new InitTest;
+printfln("it.a = %p", it.a);

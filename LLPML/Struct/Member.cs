@@ -172,6 +172,8 @@ namespace Girl.LLPML.Struct
             }
             if (mem != null)
             {
+                if (ret == null)
+                    throw Abort("not static: {0}.{1}", st.FullName, name);
                 ret.Add(st.GetOffset(name));
                 return ret;
             }

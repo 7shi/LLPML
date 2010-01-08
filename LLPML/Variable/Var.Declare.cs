@@ -129,12 +129,23 @@ namespace Girl.LLPML
                     throw Abort("multiple definitions: " + name);
             }
 
+            private void AddConstructor(OpModule codes)
+            {
+                if (!type.NeedsCtor) return;
+                var pst = Parent as Struct.Define;
+                if (pst != null && pst.IsClass)
+                {
+                    var tr = type as TypeReference;
+                    if (tr != null && tr.UseGC) return;
+                }
+                type.AddConstructor(codes, GetAddress(codes, Parent));
+            }
+
             public override void AddCodes(OpModule codes)
             {
                 try
                 {
-                    if (type.NeedsCtor)
-                        type.AddConstructor(codes, GetAddress(codes, Parent));
+                    AddConstructor(codes);
                 }
                 catch
                 {
@@ -151,7 +162,7 @@ namespace Girl.LLPML
             protected TypeBase type;
             protected bool doneInferType = false;
 
-            public TypeBase Type
+            public virtual TypeBase Type
             {
                 get
                 {

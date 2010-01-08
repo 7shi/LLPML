@@ -331,7 +331,7 @@ namespace Girl.LLPML
             var vp = Parent.GetVar(name);
             if (vp == null || vp.IsMember || vp.IsStatic) return vp;
 
-            var arg = new Arg(this, name, vp.Type);
+            var arg = new Arg(this, vp);
             InsertArg(arg);
             return arg;
         }
