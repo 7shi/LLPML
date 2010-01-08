@@ -25,8 +25,8 @@ namespace Girl.LLPML
             {
                 switch (xr.Name)
                 {
-                    case "arg-int":
-                        args.Add(new ArgInt(this, xr));
+                    case "arg":
+                        args.Add(new Arg(this, xr));
                         return;
                     case "arg-ptr":
                         args.Add(new ArgPtr(this, xr));

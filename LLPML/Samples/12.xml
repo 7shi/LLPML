@@ -1,43 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819">
+<llpml version="0.5.20070829">
 
 <!-- calculation -->
 
 <include src="stdio.xml" />
 
-<var-int-declare name="a">4</var-int-declare>
+<var-declare name="a">4</var-declare>
 
-<call name="printfln">a = %d<var-int name="a" /></call>
+<call name="printfln">a = %d<var name="a" /></call>
 <call name="printfln">
 	<string>1 + 2 + a - 5: %d</string>
 	<sub>
 		<add>
 			<int>1</int>
 			<int>2</int>
-			<var-int name="a" />
+			<var name="a" />
 		</add>
 		<int>5</int>
 	</sub>
 </call>
 
-<call name="printfln">++a: %d<inc><var-int name="a" /></inc></call>
-<call name="printfln">a = %d<var-int name="a" /></call>
-<call name="printfln">a++: %d<post-inc><var-int name="a" /></post-inc></call>
-<call name="printfln">a = %d<var-int name="a" /></call>
-<call name="printfln">--a: %d<dec><var-int name="a" /></dec></call>
-<call name="printfln">a = %d<var-int name="a" /></call>
-<call name="printfln">a--: %d<post-dec><var-int name="a" /></post-dec></call>
-<call name="printfln">a = %d<var-int name="a" /></call>
-<call name="printfln">a += 2: %d<var-int-add><var-int name="a" /><int>2</int></var-int-add></call>
-<call name="printfln">a -= 2: %d<var-int-sub><var-int name="a" /><int>2</int></var-int-sub></call>
-<call name="printfln">a *= 2: %d<var-int-mul><var-int name="a" /><int>2</int></var-int-mul></call>
-<call name="printfln">a /= 2: %d<var-int-div><var-int name="a" /><int>2</int></var-int-div></call>
-<call name="printfln">a |= 8: %d<var-int-or><var-int name="a" /><int>8</int></var-int-or></call>
-<call name="printfln">a &amp;= 7: %d<var-int-and><var-int name="a" /><int>7</int></var-int-and></call>
-<call name="printfln">a &lt;&lt;= 5: %d<var-int-shift-left><var-int name="a" /><int>5</int></var-int-shift-left></call>
-<call name="printfln">a &gt;&gt;= 5: %d<var-int-shift-right><var-int name="a" /><int>5</int></var-int-shift-right></call>
-<call name="printfln">a &lt;&lt;= a: %d<var-int-shift-left><var-int name="a" /><var-int name="a" /></var-int-shift-left></call>
-<call name="printfln">a = %d<var-int name="a" /></call>
+<call name="printfln">++a: %d<inc><var name="a" /></inc></call>
+<call name="printfln">a = %d<var name="a" /></call>
+<call name="printfln">a++: %d<post-inc><var name="a" /></post-inc></call>
+<call name="printfln">a = %d<var name="a" /></call>
+<call name="printfln">--a: %d<dec><var name="a" /></dec></call>
+<call name="printfln">a = %d<var name="a" /></call>
+<call name="printfln">a--: %d<post-dec><var name="a" /></post-dec></call>
+<call name="printfln">a = %d<var name="a" /></call>
+<call name="printfln">a += 2: %d<var-add><var name="a" /><int>2</int></var-add></call>
+<call name="printfln">a -= 2: %d<var-sub><var name="a" /><int>2</int></var-sub></call>
+<call name="printfln">a *= 2: %d<var-mul><var name="a" /><int>2</int></var-mul></call>
+<call name="printfln">a /= 2: %d<var-div><var name="a" /><int>2</int></var-div></call>
+<call name="printfln">a |= 8: %d<var-or><var name="a" /><int>8</int></var-or></call>
+<call name="printfln">a &amp;= 7: %d<var-and><var name="a" /><int>7</int></var-and></call>
+<call name="printfln">a &lt;&lt;= 5: %d<var-shift-left><var name="a" /><int>5</int></var-shift-left></call>
+<call name="printfln">a &gt;&gt;= 5: %d<var-shift-right><var name="a" /><int>5</int></var-shift-right></call>
+<call name="printfln">a &lt;&lt;= a: %d<var-shift-left><var name="a" /><var name="a" /></var-shift-left></call>
+<call name="printfln">a = %d<var name="a" /></call>
 
 <call name="finish" />
 

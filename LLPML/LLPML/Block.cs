@@ -161,22 +161,22 @@ namespace Girl.LLPML
 
         #endregion
 
-        #region var-int
+        #region var
 
-        protected Dictionary<string, VarInt.Declare> var_ints
-            = new Dictionary<string, VarInt.Declare>();
+        protected Dictionary<string, Var.Declare> vars
+            = new Dictionary<string, Var.Declare>();
 
-        public VarInt.Declare GetVarInt(string name)
+        public Var.Declare GetVar(string name)
         {
-            if (var_ints.ContainsKey(name)) return var_ints[name];
-            return parent == null ? null : parent.GetVarInt(name);
+            if (vars.ContainsKey(name)) return vars[name];
+            return parent == null ? null : parent.GetVar(name);
         }
 
-        public void AddVarInt(VarInt.Declare src)
+        public void AddVar(Var.Declare src)
         {
-            if (var_ints.ContainsKey(src.Name))
+            if (vars.ContainsKey(src.Name))
                 throw new Exception("multiple definitions: " + src.Name);
-            var_ints.Add(src.Name, src);
+            vars.Add(src.Name, src);
         }
 
         #endregion
@@ -297,8 +297,8 @@ namespace Girl.LLPML
                         case "let":
                             sentences.Add(new Let(this, xr));
                             break;
-                        case "var-int-declare":
-                            sentences.Add(new VarInt.Declare(this, xr));
+                        case "var-declare":
+                            sentences.Add(new Var.Declare(this, xr));
                             break;
                         case "inc":
                             sentences.Add(new Inc(this, xr));
@@ -312,41 +312,41 @@ namespace Girl.LLPML
                         case "post-dec":
                             sentences.Add(new PostDec(this, xr));
                             break;
-                        case "var-int-add":
-                            sentences.Add(new VarInt.Add(this, xr));
+                        case "var-add":
+                            sentences.Add(new Var.Add(this, xr));
                             break;
-                        case "var-int-sub":
-                            sentences.Add(new VarInt.Sub(this, xr));
+                        case "var-sub":
+                            sentences.Add(new Var.Sub(this, xr));
                             break;
-                        case "var-int-mul":
-                            sentences.Add(new VarInt.Mul(this, xr));
+                        case "var-mul":
+                            sentences.Add(new Var.Mul(this, xr));
                             break;
-                        case "var-int-unsigned-mul":
-                            sentences.Add(new VarInt.UnsignedMul(this, xr));
+                        case "var-unsigned-mul":
+                            sentences.Add(new Var.UnsignedMul(this, xr));
                             break;
-                        case "var-int-div":
-                            sentences.Add(new VarInt.Div(this, xr));
+                        case "var-div":
+                            sentences.Add(new Var.Div(this, xr));
                             break;
-                        case "var-int-unsigned-div":
-                            sentences.Add(new VarInt.UnsignedDiv(this, xr));
+                        case "var-unsigned-div":
+                            sentences.Add(new Var.UnsignedDiv(this, xr));
                             break;
-                        case "var-int-and":
-                            sentences.Add(new VarInt.And(this, xr));
+                        case "var-and":
+                            sentences.Add(new Var.And(this, xr));
                             break;
-                        case "var-int-or":
-                            sentences.Add(new VarInt.Or(this, xr));
+                        case "var-or":
+                            sentences.Add(new Var.Or(this, xr));
                             break;
-                        case "var-int-shift-left":
-                            sentences.Add(new VarInt.ShiftLeft(this, xr));
+                        case "var-shift-left":
+                            sentences.Add(new Var.ShiftLeft(this, xr));
                             break;
-                        case "var-int-shift-right":
-                            sentences.Add(new VarInt.ShiftRight(this, xr));
+                        case "var-shift-right":
+                            sentences.Add(new Var.ShiftRight(this, xr));
                             break;
-                        case "var-int-unsigned-shift-left":
-                            sentences.Add(new VarInt.UnsignedShiftLeft(this, xr));
+                        case "var-unsigned-shift-left":
+                            sentences.Add(new Var.UnsignedShiftLeft(this, xr));
                             break;
-                        case "var-int-unsigned-shift-right":
-                            sentences.Add(new VarInt.UnsignedShiftRight(this, xr));
+                        case "var-unsigned-shift-right":
+                            sentences.Add(new Var.UnsignedShiftRight(this, xr));
                             break;
                         case "ptr-declare":
                             sentences.Add(new Pointer.Declare(this, xr));
@@ -383,9 +383,9 @@ namespace Girl.LLPML
         {
             get
             {
-                foreach (VarInt.Declare v in var_ints.Values)
+                foreach (Var.Declare v in vars.Values)
                 {
-                    if (v.GetType() == typeof(VarInt.Declare))
+                    if (v.GetType() == typeof(Var.Declare))
                     {
                         return true;
                     }
@@ -417,9 +417,9 @@ namespace Girl.LLPML
         protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             int stack = Level * 4;
-            foreach (VarInt.Declare v in var_ints.Values)
+            foreach (Var.Declare v in vars.Values)
             {
-                if (v.GetType() == typeof(VarInt.Declare))
+                if (v.GetType() == typeof(Var.Declare))
                 {
                     stack += 4;
                     v.Address = new Addr32(Reg32.EBP, -stack);

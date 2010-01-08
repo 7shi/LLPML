@@ -8,9 +8,10 @@ using Girl.X86;
 
 namespace Girl.LLPML.Struct
 {
-    public class Member : VarInt
+    public class Member : Var
     {
         private Struct.Declare src;
+        private Var var;
         private bool isRoot = true;
         private Member member;
 
@@ -33,9 +34,21 @@ namespace Girl.LLPML.Struct
             if (isRoot)
             {
                 string src = xr["src"];
-                if (src == null) throw Abort(xr, "source required");
-                this.src = parent.GetPointer(src) as Struct.Declare;
-                if (this.src == null) throw Abort(xr, "undefined struct: " + src);
+                string var = xr["var"];
+                if (src == null && var == null)
+                    throw Abort(xr, "src or var required");
+                else if (src != null && var == null)
+                {
+                    this.src = parent.GetPointer(src) as Struct.Declare;
+                    if (this.src == null)
+                        throw Abort(xr, "undefined struct: " + src);
+                }
+                else if (src == null && var != null)
+                {
+                    this.var = new Var(parent, var);
+                }
+                else
+                    throw Abort(xr, "either src or var required");
             }
 
             Parse(xr, delegate
@@ -67,18 +80,28 @@ namespace Girl.LLPML.Struct
 
         private Addr32 GetStructAddress(List<OpCode> codes, Module m)
         {
-            Addr32 ad = src.Address;
-            if (parent.Level == src.Parent.Level || ad.IsAddress)
+            if (src != null)
             {
-                return ad;
+                Addr32 ad = src.Address;
+                if (parent.Level == src.Parent.Level || ad.IsAddress)
+                {
+                    return ad;
+                }
+                int lv = src.Parent.Level;
+                if (lv <= 0 || lv >= parent.Level)
+                {
+                    throw new Exception("Invalid variable scope: " + name);
+                }
+                codes.Add(I386.Mov(Reg32.EDX, new Addr32(Reg32.EBP, -lv * 4)));
+                return new Addr32(Reg32.EDX, ad.Disp);
             }
-            int lv = src.Parent.Level;
-            if (lv <= 0 || lv >= parent.Level)
+            else if (var != null)
             {
-                throw new Exception("Invalid variable scope: " + name);
+                codes.Add(I386.Mov(Reg32.EDX, var.GetAddress(codes, m)));
+                return new Addr32(Reg32.EDX);
             }
-            codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
-            return new Addr32(Reg32.EAX, ad.Disp);
+            else
+                throw new Exception("can not get address");
         }
 
         public int GetOffset(Define st)
@@ -92,7 +115,14 @@ namespace Girl.LLPML.Struct
         public override Addr32 GetAddress(List<OpCode> codes, Module m)
         {
             Addr32 ret = new Addr32(GetStructAddress(codes, m));
-            ret.Add(GetOffset(src.GetStruct()));
+            Define st;
+            if (src != null)
+                st = src.GetStruct();
+            else if (var != null)
+                st = var.Reference.GetStruct();
+            else
+                throw new Exception("can not get address");
+            ret.Add(GetOffset(st));
             return ret;
         }
     }

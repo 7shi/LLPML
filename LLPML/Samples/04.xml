@@ -1,61 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.5.20070829">
 
 <include src="stdio.xml" />
 
-<var-int-declare name="i">1</var-int-declare>
+<var-declare name="i">1</var-declare>
 <string-declare name="format">i=%d</string-declare>
 
 <call name="printfln">
 	<string name="format" />
-	<var-int name="i" />
+	<var name="i" />
 </call>
 
 <block>
 	<call name="printfln">
 		<string name="format" />
-		<var-int name="i" />
+		<var name="i" />
 	</call>
 
 	<block>
 		<call name="printfln">
 			<string name="format" />
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 	</block>
 
-	<var-int-declare name="i">2</var-int-declare>
+	<var-declare name="i">2</var-declare>
 	<string-declare name="format">	i=%d</string-declare>
 
 	<call name="printfln">
 		<string name="format" />
-		<var-int name="i" />
+		<var name="i" />
 	</call>
 
 	<block>
 		<call name="printfln">
 			<string name="format" />
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 
-		<var-int-declare name="i">3</var-int-declare>
+		<var-declare name="i">3</var-declare>
 		<string-declare name="format">		i=%d</string-declare>
 
 		<call name="printfln">
 			<string name="format" />
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 	</block>
 
 	<call name="printfln">
 		<string name="format" />
-		<var-int name="i" />
+		<var name="i" />
 	</call>
 </block>
 
 <call name="printfln">
 	<string name="format" />
-	<var-int name="i" />
+	<var name="i" />
 </call>
 
 <call name="finish" />

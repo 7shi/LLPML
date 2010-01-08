@@ -7,17 +7,18 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class ArgInt : VarInt.Declare
+    public class Arg : Var.Declare
     {
-        public ArgInt() { }
-        public ArgInt(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Arg() { }
+        public Arg(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
             RequiresName(xr);
 
-            parent.AddVarInt(this);
+            type = xr["type"];
+            parent.AddVar(this);
         }
     }
 }

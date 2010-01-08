@@ -7,18 +7,19 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class VarInt : VarBase
+    public partial class Var : VarBase
     {
         public class Declare : DeclareBase
         {
             private IIntValue value;
+            protected string type;
 
             public Declare() { }
 
             public Declare(Block parent, string name)
                 : base(parent, name)
             {
-                parent.AddVarInt(this);
+                parent.AddVar(this);
             }
 
             public Declare(Block parent, string name, IIntValue value)
@@ -40,6 +41,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 RequiresName(xr);
+                type = xr["type"];
 
                 Parse(xr, delegate
                 {
@@ -51,7 +53,7 @@ namespace Girl.LLPML
                     }
                 });
 
-                parent.AddVarInt(this);
+                parent.AddVar(this);
             }
 
             public override void AddCodes(List<OpCode> codes, Module m)
@@ -60,6 +62,15 @@ namespace Girl.LLPML
                 {
                     value.AddCodes(codes, m, "mov", address);
                 }
+            }
+
+            public Struct.Define GetStruct()
+            {
+                if (type == null) return null;
+
+                Struct.Define st = parent.GetStruct(type);
+                if (st != null) return st;
+                throw new Exception("undefined struct: " + type);
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.5.20070829">
 
 <!-- stdio functions -->
 
@@ -12,39 +12,39 @@
 <int-declare name="STD_OUTPUT_HANDLE">-11</int-declare>
 <int-declare name="STD_INPUT_HANDLE">-10</int-declare>
 
-<var-int-declare name="stdout">
+<var-declare name="stdout">
 	<call name="GetStdHandle">
 		<int name="STD_OUTPUT_HANDLE" />
 	</call>
-</var-int-declare>
-<var-int-declare name="stdin">
+</var-declare>
+<var-declare name="stdin">
 	<call name="GetStdHandle">
 		<int name="STD_INPUT_HANDLE" />
 	</call>
-</var-int-declare>
+</var-declare>
 
 <function name="print">
-	<arg-int name="text" />
-	<var-int-declare name="dummy" />
+	<arg name="text" />
+	<var-declare name="dummy" />
 	<call name="WriteConsole">
-		<var-int name="stdout" />
-		<var-int name="text" />
+		<var name="stdout" />
+		<var name="text" />
 		<call name="lstrlen">
-			<var-int name="text" />
+			<var name="text" />
 		</call>
-		<var-int-ptr name="dummy" />
+		<var-ptr name="dummy" />
 		<int>0</int>
 	</call>
 </function>
 
 <function name="vprintf">
-	<arg-int name="format" />
-	<arg-int name="args" />
+	<arg name="format" />
+	<arg name="args" />
 	<ptr-declare name="buffer" type="char" length="1025" />
 	<call name="wvsprintf">
 		<ptr name="buffer" />
-		<var-int name="format" />
-		<var-int name="args" />
+		<var name="format" />
+		<var name="args" />
 	</call>
 	<call name="print">
 		<ptr name="buffer" />
@@ -52,20 +52,20 @@
 </function>
 
 <function name="vprintfln">
-	<arg-int name="format" />
-	<arg-int name="args" />
+	<arg name="format" />
+	<arg name="args" />
 	<call name="vprintf">
-		<var-int name="format" />
-		<var-int name="args" />
+		<var name="format" />
+		<var name="args" />
 	</call>
 	<call name="println" />
 </function>
 
 <function name="printf">
-	<arg-int name="format" />
+	<arg name="format" />
 	<arg-ptr name="args" />
 	<call name="vprintf">
-		<var-int name="format" />
+		<var name="format" />
 		<ptr name="args" />
 	</call>
 </function>
@@ -78,23 +78,23 @@
 </function>
 
 <function name="printfln">
-	<arg-int name="format" />
+	<arg name="format" />
 	<arg-ptr name="args" />
 	<call name="vprintf">
-		<var-int name="format" />
+		<var name="format" />
 		<ptr name="args" />
 	</call>
 	<call name="println" />
 </function>
 
 <function name="pause">
-	<var-int-declare name="dummy" />
+	<var-declare name="dummy" />
 	<ptr-declare name="buffer" type="char" length="16" />
 	<call name="ReadConsole">
-		<var-int name="stdin" />
+		<var name="stdin" />
 		<ptr name="buffer" />
 		<int>1</int>
-		<var-int-ptr name="dummy" />
+		<var-ptr name="dummy" />
 		<int>0</int>
 	</call>
 </function>

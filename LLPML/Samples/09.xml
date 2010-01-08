@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815">
+<llpml version="0.5.20070829">
 
 <!-- callback -->
 
@@ -12,7 +12,7 @@
 <call name="finish" />
 
 <function name="wrapper">
-	<arg-int name="ptr" />
+	<arg name="ptr" />
 	<call ptr="ptr" />
 </function>
 

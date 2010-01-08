@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819">
+<llpml version="0.5.20070829">
 
 <!-- sign -->
 
 <include src="stdio.xml" />
 
-<var-int-declare name="a">-333</var-int-declare>
-<var-int-declare name="b">100</var-int-declare>
-<var-int-declare name="c">5</var-int-declare>
+<var-declare name="a">-333</var-declare>
+<var-declare name="b">100</var-declare>
+<var-declare name="c">5</var-declare>
 
 <call name="printfln">
 	<string>(a, b, c) = (%d, %d, %d)</string>
-	<var-int name="a" />
-	<var-int name="b" />
-	<var-int name="c" />
+	<var name="a" />
+	<var name="b" />
+	<var name="c" />
 </call>
 
 <!-- signed -->
@@ -23,47 +23,47 @@
 <call name="printfln">
 	<string>%d: a &gt; b (signed)</string>
 	<greater>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</greater>
 </call>
 
 <call name="printfln">
 	<string>%d: a &lt; b (signed)</string>
 	<less>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</less>
 </call>
 
 <call name="printfln">
 	<string>a * b = %d (signed)</string>
 	<mul>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</mul>
 </call>
 
 <call name="printfln">
 	<string>a / b = %d (signed)</string>
 	<div>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</div>
 </call>
 
 <call name="printfln">
 	<string>a %% b = %d (signed)</string>
 	<mod>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</mod>
 </call>
 
 <call name="printfln">
 	<string>a &lt;&lt; 5 = %d (signed)</string>
 	<shift-left>
-		<var-int name="a" />
+		<var name="a" />
 		<int>5</int>
 	</shift-left>
 </call>
@@ -71,7 +71,7 @@
 <call name="printfln">
 	<string>a &gt;&gt; 5 = %d (signed)</string>
 	<shift-right>
-		<var-int name="a" />
+		<var name="a" />
 		<int>5</int>
 	</shift-right>
 </call>
@@ -79,16 +79,16 @@
 <call name="printfln">
 	<string>a &lt;&lt; c = %d (signed)</string>
 	<shift-left>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 	</shift-left>
 </call>
 
 <call name="printfln">
 	<string>a &gt;&gt; c = %d (signed)</string>
 	<shift-right>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 	</shift-right>
 </call>
 
@@ -99,47 +99,47 @@
 <call name="printfln">
 	<string>%d: a &gt; b (unsigned)</string>
 	<unsigned-greater>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</unsigned-greater>
 </call>
 
 <call name="printfln">
 	<string>%d: a &lt; b (unsigned)</string>
 	<unsigned-less>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</unsigned-less>
 </call>
 
 <call name="printfln">
 	<string>a * b = %u (unsigned)</string>
 	<unsigned-mul>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</unsigned-mul>
 </call>
 
 <call name="printfln">
 	<string>a / b = %u (unsigned)</string>
 	<unsigned-div>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</unsigned-div>
 </call>
 
 <call name="printfln">
 	<string>a %% b = %u (unsigned)</string>
 	<unsigned-mod>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</unsigned-mod>
 </call>
 
 <call name="printfln">
 	<string>a &lt;&lt; 5 = %u (unsigned)</string>
 	<unsigned-shift-left>
-		<var-int name="a" />
+		<var name="a" />
 		<int>5</int>
 	</unsigned-shift-left>
 </call>
@@ -147,7 +147,7 @@
 <call name="printfln">
 	<string>a &gt;&gt; 5 = %u (unsigned)</string>
 	<unsigned-shift-right>
-		<var-int name="a" />
+		<var name="a" />
 		<int>5</int>
 	</unsigned-shift-right>
 </call>
@@ -155,16 +155,16 @@
 <call name="printfln">
 	<string>a &lt;&lt; c = %u (unsigned)</string>
 	<unsigned-shift-left>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 	</unsigned-shift-left>
 </call>
 
 <call name="printfln">
 	<string>a &gt;&gt; c = %u (unsigned)</string>
 	<unsigned-shift-right>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 	</unsigned-shift-right>
 </call>
 

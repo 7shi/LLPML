@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819">
+<llpml version="0.5.20070829">
 
 <!-- boolean operation 2 -->
 
 <include src="stdio.xml" />
 
-<var-int-declare name="a">-1</var-int-declare>
-<var-int-declare name="b">0</var-int-declare>
-<var-int-declare name="c">1</var-int-declare>
+<var-declare name="a">-1</var-declare>
+<var-declare name="b">0</var-declare>
+<var-declare name="c">1</var-declare>
 
 <call name="printfln">
 	<string>(a, b, c) = (%d, %d, %d)</string>
-	<var-int name="a" />
-	<var-int name="b" />
-	<var-int name="c" />
+	<var name="a" />
+	<var name="b" />
+	<var name="c" />
 </call>
 
 <!-- greater -->
@@ -21,43 +21,43 @@
 <call name="printfln">
 	<string>%d: a &gt; b</string>
 	<greater>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</greater>
 </call>
 
 <call name="printfln">
 	<string>%d: b &gt; a</string>
 	<greater>
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="b" />
+		<var name="a" />
 	</greater>
 </call>
 
 <call name="printfln">
 	<string>%d: a &gt; b &gt; c</string>
 	<greater>
-		<var-int name="a" />
-		<var-int name="b" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="b" />
+		<var name="c" />
 	</greater>
 </call>
 
 <call name="printfln">
 	<string>%d: c &gt; b &gt; a</string>
 	<greater>
-		<var-int name="c" />
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="c" />
+		<var name="b" />
+		<var name="a" />
 	</greater>
 </call>
 
 <call name="printfln">
 	<string>%d: b &gt; 0 &gt; a</string>
 	<greater>
-		<var-int name="b" />
+		<var name="b" />
 		<int>0</int>
-		<var-int name="a" />
+		<var name="a" />
 	</greater>
 </call>
 
@@ -66,43 +66,43 @@
 <call name="printfln">
 	<string>%d: a &gt;= b</string>
 	<greater-equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</greater-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: b &gt;= a</string>
 	<greater-equal>
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="b" />
+		<var name="a" />
 	</greater-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: a &gt;= b &gt;= c</string>
 	<greater-equal>
-		<var-int name="a" />
-		<var-int name="b" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="b" />
+		<var name="c" />
 	</greater-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: c &gt;= b &gt;= a</string>
 	<greater-equal>
-		<var-int name="c" />
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="c" />
+		<var name="b" />
+		<var name="a" />
 	</greater-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: b &gt;= 0 &gt;= a</string>
 	<greater-equal>
-		<var-int name="b" />
+		<var name="b" />
 		<int>0</int>
-		<var-int name="a" />
+		<var name="a" />
 	</greater-equal>
 </call>
 
@@ -111,43 +111,43 @@
 <call name="printfln">
 	<string>%d: a &lt; b</string>
 	<less>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</less>
 </call>
 
 <call name="printfln">
 	<string>%d: b &lt; a</string>
 	<less>
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="b" />
+		<var name="a" />
 	</less>
 </call>
 
 <call name="printfln">
 	<string>%d: a &lt; b &lt; c</string>
 	<less>
-		<var-int name="a" />
-		<var-int name="b" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="b" />
+		<var name="c" />
 	</less>
 </call>
 
 <call name="printfln">
 	<string>%d: c &lt; b &lt; a</string>
 	<less>
-		<var-int name="c" />
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="c" />
+		<var name="b" />
+		<var name="a" />
 	</less>
 </call>
 
 <call name="printfln">
 	<string>%d: a &lt; 0 &lt; b</string>
 	<less>
-		<var-int name="a" />
+		<var name="a" />
 		<int>0</int>
-		<var-int name="b" />
+		<var name="b" />
 	</less>
 </call>
 
@@ -156,43 +156,43 @@
 <call name="printfln">
 	<string>%d: a &lt;= b</string>
 	<less-equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</less-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: b &lt;= a</string>
 	<less-equal>
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="b" />
+		<var name="a" />
 	</less-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: a &lt;= b &lt;= c</string>
 	<less-equal>
-		<var-int name="a" />
-		<var-int name="b" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="b" />
+		<var name="c" />
 	</less-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: c &lt;= b &lt;= a</string>
 	<less-equal>
-		<var-int name="c" />
-		<var-int name="b" />
-		<var-int name="a" />
+		<var name="c" />
+		<var name="b" />
+		<var name="a" />
 	</less-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: a &lt;= 0 &lt;= b</string>
 	<less-equal>
-		<var-int name="a" />
+		<var name="a" />
 		<int>0</int>
-		<var-int name="b" />
+		<var name="b" />
 	</less-equal>
 </call>
 

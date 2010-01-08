@@ -24,6 +24,7 @@ namespace Test
             InitializeComponent();
             ReadSample(textBox1, "template.xml");
             AddTab("stdio.xml");
+            AddTab("win32.xml");
             for (int i = 1; ; i++)
             {
                 string xml = string.Format("{0:00}.xml", i);

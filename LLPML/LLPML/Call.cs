@@ -12,7 +12,7 @@ namespace Girl.LLPML
     {
         public List<IIntValue> args = new List<IIntValue>();
 
-        private VarInt ptr;
+        private Var ptr;
         private CallType type;
 
         public Call() { }
@@ -28,7 +28,7 @@ namespace Girl.LLPML
             }
             else if (name == null && ptr != null)
             {
-                this.ptr = new VarInt(parent, ptr);
+                this.ptr = new Var(parent, ptr);
                 type = CallType.CDecl;
                 if (xr["type"] == "std") type = CallType.Std;
             }

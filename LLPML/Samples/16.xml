@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070821">
+<llpml version="0.5.20070829">
 
 <!-- flow -->
 
@@ -7,22 +7,22 @@
 
 <for>
 	<init>
-		<var-int-declare name="i">0</var-int-declare>
+		<var-declare name="i">0</var-declare>
 	</init>
 	<cond>
 		<less>
-			<var-int name="i" />
+			<var name="i" />
 			<int>5</int>
 		</less>
 	</cond>
 	<loop>
 		<inc>
-			<var-int name="i" />
+			<var name="i" />
 		</inc>
 	</loop>
 	<block>
 		<if>
-			<cond><equal><var-int name="i" /><int>2</int></equal></cond>
+			<cond><equal><var name="i" /><int>2</int></equal></cond>
 			<block>
 				<call name="printfln">skip...</call>
 				<continue />
@@ -30,28 +30,28 @@
 		</if>
 		<call name="printfln">
 			<string>[for] i = %d</string>
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 	</block>
 </for>
 
-<var-int-declare name="i">0</var-int-declare>
+<var-declare name="i">0</var-declare>
 <do>
 	<block>
 		<call name="printf">
 			<string>[do] i = %d </string>
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 		<if>
-			<cond><equal><var-int name="i" /><int>0</int></equal></cond>
+			<cond><equal><var name="i" /><int>0</int></equal></cond>
 			<block>
 				<call name="printfln">(zero)</call>
 			</block>
-			<cond><equal><var-int name="i" /><int>1</int></equal></cond>
+			<cond><equal><var name="i" /><int>1</int></equal></cond>
 			<block>
 				<call name="printfln">(one)</call>
 			</block>
-			<cond><equal><var-int name="i" /><int>2</int></equal></cond>
+			<cond><equal><var name="i" /><int>2</int></equal></cond>
 			<block>
 				<call name="printfln">(two)</call>
 			</block>
@@ -61,12 +61,12 @@
 			</block>
 		</if>
 		<inc>
-			<var-int name="i" />
+			<var name="i" />
 		</inc>
 	</block>
 	<cond>
 		<less>
-			<var-int name="i" />
+			<var name="i" />
 			<int>5</int>
 		</less>
 	</cond>
@@ -75,18 +75,18 @@
 <while>
 	<cond>
 		<greater>
-			<var-int name="i" />
+			<var name="i" />
 			<int>0</int>
 		</greater>
 	</cond>
 	<block>
 		<call name="printf">
 			<string>[while] i = %d </string>
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 		<switch>
 			<expr>
-				<var-int name="i" />
+				<var name="i" />
 			</expr>
 			<case>
 				<int>5</int>
@@ -110,29 +110,29 @@
 			</block>
 		</switch>
 		<dec>
-			<var-int name="i" />
+			<var name="i" />
 		</dec>
 	</block>
 </while>
 
 <for>
 	<init>
-		<var-int-declare name="i">0</var-int-declare>
+		<var-declare name="i">0</var-declare>
 	</init>
 	<loop>
 		<inc>
-			<var-int name="i" />
+			<var name="i" />
 		</inc>
 	</loop>
 	<block>
 		<call name="printfln">
 			<string>[for] i = %d</string>
-			<var-int name="i" />
+			<var name="i" />
 		</call>
 		<if>
 			<cond>
 				<equal>
-					<var-int name="i" />
+					<var name="i" />
 					<int>2</int>
 				</equal>
 			</cond>

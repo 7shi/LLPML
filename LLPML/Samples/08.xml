@@ -1,32 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070817">
+<llpml version="0.5.20070829">
 
 <!-- function returns value -->
 
 <include src="stdio.xml" />
 
-<var-int-declare name="a">3</var-int-declare>
-<var-int-declare name="b">4</var-int-declare>
+<var-declare name="a">3</var-declare>
+<var-declare name="b">4</var-declare>
 
 <call name="printfln">
 	<string>%d + %d = %d</string>
-	<var-int name="a" />
-	<var-int name="b" />
+	<var name="a" />
+	<var name="b" />
 	<call name="add">
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</call>
 </call>
 
 <call name="finish" />
 
 <function name="add">
-	<arg-int name="a" />
-	<arg-int name="b" />
+	<arg name="a" />
+	<arg name="b" />
 	<return>
 		<add>
-			<var-int name="a" />
-			<var-int name="b" />
+			<var name="a" />
+			<var name="b" />
 		</add>
 	</return>
 </function>

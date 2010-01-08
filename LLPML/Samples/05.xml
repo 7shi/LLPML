@@ -1,36 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819">
+<llpml version="0.5.20070829">
 
 <include src="stdio.xml" />
 
-<var-int-declare name="result">0</var-int-declare>
+<var-declare name="result">0</var-declare>
 
 <for>
 	<init>
-		<var-int-declare name="i">1</var-int-declare>
+		<var-declare name="i">1</var-declare>
 	</init>
 	<cond>
 		<less-equal>
-			<var-int name="i" />
+			<var name="i" />
 			<int>10000</int>
 		</less-equal>
 	</cond>
 	<loop>
 		<inc>
-			<var-int name="i" />
+			<var name="i" />
 		</inc>
 	</loop>
 	<block>
-		<var-int-add>
-			<var-int name="result" />
-			<var-int name="i" />
-		</var-int-add>
+		<var-add>
+			<var name="result" />
+			<var name="i" />
+		</var-add>
 	</block>
 </for>
 
 <call name="printfln">
 	<string>1 + 2 + ... + 10000 = %d</string>
-	<var-int name="result" />
+	<var name="result" />
 </call>
 
 <call name="finish" />

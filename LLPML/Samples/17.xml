@@ -1,80 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070826" subsystem="WINDOWS_GUI">
+<llpml version="0.5.20070829" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
-<extern name="GetModuleHandle" alias="GetModuleHandleW" module="kernel32.dll" type="std" />
-<extern name="Sleep" module="kernel32.dll" type="std" />
-<extern name="DefWindowProc" alias="DefWindowProcW" module="user32.dll" type="std" />
-<extern name="LoadCursor" alias="LoadCursorW" module="user32.dll" type="std" />
-<extern name="RegisterClassEx" alias="RegisterClassExW" module="user32.dll" type="std" />
-<extern name="CreateWindowEx" alias="CreateWindowExW" module="user32.dll" type="std" />
-<extern name="ShowWindow" module="user32.dll" type="std" />
-<extern name="UpdateWindow" module="user32.dll" type="std" />
-<extern name="DestroyWindow" module="user32.dll" type="std" />
-<extern name="GetMessage" alias="GetMessageW" module="user32.dll" type="std" />
-<extern name="TranslateMessage" module="user32.dll" type="std" />
-<extern name="DispatchMessage" alias="DispatchMessageW" module="user32.dll" type="std" />
-<extern name="PostQuitMessage" module="user32.dll" type="std" />
-
-<int-declare name="CS_VREDRAW">1</int-declare>
-<int-declare name="CS_HREDRAW">2</int-declare>
-<int-declare name="COLOR_WINDOW">5</int-declare>
-<int-declare name="IDC_ARROW">32512</int-declare>
-<int-declare name="CW_USEDEFAULT">0x80000000</int-declare>
-<int-declare name="WS_OVERLAPPED">0</int-declare>
-<int-declare name="WS_CAPTION">0xc00000</int-declare>
-<int-declare name="WS_SYSMENU">0x80000</int-declare>
-<int-declare name="WS_THICKFRAME">0x40000</int-declare>
-<int-declare name="WS_MINIMIZEBOX">0x20000</int-declare>
-<int-declare name="WS_MAXIMIZEBOX">0x10000</int-declare>
-<var-int-declare name="WS_OVERLAPPEDWINDOW">
-	<or>
-		<int name="WS_OVERLAPPED" />
-		<int name="WS_CAPTION" />
-		<int name="WS_SYSMENU" />
-		<int name="WS_THICKFRAME" />
-		<int name="WS_MINIMIZEBOX" />
-		<int name="WS_MAXIMIZEBOX" />
-	</or>
-</var-int-declare>
-<int-declare name="SW_SHOWNORMAL">1</int-declare>
-<int-declare name="WM_DESTROY">2</int-declare>
-
-<struct-define name="WNDCLASSEX">
-	<member name="cbSize" />
-	<member name="style" />
-	<member name="lpfnWndProc" />
-	<member name="cbClsExtra" />
-	<member name="cbWndExtra" />
-	<member name="hInstance" />
-	<member name="hIcon" />
-	<member name="hCursor" />
-	<member name="hbrBackground" />
-	<member name="lpszMenuName" />
-	<member name="lpszClassName" />
-	<member name="hIconSm" />
-</struct-define>
-
-<struct-define name="POINT">
-	<member name="x" />
-	<member name="y" />
-</struct-define>
-
-<struct-define name="MSG">
-	<member name="hwnd" />
-	<member name="message" />
-	<member name="wParam" />
-	<member name="lParam" />
-	<member name="time" />
-	<member name="pt" type="POINT" />
-</struct-define>
+<include src="win32.xml" />
 
 <string-declare name="className">LLPML Test Window</string-declare>
-
-<var-int-declare name="hInst">
-	<call name="GetModuleHandle" />
-</var-int-declare>
 
 <struct-declare name="wcex" type="WNDCLASSEX">
 	<!-- cbSize        --> <struct-size name="WNDCLASSEX" />
@@ -82,7 +13,7 @@
 	<!-- lpfnWndProc   --> <function-ptr name="WndProc" />
 	<!-- cbClsExtra    --> <int>0</int>
 	<!-- cbWndExtra    --> <int>0</int>
-	<!-- hInstance     --> <var-int name="hInst" />
+	<!-- hInstance     --> <var name="hInstance" />
 	<!-- hIcon         --> <int>0</int>
 	<!-- hCursor       --> <call name="LoadCursor"><int>0</int><int name="IDC_ARROW" /></call>
 	<!-- hbrBackground --> <add><int name="COLOR_WINDOW" /><int>1</int></add>
@@ -95,65 +26,46 @@
 	<ptr name="wcex" />
 </call>
 
-<var-int-declare name="hWnd">
+<var-declare name="hWnd">
 	<call name="CreateWindowEx">
 		<!-- dwExStyle    --> <int>0</int>
 		<!-- lpClassName  --> <string name="className" />
 		<!-- lpWindowName --> <string>テスト</string>
-		<!-- dwStyle      --> <var-int name="WS_OVERLAPPEDWINDOW" />
+		<!-- dwStyle      --> <var name="WS_OVERLAPPEDWINDOW" />
 		<!-- X            --> <int name="CW_USEDEFAULT" />
 		<!-- Y            --> <int>0</int>
 		<!-- nWidth       --> <int>256</int>
 		<!-- nHeight      --> <int>256</int>
 		<!-- hWndParent   --> <int>0</int>
 		<!-- hMenu        --> <int>0</int>
-		<!-- hInstance    --> <var-int name="hInst" />
+		<!-- hInstance    --> <var name="hInstance" />
 		<!-- lpParam      --> <int>0</int>
 	</call>
-</var-int-declare>
+</var-declare>
 
 <call name="ShowWindow">
-	<var-int name="hWnd" />
+	<var name="hWnd" />
 	<int name="SW_SHOWNORMAL" />
 </call>
 
 <call name="UpdateWindow">
-	<var-int name="hWnd" />
+	<var name="hWnd" />
 </call>
 
-<struct-declare name="msg" type="MSG" />
-
-<while>
-	<cond>
-		<call name="GetMessage">
-			<ptr name="msg" />
-			<int>0</int>
-			<int>0</int>
-			<int>0</int>
-		</call>
-	</cond>
-	<block>
-		<call name="TranslateMessage">
-			<ptr name="msg" />
-		</call>
-		<call name="DispatchMessage">
-			<ptr name="msg" />
-		</call>
-	</block>
-</while>
+<call name="MainLoop" />
 
 <call name="DestroyWindow">
-	<var-int name="hWnd" />
+	<var name="hWnd" />
 </call>
 
 <function name="WndProc" type="std">
-	<arg-int name="hwnd" />
-	<arg-int name="msg" />
-	<arg-int name="wParam" />
-	<arg-int name="lParam" />
+	<arg name="hwnd" />
+	<arg name="msg" />
+	<arg name="wParam" />
+	<arg name="lParam" />
 	<switch>
 		<expr>
-			<var-int name="msg" />
+			<var name="msg" />
 		</expr>
 		<case><int name="WM_DESTROY" /></case>
 		<block>
@@ -165,10 +77,10 @@
 		<block>
 			<return>
 				<call name="DefWindowProc">
-					<var-int name="hwnd" />
-					<var-int name="msg" />
-					<var-int name="wParam" />
-					<var-int name="lParam" />
+					<var name="hwnd" />
+					<var name="msg" />
+					<var name="wParam" />
+					<var name="lParam" />
 				</call>
 			</return>
 		</block>

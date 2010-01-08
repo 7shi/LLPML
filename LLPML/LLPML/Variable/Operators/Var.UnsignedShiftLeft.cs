@@ -7,13 +7,13 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class VarInt : VarBase
+    public partial class Var : VarBase
     {
         public class UnsignedShiftLeft : ShiftLeft
         {
             public UnsignedShiftLeft() { }
-            public UnsignedShiftLeft(Block parent, VarInt dest) : base(parent, dest) { }
-            public UnsignedShiftLeft(Block parent, VarInt dest, IntValue[] values) : base(parent, dest, values) { }
+            public UnsignedShiftLeft(Block parent, Var dest) : base(parent, dest) { }
+            public UnsignedShiftLeft(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
             public UnsignedShiftLeft(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override string Shift { get { return "shl"; } }

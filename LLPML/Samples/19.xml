@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.5.20070829">
+
+<!-- struct type -->
+
+<include src="stdio.xml" />
+
+<struct-define name="Point">
+	<member name="x" />
+	<member name="y" />
+</struct-define>
+
+<struct-declare name="p" type="Point">
+	<int>3</int>
+	<int>7</int>
+</struct-declare>
+
+<call name="vprintfln">
+	<string>p = (%d, %d)</string>
+	<ptr name="p" />
+</call>
+
+<call name="printfln">pp = &amp;p</call>
+<var-declare name="pp" type="Point">
+	<ptr name="p" />
+</var-declare>
+
+<call name="vprintfln">
+	<string>*pp = (%d, %d)</string>
+	<var name="pp" />
+</call>
+
+<call name="printfln">pp->y -= 5</call>
+<var-sub>
+	<struct-member var="pp" name="y" />
+	<int>5</int>
+</var-sub>
+
+<call name="vprintfln">
+	<string>p = (%d, %d)</string>
+	<ptr name="p" />
+</call>
+
+<call name="printfln">p.x += 5</call>
+<var-add>
+	<struct-member src="p" name="x" />
+	<int>5</int>
+</var-add>
+
+<call name="vprintfln">
+	<string>*pp = (%d, %d)</string>
+	<var name="pp" />
+</call>
+
+<call name="printfln">offset(pp, 3, 4)</call>
+<call name="offset">
+	<var name="pp" />
+	<int>3</int>
+	<int>4</int>
+</call>
+
+<call name="vprintfln">
+	<string>*pp = (%d, %d)</string>
+	<var name="pp" />
+</call>
+
+<call name="vprintfln">
+	<string>p = (%d, %d)</string>
+	<ptr name="p" />
+</call>
+
+<call name="finish" />
+
+<function name="offset">
+	<arg name="p" type="Point" />
+	<arg name="x" />
+	<arg name="y" />
+	<var-add>
+		<struct-member var="p" name="x" />
+		<var name="x" />
+	</var-add>
+	<var-add>
+		<struct-member var="p" name="y" />
+		<var name="y" />
+	</var-add>
+</function>
+
+</llpml>

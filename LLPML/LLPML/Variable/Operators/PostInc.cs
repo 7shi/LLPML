@@ -7,13 +7,13 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class PostInc : VarInt.Operator, IIntValue
+    public class PostInc : Var.Operator, IIntValue
     {
         public override int Min { get { return 0; } }
         public override int Max { get { return 0; } }
 
         public PostInc() { }
-        public PostInc(Block parent, VarInt dest) : base(parent, dest) { }
+        public PostInc(Block parent, Var dest) : base(parent, dest) { }
         public PostInc(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(List<OpCode> codes, Module m)

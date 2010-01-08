@@ -73,8 +73,8 @@ namespace Girl.LLPML.Struct
         public Struct.Define GetStruct()
         {
             Struct.Define st = parent.GetStruct(type);
-            if (st == null) throw new Exception("undefined struct: " + type);
-            return st;
+            if (st != null) return st;
+            throw new Exception("undefined struct: " + type);
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)

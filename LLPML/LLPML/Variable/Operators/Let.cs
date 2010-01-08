@@ -7,21 +7,21 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Let : VarInt.Operator
+    public class Let : Var.Operator
     {
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
         public Let() { }
-        public Let(Block parent, VarInt dest) : base(parent, dest) { }
+        public Let(Block parent, Var dest) : base(parent, dest) { }
 
-        public Let(Block parent, VarInt dest, IntValue value)
+        public Let(Block parent, Var dest, IntValue value)
             : base(parent, dest)
         {
             this.values.Add(value);
         }
 
-        public Let(Block parent, VarInt dest, int value)
+        public Let(Block parent, Var dest, int value)
             : this(parent, dest, new IntValue(value))
         {
         }

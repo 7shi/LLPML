@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819">
+<llpml version="0.5.20070829">
 
 <!-- boolean operation 1 -->
 
 <include src="stdio.xml" />
 
-<var-int-declare name="a">1</var-int-declare>
-<var-int-declare name="b">2</var-int-declare>
-<var-int-declare name="c">1</var-int-declare>
+<var-declare name="a">1</var-declare>
+<var-declare name="b">2</var-declare>
+<var-declare name="c">1</var-declare>
 
 <call name="printfln">
 	<string>(a, b, c) = (%d, %d, %d)</string>
-	<var-int name="a" />
-	<var-int name="b" />
-	<var-int name="c" />
+	<var name="a" />
+	<var name="b" />
+	<var name="c" />
 </call>
 
 <!-- equal -->
@@ -21,7 +21,7 @@
 <call name="printfln">
 	<string>%d: a == 1</string>
 	<equal>
-		<var-int name="a" />
+		<var name="a" />
 		<int>1</int>
 	</equal>
 </call>
@@ -29,7 +29,7 @@
 <call name="printfln">
 	<string>%d: a == 2</string>
 	<equal>
-		<var-int name="a" />
+		<var name="a" />
 		<int>2</int>
 	</equal>
 </call>
@@ -37,16 +37,16 @@
 <call name="printfln">
 	<string>%d: a == b</string>
 	<equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</equal>
 </call>
 
 <call name="printfln">
 	<string>%d: a == b == 1</string>
 	<equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 		<int>1</int>
 	</equal>
 </call>
@@ -54,8 +54,8 @@
 <call name="printfln">
 	<string>%d: a == c == 1</string>
 	<equal>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 		<int>1</int>
 	</equal>
 </call>
@@ -63,8 +63,8 @@
 <call name="printfln">
 	<string>%d: a == c == 2</string>
 	<equal>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 		<int>2</int>
 	</equal>
 </call>
@@ -74,7 +74,7 @@
 <call name="printfln">
 	<string>%d: a != 1</string>
 	<not-equal>
-		<var-int name="a" />
+		<var name="a" />
 		<int>1</int>
 	</not-equal>
 </call>
@@ -82,7 +82,7 @@
 <call name="printfln">
 	<string>%d: a != 2</string>
 	<not-equal>
-		<var-int name="a" />
+		<var name="a" />
 		<int>2</int>
 	</not-equal>
 </call>
@@ -90,16 +90,16 @@
 <call name="printfln">
 	<string>%d: a != b</string>
 	<not-equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 	</not-equal>
 </call>
 
 <call name="printfln">
 	<string>%d: a != b != 1</string>
 	<not-equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 		<int>1</int>
 	</not-equal>
 </call>
@@ -107,8 +107,8 @@
 <call name="printfln">
 	<string>%d: a != b != 3</string>
 	<not-equal>
-		<var-int name="a" />
-		<var-int name="b" />
+		<var name="a" />
+		<var name="b" />
 		<int>3</int>
 	</not-equal>
 </call>
@@ -116,8 +116,8 @@
 <call name="printfln">
 	<string>%d: a != c != 1</string>
 	<not-equal>
-		<var-int name="a" />
-		<var-int name="c" />
+		<var name="a" />
+		<var name="c" />
 		<int>1</int>
 	</not-equal>
 </call>
@@ -128,11 +128,11 @@
 	<string>%d: a == 1 &amp;&amp; b == 1</string>
 	<and-also>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>1</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>1</int>
 		</equal>
 	</and-also>
@@ -142,11 +142,11 @@
 	<string>%d: a == 1 &amp;&amp; b == 2</string>
 	<and-also>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>1</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>2</int>
 		</equal>
 	</and-also>
@@ -156,11 +156,11 @@
 	<string>%d: a == 2 &amp;&amp; b == 2</string>
 	<and-also>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>2</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>2</int>
 		</equal>
 	</and-also>
@@ -170,11 +170,11 @@
 	<string>%d: a == 3 &amp;&amp; b == 3</string>
 	<and-also>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>3</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>3</int>
 		</equal>
 	</and-also>
@@ -186,11 +186,11 @@
 	<string>%d: a == 1 || b == 1</string>
 	<or-else>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>1</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>1</int>
 		</equal>
 	</or-else>
@@ -200,11 +200,11 @@
 	<string>%d: a == 1 || b == 2</string>
 	<or-else>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>1</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>2</int>
 		</equal>
 	</or-else>
@@ -214,11 +214,11 @@
 	<string>%d: a == 2 || b == 2</string>
 	<or-else>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>2</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>2</int>
 		</equal>
 	</or-else>
@@ -228,11 +228,11 @@
 	<string>%d: a == 3 || b == 3</string>
 	<or-else>
 		<equal>
-			<var-int name="a" />
+			<var name="a" />
 			<int>3</int>
 		</equal>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>3</int>
 		</equal>
 	</or-else>
@@ -245,12 +245,12 @@
 	<and-also>
 		<not>
 			<equal>
-				<var-int name="a" />
+				<var name="a" />
 				<int>2</int>
 			</equal>
 		</not>
 		<equal>
-			<var-int name="b" />
+			<var name="b" />
 			<int>2</int>
 		</equal>
 	</and-also>

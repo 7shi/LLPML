@@ -7,21 +7,22 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class VarInt : VarBase, IIntValue
+    public partial class Var : VarBase, IIntValue
     {
-        protected VarInt.Declare reference;
+        protected Declare reference;
+        public Declare Reference { get { return reference; } }
 
-        public VarInt() { }
+        public Var() { }
 
-        public VarInt(Block parent, string name)
+        public Var(Block parent, string name)
             : base(parent, name)
         {
-            reference = parent.GetVarInt(name);
+            reference = parent.GetVar(name);
             if (reference == null)
                 throw new Exception("undefined variable: " + name);
         }
 
-        public VarInt(Block parent, XmlTextReader xr)
+        public Var(Block parent, XmlTextReader xr)
             : base(parent, xr)
         {
         }
@@ -31,7 +32,7 @@ namespace Girl.LLPML
             NoChild(xr);
             RequiresName(xr);
 
-            reference = parent.GetVarInt(name);
+            reference = parent.GetVar(name);
             if (reference == null)
                 throw Abort(xr, "undefined variable: " + name);
         }

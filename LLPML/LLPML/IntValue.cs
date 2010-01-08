@@ -34,10 +34,10 @@ namespace Girl.LLPML
                             return new StringValue(parent.ReadString(xr));
                         case "string-length":
                             return new IntValue(parent.ReadStringLength(xr));
-                        case "var-int":
-                            return new VarInt(parent, xr);
-                        case "var-int-ptr":
-                            return new VarInt.Ptr(parent, xr);
+                        case "var":
+                            return new Var(parent, xr);
+                        case "var-ptr":
+                            return new Var.Ptr(parent, xr);
                         case "ptr":
                             return new Pointer(parent, xr);
                         case "call":
@@ -56,30 +56,30 @@ namespace Girl.LLPML
                             return new PostInc(parent, xr);
                         case "post-dec":
                             return new PostDec(parent, xr);
-                        case "var-int-add":
-                            return new VarInt.Add(parent, xr);
-                        case "var-int-sub":
-                            return new VarInt.Sub(parent, xr);
-                        case "var-int-mul":
-                            return new VarInt.Mul(parent, xr);
-                        case "var-int-unsigned-mul":
-                            return new VarInt.UnsignedMul(parent, xr);
-                        case "var-int-div":
-                            return new VarInt.Div(parent, xr);
-                        case "var-int-unsigned-div":
-                            return new VarInt.UnsignedDiv(parent, xr);
-                        case "var-int-and":
-                            return new VarInt.And(parent, xr);
-                        case "var-int-or":
-                            return new VarInt.Or(parent, xr);
-                        case "var-int-shift-left":
-                            return new VarInt.ShiftLeft(parent, xr);
-                        case "var-int-shift-right":
-                            return new VarInt.ShiftRight(parent, xr);
-                        case "var-int-unsigned-shift-left":
-                            return new VarInt.UnsignedShiftLeft(parent, xr);
-                        case "var-int-unsigned-shift-right":
-                            return new VarInt.UnsignedShiftRight(parent, xr);
+                        case "var-add":
+                            return new Var.Add(parent, xr);
+                        case "var-sub":
+                            return new Var.Sub(parent, xr);
+                        case "var-mul":
+                            return new Var.Mul(parent, xr);
+                        case "var-unsigned-mul":
+                            return new Var.UnsignedMul(parent, xr);
+                        case "var-div":
+                            return new Var.Div(parent, xr);
+                        case "var-unsigned-div":
+                            return new Var.UnsignedDiv(parent, xr);
+                        case "var-and":
+                            return new Var.And(parent, xr);
+                        case "var-or":
+                            return new Var.Or(parent, xr);
+                        case "var-shift-left":
+                            return new Var.ShiftLeft(parent, xr);
+                        case "var-shift-right":
+                            return new Var.ShiftRight(parent, xr);
+                        case "var-unsigned-shift-left":
+                            return new Var.UnsignedShiftLeft(parent, xr);
+                        case "var-unsigned-shift-right":
+                            return new Var.UnsignedShiftRight(parent, xr);
                         case "add":
                             return new Add(parent, xr);
                         case "sub":

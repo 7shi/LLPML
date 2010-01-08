@@ -59,7 +59,7 @@
     <Compile Include="LLPML\Operators\ShiftRight.cs" />
     <Compile Include="LLPML\Operators\UnsignedShiftLeft.cs" />
     <Compile Include="LLPML\Operators\UnsignedShiftRight.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.Sub.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.Sub.cs" />
     <Compile Include="LLPML\Operators\Add.cs" />
     <Compile Include="LLPML\Variable\Operators\Dec.cs" />
     <Compile Include="LLPML\Operators\Sub.cs" />
@@ -87,42 +87,42 @@
     <Compile Include="LLPML\Block.cs" />
     <Compile Include="LLPML\IIntValue.cs" />
     <Compile Include="LLPML\Struct\Size.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.And.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.Or.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.ShiftLeft.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.ShiftRight.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.UnsignedShiftRight.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.UnsignedShiftLeft.cs" />
-    <Compile Include="LLPML\Variable\VarInt.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.And.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.Or.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.ShiftLeft.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.ShiftRight.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.UnsignedShiftRight.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.UnsignedShiftLeft.cs" />
+    <Compile Include="LLPML\Variable\Var.cs" />
     <Compile Include="LLPML\Variable\Pointer.Declare.cs" />
     <Compile Include="LLPML\Flow\For.cs" />
     <Compile Include="LLPML\Flow\Break.cs" />
-    <Compile Include="LLPML\Variable\ArgInt.cs" />
+    <Compile Include="LLPML\Variable\Arg.cs" />
     <Compile Include="LLPML\Variable\Operators\Inc.cs" />
     <Compile Include="LLPML\Variable\ArgPtr.cs" />
     <Compile Include="LLPML\Variable\VarBase.cs" />
     <Compile Include="LLPML\Flow\Return.cs" />
-    <Compile Include="LLPML\Variable\VarInt.Ptr.cs" />
+    <Compile Include="LLPML\Variable\Var.Ptr.cs" />
     <Compile Include="LLPML\Variable\Pointer.cs" />
     <Compile Include="LLPML\Function.Ptr.cs" />
     <Compile Include="LLPML\IntValue.cs" />
-    <Compile Include="LLPML\Variable\VarInt.Declare.cs" />
+    <Compile Include="LLPML\Variable\Var.Declare.cs" />
     <Compile Include="LLPML\Struct\Member.cs" />
     <Compile Include="LLPML\Struct\Define.cs" />
     <Compile Include="LLPML\Struct\Define.Member.cs" />
     <Compile Include="LLPML\Struct\Declare.cs" />
     <Compile Include="LLPML\Variable\Operators\Let.cs" />
     <Compile Include="LLPML\Variable\DeclareBase.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.Add.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.Add.cs" />
     <Compile Include="LLPML\Operators\Operator.cs" />
     <Compile Include="LLPML\StringValue.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.Operator.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.Operator.cs" />
     <Compile Include="LLPML\Variable\Operators\PostDec.cs" />
     <Compile Include="LLPML\Variable\Operators\PostInc.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.Mul.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarIntUnsignedMul.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.Div.cs" />
-    <Compile Include="LLPML\Variable\Operators\VarInt.UnsignedDiv.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.Mul.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.UnsignedMul.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.Div.cs" />
+    <Compile Include="LLPML\Variable\Operators\Var.UnsignedDiv.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -214,6 +214,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\18.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\19.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\win32.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ToDo.txt" />

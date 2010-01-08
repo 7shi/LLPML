@@ -25,8 +25,8 @@ namespace Girl.LLPML
                         case XmlNodeType.Element:
                             switch (xr.Name)
                             {
-                                case "var-int-declare":
-                                    sentences.Add(new VarInt.Declare(parent, xr));
+                                case "var-declare":
+                                    sentences.Add(new Var.Declare(parent, xr));
                                     break;
                                 case "let":
                                     sentences.Add(new Let(parent, xr));

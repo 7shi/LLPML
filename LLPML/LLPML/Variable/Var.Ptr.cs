@@ -7,18 +7,18 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class VarInt : VarBase
+    public partial class Var : VarBase
     {
         public class Ptr : NodeBase, IIntValue
         {
-            private VarInt src;
+            private Var src;
 
             public Ptr() { }
 
             public Ptr(Block parent, string name)
                 : base(parent)
             {
-                src = new VarInt(parent, name);
+                src = new Var(parent, name);
             }
 
             public Ptr(Block parent, XmlTextReader xr)
@@ -28,7 +28,7 @@ namespace Girl.LLPML
 
             public override void Read(XmlTextReader xr)
             {
-                src = new VarInt(parent, xr);
+                src = new Var(parent, xr);
             }
 
             public Addr32 GetAddress(List<OpCode> codes, Module m)

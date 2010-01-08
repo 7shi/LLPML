@@ -7,11 +7,11 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class VarInt : VarBase
+    public partial class Var : VarBase
     {
         public class Operator : NodeBase
         {
-            protected VarInt dest;
+            protected Var dest;
             protected List<IIntValue> values = new List<IIntValue>();
             public IIntValue[] GetValues() { return values.ToArray(); }
 
@@ -19,13 +19,13 @@ namespace Girl.LLPML
             public virtual int Max { get { return int.MaxValue; } }
 
             public Operator() { }
-            public Operator(Block parent, VarInt dest)
+            public Operator(Block parent, Var dest)
                 : base(parent)
             {
                 this.dest = dest;
             }
 
-            public Operator(Block parent, VarInt dest, IntValue[] values)
+            public Operator(Block parent, Var dest, IntValue[] values)
                 : this(parent, dest)
             {
                 if (values.Length < Min)
@@ -46,8 +46,8 @@ namespace Girl.LLPML
                     {
                         if (dest == null)
                         {
-                            if (!(v is VarInt)) throw Abort(xr, "no variable specified");
-                            dest = v as VarInt;
+                            if (!(v is Var)) throw Abort(xr, "no variable specified");
+                            dest = v as Var;
                         }
                         else
                         {
