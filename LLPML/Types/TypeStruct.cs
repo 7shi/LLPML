@@ -90,6 +90,11 @@ namespace Girl.LLPML
             return Parent.GetStruct(name);
         }
 
+        public bool IsClass
+        {
+            get { return GetStruct().IsClass; }
+        }
+
         public TypeStruct(BlockBase parent, string name)
         {
             if (name.EndsWith("]"))

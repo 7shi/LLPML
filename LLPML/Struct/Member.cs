@@ -176,6 +176,8 @@ namespace Girl.LLPML.Struct
         {
             get
             {
+                if (IsLengthInternal) return TypeVar.Instance;
+
                 var st = GetTargetStruct();
                 if (st == null) return null;
 
@@ -298,6 +300,17 @@ namespace Girl.LLPML.Struct
             get { return Child != null ? Child.IsGetter : IsGetterInternal; }
         }
 
+        protected bool IsLengthInternal
+        {
+            get
+            {
+                if (name != "Length") return false;
+
+                var tr = target.Type as TypeReference;
+                return tr != null && tr.IsArray;
+            }
+        }
+
         public Member Duplicate()
         {
             var m = new Member(parent, name);
@@ -331,7 +344,13 @@ namespace Girl.LLPML.Struct
 
         protected void AddCodesInternal(OpCodes codes, string op, Addr32 dest)
         {
-            if (IsGetterInternal)
+            if (IsLengthInternal)
+            {
+                target.AddCodes(codes, "mov", null);
+                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -4)));
+                codes.AddCodes(op, dest);
+            }
+            else if (IsGetterInternal)
                 GetCall("get_").AddCodes(codes, op, dest);
             else if (IsFunctionInternal)
             {

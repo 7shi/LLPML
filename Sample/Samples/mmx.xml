@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080323">
+<llpml version="0.21.20080817">
 
 <!-- MMX support -->
 
@@ -19,7 +19,7 @@ struct __m64b
   
   function Show(name)
   {
-    var p : byte[] = this;
+    var p : byte* = this;
     printf("%s = { ", name);
     for (int i = 0; i < 8; i++)
     {

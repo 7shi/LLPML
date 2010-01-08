@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.21.20080817">
 
 <title>JIT</title>
 
@@ -7,7 +7,7 @@
 <include src="jit.xml" />
 
 <?llp
-var f : byte[] = VirtualAlloc(null, 16, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+var f : byte* = VirtualAlloc(null, 16, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 
 // mov eax, [esp+4]
 f[0] = 0x8b;

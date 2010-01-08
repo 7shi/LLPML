@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.18.20080421">
+<llpml version="0.21.20080817">
 
 <include src="malloc.xml" />
 
 <?llp
 struct ArrayList
 {
-  var Ptr : var[];
+  var Ptr : var*;
   int Count, Capacity;
   
   function ctor
   {
     Capacity = 16;
-    Ptr = malloc(Capacity * sizeof(var));
+    Ptr = calloc(Capacity, sizeof(var));
+    //Ptr = malloc(Capacity * sizeof(var));
     Count = 0;
   }
   
@@ -34,7 +35,8 @@ struct ArrayList
     if (Capacity != cap)
     {
       var oldPtr = Ptr;
-      Ptr = malloc(Capacity * sizeof(var));
+      Ptr = calloc(Capacity, sizeof(var));
+      //Ptr = malloc(Capacity * sizeof(var));
       __movsd(Ptr, oldPtr, Count);
       free(oldPtr);
     }
@@ -43,7 +45,7 @@ struct ArrayList
   
   function Remove(obj)
   {
-    var p : var[] = Ptr;
+    var p : var* = Ptr;
     for (int i = 0; i < Count; i++)
     {
       if (p[0] == obj)
@@ -62,7 +64,7 @@ struct ArrayList
     if (order < 0 || order >= Count) return null;
     
     var ret = Ptr[order];
-    var p : var[] = addrof Ptr[order];
+    var p : var* = addrof Ptr[order];
     Count--;
     __movsd(p, p + 1, Count - order);
     return ret;
@@ -77,6 +79,18 @@ struct ArrayList
   function ForEachWithOrder(delg)
   {
     for (int i = 0; i < Count; i++)
+      delg(Ptr[i], i);
+  }
+  
+  function ForEachRev(delg)
+  {
+    for (int i = Count - 1; i >= 0; i--)
+      delg(Ptr[i]);
+  }
+  
+  function ForEachRevWithOrder(delg)
+  {
+    for (int i = Count - 1; i >= 0; i--)
       delg(Ptr[i], i);
   }
   

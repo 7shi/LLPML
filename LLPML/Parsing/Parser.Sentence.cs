@@ -27,7 +27,8 @@ namespace Girl.LLPML.Parsing
                     ReadBlock("block", nb as Block);
                     break;
                 case "struct":
-                    StructDefine().SrcInfo = si;
+                case "class":
+                    StructDefine(t).SrcInfo = si;
                     return null;
                 case "function":
                 case "virtual":
@@ -60,8 +61,9 @@ namespace Girl.LLPML.Parsing
                 case "switch":
                     nb = Switch();
                     break;
-                case "delete":
-                    nb = new Struct.Delete(parent, Expression()) { SrcInfo = si };
+                case "new":
+                    nb = New();
+                    (nb as Struct.New).NoSet = true;
                     break;
             }
             if (nb != null)
@@ -120,7 +122,18 @@ namespace Girl.LLPML.Parsing
             var dec = Declare(false);
             if (dec != null) return dec;
 
-            var e = Expression() as NodeBase;
+            return SentenceExpression();
+        }
+
+        private NodeBase[] SentenceExpression()
+        {
+            var si = SrcInfo;
+            var v = Expression();
+            var e = v as NodeBase;
+            if (e == null) return null;
+
+            e.SrcInfo = si;
+            if (e is Call) (e as Call).NoSet = true;
             return new NodeBase[] { e };
         }
 
@@ -152,15 +165,15 @@ namespace Girl.LLPML.Parsing
             return null;
         }
 
-        private Struct.Define StructDefine()
+        private Struct.Define StructDefine(string type)
         {
-            if (!CanRead) throw Abort("struct: 名前が必要です。");
+            if (!CanRead) throw Abort("{0}: 名前が必要です。", type);
 
             var name = Read();
             if (!Tokenizer.IsWord(name))
             {
                 Rewind();
-                throw Abort("struct: 名前が不適切です: {0}", name);
+                throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
             string baseType = null;
@@ -168,23 +181,24 @@ namespace Girl.LLPML.Parsing
             if (t == ":")
             {
                 if (!CanRead)
-                    throw Abort("struct: {0}: 型が必要です。", name);
+                    throw Abort("{0}: {1}: 型が必要です。", type, name);
                 baseType = Read();
                 if (!Tokenizer.IsWord(baseType))
                 {
                     Rewind();
-                    throw Abort("struct: {0}: 型が必要です。", name);
+                    throw Abort("{0}: {1}: 型が必要です。", type, name);
                 }
                 if (name == baseType)
-                    throw Abort("struct: {0}: 継承できません: {1}", name, baseType);
+                    throw Abort("{0}: {1}: 継承できません: {2}", type, name, baseType);
             }
             else
                 Rewind();
 
             var ret = new Struct.Define(parent, name, baseType);
-            ReadBlock("struct", ret);
+            if (type == "class") ret.IsClass = true;
+            ReadBlock(type, ret);
             if (!parent.AddStruct(ret))
-                throw Abort("struct: {0}: 定義が重複しています。", name);
+                throw Abort("{0}: {1}: 定義が重複しています。", type, name);
             return ret;
         }
 
@@ -423,11 +437,8 @@ namespace Girl.LLPML.Parsing
                         throw Abort("{0}: {1}: {2}: 引数の型が不適切です。", tp, f.Name, arg);
                     }
                     var ar = Read();
-                    if (ar == "[")
-                    {
-                        Check(tp, "]");
-                        type += "[]";
-                    }
+                    if (ar == "*")
+                        type += "*";
                     else if (ar != null)
                         Rewind();
                 }

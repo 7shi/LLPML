@@ -34,7 +34,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "target required");
         }
 
-        public TypeBase Type { get { return new TypeIterator(Target.Type); } }
+        public TypeBase Type { get { return new TypePointer(Target.Type); } }
 
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080402">
+<llpml version="0.21.20080817">
 
 <include src="win32.xml" />
 <include src="malloc.xml" />
@@ -27,7 +27,7 @@ struct Color
 
 struct Bitmap : BITMAPINFO
 {
-  var Buffer : Color[] = null;
+  var Buffer : Color* = null;
   var Count = 0;
   var Width, Height;
   var enableMMX  = __check_mmx();
@@ -98,7 +98,7 @@ struct Bitmap : BITMAPINFO
     var y2 = y + h;
     if (y2 > Height) y2 = Height;
     
-    var buffer : Color[] = Buffer;
+    var buffer : Color* = Buffer;
     var c : Color = addrof color;
     int a = c.A;
     if (a > 127) a++;
@@ -117,10 +117,11 @@ struct Bitmap : BITMAPINFO
       __movd(__xmm0, 0);
       __movdqu(__xmm1, fore);
       __movdqu(__xmm2, alpha);
+      var w = (x2 - x1) / 2;
       for (var yy = y1; yy < y2; yy++)
       {
-        var p : Color[] = addrof Buffer[x1 + yy * Width];
-        for (var xx = x1; xx < x2; xx += 2)
+        var p : __m64w* = addrof Buffer[x1 + yy * Width];
+        for (var i = 0; i < w; i++)
         {
           __movq(__xmm3, p);
           __punpcklbw(__xmm3, __xmm0);
@@ -129,7 +130,7 @@ struct Bitmap : BITMAPINFO
           __psrlw(__xmm3, 8);
           __packuswb(__xmm3, __xmm0);
           __movq(p, __xmm3);
-          p += 2;
+          p++;
         }
         if (last)
         {
@@ -152,7 +153,7 @@ struct Bitmap : BITMAPINFO
       __movq(__mm2, alpha);
       for (var yy = y1; yy < y2; yy++)
       {
-        var p : Color[] = addrof Buffer[x1 + yy * Width];
+        var p : Color* = addrof Buffer[x1 + yy * Width];
         for (var xx = x1; xx < x2; xx++)
         {
           __movd(__mm3, p);
@@ -172,10 +173,10 @@ struct Bitmap : BITMAPINFO
       int r = c.R * a, g = c.G * a, b = c.B * a;
       for (var yy = y1; yy < y2; yy++)
       {
-        var p : Color[] = addrof Buffer[x1 + yy * Width];
+        var p : Color* = addrof Buffer[x1 + yy * Width];
         for (var xx = x1; xx < x2; xx++)
         {
-          ((int[])p)[0] =
+          ((int*)p)[0] =
             (((r + p[0].R * aa) & 0xff00) << 8)
             | ((g + p[0].G * aa) & 0xff00)
             | ((b + p[0].B * aa) >> 8);

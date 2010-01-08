@@ -417,7 +417,7 @@ namespace Girl.LLPML
             codes.AddRange(new[]
             {
                 I386.Push(codes.Module.GetString(format)),
-                I386.Call(parent.GetFunction("printfln").First),
+                I386.Call(GetFunction("printfln").First),
                 I386.Add(Reg32.ESP, (uint)((argCount + 1) * 4))
             });
         }
@@ -466,7 +466,7 @@ namespace Girl.LLPML
             var t = returnType;
             if (v is Null)
             {
-                if (t == null || t is TypeReference || t is TypeIterator)
+                if (t == null || t is TypeReference || t is TypePointer)
                     return true;
                 return false;
             }
@@ -486,6 +486,8 @@ namespace Girl.LLPML
             foreach (var obj in members.Values)
                 if (obj is BlockBase)
                     (obj as BlockBase).MakeUp();
+                else if (obj is Var.Declare)
+                    (obj as Var.Declare).CheckClass();
         }
 
         protected virtual void MakeUpInternal()

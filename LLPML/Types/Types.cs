@@ -14,10 +14,15 @@ namespace Girl.LLPML
                 return Delegate.GetDefaultType(parent);
             else if (type.StartsWith("var:"))
                 return new TypeReference(parent, GetType(parent, type.Substring(4)));
+            else if (type.EndsWith("*"))
+            {
+                var t = type.Substring(0, type.Length - 1).TrimEnd();
+                return new TypePointer(GetType(parent, t));
+            }
             else if (type.EndsWith("[]"))
             {
                 var t = type.Substring(0, type.Length - 2).TrimEnd();
-                return new TypeIterator(GetType(parent, t));
+                return new TypeReference(parent, GetType(parent, t), true);
             }
             else if (type.EndsWith("]"))
             {
@@ -65,7 +70,7 @@ namespace Girl.LLPML
             if (t is TypeStruct)
                 return new TypeReference(parent, t);
             else if (t is TypeArray)
-                return new TypeIterator(t.Type);
+                return new TypePointer(t.Type);
             else
                 return t;
         }

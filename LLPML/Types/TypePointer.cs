@@ -7,10 +7,13 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class TypeIterator : TypeVarBase
+    public class TypePointer : TypeVarBase
     {
         // type name
-        public override string Name { get { return Type.Name + "[]"; } }
+        public override string Name { get { return Type.Name + "*"; } }
+
+        // type size
+        public override int Size { get { return Type.Size; } }
 
         // check array
         public override bool IsArray { get { return true; } }
@@ -19,11 +22,11 @@ namespace Girl.LLPML
         public override TypeBase Cast(TypeBase type)
         {
             if (type is TypeVar) return type;
-            if (!(type is TypeIterator || type is TypeReference)) return null;
+            if (!(type is TypePointer || type is TypeReference)) return null;
             return base.Cast(type);
         }
 
-        public TypeIterator(TypeBase type)
+        public TypePointer(TypeBase type)
         {
             Type = type;
 

@@ -46,13 +46,21 @@ namespace Girl.LLPML
         public override void AddCodes(OpCodes codes)
         {
             ///if (castFailed != null) throw Abort(castFailed);
+            var f = parent.GetFunction();
             if (value != null)
             {
                 value.AddCodes(codes, "mov", null);
-                var retval = parent.GetFunction().GetRetVal(parent);
-                codes.Add(I386.Mov(retval.GetAddress(codes), Reg32.EAX));
+                var retval = f.GetRetVal(parent);
+                var dest = retval.GetAddress(codes);
+                var rt = f.ReturnType as TypeReference;
+                if (rt != null)
+                {
+                    codes.Add(I386.Mov(dest, (Val32)0));
+                    rt.AddSetCodes(codes, dest);
+                }
+                else
+                    codes.Add(I386.Mov(dest, Reg32.EAX));
             }
-            var f = parent.GetFunction();
             var b = parent;
             var ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)

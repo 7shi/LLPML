@@ -27,6 +27,8 @@ namespace Girl.LLPML.Struct
             }
         }
 
+        public bool IsClass { get; set; }
+
         private Arg thisptr;
 
         public Define(BlockBase parent, string name)

@@ -46,10 +46,10 @@ namespace Girl.LLPML.Parsing
             switch (t)
             {
                 case "int":
-                    IntDeclare();
+                    ConstIntDeclare();
                     return;
                 case "string":
-                    StringDeclare();
+                    ConstStringDeclare();
                     return;
             }
 
@@ -105,7 +105,7 @@ namespace Girl.LLPML.Parsing
                 ReadDeclare(category, delg1, delg2);
         }
 
-        private void IntDeclare()
+        private void ConstIntDeclare()
         {
             ReadDeclare("const int", null,
                 (name, eq, si, array) =>
@@ -121,7 +121,7 @@ namespace Girl.LLPML.Parsing
                 });
         }
 
-        private void StringDeclare()
+        private void ConstStringDeclare()
         {
             ReadDeclare("const string", null,
                 (name, eq, si, array) =>
@@ -162,11 +162,8 @@ namespace Girl.LLPML.Parsing
                         throw Abort("var: 型が必要です。");
                     }
                     var ar = Read();
-                    if (ar == "[")
-                    {
-                        Check("var", "]");
-                        type += "[]";
-                    }
+                    if (ar == "*")
+                        type += "*";
                     else if (ar != null)
                         Rewind();
                 },
@@ -183,7 +180,7 @@ namespace Girl.LLPML.Parsing
                     }
                     else
                     {
-                        /// todo: 配列を初期化できるようにする
+                        /// TODO: 配列を初期化できるようにする
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
                         v = new Var.Declare(

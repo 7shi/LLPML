@@ -12,6 +12,15 @@ namespace Girl.LLPML
     {
         public Var.Declare[] UsingPointers { get; protected set; }
 
+        private void SetUsingPointers()
+        {
+            if (parent == null) return;
+            var list = new List<Var.Declare>();
+            foreach (var obj in parent.GetMembers<Var.Declare>())
+                if (!(obj is Arg)) list.Add(obj);
+            UsingPointers = list.ToArray();
+        }
+
         public BreakBase()
         {
         }
@@ -19,8 +28,7 @@ namespace Girl.LLPML
         public BreakBase(BlockBase parent)
             : base(parent)
         {
-            if (parent != null)
-                UsingPointers = parent.GetMembers<Var.Declare>();
+            SetUsingPointers();
         }
 
         public BreakBase(BlockBase parent, XmlTextReader xr)
@@ -30,8 +38,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            if (parent != null)
-                UsingPointers = parent.GetMembers<Var.Declare>();
+            SetUsingPointers();
         }
     }
 }

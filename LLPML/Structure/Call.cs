@@ -15,6 +15,7 @@ namespace Girl.LLPML
 
         private IIntValue val;
         private CallType callType = CallType.CDecl;
+        public bool NoSet { get; set; }
 
         public Call(BlockBase parent, string name)
             : base(parent, name)
@@ -172,6 +173,7 @@ namespace Girl.LLPML
             {
                 (f.Type as TypeFunction).CheckArgs(this, args_array);
                 AddCodes(codes, f as Function, args_array);
+                CheckNoSet(codes);
                 return;
             }
 
@@ -208,6 +210,23 @@ namespace Girl.LLPML
             });
             if (cleanup)
                 codes.Add(I386.Add(Reg32.ESP, 4));
+            CheckNoSet(codes);
+        }
+
+        public void CheckNoSet(OpCodes codes)
+        {
+            if (!NoSet) return;
+
+            var t = Type as TypeReference;
+            if (t == null || !t.UseGC) return;
+
+            codes.AddRange(new[]
+            {
+                I386.Push(Reg32.EAX),
+                I386.Push(Reg32.ESP),
+            });
+            t.AddDestructor(codes);
+            codes.Add(I386.Add(Reg32.ESP, 8));
         }
 
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
@@ -246,18 +265,43 @@ namespace Girl.LLPML
             Array.Reverse(args2);
             foreach (IIntValue arg in args2)
             {
-                arg.AddCodes(codes, "push", null);
+                var t = arg.Type;
+                if (!(arg is Call) && t is TypeReference && t.NeedsCtor)
+                {
+                    arg.AddCodes(codes, "mov", null);
+                    var label = new OpCode();
+                    codes.AddRange(new[]
+                    {
+                        I386.Test(Reg32.EAX, Reg32.EAX),
+                        I386.Jcc(Cc.Z, label.Address),
+                        I386.Inc(new Addr32(Reg32.EAX, -12)),
+                        label,
+                        I386.Push(Reg32.EAX),
+                    });
+                }
+                else
+                    arg.AddCodes(codes, "push", null);
             }
             delg();
             if (type == CallType.CDecl && args2.Length > 0)
             {
-                int p = 0;
+                int p = 4;
+                bool pop = false;
                 foreach (var arg in args)
                 {
-                    if (NeedsDtor(arg))
-                        arg.Type.AddDestructor(codes, new Addr32(Reg32.ESP, p));
+                    var t = arg.Type;
+                    if (NeedsDtor(arg) || (t is TypeReference && t.NeedsDtor))
+                    {
+                        if (!pop)
+                        {
+                            codes.Add(I386.Push(Reg32.EAX));
+                            pop = true;
+                        }
+                        t.AddDestructor(codes, new Addr32(Reg32.ESP, p));
+                    }
                     p += 4;
                 }
+                if (pop) codes.Add(I386.Pop(Reg32.EAX));
                 codes.Add(I386.Add(Reg32.ESP, (byte)(args2.Length * 4)));
             }
         }

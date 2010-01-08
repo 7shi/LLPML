@@ -122,14 +122,14 @@ namespace Girl.LLPML
                         case "struct-define":
                             new Struct.Define(target, xr);
                             break;
+                        case "class-define":
+                            new Struct.Define(target, xr) { IsClass = true };
+                            break;
                         case "struct-declare":
                             nb = new Struct.Declare(target, xr);
                             break;
                         case "new":
                             nb = new Struct.New(target, xr);
-                            break;
-                        case "delete":
-                            nb = new Struct.Delete(target, xr);
                             break;
                         default:
                             throw Abort(xr);

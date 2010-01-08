@@ -161,6 +161,25 @@ namespace Girl.LLPML
             {
                 get { return parent.GetFullName(name); }
             }
+
+            public void CheckClass()
+            {
+                var t = Type;
+                TypeStruct ts = null;
+                if (Type is TypeStruct)
+                    ts = t as TypeStruct;
+                else if (Type is TypeArray)
+                    ts = t.Type as TypeStruct;
+                if (ts == null) return;
+
+                var st = ts.GetStruct();
+                st.MakeUp();
+                if (!st.IsClass) return;
+
+                throw Abort(
+                    "can not declare class as automatic variable: {0}",
+                    st.FullName);
+            }
         }
     }
 }

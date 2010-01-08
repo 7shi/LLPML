@@ -25,7 +25,7 @@ namespace Girl.LLPML
         public override TypeBase Cast(TypeBase type)
         {
             if (type is TypeVar) return type;
-            if (!(type is TypeIterator)) return null;
+            if (!(type is TypePointer)) return null;
             return base.Cast(type);
         }
 

@@ -82,7 +82,16 @@ namespace Girl.LLPML.Parsing
                         return new AddrOf(parent, ex) { SrcInfo = si };
                     }
                 case "typeof":
-                    return new TypeOf(parent, Expression()) { SrcInfo = si };
+                    {
+                        var br = Read();
+                        if (br != "(")
+                            if (br != null) Rewind();
+                        var arg = Expression();
+                        if (arg == null)
+                            throw parent.Abort(si, "typeof: à¯êîÇ™ïKóvÇ≈Ç∑ÅB");
+                        if (br == "(") Check("typeof", ")");
+                        return new TypeOf(parent, arg) { SrcInfo = si };
+                    }
                 case "__FUNCTION__":
                     return new StringValue(parent.FullName);
                 case "__FILE__":
@@ -119,8 +128,8 @@ namespace Girl.LLPML.Parsing
                 var parent = this.parent;
                 this.parent = ret;
                 var ex = Expression();
-                this.parent = parent;
                 ret.AddSentence(new Return(ret, ex));
+                this.parent = parent;
             }
 
             if (!ret.Parent.AddFunction(ret))

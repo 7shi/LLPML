@@ -183,19 +183,10 @@ namespace Girl.LLPML.Parsing
             if (Tokenizer.IsWord(type) && parent.GetVar(type) == null)
             {
                 var br2 = Read();
-                if (br2 == "[")
+                if (br2 == "*")
                 {
+                    type += "*";
                     br2 = Read();
-                    if (br2 == "]")
-                    {
-                        br2 = Read();
-                        type += "[]";
-                    }
-                    else
-                    {
-                        Rewind();
-                        br2 = "[";
-                    }
                 }
                 if (br2 == ")")
                     return new Cast(parent, type, Expression()) { SrcInfo = si };

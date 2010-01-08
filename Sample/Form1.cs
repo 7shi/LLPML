@@ -16,15 +16,6 @@ namespace Sample
 {
     public partial class Form1 : Form
     {
-        private static string[] Libraries =
-        {
-            "stdio", "string", "malloc", "finish",
-            "cpuid", "mmx", "sse",
-            "jit", "binary",
-            "win32", "WinWrap", "Drawing", "ArrayList",
-            "CriticalSection"
-        };
-
         private class TextData
         {
             public string Name, Text, Output;
@@ -68,30 +59,31 @@ namespace Sample
                 console = new TreeNode("ƒRƒ“ƒ\[ƒ‹"),
             });
             treeView1.ExpandAll();
-            foreach (var lib in Libraries)
-                library.Nodes.Add(CreateItem(lib + ".xml"));
-            ReadSamples(console, "c");
-            ReadSamples(window, "w");
+            var dir = new DirectoryInfo(GetFullName("Samples"));
+            foreach (var xml in dir.GetFiles("*.xml"))
+            {
+                var name = xml.Name;
+                if (name.Length >= 2 && name[0] == 'c' && char.IsNumber(name[1]))
+                    ReadSample(console, name);
+                else if (name.Length >= 2 && name[0] == 'w' && char.IsNumber(name[1]))
+                    ReadSample(window, name);
+                else
+                    ReadSample(library, name);
+            }
             newToolStripMenuItem.PerformClick();
         }
 
-        private void ReadSamples(TreeNode parent, string prefix)
+        private void ReadSample(TreeNode parent, string xml)
         {
-            for (int i = 1; ; i++)
-            {
-                var xml = string.Format("{0}{1:00}.xml", prefix, i);
-                if (!File.Exists(GetSampleFileName(xml))) break;
-
-                var node = CreateItem(xml);
-                var td = (node.Tag) as TextData;
-                var sr = new StringReader(td.Text);
-                var xr = new XmlTextReader(sr);
-                var title = Root.ReadTitle(xr);
-                if (title != "") node.Text += "(" + title + ")";
-                xr.Close();
-                sr.Close();
-                parent.Nodes.Add(node);
-            }
+            var node = CreateItem(xml);
+            var td = (node.Tag) as TextData;
+            var sr = new StringReader(td.Text);
+            var xr = new XmlTextReader(sr);
+            var title = Root.ReadTitle(xr);
+            if (title != "") node.Text += "(" + title + ")";
+            xr.Close();
+            sr.Close();
+            parent.Nodes.Add(node);
         }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
