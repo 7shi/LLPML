@@ -238,9 +238,9 @@ namespace Girl.LLPML.Parsing
                 case "null":
                     return new Null(parent) { SrcInfo = si };
                 case "true":
-                    return new IntValue(1) { SrcInfo = si };
+                    return new Cast(parent, "bool", new IntValue(1)) { SrcInfo = si };
                 case "false":
-                    return new IntValue(0) { SrcInfo = si };
+                    return new Cast(parent, "bool", new IntValue(0)) { SrcInfo = si };
                 case "function":
                     {
                         var f = Function(t);
@@ -368,7 +368,7 @@ namespace Girl.LLPML.Parsing
             return new StringValue(GetString(t.Substring(1, t.Length - 2)));
         }
 
-        private Struct.Cast Cast()
+        private Cast Cast()
         {
             var si = SrcInfo;
             var br1 = Read();
@@ -393,7 +393,7 @@ namespace Girl.LLPML.Parsing
                         }
                     }
                     if (br2 == ")")
-                        return new Struct.Cast(parent, type, Expression()) { SrcInfo = si };
+                        return new Cast(parent, type, Expression()) { SrcInfo = si };
                     Rewind();
                 }
                 Rewind();

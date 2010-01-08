@@ -66,7 +66,7 @@ namespace Girl.LLPML
             return c;
         }
 
-        public TypeBase Type
+        public virtual TypeBase Type
         {
             get
             {

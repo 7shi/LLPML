@@ -13,12 +13,21 @@ namespace Girl.X86
 
         public void AddCodes(string op, Addr32 dest)
         {
+            AddCodes(op, dest, (Addr32)null);
+        }
+
+        public void AddCodes(string op, Addr32 dest, Addr32 ad)
+        {
             switch (op)
             {
                 case "push":
-                    Add(I386.Push(Reg32.EAX));
+                    if (ad != null)
+                        Add(I386.Push(ad));
+                    else
+                        Add(I386.Push(Reg32.EAX));
                     break;
                 default:
+                    if (ad != null) Add(I386.Mov(Reg32.EAX, ad));
                     if (dest != null) Add(I386.FromName(op, dest, Reg32.EAX));
                     break;
             }
@@ -40,18 +49,9 @@ namespace Girl.X86
             }
         }
 
-        public void AddCodes(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesSW(string op, Addr32 dest)
         {
-            switch (op)
-            {
-                case "push":
-                    Add(I386.Push(ad));
-                    break;
-                default:
-                    Add(I386.Mov(Reg32.EAX, ad));
-                    if (dest != null) Add(I386.FromName(op, dest, Reg32.EAX));
-                    break;
-            }
+            AddCodesSW(op, dest, null);
         }
 
         public void AddCodesSW(string op, Addr32 dest, Addr32 ad)
@@ -59,13 +59,14 @@ namespace Girl.X86
             switch (op)
             {
                 case "push":
-                    AddRange(new OpCode[] {
-                        I386.MovsxW(Reg32.EAX, ad),
-                        I386.Push(Reg32.EAX)
-                    });
+                    if (ad != null)
+                        Add(I386.MovsxW(Reg32.EAX, ad));
+                    else
+                        Add(I386.MovsxW(Reg32.EAX, Reg16.AX));
+                    Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    Add(I386.MovW(Reg16.AX, ad));
+                    if (ad != null) Add(I386.MovW(Reg16.AX, ad));
                     if (dest != null)
                         Add(I386.FromNameW(op, dest, Reg16.AX));
                     else
@@ -74,18 +75,24 @@ namespace Girl.X86
             }
         }
 
+        public void AddCodesUW(string op, Addr32 dest)
+        {
+            AddCodesUW(op, dest, null);
+        }
+
         public void AddCodesUW(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
                 case "push":
-                    AddRange(new OpCode[] {
-                        I386.MovzxW(Reg32.EAX, ad),
-                        I386.Push(Reg32.EAX)
-                    });
+                    if (ad != null)
+                        Add(I386.MovzxW(Reg32.EAX, ad));
+                    else
+                        Add(I386.MovzxW(Reg32.EAX, Reg16.AX));
+                    Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    Add(I386.MovW(Reg16.AX, ad));
+                    if (ad != null) Add(I386.MovW(Reg16.AX, ad));
                     if (dest != null)
                         Add(I386.FromNameW(op, dest, Reg16.AX));
                     else
@@ -94,18 +101,24 @@ namespace Girl.X86
             }
         }
 
+        public void AddCodesSB(string op, Addr32 dest)
+        {
+            AddCodesSB(op, dest, null);
+        }
+
         public void AddCodesSB(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
                 case "push":
-                    AddRange(new OpCode[] {
-                        I386.MovsxB(Reg32.EAX, ad),
-                        I386.Push(Reg32.EAX)
-                    });
+                    if (ad != null)
+                        Add(I386.MovsxB(Reg32.EAX, ad));
+                    else
+                        Add(I386.MovsxB(Reg32.EAX, Reg8.AL));
+                    Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    Add(I386.MovB(Reg8.AL, ad));
+                    if (ad != null) Add(I386.MovB(Reg8.AL, ad));
                     if (dest != null)
                         Add(I386.FromNameB(op, dest, Reg8.AL));
                     else
@@ -114,18 +127,24 @@ namespace Girl.X86
             }
         }
 
+        public void AddCodesUB(string op, Addr32 dest)
+        {
+            AddCodesUB(op, dest, null);
+        }
+
         public void AddCodesUB(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
                 case "push":
-                    AddRange(new OpCode[] {
-                        I386.MovzxB(Reg32.EAX, ad),
-                        I386.Push(Reg32.EAX)
-                    });
+                    if (ad != null)
+                        Add(I386.MovzxB(Reg32.EAX, ad));
+                    else
+                        Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
+                    Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    Add(I386.MovB(Reg8.AL, ad));
+                    if (ad != null) Add(I386.MovB(Reg8.AL, ad));
                     if (dest != null)
                         Add(I386.FromNameB(op, dest, Reg8.AL));
                     else

@@ -21,6 +21,14 @@ namespace Girl.LLPML
         // check value
         public override bool IsValue { get { return false; } }
 
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeVar) return type;
+            if (!(type is TypeIterator)) return null;
+            return base.Cast(type);
+        }
+
         public int Count { get; protected set; }
 
         public TypeArray(TypeBase type, int count)

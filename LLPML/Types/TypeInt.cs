@@ -76,6 +76,34 @@ namespace Girl.LLPML
         }
     }
 
+    public class TypeVar : TypeInt
+    {
+        // type name
+        public override string Name { get { return "var"; } }
+
+        // singleton
+        private static TypeVar instance = new TypeVar();
+        public static new TypeVar Instance { get { return instance; } }
+        protected TypeVar() { }
+
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            return this;
+        }
+    }
+
+    public class TypeBool : TypeInt
+    {
+        // type name
+        public override string Name { get { return "bool"; } }
+
+        // singleton
+        private static TypeBool instance = new TypeBool();
+        public static new TypeBool Instance { get { return instance; } }
+        protected TypeBool() { }
+    }
+
     public class TypeShort : TypeInt
     {
         // type name
@@ -96,9 +124,9 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpCodes codes, Addr32 dest)
         {
-            codes.Add(I386.MovW(ad, Reg16.AX));
+            codes.Add(I386.MovW(dest, Reg16.AX));
         }
 
         // cast
@@ -134,9 +162,9 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpCodes codes, Addr32 dest)
         {
-            codes.Add(I386.MovB(ad, Reg8.AL));
+            codes.Add(I386.MovB(dest, Reg8.AL));
         }
 
         // cast

@@ -11,6 +11,7 @@ namespace Girl.LLPML
     public class Equal : Operator
     {
         public override string Tag { get { return "equal"; } }
+        public override TypeBase Type { get { return TypeBool.Instance; } }
 
         public Equal(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Equal(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }

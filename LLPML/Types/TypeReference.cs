@@ -41,17 +41,17 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpCodes codes, Addr32 dest)
         {
-            codes.Add(I386.Mov(ad, Reg32.EAX));
+            codes.Add(I386.Mov(dest, Reg32.EAX));
         }
 
         // cast
         public override TypeBase Cast(TypeBase type)
         {
-            if (type is TypeReference)
-                return Type.Cast((type as TypeReference).Type);
-            return null;
+            if (type is TypeVar) return type;
+            if (!(type is TypeReference)) return null;
+            return base.Cast(type);
         }
 
         public TypeReference(TypeBase type)

@@ -11,6 +11,7 @@ namespace Girl.LLPML
     public class NotEqual : Operator
     {
         public override string Tag { get { return "not-equal"; } }
+        public override TypeBase Type { get { return TypeBool.Instance; } }
 
         public NotEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }

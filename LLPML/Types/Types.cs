@@ -33,7 +33,9 @@ namespace Girl.LLPML
             switch (type)
             {
                 case "var":
+                    return TypeVar.Instance;
                 case "bool":
+                    return TypeBool.Instance;
                 case "int":
                     return TypeInt.Instance;
                 case "short":
@@ -56,7 +58,7 @@ namespace Girl.LLPML
         public static TypeBase ConvertVarType(TypeBase t)
         {
             if (t == null)
-                return TypeInt.Instance;
+                return TypeVar.Instance;
             if (t is TypeStruct)
                 return new TypeReference(t);
             else if (t is TypeArray)
@@ -83,7 +85,12 @@ namespace Girl.LLPML
         public static TypeBase Cast(TypeBase t1, TypeBase t2)
         {
             if (t1 == null) return t2;
-            return t1.Cast(t2);
+            if (t2 == null) return t1;
+
+            var c1 = t1.Cast(t2);
+            if (c1 != null) return c1;
+
+            return t2.Cast(t1);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Girl.LLPML
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
+        public TypeBase Type { get { return TypeVar.Instance; } }
 
         protected Function virtfunc;
 

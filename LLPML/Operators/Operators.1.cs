@@ -8,15 +8,15 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Not : Operator
+    public class Neg : Operator
     {
-        public override string Tag { get { return "not"; } }
+        public override string Tag { get { return "neg"; } }
 
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
-        public Not(BlockBase parent, IIntValue value) : base(parent, value) { }
-        public Not(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Neg(BlockBase parent, IIntValue value) : base(parent, value) { }
+        public Neg(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
@@ -26,17 +26,18 @@ namespace Girl.LLPML
         }
     }
 
-    public class Neg : Not
-    {
-        public override string Tag { get { return "neg"; } }
-        public Neg(BlockBase parent, IIntValue value) : base(parent, value) { }
-        public Neg(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-    }
-
-    public class Rev : Not
+    public class Rev : Neg
     {
         public override string Tag { get { return "rev"; } }
         public Rev(BlockBase parent, IIntValue value) : base(parent, value) { }
         public Rev(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+    }
+
+    public class Not : Neg
+    {
+        public override string Tag { get { return "not"; } }
+        public override TypeBase Type { get { return TypeBool.Instance; } }
+        public Not(BlockBase parent, IIntValue value) : base(parent, value) { }
+        public Not(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

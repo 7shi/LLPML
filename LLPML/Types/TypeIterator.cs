@@ -15,6 +15,14 @@ namespace Girl.LLPML
         // check array
         public override bool IsArray { get { return true; } }
 
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeVar) return type;
+            if (!(type is TypeIterator || type is TypeReference)) return null;
+            return base.Cast(type);
+        }
+
         public TypeIterator(TypeBase type)
         {
             Type = type;
@@ -88,9 +96,9 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpCodes codes, Addr32 dest)
         {
-            codes.Add(I386.Mov(ad, Reg32.EAX));
+            codes.Add(I386.Mov(dest, Reg32.EAX));
         }
     }
 }

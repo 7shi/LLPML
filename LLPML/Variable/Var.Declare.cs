@@ -60,7 +60,7 @@ namespace Girl.LLPML
 
             protected virtual void Init()
             {
-                if (type == null) type = Types.GetValueType("var");
+                if (type == null) type = TypeVar.Instance;
                 IsMember = parent is Struct.Define;
             }
 

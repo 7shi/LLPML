@@ -214,7 +214,7 @@ namespace Girl.LLPML.Parsing
 
             var name = Read();
             CallType ct = CheckCallType(CallType.CDecl, ref name);
-            if (name == "(")
+            if (name == "(" || name == ":" || name == "{")
             {
                 name = "";
                 Rewind();
@@ -227,7 +227,7 @@ namespace Girl.LLPML.Parsing
 
             var ret = new Function(parent, name);
             ret.CallType = ct;
-            ReadArgs(type, ret);
+            if (Peek() == "(") ReadArgs(type, ret);
             var comma = Read();
             if (comma == ":")
             {
@@ -284,7 +284,7 @@ namespace Girl.LLPML.Parsing
                 var ex = new Extern(parent, name, module.Value, alias);
                 ex.SrcInfo = si;
                 ex.CallType = ct2;
-                ReadArgs("extern", ex);
+                if (Peek() == "(") ReadArgs("extern", ex);
                 if (!parent.AddFunction(ex))
                     throw Abort("extern: {0}: íËã`Ç™èdï°ÇµÇƒÇ¢Ç‹Ç∑ÅB", name);
                 list.Add(ex);

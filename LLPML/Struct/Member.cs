@@ -154,7 +154,11 @@ namespace Girl.LLPML.Struct
             get
             {
                 if (Child == null)
-                    return GetMember().Type;
+                {
+                    var m = GetMember();
+                    if (m != null) return m.Type;
+                    return null;
+                }
                 return Child.Type;
             }
         }

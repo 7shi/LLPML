@@ -39,9 +39,21 @@ namespace Girl.LLPML
         // cast
         public override TypeBase Cast(TypeBase type)
         {
-            if (type is TypeStruct && (type as TypeStruct).name == name)
-                return this;
-            return null;
+            if (type is TypeStruct)
+            {
+                if (GetStruct().CanUpCast((type as TypeStruct).GetStruct()))
+                    return type;
+                return null;
+            }
+            else if (type is TypeReference)
+            {
+                if (Cast(type.Type) != null) return type;
+                return null;
+            }
+            else if (type is TypeVar)
+                return type;
+            else
+                return null;
         }
 
         public BlockBase Parent { get; protected set; }

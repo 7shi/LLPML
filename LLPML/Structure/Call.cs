@@ -177,12 +177,7 @@ namespace Girl.LLPML
 
                 List<IIntValue> args;
                 var f = GetFunction(codes, target, out args);
-                if (f == null) return;
-                var fargs = f.Args.ToArray();
-                var len = fargs.Length;
-                if (!((len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1) || args.Count == len))
-                    throw Abort("argument mismatched: " + name);
-                AddCodes(codes, f, args);
+                if (f != null) AddCodes(codes, f, args);
             }
             else
             {
@@ -210,12 +205,17 @@ namespace Girl.LLPML
                     return type;
 
                 doneInferType = true;
-                List<IIntValue> args;
-                var f = GetFunction(null, target, out args);
-                if (f != null)
-                    type = f.ReturnType;
+                if (name == null)
+                    type = TypeVar.Instance;
                 else
-                    type = TypeInt.Instance;
+                {
+                    List<IIntValue> args;
+                    var f = GetFunction(null, target, out args);
+                    if (f != null)
+                        type = f.ReturnType;
+                    else
+                        type = TypeVar.Instance;
+                }
                 return type;
             }
         }
@@ -226,8 +226,23 @@ namespace Girl.LLPML
             codes.AddCodes(op, dest);
         }
 
-        public static void AddCodes(OpCodes codes, Function f, List<IIntValue> args)
+        public void AddCodes(OpCodes codes, Function f, List<IIntValue> args)
         {
+            var fargs = f.Args.ToArray();
+            var len = fargs.Length;
+            if (len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1)
+                len--;
+            else if (args.Count != len)
+                throw Abort("argument mismatched: " + name);
+            for (int i = 0; i < len; i++)
+            {
+                var t1 = args[i].Type;
+                var t2 = fargs[i].Type;
+                if (t1 != null && t1.Cast(t2) == null)
+                    throw Abort(
+                        "can not cast arg {0}: {1}: {2} => {3}",
+                        i + 1, fargs[i].Name, t1.Name, t2.Name);
+            }
             AddCodes(codes, args, f.CallType, delegate
             {
                 codes.Add(I386.Call(f.First));

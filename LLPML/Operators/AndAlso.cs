@@ -10,6 +10,7 @@ namespace Girl.LLPML
     public class AndAlso : Operator
     {
         public override string Tag { get { return "and-also"; } }
+        public override TypeBase Type { get { return TypeBool.Instance; } }
 
         public AndAlso(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public AndAlso(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }

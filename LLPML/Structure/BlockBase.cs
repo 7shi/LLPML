@@ -438,7 +438,7 @@ namespace Girl.LLPML
                     {
                         var err = string.Format(
                             "can not cast return type: {0} => {1}",
-                            v.Type.Name, t.Name);
+                            t.Name, v.Type.Name);
                         if (v is NodeBase)
                             throw (v as NodeBase).Abort(err);
                         throw Abort(err);

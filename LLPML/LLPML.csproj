@@ -82,7 +82,7 @@
     <Compile Include="Structure\Function.cs" />
     <Compile Include="NodeBase.cs" />
     <Compile Include="Struct\Base.cs" />
-    <Compile Include="Struct\Cast.cs" />
+    <Compile Include="Value\Cast.cs" />
     <Compile Include="Value\Null.cs" />
     <Compile Include="Value\AddrOf.cs" />
     <Compile Include="Types\TypeOf.cs" />

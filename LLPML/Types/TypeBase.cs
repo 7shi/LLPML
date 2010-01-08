@@ -41,7 +41,7 @@ namespace Girl.LLPML
         }
 
         // set value
-        public virtual void AddSetCodes(OpCodes codes, Addr32 ad)
+        public virtual void AddSetCodes(OpCodes codes, Addr32 dest)
         {
             throw new Exception("can not set value!");
         }
@@ -58,6 +58,17 @@ namespace Girl.LLPML
         // cast
         public virtual TypeBase Cast(TypeBase type)
         {
+            var t1 = Type;
+            var t2 = type.Type;
+            if (t1 == t2) return type;
+
+            var st1 = t1 as TypeStruct;
+            var st2 = t2 as TypeStruct;
+            if (st1 == null || st2 == null) return null;
+
+            if (st1.GetStruct().CanUpCast(st2.GetStruct()))
+                return type;
+
             return null;
         }
 

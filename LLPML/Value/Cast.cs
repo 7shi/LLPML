@@ -5,7 +5,7 @@ using System.Xml;
 using Girl.PE;
 using Girl.X86;
 
-namespace Girl.LLPML.Struct
+namespace Girl.LLPML
 {
     public class Cast : Var
     {
@@ -76,7 +76,15 @@ namespace Girl.LLPML.Struct
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            Source.AddCodes(codes, op, dest);
+            var t = Type;
+            var st = Source.Type;
+            if (st is TypeIntBase && t.Size < st.Size)
+            {
+                Source.AddCodes(codes, "mov", null);
+                t.AddGetCodes(codes, op, dest, null);
+            }
+            else
+                Source.AddCodes(codes, op, dest);
         }
     }
 }

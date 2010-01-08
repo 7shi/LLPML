@@ -47,7 +47,7 @@ namespace Girl.LLPML
                 case "base":
                     return new Struct.Base(parent, xr);
                 case "cast":
-                    return new Struct.Cast(parent, xr);
+                    return new Cast(parent, xr);
                 case "call":
                 case "invoke":
                     return new Call(parent, xr);

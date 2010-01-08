@@ -43,9 +43,7 @@ namespace Girl.LLPML
             values[0].AddCodes(codes, "push", null);
             var ad = dest.GetAddress(codes);
             codes.Add(I386.Pop(Reg32.EAX));
-            var t = dest.Type;
-            if (dest is Index) t = t.Type;
-            t.AddSetCodes(codes, ad);
+            dest.Type.AddSetCodes(codes, ad);
         }
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)

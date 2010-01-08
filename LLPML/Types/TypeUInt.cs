@@ -96,9 +96,9 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpCodes codes, Addr32 dest)
         {
-            codes.Add(I386.MovW(ad, Reg16.AX));
+            codes.Add(I386.MovW(dest, Reg16.AX));
         }
 
         // cast
@@ -145,9 +145,9 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpCodes codes, Addr32 dest)
         {
-            codes.Add(I386.MovB(ad, Reg8.AL));
+            codes.Add(I386.MovB(dest, Reg8.AL));
         }
 
         // cast

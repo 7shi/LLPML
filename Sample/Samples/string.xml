@@ -4,13 +4,13 @@
 <!-- string functions -->
 
 <?llp
-function memcpy(dest : byte[], src : byte[], count)
+function memcpy(dest, src, count)
 {
   __memcpy(dest, src, count);
   return dest;
 }
 
-function memset(dest : byte[], c, count)
+function memset(dest, c, count)
 {
   __stosb(dest, c, count);
   return dest;

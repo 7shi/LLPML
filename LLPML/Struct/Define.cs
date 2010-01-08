@@ -355,5 +355,14 @@ namespace Girl.LLPML.Struct
                 if (f == null) AddFunction(new Function(this, func));
             }
         }
+
+        public bool CanUpCast(Define st)
+        {
+            MakeUp();
+            if (st == this) return true;
+            var b = GetBaseStruct();
+            if (b == null) return false;
+            return b.CanUpCast(st);
+        }
     }
 }
