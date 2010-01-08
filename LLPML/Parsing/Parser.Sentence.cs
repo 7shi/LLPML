@@ -60,6 +60,9 @@ namespace Girl.LLPML.Parsing
                 case "switch":
                     nb = Switch();
                     break;
+                case "delete":
+                    nb = new Struct.Delete(parent, Expression()) { SrcInfo = si };
+                    break;
             }
             if (nb != null)
             {

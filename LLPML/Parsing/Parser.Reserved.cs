@@ -22,6 +22,20 @@ namespace Girl.LLPML.Parsing
                     return new Cast(parent, "bool", new IntValue(0)) { SrcInfo = si };
                 case "base":
                     return new Struct.Base(parent) { SrcInfo = si };
+                case "new":
+                    {
+                        var type = Read();
+                        if (type == null)
+                            throw Abort("new: 型が必要です。");
+                        else if (!Tokenizer.IsWord(type))
+                            throw Abort("new: 型が不適切です: {0}", type);
+                        var br = Read();
+                        if (br == "(")
+                            Check("new", ")");
+                        else if (br != null)
+                            Rewind();
+                        return new Struct.New(parent, type) { SrcInfo = si };
+                    }
                 case "function":
                     {
                         var f = Function(t, false);

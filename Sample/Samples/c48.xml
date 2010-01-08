@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.20.20080512">
+
+<title>仮想関数デストラクタ</title>
+
+<include src="finish.xml" />
+<include src="malloc.xml" />
+
+<?llp
+struct Test1
+{
+  function ctor
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+
+  virtual dtor
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+}
+
+struct Test2 : Test1
+{
+  function ctor
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+
+  override dtor
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+}
+
+var t = new Test1;
+delete t;
+
+t = new Test2;
+delete t;
+?>
+
+</llpml>

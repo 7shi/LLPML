@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080205">
+<llpml version="0.20.20080512">
 
 <!-- heap functions -->
 
@@ -11,6 +11,18 @@ extern "kernel32.dll" __stdcall
   HeapReAlloc(hHeap, dwFlags, lpMem, dwBytes);
   HeapFree(hHeap, dwFlags, lpMem);
 }
+
+function __operator_new(size)
+{
+  return malloc(size);
+}
+
+function __operator_delete(ptr)
+{
+  free(ptr);
+}
+
+// 実装
 
 var g_hProcessHeap = GetProcessHeap();
 

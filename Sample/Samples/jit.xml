@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.20.20080512">
 
 <!-- JIT -->
 
@@ -146,8 +146,7 @@ struct _JIT_Manager
       for (int j = 0; j < allocator.allocated.Count; j++)
         printfln("%s: leaked: %p", __FUNCTION__, allocator.allocated.Ptr[j]);
       allocators.RemoveAt(i);
-      allocator.dtor();
-      free(allocator);
+      delete allocator;
     }
   }
   
@@ -163,9 +162,7 @@ struct _JIT_Manager
       if (ret != null) return ret;
     }
     
-    var alloc = (_JIT_Allocator)malloc(sizeof _JIT_Allocator);
-    alloc.izer();
-    alloc.ctor();
+    var alloc = new _JIT_Allocator;
     allocators.Add(alloc);
     return alloc.Alloc();
   }
@@ -184,8 +181,7 @@ struct _JIT_Manager
         if (allocator.IsEmpty && c > 1)
         {
           allocators.RemoveAt(i);
-          allocator.dtor();
-          free(allocator);
+          delete allocator;
         }
         return true;
       }

@@ -142,9 +142,9 @@ namespace Girl.LLPML
             if (ret == null)
             {
                 if (st == null)
-                    throw Abort("undefined function: " + name);
+                    throw Abort("undefined function: {0}", name);
                 else
-                    throw Abort("undefined method: " + st.GetFullName(name));
+                    throw Abort("undefined function: {0}", st.GetFullName(name));
             }
             args = new List<IIntValue>();
             args.Add(target);

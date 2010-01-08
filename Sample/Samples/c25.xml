@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.15.20080403">
+<llpml version="0.20.20080512">
 
 <title>ヒープ</title>
 
@@ -17,30 +17,16 @@ struct Test
   }
 }
 
-function new_Test()
-{
-  var this = (Test)malloc(sizeof(Test));
-  this.izer(); // initializer
-  this.ctor(); // constructor
-  return this;
-}
-
-function delete_Test(this : Test)
-{
-  this.dtor();
-  free(this);
-}
-
 Test test1;
 printfln("test1 = %p", test1);
 test1.Show();
 
-var test2 = new_Test();
+var test2 = new Test;
 printfln("test2 = %p", test2);
 test2.Show();
 test2.a = 2;
 test2.Show();
-delete_Test(test2);
+delete test2;
 ?>
 
 </llpml>

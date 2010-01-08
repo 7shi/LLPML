@@ -140,6 +140,8 @@ namespace Girl.LLPML
                     return new Less(parent, xr);
                 case "less-equal":
                     return new LessEqual(parent, xr);
+                case "new":
+                    return new Struct.New(parent, xr);
                 default:
                     throw parent.Abort(xr);
             }

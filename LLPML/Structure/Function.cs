@@ -231,6 +231,8 @@ namespace Girl.LLPML
 
         protected override void AfterAddCodes(OpCodes codes)
         {
+            var name = this.name;
+            if (virtfunc != null) name = virtfunc.name;
             if (thisptr != null && name == Struct.Define.Destructor)
                 ThisStruct.AddAfterDtor(codes);
             AddExitCodes(codes);

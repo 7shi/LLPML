@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.15.20080403">
+<llpml version="0.20.20080512">
 
 <title>関数の戻り値の型</title>
 
@@ -30,7 +30,7 @@ function new_Point1(x, y) : Point
 // 型推論によりretの型が戻り値の型になる
 function new_Point2(x, y)
 {
-  var ret = (Point)malloc(sizeof Point);
+  var ret = new Point;
   ret.x = x;
   ret.y = y;
   return ret;
@@ -48,8 +48,8 @@ printfln("typeof p2 = %s", typeof p2);
 p1.Show();
 p2.Show();
 
-free(p1);
-free(p2);
+delete p1;
+delete p2;
 ?>
 
 </llpml>

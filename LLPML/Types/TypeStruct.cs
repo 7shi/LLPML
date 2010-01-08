@@ -74,8 +74,17 @@ namespace Girl.LLPML
         public override void AddDestructor(OpCodes codes, Addr32 ad)
         {
             if (ad != null)
-                codes.Add(I386.Lea(Reg32.EAX, ad));
-            GetStruct().AddDestructor(codes, null);
+                codes.AddRange(new[]
+                {
+                    I386.Lea(Reg32.EAX, ad),
+                    I386.Push(Reg32.EAX),
+                });
+            else
+                codes.Add(I386.Push(Reg32.EAX));
+            var dtor = GetStruct().GetFunction(Struct.Define.Destructor);
+            codes.Add(I386.Call(dtor.First));
+            if (dtor.CallType == CallType.CDecl)
+                codes.Add(I386.Add(Reg32.ESP, 4));
         }
 
         public BlockBase Parent { get; protected set; }
