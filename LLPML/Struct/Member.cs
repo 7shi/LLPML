@@ -126,7 +126,10 @@ namespace Girl.LLPML.Struct
         {
             get
             {
-                return GetPointer().Count > 0;
+                var p = GetPointer();
+                if (p is Var.Declare)
+                    return (p as Var.Declare).IsArray;
+                return p.Count > 0;
             }
         }
 

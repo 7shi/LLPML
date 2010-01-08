@@ -8,7 +8,7 @@
 <?llp
 struct Test
 {
-  var value;
+  var value = 3;
   
   function get_Value()
   {
@@ -22,6 +22,7 @@ struct Test
 }
 
 Test t;
+printfln("t.Value = %d", t.Value);
 t.Value = 5;
 printfln("t.Value = %d", t.Value);
 ?>

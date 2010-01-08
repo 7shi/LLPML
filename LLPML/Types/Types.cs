@@ -10,6 +10,7 @@ namespace Girl.LLPML
         {
             switch (type)
             {
+                case "var":
                 case "int":
                     return TypeInt.Instance;
                 case "short":

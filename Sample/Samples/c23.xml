@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080314">
+<llpml version="0.13.20080327">
 
 <title>構造体型引数</title>
 
@@ -9,9 +9,6 @@
 struct Test
 {
   var a = 1, b = 2;
-
-  // define constructor to initialize members
-  function ctor() { }
 
   function Show()
   {
@@ -32,7 +29,7 @@ printfln("t1 = %p", t1);
 show(t1);
 println();
 
-// ignore initializers
+// overwrite initializers
 Test t2 = { 3, 4 };
 printfln("t2 = %p", t2);
 show(t2);

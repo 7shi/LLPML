@@ -51,6 +51,8 @@ namespace Girl.LLPML
                 case "call":
                 case "invoke":
                     return new Call(parent, xr);
+                case "function":
+                    return new Function(parent, xr);
                 case "function-ptr":
                     return new Function.Ptr(parent, xr);
                 case "struct-member":

@@ -16,7 +16,10 @@ namespace Girl.LLPML
             set { address = value; }
         }
 
-        protected Var thisptr;
+        public bool IsMember { get; protected set; }
+        public virtual bool NeedsInit { get { return false; } }
+        public virtual bool NeedsCtor { get { return false; } }
+        public virtual bool NeedsDtor { get { return false; } }
 
         public DeclareBase() { }
         public DeclareBase(BlockBase parent, string name) : base(parent, name) { Init(); }
@@ -24,24 +27,16 @@ namespace Girl.LLPML
 
         protected virtual void Init()
         {
-            if (parent is Struct.Define)
-                thisptr = new Struct.This(parent);
-        }
-
-        public bool HasThis
-        {
-            get
-            {
-                return thisptr != null;
-            }
+            IsMember = parent is Struct.Define;
         }
 
         public Addr32 GetAddress(OpCodes codes, BlockBase scope)
         {
             const Reg32 dest = Reg32.EDX;
 
-            if (HasThis)
+            if (IsMember)
             {
+                var thisptr = new Struct.This(scope);
                 codes.Add(I386.Mov(dest, thisptr.GetAddress(codes)));
                 return new Addr32(address);
             }

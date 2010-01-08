@@ -14,7 +14,7 @@ namespace Girl.LLPML
         {
             public virtual TypeBase Type { get { return Types.GetType(TypeName); } }
             public virtual string TypeName { get; set; }
-            public int TypeSize { get; private set; }
+            public int TypeSize { get; protected set; }
             public int Count { get; private set; }
 
             private int length = 0;

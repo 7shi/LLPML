@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080314">
+<llpml version="0.13.20080327">
 
 <title>コンストラクタ</title>
 
@@ -9,7 +9,7 @@
 struct Name
 {
   printfln("%p [%s]", this, __FUNCTION__);
-  var name;
+  var name = "";
 
   // constructor
   function ctor()
@@ -27,7 +27,7 @@ struct Name
 
   function Show()
   {
-    printfln("%p [%s] %s", this, __FUNCTION__, name);
+    printfln("%p [%s] \"%s\"", this, __FUNCTION__, name);
   }
 }
 

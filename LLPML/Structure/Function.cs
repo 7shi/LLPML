@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Function : Block
+    public partial class Function : Block, IIntValue
     {
         public CallType CallType { get; set; }
 
@@ -26,6 +26,11 @@ namespace Girl.LLPML
         public Function(BlockBase parent, string name)
             : base(parent)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                parent = root;
+                name = parent.GetAnonymousFunctionName();
+            }
             this.name = name;
             CallType = CallType.CDecl;
 
@@ -60,7 +65,12 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            RequiresName(xr);
+            name = xr["name"];
+            if (string.IsNullOrEmpty(name))
+            {
+                parent = root;
+                name = parent.GetAnonymousFunctionName();
+            }
 
             if (parent is Struct.Define)
             {
@@ -97,21 +107,29 @@ namespace Girl.LLPML
             }
 
             base.BeforeAddCodes(codes);
+            if (thisptr == null) return;
 
-            if (thisptr != null && name == "ctor")
-                ThisStruct.AddBeforeCtor(codes, thisptr);
+            switch (name)
+            {
+                case Struct.Define.Initializer:
+                    ThisStruct.AddInit(codes, new Addr32(Reg32.EBP, 8));
+                    break;
+                case Struct.Define.Constructor:
+                    ThisStruct.AddBeforeCtor(codes);
+                    break;
+            }
         }
 
         protected override void AfterAddCodes(OpCodes codes)
         {
-            if (thisptr != null && name == "dtor")
-                ThisStruct.AddAfterDtor(codes, thisptr);
+            if (thisptr != null && name == Struct.Define.Destructor)
+                ThisStruct.AddAfterDtor(codes);
             AddExitCodes(codes);
         }
 
         public override void AddExitCodes(OpCodes codes)
         {
-            if (thisptr != null && name == "ctor")
+            if (thisptr != null && name == Struct.Define.Constructor)
                 thisptr.AddCodes(codes, "mov", null);
             else if (members.ContainsKey("__retval"))
             {
@@ -123,6 +141,18 @@ namespace Girl.LLPML
                 codes.Add(I386.Ret(argStack));
             else
                 codes.Add(I386.Ret());
+        }
+
+        public Val32 GetAddress(Module m)
+        {
+            return new Val32(m.Specific.ImageBase, First);
+        }
+
+        public TypeBase Type { get { return null; } }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        {
+            codes.AddCodes(op, dest, GetAddress(codes.Module));
         }
     }
 }

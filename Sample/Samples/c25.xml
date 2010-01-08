@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080314">
+<llpml version="0.13.20080327">
 
 <title>ヒープ</title>
 
@@ -11,9 +11,6 @@ struct Test
 {
   var a = 1;
   
-  function ctor() {}
-  function dtor() {}
-  
   function Show()
   {
     printfln("%p [%s] a = %d", this, __FUNCTION__, a);
@@ -22,10 +19,10 @@ struct Test
 
 function Test_new()
 {
-  //var ret : Test = malloc(sizeof(Test));
-  var ret = (Test)malloc(sizeof(Test)); // 型推論
-  ret.ctor();
-  return ret;
+  var this = (Test)malloc(sizeof(Test));
+  this.izer(); // initializer
+  this.ctor(); // constructor
+  return this;
 }
 
 function Test_delete(this : Test)
@@ -38,8 +35,7 @@ Test test1;
 printfln("test1 = %p", test1);
 test1.Show();
 
-//var test2 : Test = Test_new();
-var test2 = (Test)Test_new(); // 型推論
+var test2 = (Test)Test_new();
 printfln("test2 = %p", test2);
 test2.Show();
 test2.a = 2;

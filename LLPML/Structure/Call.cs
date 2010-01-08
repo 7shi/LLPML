@@ -149,11 +149,10 @@ namespace Girl.LLPML
                 }
 
                 List<IIntValue> args;
-                Function f = GetFunction(target, out args);
-                if (f == null)
-                    throw Abort("undefined function: " + name);
-                DeclareBase[] fargs = f.Args.ToArray();
-                int len = fargs.Length;
+                var f = GetFunction(target, out args);
+                //if (f == null) return;
+                var fargs = f.Args.ToArray();
+                var len = fargs.Length;
                 if (!((len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1) || args.Count == len))
                     throw Abort("argument mismatched: " + name);
                 AddCodes(codes, f, args);

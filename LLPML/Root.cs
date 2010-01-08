@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.12.20080325";
+        public const string LLPMLVersion = "0.13.20080327";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -135,6 +135,12 @@ namespace Girl.LLPML
                 }
             }
             return "";
+        }
+
+        public override void AddCodes(OpCodes codes)
+        {
+            MakeUp();
+            base.AddCodes(codes);
         }
     }
 }

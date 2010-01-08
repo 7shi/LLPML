@@ -282,35 +282,21 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpCodes codes)
         {
-            CheckStructs();
             codes.Add(first);
             BeforeAddCodes(codes);
             codes.Add(construct);
             foreach (NodeBase child in sentences)
-            {
                 child.AddCodes(codes);
-            }
             if (!IsTerminated)
                 AddDestructors(codes, GetMembers<Pointer.Declare>());
             codes.Add(destruct);
             AfterAddCodes(codes);
             foreach (Function func in GetMembers<Function>())
-            {
                 func.AddCodes(codes);
-            }
+            var s = GetMembers<Struct.Define>();
             foreach (Struct.Define st in GetMembers<Struct.Define>())
-            {
                 st.AddCodes(codes);
-            }
             codes.Add(last);
-        }
-
-        private void CheckStructs()
-        {
-            foreach (Struct.Define st in GetMembers<Struct.Define>())
-            {
-                st.CheckStruct();
-            }
         }
 
         protected virtual void AfterAddCodes(OpCodes codes)
@@ -346,8 +332,10 @@ namespace Girl.LLPML
                 Struct.Declare st = ptrs2.Pop() as Struct.Declare;
                 if (st == null) continue;
 
-                st.GetStruct().AddDestructor(codes,
-                    GetPointer(st.Name).GetAddress(codes, this));
+                var p = GetPointer(st.Name);
+                var ad = p.GetAddress(codes, this);
+                codes.Add(I386.Lea(Reg32.EAX, ad));
+                st.GetStruct().AddDestructor(codes, null);
             }
         }
 
@@ -390,6 +378,40 @@ namespace Girl.LLPML
                 }
             }
             return ret;
+        }
+
+        private int funcNo = 0;
+
+        public string GetAnonymousFunctionName()
+        {
+            return "__anonymous_" + (funcNo++);
+        }
+
+        public void AddDebug(OpCodes codes, string message)
+        {
+            codes.Add(I386.Push(Reg32.EAX));
+            codes.Add(I386.Push(codes.Module.GetString(message)));
+            AddDebug(codes, "%s", 1);
+            codes.Add(I386.Pop(Reg32.EAX));
+        }
+
+        public void AddDebug(OpCodes codes, string format, int argCount)
+        {
+            codes.AddRange(new OpCode[]
+            {
+                I386.Push(codes.Module.GetString(format)),
+                I386.Call(parent.GetFunction("printfln").First),
+                I386.Add(Reg32.ESP, (uint)((argCount + 1) * 4))
+            });
+        }
+
+        public virtual void MakeUp()
+        {
+            foreach (Struct.Define st in GetMembers<Struct.Define>())
+            {
+                st.CheckStruct();
+                st.MakeUp();
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Girl.LLPML.Struct
 {
     public class Define : Block
     {
+        public const string Initializer = "izer";
         public const string Constructor = "ctor";
         public const string Destructor = "dtor";
 
@@ -155,15 +156,21 @@ namespace Girl.LLPML.Struct
             }
             else if (type == name)
                 throw Abort("can not define recursive type: " + name);
-            ForEachMembers((p, pos) =>
+            foreach (var obj in members.Values)
+            {
+                Type t = obj.GetType();
+                if (t == typeof(Var.Declare)
+                    || t == typeof(Pointer.Declare)
+                    || t == typeof(Struct.Declare))
                 {
+                    var p = obj as Pointer.Declare;
                     if (p is Struct.Declare)
                     {
                         var st = GetStruct(p);
                         if (st != null) st.CheckStruct(type);
                     }
-                    return false;
-                }, null);
+                }
+            }
         }
 
         public void CheckBaseStruct(string name)
@@ -178,82 +185,82 @@ namespace Girl.LLPML.Struct
 
         public override Struct.Define ThisStruct { get { return this; } }
 
-        private void CallBlock(OpCodes codes, Addr32 ad, Block b)
+        private void CallBlock(OpCodes codes, Addr32 ad, Block b, CallType ct)
         {
-            codes.AddRange(new OpCode[]
-            {
-                I386.Lea(Reg32.EAX, new Addr32(ad)),
-                I386.Push(Reg32.EAX),
-                I386.Call(b.First)
-            });
+            if (ad != null)
+                codes.Add(I386.Push(ad));
+            else
+                codes.Add(I386.Push(Reg32.EAX));
+            codes.Add(I386.Call(b.First));
+            if (ct == CallType.CDecl)
+                codes.Add(I386.Add(Reg32.ESP, 4));
         }
 
         public void AddInit(OpCodes codes, Addr32 ad)
         {
-            CallBlock(codes, ad, this);
-            codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
+            if (!NeedsInit) return;
+
+            //AddDebug(codes, "AddInit: " + name);
+            CallBlock(codes, ad, this, CallType.CDecl);
         }
 
         public void AddConstructor(OpCodes codes, Addr32 ad)
         {
-            Function f = GetFunction(Constructor);
-            if (f == null) return;
+            if (!NeedsCtor) return;
 
-            CallBlock(codes, ad, f);
-            if (f.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
+            //AddDebug(codes, "AddConstructor: " + name);
+            var f = GetFunction(Constructor);
+            CallBlock(codes, ad, f, f.CallType);
         }
 
         public void AddDestructor(OpCodes codes, Addr32 ad)
         {
-            Function f = GetFunction(Destructor);
-            if (f == null) return;
+            if (!NeedsDtor) return;
 
-            CallBlock(codes, ad, f);
-            if (f.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
+            //AddDebug(codes, "AddDestructor: " + name);
+            var f = GetFunction(Destructor);
+            CallBlock(codes, ad, f, f.CallType);
         }
 
-        public void AddBeforeCtor(OpCodes codes, Var th)
+        public void AddBeforeCtor(OpCodes codes)
         {
-            codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
-            AddInit(codes, new Addr32(Reg32.EAX));
-
             Define st = GetBaseStruct();
-            int pos = 0;
             if (st != null)
-            {
-                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
-                st.AddConstructor(codes, new Addr32(Reg32.EAX));
-                pos = st.GetSize();
-            }
+                st.AddConstructor(codes, new Addr32(Reg32.EBP, 8));
         }
 
-        public void AddAfterDtor(OpCodes codes, Var th)
+        public void AddAfterDtor(OpCodes codes)
         {
             var list = new List<Pointer.Declare>();
             var poslist = new Dictionary<Pointer.Declare, int>();
+            int offset = 0;
+            var st = GetBaseStruct();
+            if (st != null) offset = st.GetSize();
             ForEachMembers((p, pos) =>
                 {
-                    list.Add(p);
-                    poslist[p] = pos;
+                    if (!(p is Var.Declare))
+                    {
+                        list.Add(p);
+                        poslist[p] = offset + pos;
+                    }
                     return false;
                 }, null);
             list.Reverse();
+            var ad = new Addr32(Reg32.EBP, 8);
             foreach (var p in list)
             {
                 Define memst = GetStruct(p);
                 if (memst == null) continue;
 
-                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
-                memst.AddDestructor(codes, new Addr32(Reg32.EAX, poslist[p]));
+                codes.AddRange(new OpCode[]
+                {
+                    I386.Mov(Reg32.EAX, ad),
+                    I386.Add(Reg32.EAX, (uint)poslist[p])
+                });
+                memst.AddDestructor(codes, null);
             }
-            Define st = GetBaseStruct();
             if (st != null)
-            {
-                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
-                st.AddDestructor(codes, new Addr32(Reg32.EAX));
-            }
+                st.AddDestructor(codes, ad);
         }
 
         public override bool HasStackFrame { get { return false; } }
@@ -288,6 +295,67 @@ namespace Girl.LLPML.Struct
         public override void AddDestructors(
             OpCodes codes, IEnumerable<Pointer.Declare> ptrs)
         {
+        }
+
+        public override void MakeUp()
+        {
+            string[] funcs = { Initializer, Constructor, Destructor };
+            foreach (var func in funcs)
+            {
+                var f = base.GetMember<Function>(func);
+                if (f == null) AddFunction(new Function(this, func));
+            }
+            base.MakeUp();
+        }
+
+        public bool NeedsInit
+        {
+            get
+            {
+                var st = GetBaseStruct();
+                if (st != null && st.NeedsInit) return true;
+
+                foreach (var s in sentences)
+                {
+                    if (s is DeclareBase)
+                    {
+                        var d = s as DeclareBase;
+                        if (!d.NeedsInit && !d.NeedsCtor)
+                            continue;
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public bool NeedsCtor
+        {
+            get
+            {
+                var st = GetBaseStruct();
+                if (st != null && st.NeedsCtor) return true;
+                return GetFunction(Constructor).Sentences.Count > 0;
+            }
+        }
+
+        public bool NeedsDtor
+        {
+            get
+            {
+                var st = GetBaseStruct();
+                if (st != null && st.NeedsDtor) return true;
+                if (GetFunction(Destructor).Sentences.Count > 0)
+                    return true;
+                foreach (object obj in members.Values)
+                {
+                    var sd = obj as Struct.Declare;
+                    if (sd == null || !sd.NeedsDtor)
+                        continue;
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

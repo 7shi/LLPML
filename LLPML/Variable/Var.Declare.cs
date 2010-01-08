@@ -14,6 +14,7 @@ namespace Girl.LLPML
             public IIntValue Value { get; set; }
             public bool IsArray { get; set; }
             public bool IsValue { get { return length > 0; } }
+            public override bool NeedsInit { get { return Value != null; } }
 
             private int length = Var.DefaultSize;
             public override int Length { get { return length; } }
@@ -29,7 +30,7 @@ namespace Girl.LLPML
                     {
                         var t = value.Substring(0, value.Length - 2).TrimEnd();
                         base.TypeName = t;
-                        length = Var.DefaultSize;
+                        TypeSize = length = Var.DefaultSize;
                         IsArray = true;
                         type = new TypeArray(value, SizeOf.GetTypeSize(parent, t));
                     }
@@ -114,7 +115,8 @@ namespace Girl.LLPML
 
                 Struct.Define st = parent.GetStruct(TypeName);
                 if (st != null) return st;
-                throw Abort("undefined struct: " + TypeName);
+                //throw Abort("undefined struct: " + TypeName);
+                return null;
             }
 
             public override void AddCodes(OpCodes codes)
@@ -123,7 +125,7 @@ namespace Girl.LLPML
 
                 Value.AddCodes(codes, "mov", null);
                 var ad = address;
-                if (HasThis) ad = GetAddress(codes, null);
+                if (IsMember) ad = GetAddress(codes, parent);
                 type.AddSetCodes(codes, ad);
             }
         }

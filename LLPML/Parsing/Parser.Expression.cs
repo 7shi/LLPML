@@ -239,6 +239,12 @@ namespace Girl.LLPML.Parsing
                     return new IntValue(1) { SrcInfo = si };
                 case "false":
                     return new IntValue(0) { SrcInfo = si };
+                case "function":
+                    {
+                        var f = Function();
+                        f.SrcInfo = si;
+                        return f;
+                    }
                 case "__FUNCTION__":
                     return new StringValue(parent.GetName());
                 case "__FILE__":

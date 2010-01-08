@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.13.20080327">
+
+<include src="malloc.xml" />
+
+<?llp
+struct ArrayList
+{
+  var Ptr : var[];
+  int Count, Capacity;
+  
+  function ctor()
+  {
+    Capacity = 16;
+    Ptr = malloc(Capacity * sizeof(var));
+    Count = 0;
+  }
+  
+  function dtor()
+  {
+    free(Ptr);
+  }
+  
+  function Add(obj)
+  {
+    var cap = Capacity;
+    while (Count >= Capacity)
+      Capacity += Capacity;
+    if (Capacity != cap)
+    {
+      var oldPtr = Ptr;
+      Ptr = malloc(Capacity * sizeof(var));
+      __movsd(Ptr, oldPtr, Count);
+      free(oldPtr);
+    }
+    Ptr[Count++] = obj;
+  }
+  
+  function Remove(obj)
+  {
+    var p : var[] = Ptr;
+    for (int i = 0; i < Count; i++)
+    {
+      if (p[0] == obj)
+      {
+        Count--;
+        __movsd(p, p + 1, Count - i);
+        return i;
+      }
+      p++;
+    }
+    return -1;
+  }
+  
+  function RemoveAt(order)
+  {
+    if (order < 0 || order >= Count) return null;
+    
+    var ret = Ptr[order];
+    var p : var[] = addrof Ptr[order];
+    Count--;
+    __movsd(p, p + 1, Count - order);
+    return ret;
+  }
+  
+  function ForEach(delg)
+  {
+    for (int i = 0; i < Count; i++)
+      delg(Ptr[i]);
+  }
+  
+  function ForEachWithOrder(delg)
+  {
+    for (int i = 0; i < Count; i++)
+      delg(Ptr[i], i);
+  }
+}
+?>
+
+</llpml>

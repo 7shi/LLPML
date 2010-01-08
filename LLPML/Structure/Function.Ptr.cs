@@ -24,10 +24,10 @@ namespace Girl.LLPML
 
             public Val32 GetAddress(Module m)
             {
-                Function f = parent.GetFunction(name);
+                var f = parent.GetFunction(name);
                 if (f == null)
                     throw Abort("undefined function: " + name);
-                return new Val32(m.Specific.ImageBase, f.First);
+                return f.GetAddress(m);
             }
 
             public TypeBase Type { get { return null; } }

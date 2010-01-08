@@ -26,7 +26,8 @@ function realloc(ptr, size)
 
 function free(ptr)
 {
-  HeapFree(g_hProcessHeap, 0, ptr);
+  if (ptr != null)
+    HeapFree(g_hProcessHeap, 0, ptr);
 }
 ?>
 

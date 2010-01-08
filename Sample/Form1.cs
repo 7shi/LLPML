@@ -62,7 +62,8 @@ namespace Sample
             string[] libs =
             {
                 "stdio", "string", "malloc", "finish",
-                "cpuid", "mmx", "sse", "win32", "winwrap"
+                "cpuid", "mmx", "sse", "win32",
+                "WinWrap", "ArrayList"
             };
             foreach (var lib in libs)
                 library.Nodes.Add(CreateItem(lib + ".xml"));

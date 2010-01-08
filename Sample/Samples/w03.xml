@@ -6,7 +6,7 @@
 <include src="stdio.xml" />
 <include src="mmx.xml" />
 <include src="sse.xml" />
-<include src="winwrap.xml" />
+<include src="WinWrap.xml" />
 
 <?llp
 const string className = "LLPML Test Window";

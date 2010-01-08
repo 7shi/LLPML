@@ -208,11 +208,16 @@ namespace Girl.LLPML.Parsing
 
         private Function Function()
         {
-            if (!CanRead) throw Abort("function: 名前が必要です。");
+            if (!CanRead) throw Abort("function: 定義が必要です。");
 
             var name = Read();
             CallType ct = CheckCallType(CallType.CDecl, ref name);
-            if (!Tokenizer.IsWord(name))
+            if (name == "(")
+            {
+                name = "";
+                Rewind();
+            }
+            else if (!Tokenizer.IsWord(name))
             {
                 Rewind();
                 throw Abort("function: 名前が不適切です: {0}", name);
@@ -222,8 +227,8 @@ namespace Girl.LLPML.Parsing
             ret.CallType = ct;
             ReadArgs("function", ret);
             ReadBlock(ret, "function");
-            if (!parent.AddFunction(ret))
-                throw Abort("function: {0}: 定義が重複しています。", name);
+            if (!ret.Parent.AddFunction(ret))
+                throw Abort("function: {0}: 定義が重複しています。", ret.Name);
             return ret;
         }
 
