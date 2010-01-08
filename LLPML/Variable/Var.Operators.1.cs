@@ -56,7 +56,7 @@ namespace Girl.LLPML
                     codes.Add(I386.Pop(Reg32.EAX));
                     if (!ad.IsAddress && ad.Register != Reg32.EBP)
                         codes.Add(I386.Pop(ad.Register));
-                    codes.Add(I386.Mov(ad, Reg32.EAX));
+                    dest.Type.AddSetCodes(codes, ad);
                 }
                 return ad;
             }

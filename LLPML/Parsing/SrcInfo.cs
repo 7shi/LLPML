@@ -22,5 +22,11 @@ namespace Girl.LLPML.Parsing
             : this(source, xr.LineNumber, xr.LinePosition)
         {
         }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "{0}: {1}, {2}", Source, Number, Position);
+        }
     }
 }

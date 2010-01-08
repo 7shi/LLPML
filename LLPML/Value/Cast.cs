@@ -69,7 +69,7 @@ namespace Girl.LLPML
             else
             {
                 Source.AddCodes(codes, "mov", null);
-                codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
+                return null;
             }
             return new Addr32(Var.DestRegister);
         }
@@ -85,6 +85,13 @@ namespace Girl.LLPML
             }
             else
                 Source.AddCodes(codes, op, dest);
+        }
+
+        public IIntValue GetSource()
+        {
+            var ret = Source;
+            if (ret == null || !(ret is Cast)) return ret;
+            return (ret as Cast).GetSource();
         }
     }
 }

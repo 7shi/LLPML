@@ -199,7 +199,16 @@ namespace Girl.LLPML.Parsing
 
             var ret = parent.GetStruct(name);
             var first = ret == null;
-            if (first) ret = new Struct.Define(parent, name, baseType);
+            if (first)
+                ret = new Struct.Define(parent, name, baseType);
+            else if (baseType != null)
+            {
+                if (ret.BaseType == null)
+                    ret.BaseType = baseType;
+                else if (baseType != ret.BaseType)
+                    throw Abort("{0}: 基本クラスが異なります: {1} != {2}",
+                        ret.FullName, ret.BaseType, baseType);
+            }
             if (type == "class")
             {
                 if (!first && !ret.IsClass)

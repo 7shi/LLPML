@@ -423,7 +423,10 @@ namespace Girl.LLPML.Struct
             var target = Target;
             if (IsLengthInternal)
             {
-                target.AddCodes(codes, "mov", null);
+                if (target is Member)
+                    (target as Member).AddCodesInternal(codes, "mov", null);
+                else
+                    target.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -4)));
                 codes.AddCodes(op, dest);
                 return;

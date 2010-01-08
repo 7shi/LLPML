@@ -2,6 +2,8 @@
 {
 	GetStdHandle(nStdHandle);
 	lstrlenA(lpString : byte*);
+	WriteFile(handle, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped);
+	ReadFile(handle, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
 }
 extern "kernel32.dll" __stdcall __widecharset
 {
@@ -17,13 +19,22 @@ extern "user32.dll" __stdcall __widecharset
 const int STD_OUTPUT_HANDLE = -11;
 const int STD_INPUT_HANDLE  = -10;
 
-var stdout = GetStdHandle(STD_OUTPUT_HANDLE);
-var stdin  = GetStdHandle(STD_INPUT_HANDLE);
+var stdout;
+var stdin = GetStdHandle(STD_INPUT_HANDLE);
+
+var __stdout_func;
 
 function print(text)
 {
-	var length;
-	WriteConsole(stdout, text, lstrlen(text), addrof(length), null);
+	if (__stdout_func == null)
+	{
+		if (stdout == 0) stdout = GetStdHandle(STD_OUTPUT_HANDLE);
+		var length;
+		var ctext = cstr(text);
+		WriteFile(stdout, ctext, ctext.Length, addrof(length), null);
+	}
+	else
+		__stdout_func(text);
 }
 
 function vprintf(format, args)
@@ -58,8 +69,8 @@ function printfln(format, args : params)
 function pause()
 {
 	var length;
-	char buffer[16];
-	ReadConsole(stdin, buffer, 2, addrof(length), null);
+	byte buffer[16];
+	ReadFile(stdin, buffer, 2, addrof(length), null);
 }
 
 struct _Finish

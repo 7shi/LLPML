@@ -62,20 +62,20 @@ namespace Compiler
             if (!IsAnonymous) root.Output = Name + ".exe";
             ret.Output = root.Output;
             ret.Exe = Path.Combine(BaseDir, root.Output);
-            if (File.Exists(ret.Exe))
+            ret.NoBuild = File.Exists(ret.Exe);
+            if (ret.NoBuild)
             {
                 var exet = File.GetLastWriteTime(ret.Exe);
-                var nobuild = true;
                 foreach (var src in Sources)
                 {
                     if ((src.FileInfo.Exists && src.FileInfo.LastWriteTime > exet)
                         || (src.Source != null && src.Source.LastWriteTime > exet))
                     {
-                        nobuild = false;
+                        ret.NoBuild = false;
                         break;
                     }
                 }
-                if (nobuild) return ret;
+                if (ret.NoBuild) return ret;
             }
 #if !DEBUG
             try
@@ -304,6 +304,7 @@ namespace Compiler
 
     public class ResultInfo
     {
+        public bool NoBuild = true;
         public string Output, Exe;
         public double Time;
         public List<Exception> Exceptions = new List<Exception>();
@@ -315,7 +316,7 @@ namespace Compiler
                 foreach (var ex in Exceptions)
                     Console.WriteLine(ex.Message);
             }
-            else if (string.IsNullOrEmpty(Output))
+            else if (NoBuild)
                 Console.WriteLine("更新は不要です。");
             else
             {

@@ -74,7 +74,12 @@ namespace Girl.LLPML
                             target.Name, oi.Value, tc);
                 }
                 var ret = target.GetAddress(codes);
-                if (t.IsValue)
+                if (ret == null)
+                {
+                    codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
+                    ret = new Addr32(Var.DestRegister);
+                }
+                else if (t.IsValue)
                 {
                     codes.Add(I386.Mov(Var.DestRegister, ret));
                     ret = new Addr32(Var.DestRegister);
