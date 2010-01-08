@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080211" subsystem="WINDOWS_GUI">
+<llpml version="0.10.20080212" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
@@ -25,11 +25,11 @@ WNDCLASSEX wcex =
   /* lpszClassName */ className,
   /* hIconSm       */ null
 };
-RegisterClassEx(wcex);
+wcex.RegisterClassEx();
 
 var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 RECT r = { 0, 0, 256, 256 };
-AdjustWindowRectEx(r, dwStyle, false, 0);
+r.AdjustWindowRectEx(dwStyle, false, 0);
 var hWnd = CreateWindowEx(
   /* dwExStyle    */ 0,
   /* lpClassName  */ className,
@@ -44,17 +44,17 @@ var hWnd = CreateWindowEx(
   /* hInstance    */ hInstance,
   /* lpParam      */ null
 );
-ShowWindow(hWnd, SW_SHOWNORMAL);
-UpdateWindow(hWnd);
+hWnd.ShowWindow(SW_SHOWNORMAL);
+hWnd.UpdateWindow();
 
 MSG msg;
-while (GetMessage(msg, null, 0, 0))
+while (msg.GetMessage(null, 0, 0))
 {
-  TranslateMessage(msg);
-  DispatchMessage(msg);
+  msg.TranslateMessage();
+  msg.DispatchMessage();
 }
 
-DestroyWindow(hWnd);
+hWnd.DestroyWindow();
 
 function __stdcall WndProc(hWnd, msg, wParam, lParam)
 {
@@ -63,16 +63,16 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
     case WM_PAINT:
     {
       PAINTSTRUCT ps;
-      var hdc = BeginPaint(hWnd, ps);
-      TextOut(hdc, 8, 8, className, lstrlen(className));
-      EndPaint(hWnd, ps);
+      var hdc = hWnd.BeginPaint(ps);
+      hdc.TextOut(8, 8, className, className.lstrlen());
+      hWnd.EndPaint(ps);
       break;
     }
     case WM_LBUTTONDOWN:
       MyFillRect();
       break;
     case WM_RBUTTONDOWN:
-      InvalidateRect(hWnd, null, true);
+      hWnd.InvalidateRect(null, true);
       break;
     case WM_MOUSEMOVE:
       if (wParam & MK_LBUTTON) MyFillRect();
@@ -81,19 +81,19 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
       PostQuitMessage(0);
       break;
     default:
-      return DefWindowProc(hWnd, msg, wParam, lParam);
+      return hWnd.DefWindowProc(msg, wParam, lParam);
   }
   return 0;
   
   // 関数内関数
   function MyFillRect()
   {
-    var hdc = GetDC(hWnd);
+    var hdc = hWnd.GetDC();
     var brush = GetSysColorBrush(COLOR_WINDOWTEXT);
-    var x = GET_X_LPARAM(lParam);
-    var y = GET_Y_LPARAM(lParam);
+    var x = lParam.GET_X_LPARAM();
+    var y = lParam.GET_Y_LPARAM();
     RECT rect = { x - 2, y - 2, x + 2, y + 2 };
-    FillRect(hdc, rect, brush);
+    hdc.FillRect(rect, brush);
   }
 }
 ?>

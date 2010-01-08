@@ -85,11 +85,13 @@ namespace Girl.LLPML
 
         public Function GetFunction(IIntValue target, out List<IIntValue> args)
         {
-            Function ret;
+            Function ret = null;
             if (target == null)
             {
                 ret = parent.GetFunction(name);
-                if (ret.HasThis)
+                if (ret == null)
+                    throw Abort("undefined function: {0}", name);
+                else if (ret.HasThis)
                     return GetFunction(new Struct.This(parent), out args);
                 args = this.args;
                 return ret;
@@ -117,13 +119,22 @@ namespace Girl.LLPML
                 args.Add(target);
             }
             else
-                throw Abort("struct instance or pointer required: " + name);
-            if (st == null)
-                throw Abort("undefined struct: " + type);
-            args.AddRange(this.args);
-            ret = st.GetFunction(name);
+            {
+                //throw Abort("struct instance or pointer required: " + name);
+                args.Add(target);
+            }
+            if (st != null)
+                ret = st.GetFunction(name);
             if (ret == null)
-                throw Abort("undefined method: " + st.GetMemberName(name));
+                ret = parent.GetFunction(name);
+            if (ret == null)
+            {
+                if (st == null)
+                    throw Abort("undefined struct: " + type);
+                else
+                    throw Abort("undefined method: " + st.GetMemberName(name));
+            }
+            args.AddRange(this.args);
             return ret;
         }
 
