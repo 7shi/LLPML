@@ -39,7 +39,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 NoChild(xr);
-                RequireName(xr);
+                RequiresName(xr);
 
                 type = xr["type"];
                 if (type == null) type = "byte";

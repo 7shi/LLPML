@@ -18,7 +18,7 @@ namespace Girl.LLPML.Struct
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-            RequireName(xr);
+            RequiresName(xr);
 
             src = parent.GetPointer(name) as Struct.Declare;
             if (src == null) throw Abort(xr, "undefined struct: " + name);
@@ -30,7 +30,7 @@ namespace Girl.LLPML.Struct
         private Addr32 GetStructAddress(List<OpCode> codes, Module m)
         {
             Addr32 ad = src.Address;
-            if (parent == src.Parent || ad.IsAddress)
+            if (parent.Level == src.Parent.Level || ad.IsAddress)
             {
                 return ad;
             }

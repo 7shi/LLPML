@@ -19,7 +19,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 NoChild(xr);
-                RequireName(xr);
+                RequiresName(xr);
             }
 
             public Val32 GetAddress(Module m)
@@ -27,7 +27,7 @@ namespace Girl.LLPML
                 Function f = parent.GetFunction(name);
                 if (f == null)
                     throw new Exception("undefined function: " + name);
-                return new Val32(m.Specific.ImageBase, f.Address);
+                return new Val32(m.Specific.ImageBase, f.First);
             }
 
             void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

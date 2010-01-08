@@ -79,21 +79,13 @@ namespace Girl.LLPML
             root = src.root;
         }
 
-        public int Level
-        {
-            get
-            {
-                return parent == null ? 0 : parent.Level + 1;
-            }
-        }
-
         protected void NoChild(XmlTextReader xr)
         {
             if (!xr.IsEmptyElement)
                 throw Abort(xr, "<" + xr.Name + "> can not have any children");
         }
 
-        protected void RequireName(XmlTextReader xr)
+        protected void RequiresName(XmlTextReader xr)
         {
             name = xr["name"];
             if (name == null) throw Abort(xr, "name required");

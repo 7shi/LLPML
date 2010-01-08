@@ -17,7 +17,7 @@ namespace Girl.LLPML.Struct
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-            RequireName(xr);
+            RequiresName(xr);
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

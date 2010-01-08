@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.5.20070819";
+        public string Version = "0.5.20070821";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
@@ -74,9 +74,20 @@ namespace Girl.LLPML
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)
         {
-            Girl.PE.Function ExitProcess = m.GetFunction(CallType.Std, "kernel32.dll", "ExitProcess");
-            codes.AddRange(ExitProcess.Invoke(0));
+            int len = sentences.Count;
+            if (len > 0 && sentences[len - 1] is Return) return;
+            AddExitCodes(codes, m, false);
             codes.Add(I386.Ret());
+        }
+
+        public void AddExitCodes(List<OpCode> codes, Module m, bool arg)
+        {
+            if (arg)
+                codes.Add(I386.Push(Reg32.EAX));
+            else
+                codes.Add(I386.Push((uint)0));
+            codes.Add(I386.Call(m.GetFunction(
+                CallType.Std, "kernel32.dll", "ExitProcess").Address));
         }
     }
 }

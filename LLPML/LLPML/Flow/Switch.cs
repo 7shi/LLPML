@@ -2,17 +2,87 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Switch : NodeBase
+    public class Switch : Block
     {
-        private class Case : Operator
+        private class Expression : NodeBase
         {
-            public override int Min { get { return 1; } }
+            private IIntValue value;
+
+            public Expression(Block parent, XmlTextReader xr) : base(parent, xr) { }
+
+            public override void Read(XmlTextReader xr)
+            {
+                Parse(xr, delegate
+                {
+                    IIntValue v = IntValue.Read(parent, xr, false);
+                    if (v != null)
+                    {
+                        if (value != null)
+                            throw Abort(xr, "multiple expressions");
+                        else
+                            value = v;
+                    }
+                });
+                if (value == null)
+                    throw Abort(xr, "expression required");
+            }
+
+            public override void AddCodes(List<OpCode> codes, Module m)
+            {
+                value.AddCodes(codes, m, "mov", null);
+                codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
+            }
+        }
+
+        private class Case : NodeBase
+        {
+            private List<IIntValue> values = new List<IIntValue>();
+            public Block Block;
+            public bool IsLast;
+
+            public Case(Block parent) : base(parent) { }
             public Case(Block parent, XmlTextReader xr) : base(parent, xr) { }
+
+            public override void Read(XmlTextReader xr)
+            {
+                Parse(xr, delegate
+                {
+                    IIntValue v = IntValue.Read(parent, xr, false);
+                    if (v != null)
+                    {
+                        if (!(v is IntValue))
+                            throw Abort(xr, "constant required");
+                        values.Add(v);
+                    }
+                });
+                if (values.Count == 0)
+                    throw Abort(xr, "value(s) required");
+            }
+
+            public override void AddCodes(List<OpCode> codes, Module m)
+            {
+                int len = values.Count;
+                if (len == 0)
+                {
+                    codes.Add(I386.Jmp(Block.First));
+                }
+                else
+                {
+                    for (int i = 0; i < len; i++)
+                    {
+                        values[i].AddCodes(codes, m, "mov", null);
+                        codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
+                        codes.Add(I386.Jcc(Cc.E, Block.First));
+                    }
+                    if (IsLast) codes.Add(I386.Jmp(parent.Destruct));
+                }
+            }
         }
 
         private class CaseBlock
@@ -20,7 +90,6 @@ namespace Girl.LLPML
             public Case Case;
             public Block Block;
 
-            public CaseBlock() { }
             public CaseBlock(Case c) : this(c, null) { }
             public CaseBlock(Block block) : this(null, block) { }
 
@@ -31,10 +100,11 @@ namespace Girl.LLPML
             }
         }
 
-        public IIntValue expr;
+        private Expression expr;
         private List<CaseBlock> blocks = new List<CaseBlock>();
 
-        public Switch() { }
+        public override bool AcceptsBreak { get { return true; } }
+
         public Switch(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -49,18 +119,10 @@ namespace Girl.LLPML
                         switch (xr.Name)
                         {
                             case "expr":
-                                Parse(xr, delegate
                                 {
-                                    IIntValue v = IntValue.Read(parent, xr, false);
-                                    if (v != null)
-                                    {
-                                        if (expr != null)
-                                            throw Abort(xr, "multiple expressions");
-                                        else
-                                            expr = v;
-                                    }
-                                });
-                                break;
+                                    expr = new Expression(this, xr);
+                                    break;
+                                }
                             case "case":
                                 if (expr == null)
                                     throw Abort(xr, "expression required before case");
@@ -68,7 +130,7 @@ namespace Girl.LLPML
                                     throw Abort(xr, "block terminated");
                                 else if (cb != null)
                                     throw Abort(xr, "multiple cases");
-                                cb = new CaseBlock(new Case(parent, xr));
+                                cb = new CaseBlock(new Case(this, xr));
                                 break;
                             case "block":
                                 if (expr == null)
@@ -77,12 +139,13 @@ namespace Girl.LLPML
                                     throw Abort(xr, "block terminated");
                                 else if (cb == null)
                                 {
-                                    blocks.Add(new CaseBlock(new Block(parent, xr)));
+                                    blocks.Add(new CaseBlock(
+                                        new Case(this), new Block(this, xr)));
                                     stop = true;
                                 }
                                 else
                                 {
-                                    cb.Block = new Block(parent, xr);
+                                    cb.Block = new Block(this, xr);
                                     blocks.Add(cb);
                                     cb = null;
                                 }
@@ -110,36 +173,21 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            expr.AddCodes(codes, m, "push", null);
-            Addr32 ad = new Addr32(Reg32.ESP);
+            sentences.Clear();
+            sentences.Add(expr);
             int len = blocks.Count;
-            OpCode[] nexts = new OpCode[len];
-            for (int i = 0; i < len; i++)
-                nexts[i] = new OpCode();
-            OpCode last = nexts[len - 1];
             for (int i = 0; i < len; i++)
             {
-                OpCode next = nexts[i];
                 CaseBlock cb = blocks[i];
-                if (cb.Case != null)
-                {
-                    IIntValue[] values = cb.Case.GetValues();
-                    int len2 = values.Length;
-                    for (int j = 0; j < len2; j++)
-                    {
-                        values[j].AddCodes(codes, m, "mov", null);
-                        codes.Add(I386.Cmp(ad, Reg32.EAX));
-                        if (j < len2 - 1)
-                            codes.Add(I386.Jcc(Cc.E, cb.Block.First));
-                        else
-                            codes.Add(I386.Jcc(Cc.NE, next.Address));
-                    }
-                }
-                cb.Block.AddCodes(codes, m);
-                if (last != next) codes.Add(I386.Jmp(last.Address));
-                codes.Add(next);
+                cb.Case.Block = cb.Block;
+                cb.Case.IsLast = i == len - 1;
+                sentences.Add(cb.Case);
             }
-            codes.Add(I386.Add(Reg32.ESP, 4));
+            foreach (CaseBlock cb in blocks)
+            {
+                sentences.Add(cb.Block);
+            }
+            base.AddCodes(codes, m);
         }
     }
 }

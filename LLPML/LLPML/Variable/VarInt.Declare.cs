@@ -21,10 +21,15 @@ namespace Girl.LLPML
                 parent.AddVarInt(this);
             }
 
-            public Declare(Block parent, string name, int value)
+            public Declare(Block parent, string name, IIntValue value)
                 : this(parent, name)
             {
-                this.value = new IntValue(value);
+                this.value = value;
+            }
+
+            public Declare(Block parent, string name, int value)
+                : this(parent, name, new IntValue(value))
+            {
             }
 
             public Declare(Block parent, XmlTextReader xr)
@@ -34,7 +39,7 @@ namespace Girl.LLPML
 
             public override void Read(XmlTextReader xr)
             {
-                RequireName(xr);
+                RequiresName(xr);
 
                 Parse(xr, delegate
                 {

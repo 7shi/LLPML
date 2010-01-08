@@ -18,7 +18,7 @@ namespace Girl.LLPML.Struct
             public override void Read(XmlTextReader xr)
             {
                 NoChild(xr);
-                RequireName(xr);
+                RequiresName(xr);
             }
         }
     }

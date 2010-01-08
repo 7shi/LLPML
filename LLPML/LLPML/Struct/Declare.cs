@@ -38,7 +38,7 @@ namespace Girl.LLPML.Struct
 
         public override void Read(XmlTextReader xr)
         {
-            RequireName(xr);
+            RequiresName(xr);
 
             type = xr["type"];
             if (type == null) throw Abort(xr, "type required");

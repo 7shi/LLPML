@@ -12,26 +12,28 @@ namespace Girl.LLPML
     {
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
+        public Val32 First, Next;
 
-        public Cond() { }
         public Cond(Block parent) : base(parent) { }
         public Cond(Block parent, IntValue values)
             : base(parent, new IntValue[] { values }) { }
         public Cond(Block parent, XmlTextReader xr)
             : base(parent, xr) { }
 
-        public void AddPreCodes(List<OpCode> codes, Module m, Val32 next)
+        public override void AddCodes(List<OpCode> codes, Module m)
         {
-            values[0].AddCodes(codes, m, "mov", null);
-            codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
-            codes.Add(I386.Jcc(Cc.Z, next));
-        }
-
-        public void AddPostCodes(List<OpCode> codes, Module m, Val32 first)
-        {
-            values[0].AddCodes(codes, m, "mov", null);
-            codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
-            codes.Add(I386.Jcc(Cc.NZ, first));
+            if (Next != null)
+            {
+                values[0].AddCodes(codes, m, "mov", null);
+                codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                codes.Add(I386.Jcc(Cc.Z, Next));
+            }
+            else if (First != null)
+            {
+                values[0].AddCodes(codes, m, "mov", null);
+                codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                codes.Add(I386.Jcc(Cc.NZ, First));
+            }
         }
 
         public bool IsAlwaysFalse

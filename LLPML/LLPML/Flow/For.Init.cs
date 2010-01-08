@@ -13,7 +13,6 @@ namespace Girl.LLPML
         {
             private List<NodeBase> sentences = new List<NodeBase>();
 
-            public Init() { }
             public Init(Block parent) : base(parent) { }
             public Init(Block parent, XmlTextReader xr) : base(parent, xr) { }
 

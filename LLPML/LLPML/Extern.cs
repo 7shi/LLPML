@@ -25,7 +25,7 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            codes.Add(entry);
+            codes.Add(first);
             string n = alias != null ? alias : name;
             codes.Add(I386.Jmp(m.GetFunction(type, module, n).Address));
         }

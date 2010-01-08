@@ -29,7 +29,7 @@ namespace Girl.LLPML
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-            RequireName(xr);
+            RequiresName(xr);
 
             reference = parent.GetVarInt(name);
             if (reference == null)
@@ -39,7 +39,7 @@ namespace Girl.LLPML
         public virtual Addr32 GetAddress(List<OpCode> codes, Module m)
         {
             Addr32 ad = reference.Address;
-            if (parent == reference.Parent || ad.IsAddress)
+            if (parent.Level == reference.Parent.Level || ad.IsAddress)
             {
                 return ad;
             }

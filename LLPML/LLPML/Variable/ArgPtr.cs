@@ -15,7 +15,7 @@ namespace Girl.LLPML
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-            RequireName(xr);
+            RequiresName(xr);
 
             parent.AddPointer(this);
         }

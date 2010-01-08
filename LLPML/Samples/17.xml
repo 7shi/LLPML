@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819" subsystem="WINDOWS_GUI">
+<llpml version="0.5.20070821" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
@@ -147,7 +147,6 @@
 	<arg-int name="msg" />
 	<arg-int name="wParam" />
 	<arg-int name="lParam" />
-	<var-int-declare name="ret">0</var-int-declare>
 	<switch>
 		<expr>
 			<var-int name="msg" />
@@ -157,21 +156,21 @@
 			<call name="PostQuitMessage">
 				<int>0</int>
 			</call>
+			<break />
 		</block>
 		<block>
-			<let>
-				<var-int name="ret" />
+			<return>
 				<call name="DefWindowProc">
 					<var-int name="hwnd" />
 					<var-int name="msg" />
 					<var-int name="wParam" />
 					<var-int name="lParam" />
 				</call>
-			</let>
+			</return>
 		</block>
 	</switch>
 	<return>
-		<var-int name="ret" />
+		<int>0</int>
 	</return>
 </function>
 

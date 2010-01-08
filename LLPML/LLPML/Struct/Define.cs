@@ -14,7 +14,7 @@ namespace Girl.LLPML.Struct
 
         public override void Read(XmlTextReader xr)
         {
-            RequireName(xr);
+            RequiresName(xr);
             Parse(xr, delegate
             {
                 switch (xr.NodeType)

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070819">
+<llpml version="0.5.20070821">
 
 <!-- flow -->
 
@@ -21,6 +21,13 @@
 		</inc>
 	</loop>
 	<block>
+		<if>
+			<cond><equal><var-int name="i" /><int>2</int></equal></cond>
+			<block>
+				<call name="printfln">skip...</call>
+				<continue />
+			</block>
+		</if>
 		<call name="printfln">
 			<string>[for] i = %d</string>
 			<var-int name="i" />
@@ -87,16 +94,19 @@
 			</case>
 			<block>
 				<call name="printfln">(4 or 5)</call>
+				<break />
 			</block>
 			<case>
 				<int>3</int>
 			</case>
 			<block>
 				<call name="printfln">(3)</call>
+				<break />
 			</block>
 			<!-- default -->
 			<block>
 				<call name="printfln">(etc)</call>
+				<break />
 			</block>
 		</switch>
 		<dec>
@@ -104,6 +114,34 @@
 		</dec>
 	</block>
 </while>
+
+<for>
+	<init>
+		<var-int-declare name="i">0</var-int-declare>
+	</init>
+	<loop>
+		<inc>
+			<var-int name="i" />
+		</inc>
+	</loop>
+	<block>
+		<call name="printfln">
+			<string>[for] i = %d</string>
+			<var-int name="i" />
+		</call>
+		<if>
+			<cond>
+				<equal>
+					<var-int name="i" />
+					<int>2</int>
+				</equal>
+			</cond>
+			<block>
+				<break />
+			</block>
+		</if>
+	</block>
+</for>
 
 <call name="finish" />
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -11,14 +12,16 @@ namespace Girl.LLPML
     {
         private Init init;
         private Cond cond;
-        private Block block;
+        private Block loop, block;
 
-        public For() { }
+        public override bool AcceptsBreak { get { return true; } }
+        public override bool AcceptsContinue { get { return true; } }
+        public override Val32 Continue { get { return block.Last; } }
+
         public For(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
-            bool loop = false;
             Parse(xr, delegate
             {
                 switch (xr.NodeType)
@@ -37,10 +40,9 @@ namespace Girl.LLPML
                                 cond = new Cond(this, xr);
                                 break;
                             case "loop":
-                                if (loop)
+                                if (loop != null)
                                     throw Abort(xr, "multiple loops");
-                                Parse(xr, delegate { ReadBlock(xr); });
-                                loop = true;
+                                loop = new Block(this, xr);
                                 break;
                             case "block":
                                 if (block != null)
@@ -60,22 +62,29 @@ namespace Girl.LLPML
                         throw Abort(xr, "element required");
                 }
             });
-            if (block == null)
-                throw Abort(xr, "block required");
+            if (block == null) throw Abort(xr, "block required");
         }
 
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             base.BeforeAddCodes(codes, m);
             if (init != null) init.AddCodes(codes, m);
-            codes.Add(I386.Jmp(destruct.Address));
-            block.AddCodes(codes, m);
+            if (loop != null)
+                codes.Add(I386.Jmp(loop.Last));
+            else
+                codes.Add(I386.Jmp(block.Last));
         }
 
-        protected override void AfterAddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(List<OpCode> codes, Module m)
         {
-            cond.AddPostCodes(codes, m, block.First);
-            base.AfterAddCodes(codes, m);
+            sentences.Clear();
+            sentences.Add(block);
+            if (loop != null) sentences.Add(loop);
+            if (cond == null)
+                cond = new Cond(this, new IntValue(1));
+            cond.First = block.First;
+            sentences.Add(cond);
+            base.AddCodes(codes, m);
         }
     }
 }

@@ -2,17 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Do : NodeBase
+    public class Do : Block
     {
-        private Block block;
-        private Cond cond;
+        protected Cond cond;
+        protected Block block;
 
-        public Do() { }
+        public override bool AcceptsBreak { get { return true; } }
+        public override bool AcceptsContinue { get { return true; } }
+        public override Val32 Continue { get { return block.Last; } }
+
         public Do(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -24,17 +28,15 @@ namespace Girl.LLPML
                     case XmlNodeType.Element:
                         switch (xr.Name)
                         {
+                            case "cond":
+                                if (cond != null)
+                                    throw Abort(xr, "multiple conditions");
+                                cond = new Cond(this, xr);
+                                break;
                             case "block":
                                 if (block != null)
                                     throw Abort(xr, "multiple blocks");
-                                block = new Block(parent, xr);
-                                break;
-                            case "cond":
-                                if (block == null)
-                                    throw Abort(xr, "block required before condition");
-                                else if (cond != null)
-                                    throw Abort(xr, "multiple conditions");
-                                cond = new Cond(parent, xr);
+                                block = new Block(this, xr);
                                 break;
                             default:
                                 throw Abort(xr);
@@ -49,16 +51,21 @@ namespace Girl.LLPML
                         throw Abort(xr, "element required");
                 }
             });
-            if (block == null)
-                throw Abort(xr, "block and condition required");
+            if (cond == null && block == null)
+                throw Abort(xr, "condition and block required");
             else if (cond == null)
                 throw Abort(xr, "condition required");
+            else if (block == null)
+                throw Abort(xr, "block required");
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            block.AddCodes(codes, m);
-            cond.AddPostCodes(codes, m, block.First);
+            sentences.Clear();
+            cond.First = block.First;
+            sentences.Add(block);
+            sentences.Add(cond);
+            base.AddCodes(codes, m);
         }
     }
 }

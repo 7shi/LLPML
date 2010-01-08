@@ -49,6 +49,7 @@
     <Compile Include="LLPML\Flow\Do.cs" />
     <Compile Include="LLPML\Flow\If.cs" />
     <Compile Include="LLPML\Flow\Switch.cs" />
+    <Compile Include="LLPML\Flow\Continue.cs" />
     <Compile Include="LLPML\Function.cs" />
     <Compile Include="LLPML\NodeBase.cs" />
     <Compile Include="LLPML\Operators\Comparers\UnsignedGreaterEqual.cs" />

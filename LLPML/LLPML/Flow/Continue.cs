@@ -8,22 +8,22 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Break : NodeBase
+    public class Continue : NodeBase
     {
-        public Break(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Continue(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
-            if (!CanBreak()) throw Abort(xr, "can not break");
+            if (!CanContinue()) throw Abort(xr, "can not break");
             NoChild(xr);
         }
 
-        public bool CanBreak()
+        public bool CanContinue()
         {
             for (Block p = parent; p != null; p = p.Parent)
             {
                 if (p is Function) return false;
-                if (p.AcceptsBreak) return true;
+                if (p.AcceptsContinue) return true;
             }
             return false;
         }
@@ -34,11 +34,11 @@ namespace Girl.LLPML
             for (; ; b = b.Parent)
             {
                 if (b == null || b is Function)
-                    throw new Exception("invalid break");
-                if (b.AcceptsBreak) break;
+                    throw new Exception("invalid continue");
+                if (b.AcceptsContinue) break;
                 b.AddExitCodes(codes, m);
             }
-            codes.Add(I386.Jmp(b.Destruct));
+            codes.Add(I386.Jmp(b.Continue));
         }
     }
 }

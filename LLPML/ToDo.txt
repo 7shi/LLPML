@@ -1,11 +1,13 @@
-- switch
+- 構造体内構造体
 
-- flow
+- 自前leaveのためデストラクタ非対応（デストラクタ自体未実装だが）
 -- return
 -- break
 -- continue
 
 - callのretが64bitのときに怪しい
+
+- switchのテーブル化
 
 - fraction converter
   1 + 1 <==> <add><int>1</int><int>1</int></add>

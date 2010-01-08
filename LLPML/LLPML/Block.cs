@@ -15,11 +15,18 @@ namespace Girl.LLPML
         protected OpCode first = new OpCode();
         public Val32 First { get { return first.Address; } }
 
+        protected OpCode construct = new OpCode();
+        public Val32 Construct { get { return construct.Address; } }
+
         protected OpCode destruct = new OpCode();
         public Val32 Destruct { get { return destruct.Address; } }
 
         protected OpCode last = new OpCode();
         public Val32 Last { get { return last.Address; } }
+
+        public virtual bool AcceptsBreak { get { return false; } }
+        public virtual bool AcceptsContinue { get { return false; } }
+        public virtual Val32 Continue { get { return null; } }
 
         #region int
 
@@ -235,6 +242,7 @@ namespace Girl.LLPML
         #endregion
 
         public Block() { }
+        public Block(Block parent) : base(parent) { }
         public Block(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected virtual void ReadBlock(XmlTextReader xr)
@@ -256,6 +264,9 @@ namespace Girl.LLPML
                         case "extern":
                             new Extern(this, xr);
                             break;
+                        case "return":
+                            sentences.Add(new Return(this, xr));
+                            return;
                         case "block":
                             sentences.Add(new Block(this, xr));
                             break;
@@ -279,6 +290,9 @@ namespace Girl.LLPML
                             break;
                         case "break":
                             sentences.Add(new Break(this, xr));
+                            break;
+                        case "continue":
+                            sentences.Add(new Continue(this, xr));
                             break;
                         case "let":
                             sentences.Add(new Let(this, xr));
@@ -365,15 +379,50 @@ namespace Girl.LLPML
             });
         }
 
+        public virtual bool HasStackFrame
+        {
+            get
+            {
+                foreach (VarInt.Declare v in var_ints.Values)
+                {
+                    if (v.GetType() == typeof(VarInt.Declare))
+                    {
+                        return true;
+                    }
+                }
+                foreach (Pointer.Declare p in ptrs.Values)
+                {
+                    Type t = p.GetType();
+                    if (t == typeof(Pointer.Declare) || t == typeof(Struct.Declare))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public int Level
+        {
+            get
+            {
+                if (parent == null) return 0;
+                if (HasStackFrame)
+                    return parent.Level + 1;
+                else
+                    return parent.Level;
+            }
+        }
+
         protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
         {
-            int size = Level * 4;
+            int stack = Level * 4;
             foreach (VarInt.Declare v in var_ints.Values)
             {
                 if (v.GetType() == typeof(VarInt.Declare))
                 {
-                    size += 4;
-                    v.Address = new Addr32(Reg32.EBP, -size);
+                    stack += 4;
+                    v.Address = new Addr32(Reg32.EBP, -stack);
                 }
             }
             foreach (Pointer.Declare p in ptrs.Values)
@@ -381,17 +430,21 @@ namespace Girl.LLPML
                 Type t = p.GetType();
                 if (t == typeof(Pointer.Declare) || t == typeof(Struct.Declare))
                 {
-                    size += (p.Length + 3) / 4 * 4;
-                    p.Address = new Addr32(Reg32.EBP, -size);
+                    stack += (p.Length + 3) / 4 * 4;
+                    p.Address = new Addr32(Reg32.EBP, -stack);
                 }
             }
-            codes.Add(I386.Enter((ushort)size, (byte)Level));
+            if (HasStackFrame)
+            {
+                codes.Add(I386.Enter((ushort)stack, (byte)Level));
+            }
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             codes.Add(first);
             BeforeAddCodes(codes, m);
+            codes.Add(construct);
             foreach (NodeBase child in sentences)
             {
                 child.AddCodes(codes, m);
@@ -407,8 +460,25 @@ namespace Girl.LLPML
 
         protected virtual void AfterAddCodes(List<OpCode> codes, Module m)
         {
-            codes.Add(I386.Leave());
+            if (IsTerminated) return;
+            AddExitCodes(codes, m);
             if (functions.Count > 0) codes.Add(I386.Jmp(last.Address));
+        }
+
+        public bool IsTerminated
+        {
+            get
+            {
+                int len = sentences.Count;
+                if (len == 0) return false;
+                NodeBase n = sentences[len - 1];
+                return n is Break || n is Return;
+            }
+        }
+
+        public void AddExitCodes(List<OpCode> codes, Module m)
+        {
+            if (HasStackFrame) codes.Add(I386.Leave());
         }
     }
 }

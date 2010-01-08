@@ -13,9 +13,6 @@ namespace Girl.LLPML
         protected CallType type;
         public CallType Type { get { return type; } }
 
-        protected OpCode entry = new OpCode();
-        public Val32 Address { get { return entry.Address; } }
-
         protected List<DeclareBase> args
             = new List<DeclareBase>();
 
@@ -34,9 +31,6 @@ namespace Girl.LLPML
                     case "arg-ptr":
                         args.Add(new ArgPtr(this, xr));
                         return;
-                    case "return":
-                        sentences.Add(new Return(this, xr));
-                        return;
                 }
             }
             base.ReadBlock(xr);
@@ -44,7 +38,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            RequireName(xr);
+            RequiresName(xr);
 
             type = CallType.CDecl;
             if (xr["type"] == "std") type = CallType.Std;
@@ -54,40 +48,34 @@ namespace Girl.LLPML
             base.Read(xr);
         }
 
-        private ushort stack;
+        private ushort argStack;
+        public override bool HasStackFrame { get { return true; } }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            codes.Add(entry);
-
-            stack = 0;
+            argStack = 0;
             foreach (DeclareBase arg in args)
             {
-                arg.Address = new Addr32(Reg32.EBP, stack + 8);
-                stack += 4;
+                arg.Address = new Addr32(Reg32.EBP, argStack + 8);
+                argStack += 4;
             }
 
-            NodeBase nlast = null;
-            foreach (NodeBase n in sentences)
+            for (int i = 0; i < sentences.Count; i++)
             {
-                if (n is Return) (n as Return).IsLast = false;
-                nlast = n;
+                NodeBase n = sentences[i];
+                if (n is Return)
+                    (n as Return).IsLast = i == sentences.Count - 1;
             }
-            if (nlast is Return) (nlast as Return).IsLast = true;
 
             base.AddCodes(codes, m);
         }
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)
         {
-            foreach (VarInt.Declare v in var_ints.Values)
+            codes.Add(I386.Leave());
+            if (type == CallType.Std && argStack > 0)
             {
-                if (v.Name == "__retval") codes.Add(I386.Mov(Reg32.EAX, v.Address));
-            }
-            base.AfterAddCodes(codes, m);
-            if (type == CallType.Std && stack > 0)
-            {
-                codes.Add(I386.Ret(stack));
+                codes.Add(I386.Ret(argStack));
             }
             else
             {

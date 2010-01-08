@@ -58,7 +58,7 @@ namespace Girl.LLPML
                 if (f == null)
                     throw new Exception("undefined function: " + name);
                 type = f.Type;
-                codes.Add(I386.Call(f.Address));
+                codes.Add(I386.Call(f.First));
             }
             else
             {

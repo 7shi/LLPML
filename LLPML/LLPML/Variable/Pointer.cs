@@ -33,7 +33,7 @@ namespace Girl.LLPML
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-            RequireName(xr);
+            RequiresName(xr);
 
             reference = parent.GetPointer(name);
             if (reference == null)
@@ -43,7 +43,7 @@ namespace Girl.LLPML
         public void GetValue(List<OpCode> codes, Module m)
         {
             Addr32 ad = reference.Address;
-            if (parent == reference.Parent || ad.IsAddress)
+            if (parent.Level == reference.Parent.Level || ad.IsAddress)
             {
                 codes.Add(I386.Lea(Reg32.EAX, ad));
                 return;

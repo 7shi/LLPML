@@ -12,9 +12,7 @@ namespace Girl.LLPML
     {
         public bool IsLast = false;
         private IIntValue value;
-        private VarInt.Declare retval;
 
-        public Return() { }
         public Return(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -28,19 +26,24 @@ namespace Girl.LLPML
                     value = v;
                 }
             });
-            if (value != null)
-            {
-                retval = new VarInt.Declare(parent, "__retval", 0);
-            }
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             if (value != null)
             {
-                value.AddCodes(codes, m, "mov", retval.Address);
+                value.AddCodes(codes, m, "mov", null);
             }
-            if (!IsLast) codes.Add(I386.Jmp(parent.Destruct));
+            for (Block b = parent; b != root; b = b.Parent)
+            {
+                if (b is Function)
+                {
+                    if (!IsLast) codes.Add(I386.Jmp(b.Destruct));
+                    return;
+                }
+                b.AddExitCodes(codes, m);
+            }
+            root.AddExitCodes(codes, m, value != null);
         }
     }
 }

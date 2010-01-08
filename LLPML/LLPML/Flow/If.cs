@@ -2,32 +2,52 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class If : NodeBase
+    public class If : Block
     {
-        private class CondBlock
+        private class CondBlock : NodeBase
         {
             public Cond Cond;
             public Block Block;
+            public CondBlock Next;
 
-            public CondBlock() { }
-            public CondBlock(Cond cond) : this(cond, null) { }
-            public CondBlock(Block block) : this(null, block) { }
+            private OpCode first = new OpCode();
+            public Val32 First { get { return first.Address; } }
 
-            public CondBlock(Cond cond, Block block)
+            public CondBlock(If parent) : base(parent) { }
+            public CondBlock(If parent, Cond cond) : this(parent, cond, null) { }
+            public CondBlock(If parent, Block block) : this(parent, null, block) { }
+
+            public CondBlock(If parent, Cond cond, Block block)
+                : this(parent)
             {
                 Cond = cond;
                 Block = block;
+            }
+
+            public override void AddCodes(List<OpCode> codes, Module m)
+            {
+                OpCode next = new OpCode();
+                codes.Add(first);
+                if (Cond != null)
+                {
+                    Cond.Next = next.Address;
+                    Cond.AddCodes(codes, m);
+                }
+                Block.AddCodes(codes, m);
+                if (Next != null)
+                    codes.Add(I386.Jmp(parent.Destruct));
+                codes.Add(next);
             }
         }
 
         private List<CondBlock> blocks = new List<CondBlock>();
 
-        public If() { }
         public If(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -46,7 +66,7 @@ namespace Girl.LLPML
                                     throw Abort(xr, "block terminated");
                                 else if (cb != null)
                                     throw Abort(xr, "multiple contitions");
-                                cb = new CondBlock(new Cond(parent, xr));
+                                cb = new CondBlock(this, new Cond(this, xr));
                                 break;
                             case "block":
                                 if (stop)
@@ -55,12 +75,12 @@ namespace Girl.LLPML
                                 {
                                     if (blocks.Count == 0)
                                         throw Abort(xr, "condition required");
-                                    blocks.Add(new CondBlock(new Block(parent, xr)));
+                                    blocks.Add(new CondBlock(this, new Block(this, xr)));
                                     stop = true;
                                 }
                                 else
                                 {
-                                    cb.Block = new Block(parent, xr);
+                                    cb.Block = new Block(this, xr);
                                     blocks.Add(cb);
                                     cb = null;
                                 }
@@ -86,21 +106,15 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
+            sentences.Clear();
             int len = blocks.Count;
-            OpCode[] nexts = new OpCode[len];
-            for (int i = 0; i < len; i++)
-                nexts[i] = new OpCode();
-            OpCode last = nexts[len - 1];
             for (int i = 0; i < len; i++)
             {
-                OpCode next = nexts[i];
                 CondBlock cb = blocks[i];
-                if (cb.Cond != null)
-                    cb.Cond.AddPreCodes(codes, m, next.Address);
-                cb.Block.AddCodes(codes, m);
-                if (last != next) codes.Add(I386.Jmp(last.Address));
-                codes.Add(next);
+                cb.Next = i < len - 1 ? blocks[i + 1] : null;
+                sentences.Add(cb);
             }
+            base.AddCodes(codes, m);
         }
     }
 }
