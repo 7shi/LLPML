@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="1.1" subsystem="WINCE_GUI">
+
+<title>Windows CE</title>
+
+<?llp
+extern "coredll.dll" __widecharset
+  MessageBox(hWnd, lpText, lpCation, uType);
+
+MessageBox(null, "こんにちは、世界！", "だいあろぐ", 0);
+?>
+
+</llpml>

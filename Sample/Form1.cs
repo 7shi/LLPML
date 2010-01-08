@@ -128,7 +128,13 @@ namespace Sample
             var time = (DateTime.Now - start).TotalMilliseconds;
             textBox2.AppendText("èoóÕ: " + exe + "\r\n");
             textBox2.AppendText("èäóvéûä‘: " + time + "ms\r\n");
-            Process.Start(exe);
+            switch (root.Subsystem)
+            {
+                case IMAGE_SUBSYSTEM.WINDOWS_CUI:
+                case IMAGE_SUBSYSTEM.WINDOWS_GUI:
+                    Process.Start(exe);
+                    break;
+            }
 #if !DEBUG
             }
             catch (Exception ex)

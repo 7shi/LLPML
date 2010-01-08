@@ -695,18 +695,8 @@ namespace Girl.LLPML.Parsing
             var t = Read();
             if (t == null)
                 throw Abort("pragma: subsystem: サブシステム名が必要です。");
-
-            switch (t)
-            {
-                case "WINDOWS_CUI":
-                    parent.Root.Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
-                    break;
-                case "WINDOWS_GUI":
-                    parent.Root.Subsystem = IMAGE_SUBSYSTEM.WINDOWS_GUI;
-                    break;
-                default:
-                    throw Abort("pragma: subsystem: 不明なサブシステム名です: {0}", t);
-            }
+            else if (!parent.Root.SetSubsystem(t))
+                throw Abort("pragma: subsystem: 不明なサブシステム名です: {0}", t);
 
             Check("pragma: subsystem", ")");
         }

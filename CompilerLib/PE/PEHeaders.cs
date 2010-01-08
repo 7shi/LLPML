@@ -7,6 +7,7 @@ namespace Girl.PE
     {
         public const ushort WINDOWS_GUI = 2;
         public const ushort WINDOWS_CUI = 3;
+        public const ushort WINCE_GUI = 9;
     }
 
     public class IMAGE_SCN

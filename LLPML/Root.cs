@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "1.0.20080915";
+        public const string LLPMLVersion = "1.1.20080920";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -93,7 +93,7 @@ namespace Girl.LLPML
         {
             if (xr["version"] != null) Version = xr["version"];
             if (xr["output"] != null) Output = xr["output"];
-            if (xr["subsystem"] == "WINDOWS_GUI") Subsystem = IMAGE_SUBSYSTEM.WINDOWS_GUI;
+            if (xr["subsystem"] != null) SetSubsystem(xr["subsystem"]);
             base.Read(xr);
         }
 
@@ -114,12 +114,24 @@ namespace Girl.LLPML
 
         public override void AddExitCodes(OpModule codes)
         {
-            if (retVal != null)
-                GetRetVal(this).AddCodes(codes, "push", null);
-            else
-                codes.Add(I386.Push((Val32)0));
-            codes.Add(I386.Call(codes.Module.GetFunction(
-                CallType.Std, "kernel32.dll", "ExitProcess").Address));
+            switch (Subsystem)
+            {
+                case IMAGE_SUBSYSTEM.WINDOWS_CUI:
+                case IMAGE_SUBSYSTEM.WINDOWS_GUI:
+                    if (retVal != null)
+                        GetRetVal(this).AddCodes(codes, "push", null);
+                    else
+                        codes.Add(I386.Push((Val32)0));
+                    codes.Add(I386.Call(codes.Module.GetFunction(
+                        CallType.Std, "kernel32.dll", "ExitProcess").Address));
+                    break;
+                default:
+                    if (retVal != null)
+                        GetRetVal(this).AddCodes(codes, "mov", null);
+                    else
+                        codes.Add(I386.Xor(Reg32.EAX, Reg32.EAX));
+                    break;
+            }
         }
 
         public static string ReadTitle(XmlTextReader xr)
@@ -140,6 +152,13 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
+            switch (Subsystem)
+            {
+                case IMAGE_SUBSYSTEM.WINCE_GUI:
+                    codes.Module.Specific.ImageBase = 0x10000;
+                    codes.Module.Specific.SectionAlignment = 0x1000;
+                    break;
+            }
             IsCompiling = true;
             OpModule.Root = this;
             MakeUpStatics(codes.Module);
@@ -157,6 +176,23 @@ namespace Girl.LLPML
                 if (vd != null && vd.IsStatic)
                     vd.Address = new Addr32(m.GetBuffer(vd.FullName, vd.Type.Size));
             }
+        }
+
+        public bool SetSubsystem(string subsys)
+        {
+            switch (subsys)
+            {
+                case "WINDOWS_CUI":
+                    Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
+                    return true;
+                case "WINDOWS_GUI":
+                    Subsystem = IMAGE_SUBSYSTEM.WINDOWS_GUI;
+                    return true;
+                case "WINCE_GUI":
+                    Subsystem = IMAGE_SUBSYSTEM.WINCE_GUI;
+                    return true;
+            }
+            return false;
         }
     }
 }
