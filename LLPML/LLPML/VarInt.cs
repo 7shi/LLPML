@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML
@@ -12,51 +13,56 @@ namespace Girl.LLPML
         public string Name { get { return name; } }
 
         Call call;
-        int? v = null;
-        Addr32 address = null;
+        int? value = null;
 
         public VarInt() { }
-        public VarInt(Root root, XmlTextReader xr) { Read(root, xr); }
+        public VarInt(Block parent, string name, int value) : base(parent)
+        {
+            this.name = name;
+            this.value = value;
+            parent.AddVarInt(name);
+        }
+        public VarInt(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void Read(Root root, XmlTextReader xr)
+        public override void Read(XmlTextReader xr)
         {
             name = xr["name"];
-            v = null;
+            value = null;
             call = null;
-            address = root.GetVarInt(name);
             Parse(xr, delegate
             {
                 if (xr.NodeType == XmlNodeType.Text)
                 {
-                    v = int.Parse(xr.Value);
+                    value = int.Parse(xr.Value);
                 }
                 else if (xr.NodeType == XmlNodeType.Element)
                 {
                     switch (xr.Name)
                     {
                         case "call":
-                            call = new Call(root, xr);
+                            call = new Call(parent, xr);
                             break;
                         default:
                             throw Abort(xr);
                     }
                 }
             });
+            if (value != null || call != null) parent.AddVarInt(name);
         }
 
-        public override void AddCodes(List<OpCode> codes, Girl.PE.Module m)
+        public override void AddCodes(List<OpCode> codes, Module m)
         {
-            if (!address.IsInitialized) address.Set(new Addr32(m.GetInt32(name)));
-            if (v != null)
+            if (value != null)
             {
-                codes.Add(I386.Mov(Reg32.EAX, (uint)v));
-                codes.Add(I386.Mov(address, Reg32.EAX));
+                codes.Add(I386.Mov(Reg32.EAX, (uint)value));
             }
             else if (call != null)
             {
                 call.AddCodes(codes, m);
-                codes.Add(I386.Mov(address, Reg32.EAX));
             }
+            codes.Add(I386.Mov(Address, Reg32.EAX));
         }
+
+        public Addr32 Address { get { return parent.GetVarInt(name).addr; } }
     }
 }

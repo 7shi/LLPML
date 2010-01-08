@@ -18,9 +18,17 @@ namespace Test
     {
         public Form1()
         {
-            OpCode.Test();
+#if DEBUG
+            I386.Test();
+#endif
             InitializeComponent();
-            ReadSample("template.xml");
+            ReadSample(textBox1, "template.xml");
+            for (int i = 1; ; i++)
+            {
+                string xml = string.Format("{0:00}.xml", i);
+                if (!File.Exists(GetSampleFileName(xml))) break;
+                AddTab(xml);
+            }
         }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
@@ -31,14 +39,19 @@ namespace Test
             try
 #endif
             {
-                StringReader sr = new StringReader(textBox1.Text);
+                TextBox tb = tabControl1.SelectedTab.Controls[0] as TextBox;
+                StringReader sr = new StringReader(tb.Text);
                 XmlTextReader xr = new XmlTextReader(sr);
-                Root root = null;
+                Root root = new Root();
+                if (tb.Tag is string)
+                {
+                    root.Output = Path.GetFileNameWithoutExtension(tb.Tag as string) + ".exe";
+                }
                 while (xr.Read())
                 {
                     if (xr.Name == "llpml" && xr.NodeType == XmlNodeType.Element)
                     {
-                        root = new Root(xr);
+                        root.Read(xr);
                     }
                 }
                 xr.Close();
@@ -70,39 +83,68 @@ namespace Test
             this.Close();
         }
 
-        private void ReadSample(string xml)
+        private string GetSampleFileName(string xml)
         {
-            string path = GetFullName("Samples");
-            StreamReader sr = new StreamReader(Path.Combine(path, xml));
-            textBox1.Clear();
-            textBox1.AppendText(sr.ReadToEnd());
+            return Path.Combine(GetFullName("Samples"), xml);
+        }
+
+        private void ReadSample(TextBox tb, string xml)
+        {
+            StreamReader sr = new StreamReader(GetSampleFileName(xml));
+            tb.Clear();
+            tb.AppendText(sr.ReadToEnd());
+            tb.SelectionStart = 0;
             sr.Close();
         }
 
+        private TabPage AddTab(string xml, string title, string output)
+        {
+            TabPage page = new TabPage(title);
+            TextBox tb = new TextBox();
+            tb.Multiline = true;
+            tb.WordWrap = false;
+            tb.ScrollBars = ScrollBars.Both;
+            tb.Dock = DockStyle.Fill;
+            tb.Tag = output;
+            ReadSample(tb, xml);
+            page.Controls.Add(tb);
+            tabControl1.TabPages.Add(page);
+            return page;
+        }
+
+        private TabPage AddTab(string xml)
+        {
+            return AddTab(xml, xml, xml);
+        }
+
+        private int newCount = 1;
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ReadSample("template.xml");
-        }
-
-        private void sample1ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ReadSample("01.xml");
-        }
-
-        private void sample2ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ReadSample("02.xml");
-        }
-
-        private void sample3ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ReadSample("03.xml");
+            newCount++;
+            tabControl1.SelectedTab = AddTab("template.xml", "New " + newCount, null);
         }
 
         private string GetFullName(string exe)
         {
             string path = Path.GetDirectoryName(Application.ExecutablePath);
             return Path.Combine(path, exe);
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tabControl1.SelectedTab.Controls[0].Focus();
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.TabCount < 2) return;
+            tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+        }
+
+        private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            closeToolStripMenuItem.Enabled = tabControl1.TabCount > 1;
         }
     }
 }

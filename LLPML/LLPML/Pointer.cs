@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML
 {
     public class Pointer : NodeBase
     {
-        string name;
+        private string name;
         public string Name { get { return name; } }
 
-        Ref<uint> ptr = null;
-        int length = 0;
+        private int length = 0;
+        public int Length { get { return length; } }
 
         public Pointer() { }
-        public Pointer(Root root, XmlTextReader xr) { Read(root, xr); }
+        public Pointer(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void Read(Root root, XmlTextReader xr)
+        public override void Read(XmlTextReader xr)
         {
             name = xr["name"];
-            ptr = root.GetPointer(name);
             Parse(xr, delegate
             {
                 if (xr.NodeType == XmlNodeType.Element)
@@ -42,11 +42,7 @@ namespace Girl.LLPML
                     }
                 }
             });
-        }
-
-        public override void AddCodes(List<OpCode> codes, Girl.PE.Module m)
-        {
-            if (!ptr.IsInitialized && length > 0) ptr.Set(m.GetBuffer(name, length));
+            if (length > 0) parent.AddPointer(name, length);
         }
     }
 }

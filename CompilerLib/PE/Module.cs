@@ -45,17 +45,17 @@ namespace Girl.PE
             return new Function(this, ad, call);
         }
 
-        public Ref<uint> GetString(string s)
+        public Ptr<uint> GetString(string s)
         {
             return RData.AddString(s).Address;
         }
 
-        public Ref<uint> GetBuffer(string name, int size)
+        public Ptr<uint> GetBuffer(string name, int size)
         {
             return BSS.AddBuffer(name, size).Address;
         }
 
-        public Ref<uint> GetInt32(string name)
+        public Ptr<uint> GetInt32(string name)
         {
             return Data.AddBuffer(name, sizeof(int)).Address;
         }

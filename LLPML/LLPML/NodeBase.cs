@@ -11,6 +11,23 @@ namespace Girl.LLPML
 
     public class NodeBase
     {
+        protected Block parent;
+        public Block Parent { get { return parent; } }
+
+        protected Root root;
+        public Root Root { get { return root; } }
+
+        public NodeBase() { }
+        public NodeBase(Block parent)
+        {
+            this.parent = parent;
+            root = parent.root;
+        }
+        public NodeBase(Block parent, XmlTextReader xr) : this(parent)
+        {
+            Read(xr);
+        }
+
         public static void Parse(XmlTextReader xr, VoidDelegate delg)
         {
             string self = xr.Name;
@@ -25,7 +42,7 @@ namespace Girl.LLPML
             }
         }
 
-        public virtual void Read(Root root, XmlTextReader xr)
+        public virtual void Read(XmlTextReader xr)
         {
             Parse(xr, null);
         }
@@ -42,5 +59,19 @@ namespace Girl.LLPML
         }
 
         public virtual void AddCodes(List<OpCode> codes, Module m) { }
+
+        public void Set(NodeBase src)
+        {
+            parent = src.parent;
+            root = src.root;
+        }
+
+        public int Level
+        {
+            get
+            {
+                return parent == null ? 0 : parent.Level + 1;
+            }
+        }
     }
 }

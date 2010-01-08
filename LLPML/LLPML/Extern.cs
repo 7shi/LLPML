@@ -15,9 +15,9 @@ namespace Girl.LLPML
         private Function function = null;
 
         public Extern() { }
-        public Extern(Root root, XmlTextReader xr) { Read(root, xr); }
+        public Extern(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void Read(Root root, XmlTextReader xr)
+        public override void Read(XmlTextReader xr)
         {
             Name = xr["name"];
             Module = xr["module"];
@@ -47,6 +47,7 @@ namespace Girl.LLPML
             Alias = src.Alias;
             Type = src.Type;
             function = src.function;
+            base.Set(src);
         }
     }
 }

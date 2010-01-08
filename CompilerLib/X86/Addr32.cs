@@ -16,16 +16,21 @@ namespace Girl.X86
         private int disp = 0;
         public int Disp { get { return disp; } }
 
-        private Ref<uint> address;
-        public Ref<uint> Address { get { return address; } }
+        private Ptr<uint> address;
+        public Ptr<uint> Address { get { return address; } }
         public bool IsAddress { get { return address != null; } }
 
-        public byte MiddleBits = 0;
+        private byte middleBits = 0;
 
         public Addr32() { isInitialized = false; }
         public Addr32(Reg32 r) { reg = r; }
-        public Addr32(Reg32 r, int os) { reg = r; disp = os; }
-        public Addr32(Ref<uint> ad) { address = ad; }
+        public Addr32(Reg32 r, int offset) { reg = r; disp = offset; }
+        public Addr32(Ptr<uint> ad) { address = ad; }
+        public Addr32(Addr32 src, byte middleBits)
+        {
+            Set(src);
+            this.middleBits = middleBits;
+        }
 
         public void Set(Addr32 src)
         {
@@ -66,7 +71,7 @@ namespace Girl.X86
         public byte[] GetCodes()
         {
             byte[] ret = GetModRM();
-            ret[0] += (byte)(MiddleBits << 3);
+            ret[0] += (byte)(middleBits << 3);
             return ret;
         }
 
@@ -74,7 +79,7 @@ namespace Girl.X86
         {
             if (address != null)
             {
-                block.Add((byte)(0x05 + (MiddleBits << 3)));
+                block.Add((byte)(0x05 + (middleBits << 3)));
                 block.Add(address);
             }
             else

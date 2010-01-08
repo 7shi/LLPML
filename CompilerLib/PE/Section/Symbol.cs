@@ -11,10 +11,10 @@ namespace Girl.PE
         public ushort Hint;
         public string Name;
 
-        private Ref<uint> hintAddress = 0;
+        private Ptr<uint> hintAddress = 0;
 
-        private Ref<uint> importRef = new Ref<uint>(0, true);
-        public Ref<uint> ImportRef { get { return importRef; } }
+        private Ptr<uint> importRef = new Ptr<uint>(0, true);
+        public Ptr<uint> ImportRef { get { return importRef; } }
 
         public Symbol(ushort hint, string name)
         {
