@@ -134,6 +134,12 @@ namespace Girl.LLPML
                         case "new":
                             nb = new Struct.New(target, xr);
                             break;
+                        case "is":
+                            nb = new Struct.Is(target, xr);
+                            break;
+                        case "as":
+                            nb = new Struct.As(target, xr);
+                            break;
                         default:
                             throw Abort(xr);
                     }

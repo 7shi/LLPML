@@ -38,19 +38,26 @@ namespace Girl.LLPML
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            TypeBase tt = null;
-            var fp = Target as Function.Ptr;
-            if (fp != null && Parent.GetFunction(fp.Name) == null)
-                tt = Types.GetType(Parent, (Target as Function.Ptr).Name);
+            AddCodes(Parent, Target, codes, op, dest);
+        }
+
+        public static TypeBase GetType(BlockBase parent, IIntValue target)
+        {
+            var fp = target as Function.Ptr;
+            if (fp != null && parent.GetFunction(fp.Name) == null)
+                return Types.GetType(parent, (target as Function.Ptr).Name);
             else
-                tt = Target.Type;
-            if (Target is Index)
-                codes.Add(I386.Mov(Reg32.EAX, codes.GetString("index")));
+                return target.Type;
+        }
+
+        public static void AddCodes(BlockBase parent, IIntValue target, OpModule codes, string op, Addr32 dest)
+        {
+            var tt = GetType(parent, target);
             var tr = tt as TypeReference;
             var tts = tt.Type as TypeStruct;
             if (tr != null && (tr.IsArray || (tts != null && tts.IsClass)))
             {
-                Target.AddCodes(codes, "mov", null);
+                target.AddCodes(codes, "mov", null);
                 var label = new OpCode();
                 codes.AddRange(new[]
                 {

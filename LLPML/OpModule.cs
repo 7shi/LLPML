@@ -139,6 +139,7 @@ namespace Girl.LLPML
 
         public static bool NeedsDtor(IIntValue v)
         {
+            while (v is Cast) v = (v as Cast).Source;
             var vt = v.Type;
             if (vt == null) return false;
 
@@ -146,7 +147,7 @@ namespace Girl.LLPML
             if (vsm != null && vt is TypeDelegate && vsm.GetDelegate() != null)
                 return true;
 
-            return vt.NeedsDtor
+            return vt.NeedsDtor && !(v is Struct.As)
                 && (v is Call || v is Struct.New || v is Delegate || v is Operator);
         }
 

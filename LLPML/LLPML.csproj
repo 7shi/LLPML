@@ -65,6 +65,8 @@
     <Compile Include="Struct\Define.cs" />
     <Compile Include="Struct\Member.cs" />
     <Compile Include="Struct\New.cs" />
+    <Compile Include="Struct\Is.cs" />
+    <Compile Include="Struct\As.cs" />
     <Compile Include="Types\CondPair.cs" />
     <Compile Include="Types\TypeBase.cs" />
     <Compile Include="Types\TypeInt.cs" />

@@ -63,6 +63,8 @@ namespace Girl.LLPML.Parsing
                     new Operator("gt", (arg1, arg2) => new Greater(parent, arg1, arg2)),
                     new Operator("le", (arg1, arg2) => new LessEqual(parent, arg1, arg2)),
                     new Operator("ge", (arg1, arg2) => new GreaterEqual(parent, arg1, arg2)),
+                    new Operator("is", (arg1, arg2) => new Struct.Is(parent, arg1, arg2)),
+                    new Operator("as", (arg1, arg2) => new Struct.As(parent, arg1, arg2)),
                 },
                 new[]
                 {

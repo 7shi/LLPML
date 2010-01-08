@@ -199,6 +199,13 @@ namespace Girl.LLPML
             }
         }
 
+        protected bool ArgNeededGC(Var.Declare arg)
+        {
+            if (arg.Name == "this") return false;
+            var tr = arg.Type as TypeReference;
+            return tr != null && tr.UseGC;
+        }
+
         protected override void BeforeAddCodes(OpModule codes)
         {
             argStack = 0;
@@ -216,6 +223,14 @@ namespace Girl.LLPML
             }
 
             base.BeforeAddCodes(codes);
+            foreach (var arg in args)
+            {
+                if (ArgNeededGC(arg))
+                {
+                    codes.Add(I386.Mov(Reg32.EAX, arg.Address));
+                    TypeReference.AddReferenceCodes(codes);
+                }
+            }
             if (thisptr == null) return;
 
             switch (name)
@@ -236,6 +251,20 @@ namespace Girl.LLPML
             if (thisptr != null && name == Struct.Define.Destructor)
                 ThisStruct.AddAfterDtor(codes);
             AddExitCodes(codes);
+        }
+
+        public override void AddDestructors(
+            OpModule codes, IEnumerable<Var.Declare> ptrs)
+        {
+            base.AddDestructors(codes, ptrs);
+
+            Stack<Var.Declare> args2 = new Stack<Var.Declare>(args);
+            while (args2.Count > 0)
+            {
+                var arg = args2.Pop();
+                if (ArgNeededGC(arg))
+                    arg.Type.AddDestructor(codes, arg.GetAddress(codes, this));
+            }
         }
 
         public override void AddExitCodes(OpModule codes)
