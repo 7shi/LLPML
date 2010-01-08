@@ -36,7 +36,7 @@ namespace Girl.LLPML
                                     throw Abort(xr, "multiple initializers");
                                 Init = new Block(this);
                                 Init.Target = this;
-                                Init.SetLine(xr);
+                                Init.SrcInfo = new Parsing.SrcInfo(root.Source, xr);
                                 Init.Read(xr);
                                 break;
                             case "cond":

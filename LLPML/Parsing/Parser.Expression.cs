@@ -38,8 +38,7 @@ namespace Girl.LLPML.Parsing
             IIntValue ret = null;
             for (; ; )
             {
-                var ln = tokenizer.LineNumber;
-                var lp = tokenizer.LinePosition;
+                var si = tokenizer.SrcInfo;
                 if (ret == null)
                     ret = Member();
                 else
@@ -56,7 +55,7 @@ namespace Girl.LLPML.Parsing
                 }
                 var ar = ret as VarBase;
                 if (ar == null)
-                    throw parent.Abort(ln, lp, "配列が必要です。");
+                    throw parent.Abort(si, "配列が必要です。");
                 ret = new Index(parent, ar, Expression());
                 Check("配列", "]");
             }
@@ -95,7 +94,7 @@ namespace Girl.LLPML.Parsing
                 }
                 Rewind();
                 var t2m = new Struct.Member(parent, t2);
-                t2m.SetLine(tokenizer.LineNumber, tokenizer.LinePosition);
+                t2m.SrcInfo = tokenizer.SrcInfo;
                 if (mem == null)
                 {
                     if (f is VarBase)
@@ -170,20 +169,18 @@ namespace Girl.LLPML.Parsing
                     return new Rev(parent, Expression());
                 case "++":
                     {
-                        var ln = tokenizer.LineNumber;
-                        var lp = tokenizer.LinePosition;
+                        var si = tokenizer.SrcInfo;
                         var target = Member() as Var;
                         if (target == null)
-                            throw parent.Abort(ln, lp, "++: 対象が変数ではありません。");
+                            throw parent.Abort(si, "++: 対象が変数ではありません。");
                         return new Inc(parent, target);
                     }
                 case "--":
                     {
-                        var ln = tokenizer.LineNumber;
-                        var lp = tokenizer.LinePosition;
+                        var si = tokenizer.SrcInfo;
                         var target = Member() as Var;
                         if (target == null)
-                            throw parent.Abort(ln, lp, "--: 対象が変数ではありません。");
+                            throw parent.Abort(si, "--: 対象が変数ではありません。");
                         return new Dec(parent, target);
                     }
             }
@@ -231,8 +228,7 @@ namespace Girl.LLPML.Parsing
             var sv = String();
             if (sv != null) return sv;
 
-            var ln = tokenizer.LineNumber;
-            var lp = tokenizer.LinePosition;
+            var si = tokenizer.SrcInfo;
             var t = Read();
             switch (t)
             {
@@ -261,14 +257,14 @@ namespace Girl.LLPML.Parsing
                     {
                         var ex = Expression() as Var;
                         if (ex == null)
-                            throw parent.Abort(ln, lp, "addrof: 引数が不適切です。");
+                            throw parent.Abort(si, "addrof: 引数が不適切です。");
                         return new AddrOf(parent, ex);
                     }
                 case "typeof":
                     {
                         var ex = Expression() as VarBase;
                         if (ex == null)
-                            throw parent.Abort(ln, lp, "typeof: 引数が不適切です。");
+                            throw parent.Abort(si, "typeof: 引数が不適切です。");
                         return new TypeOf(parent, ex);
                     }
             }
@@ -352,6 +348,20 @@ namespace Girl.LLPML.Parsing
                 if (Tokenizer.IsWord(type) && parent.GetPointer(type) == null)
                 {
                     var br2 = Read();
+                    if (br2 == "[")
+                    {
+                        br2 = Read();
+                        if (br2 == "]")
+                        {
+                            br2 = Read();
+                            type += "[]";
+                        }
+                        else
+                        {
+                            Rewind();
+                            br2 = "[";
+                        }
+                    }
                     if (br2 == ")")
                         return new Struct.Cast(parent, type, Expression());
                     Rewind();

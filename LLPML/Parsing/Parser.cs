@@ -121,8 +121,7 @@ namespace Girl.LLPML.Parsing
 
         private Exception Abort(string format, params object[] args)
         {
-            return parent.Abort(
-                tokenizer.LineNumber, tokenizer.LinePosition, format, args);
+            return parent.Abort(tokenizer.SrcInfo, format, args);
         }
     }
 }

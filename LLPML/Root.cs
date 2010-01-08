@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.11.20080314";
+        public string Version = "0.11.20080323";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
@@ -36,7 +36,7 @@ namespace Girl.LLPML
 
         public Root(string name, XmlTextReader xr)
         {
-            SetLine(xr);
+            SrcInfo = new Parsing.SrcInfo(name, xr);
             Read(name, xr);
         }
 

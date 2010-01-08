@@ -18,7 +18,7 @@ namespace Girl.LLPML
         protected Root root;
         public Root Root { get { return root; } }
 
-        protected int lineNumber, linePosition;
+        public Parsing.SrcInfo SrcInfo { get; set; }
 
         public NodeBase()
         {
@@ -36,22 +36,11 @@ namespace Girl.LLPML
             this.name = name;
         }
 
-        public NodeBase(BlockBase parent, XmlTextReader xr) : this(parent)
+        public NodeBase(BlockBase parent, XmlTextReader xr)
+            : this(parent)
         {
-            SetLine(xr);
+            SrcInfo = new Parsing.SrcInfo(root.Source, xr);
             Read(xr);
-        }
-
-        public void SetLine(XmlTextReader xr)
-        {
-            lineNumber = xr.LineNumber;
-            linePosition = xr.LinePosition;
-        }
-
-        public void SetLine(int lineNumber, int linePosition)
-        {
-            this.lineNumber = lineNumber;
-            this.linePosition = linePosition;
         }
 
         public static void Parse(XmlTextReader xr, Action delg)
@@ -75,21 +64,23 @@ namespace Girl.LLPML
 
         public Exception Abort(string format, params object[] args)
         {
-            return Abort(lineNumber, linePosition, format, args);
+            return Abort(SrcInfo, format, args);
         }
 
-        public Exception Abort(int lineNumber, int linePosition, string format, params object[] args)
+        public Exception Abort(Parsing.SrcInfo si, string format, params object[] args)
         {
-            string s1 = "", s2 = "", src = root.Source;
-            if (src != null) s1 = src + ": ";
-            if (lineNumber > 0)
-                s2 = string.Format("[{0}:{1}] ", lineNumber, linePosition);
+            string s1 = "", s2 = "";
+            if (si != null)
+            {
+                s1 = si.Source + ": ";
+                s2 = string.Format("[{0}:{1}] ", si.Number, si.Position);
+            }
             return new Exception(s1 + s2 + string.Format(format, args));
         }
 
         public Exception Abort(XmlTextReader xr, string format, params object[] args)
         {
-            return Abort(xr.LineNumber, xr.LinePosition, format, args);
+            return Abort(new Parsing.SrcInfo(root.Source, xr), format, args);
         }
 
         public Exception Abort(XmlTextReader xr)

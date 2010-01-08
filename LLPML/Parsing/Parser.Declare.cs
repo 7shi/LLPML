@@ -54,14 +54,13 @@ namespace Girl.LLPML.Parsing
             throw Abort("const: 型が指定されていません。");
         }
 
-        private delegate void DeclareHandler(string name, bool eq, int ln, int lp, int? array);
+        private delegate void DeclareHandler(string name, bool eq, SrcInfo si, int? array);
 
         private void ReadDeclare(string category, Action delg1, DeclareHandler delg2)
         {
             if (!CanRead) throw Abort("{0}: 名前が必要です。", category);
 
-            var ln = tokenizer.LineNumber;
-            var lp = tokenizer.LinePosition;
+            var si = tokenizer.SrcInfo;
             var name = Read();
             if (!Tokenizer.IsWord(name))
             {
@@ -89,11 +88,11 @@ namespace Girl.LLPML.Parsing
 
             var eq = Read();
             if (eq == "=")
-                delg2(name, true, ln, lp, array);
+                delg2(name, true, si, array);
             else
             {
                 if (eq != null) Rewind();
-                delg2(name, false, ln, lp, array);
+                delg2(name, false, si, array);
             }
 
             var sep = Read();
@@ -106,15 +105,15 @@ namespace Girl.LLPML.Parsing
         private void IntDeclare()
         {
             ReadDeclare("const int", null,
-                (name, eq, ln, lp, array) =>
+                (name, eq, si, array) =>
                 {
                     if (array != null)
-                        throw parent.Abort(ln, lp, "const int: 配列は宣言できません。");
+                        throw parent.Abort(si, "const int: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const int: 等号がありません。");
                     var v = Expression() as IntValue;
                     if (v == null)
-                        throw parent.Abort(ln, lp, "const int: 定数値が必要です。");
+                        throw parent.Abort(si, "const int: 定数値が必要です。");
                     parent.AddInt(name, v.Value);
                 });
         }
@@ -122,10 +121,10 @@ namespace Girl.LLPML.Parsing
         private void StringDeclare()
         {
             ReadDeclare("const string", null,
-                (name, eq, ln, lp, array) =>
+                (name, eq, si, array) =>
                 {
                     if (array != null)
-                        throw parent.Abort(ln, lp, "const string: 配列は宣言できません。");
+                        throw parent.Abort(si, "const string: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const string: 等号がありません。");
                     var v = String();
@@ -168,7 +167,7 @@ namespace Girl.LLPML.Parsing
                     else if (ar != null)
                         Rewind();
                 },
-                (name, eq, ln, lp, array) =>
+                (name, eq, si, array) =>
                 {
                     Pointer.Declare p;
                     if (array == null)
@@ -199,11 +198,11 @@ namespace Girl.LLPML.Parsing
                     else
                     {
                         if (eq)
-                            throw parent.Abort(ln, lp, "var: 配列を初期化できません。");
+                            throw parent.Abort(si, "var: 配列を初期化できません。");
                         var type2 = type == null ? "var" : "var:" + type;
                         p = new Pointer.Declare(parent, name, type2, (int)array);
                     }
-                    p.SetLine(ln, lp);
+                    p.SrcInfo = si;
                     list.Add(p);
                 });
             return list.ToArray();
@@ -213,7 +212,7 @@ namespace Girl.LLPML.Parsing
         {
             var list = new List<Pointer.Declare>();
             ReadDeclare(type, null,
-                (name, eq, ln, lp, array) =>
+                (name, eq, si, array) =>
                 {
                     Pointer.Declare p;
                     if (array == null)
@@ -238,10 +237,10 @@ namespace Girl.LLPML.Parsing
                     else
                     {
                         if (eq)
-                            throw parent.Abort(ln, lp, "{0}: 配列を初期化できません。", type);
+                            throw parent.Abort(si, "{0}: 配列を初期化できません。", type);
                         p = new Pointer.Declare(parent, name, type, (int)array);
                     }
-                    p.SetLine(ln, lp);
+                    p.SrcInfo = si;
                     list.Add(p);
                 });
             return list.ToArray();
@@ -256,7 +255,7 @@ namespace Girl.LLPML.Parsing
                 if (Peek() == "{")
                 {
                     var st2 = new Struct.Declare(st);
-                    st2.SetLine(tokenizer.LineNumber, tokenizer.LinePosition);
+                    st2.SrcInfo = tokenizer.SrcInfo;
                     ReadInitializers(st2, type);
                     st.Values.Add(st2);
                 }

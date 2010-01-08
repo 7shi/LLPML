@@ -275,7 +275,8 @@ namespace Girl.LLPML
                 codes.Add(I386.Enter((ushort)stackSize, (byte)Level));
             }
             string n = GetName();
-            if (!string.IsNullOrEmpty(n))
+            if (!string.IsNullOrEmpty(n)
+                && (parent == null || parent.GetName() != n))
                 codes.Add(I386.Mov(Reg32.EAX, codes.Module.GetString(n)));
         }
 

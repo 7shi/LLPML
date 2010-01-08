@@ -31,7 +31,7 @@ namespace Girl.LLPML
                         base.TypeName = t;
                         length = Var.DefaultSize;
                         IsArray = true;
-                        type = new TypePointer(t, SizeOf.GetTypeSize(parent, t));
+                        type = new TypeArray(value, SizeOf.GetTypeSize(parent, t));
                     }
                     else
                     {
@@ -39,9 +39,17 @@ namespace Girl.LLPML
                         length = SizeOf.GetValueSize(value);
                         if (length == 0) length = Var.DefaultSize;
                         IsArray = false;
-                        type = Types.GetType(value);
+                        type = null;
+                        if (value != null)
+                        {
+                            var st = parent.GetStruct(value);
+                            if (st != null)
+                                type = new TypePointer(st);
+                            else
+                                type = Types.GetType(value);
+                        }
                         if (type == null)
-                            type = new TypePointer(value, length);
+                            type = TypeInt.Instance;
                     }
                 }
             }

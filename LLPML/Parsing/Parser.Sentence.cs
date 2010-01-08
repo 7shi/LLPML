@@ -16,8 +16,7 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("文がありません。");
 
-            var ln = tokenizer.LineNumber;
-            var lp = tokenizer.LinePosition;
+            var si = tokenizer.SrcInfo;
             var t = Read();
             NodeBase nb = null;
             switch (t)
@@ -28,10 +27,10 @@ namespace Girl.LLPML.Parsing
                     ReadBlock(nb as Block, "block");
                     break;
                 case "struct":
-                    StructDefine().SetLine(ln, lp);
+                    StructDefine().SrcInfo = si;
                     return null;
                 case "function":
-                    Function().SetLine(ln, lp);
+                    Function().SrcInfo = si;
                     return null;
                 case "extern":
                     Extern();
@@ -51,7 +50,7 @@ namespace Girl.LLPML.Parsing
             }
             if (nb != null)
             {
-                nb.SetLine(ln, lp);
+                nb.SrcInfo = si;
                 return new NodeBase[] { nb };
             }
             Rewind();
@@ -90,12 +89,11 @@ namespace Girl.LLPML.Parsing
             }
             else
             {
-                var ln = tokenizer.LineNumber;
-                var lp = tokenizer.LinePosition;
+                var si = tokenizer.SrcInfo;
                 var nb = CheckReserved(t);
                 if (nb != null)
                 {
-                    nb.SetLine(ln, lp);
+                    nb.SrcInfo = si;
                     return new NodeBase[] { nb };
                 }
             }
@@ -245,8 +243,7 @@ namespace Girl.LLPML.Parsing
             var list = new List<Extern>();
             for (; ; )
             {
-                var ln = tokenizer.LineNumber;
-                var lp = tokenizer.LinePosition;
+                var si = tokenizer.SrcInfo;
                 var name = Read();
                 CallType ct2 = CheckCallType(ct1, ref name);
                 var sfx2 = CheckSuffix(sfx1, ref name);
@@ -259,7 +256,7 @@ namespace Girl.LLPML.Parsing
                 if (sfx2 != null) alias = name + sfx2;
 
                 var ex = new Extern(parent, name, module.Value, alias);
-                ex.SetLine(ln, lp);
+                ex.SrcInfo = si;
                 ex.CallType = ct2;
                 ReadArgs("extern", ex);
                 if (!parent.AddFunction(ex))
@@ -396,8 +393,7 @@ namespace Girl.LLPML.Parsing
         {
             Block ret = null;
             var p = this.parent;
-            var ln = tokenizer.LineNumber;
-            var lp = tokenizer.LinePosition;
+            var si = tokenizer.SrcInfo;
             if (Peek() == "{")
             {
                 this.parent = parent;
@@ -413,7 +409,7 @@ namespace Girl.LLPML.Parsing
                 if (s != null) ret.Sentences.AddRange(s);
             }
             if (ret == null)
-                throw p.Abort(ln, lp, "{0}: ブロックが必要です。", type);
+                throw p.Abort(si, "{0}: ブロックが必要です。", type);
             this.parent = p;
             return ret;
         }
@@ -494,11 +490,10 @@ namespace Girl.LLPML.Parsing
         {
             Check("switch", "(");
 
-            var ln = tokenizer.LineNumber;
-            var lp = tokenizer.LinePosition;
+            var si = tokenizer.SrcInfo;
             var expr = Expression() as IIntValue;
             if (expr == null)
-                throw parent.Abort(ln, lp, "switch: 値が必要です。");
+                throw parent.Abort(si, "switch: 値が必要です。");
 
             Check("switch", ")");
             Check("switch", "{");

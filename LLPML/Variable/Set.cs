@@ -31,8 +31,10 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpCodes codes)
         {
-            values[0].AddCodes(codes, "mov", null);
-            AddCodes(dest.Size, codes, dest.GetAddress(codes));
+            values[0].AddCodes(codes, "push", null);
+            var ad = dest.GetAddress(codes);
+            codes.Add(I386.Pop(Reg32.EAX));
+            AddCodes(dest.Size, codes, ad);
         }
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)

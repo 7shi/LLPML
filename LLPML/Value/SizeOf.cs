@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class SizeOf : NodeBase, IIntValue
+    public class SizeOf : IntValue
     {
         public SizeOf(BlockBase parent, string name) : base(parent, name) { }
         public SizeOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
@@ -19,18 +19,19 @@ namespace Girl.LLPML
             RequiresName(xr);
         }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
-
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override int Value
         {
-            int size = 0;
-            var pd = parent.GetPointer(name);
-            if (pd != null)
-                size = pd.Length;
-            else
-                size = GetTypeSize(parent, name);
-            if (size == 0) throw Abort("undefined type: " + name);
-            codes.AddCodes(op, dest, (uint)size);
+            get
+            {
+                int size = 0;
+                var pd = parent.GetPointer(name);
+                if (pd != null)
+                    size = pd.Length;
+                else
+                    size = GetTypeSize(parent, name);
+                if (size == 0) throw Abort("undefined type: " + name);
+                return size;
+            }
         }
 
         public static int GetTypeSize(BlockBase parent, string type)

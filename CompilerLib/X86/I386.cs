@@ -22,11 +22,6 @@ namespace Girl.X86
             return new OpCode(new byte[] { 0x0f, (byte)(0x80 + c) }, op1, true);
         }
 
-        public static OpCode Ret()
-        {
-            return new OpCode(new byte[] { 0xc3 });
-        }
-
         public static OpCode Ret(ushort op1)
         {
             return new OpCode(new byte[] { 0xc2 }, op1);
@@ -47,19 +42,53 @@ namespace Girl.X86
             return new OpCode(new byte[] { 0xc8 }, op1, op2);
         }
 
-        public static OpCode Leave()
-        {
-            return new OpCode(new byte[] { 0xc9 });
-        }
+        public static OpCode Nop() { return FromName("nop"); }
+        public static OpCode Ret() { return FromName("ret"); }
+        public static OpCode Cdq() { return FromName("cdq"); }
+        public static OpCode Cld() { return FromName("cld"); }
+        public static OpCode Std() { return FromName("std"); }
+        public static OpCode Rep() { return FromName("rep"); }
+        public static OpCode Leave() { return FromName("leave"); }
+        public static OpCode Movsb() { return FromName("movsb"); }
+        public static OpCode Movsw() { return FromName("movsw"); }
+        public static OpCode Movsd() { return FromName("movsd"); }
+        public static OpCode Stosb() { return FromName("stosb"); }
+        public static OpCode Stosw() { return FromName("stosw"); }
+        public static OpCode Stosd() { return FromName("stosd"); }
 
-        public static OpCode Nop()
+        public static OpCode FromName(string op)
         {
-            return new OpCode(new byte[] { 0x90 });
-        }
-
-        public static OpCode Cdq()
-        {
-            return new OpCode(new byte[] { 0x99 });
+            switch (op)
+            {
+                case "nop":
+                    return new OpCode(new byte[] { 0x90 });
+                case "ret":
+                    return new OpCode(new byte[] { 0xc3 });
+                case "cdq":
+                    return new OpCode(new byte[] { 0x99 });
+                case "cld":
+                    return new OpCode(new byte[] { 0xfc });
+                case "std":
+                    return new OpCode(new byte[] { 0xfd });
+                case "rep":
+                    return new OpCode(new byte[] { 0xf3 });
+                case "leave":
+                    return new OpCode(new byte[] { 0xc9 });
+                case "movsb":
+                    return new OpCode(new byte[] { 0xa4 });
+                case "movsw":
+                    return new OpCode(new byte[] { 0x66, 0xa5 });
+                case "movsd":
+                    return new OpCode(new byte[] { 0xa5 });
+                case "stosb":
+                    return new OpCode(new byte[] { 0xaa });
+                case "stosw":
+                    return new OpCode(new byte[] { 0x66, 0xab });
+                case "stosd":
+                    return new OpCode(new byte[] { 0xab });
+                default:
+                    throw new Exception("invalid operator: " + op);
+            }
         }
     }
 }

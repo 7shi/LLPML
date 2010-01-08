@@ -46,27 +46,27 @@ namespace Sample
         }
 
         private TextData selectedData;
-        private TreeNode workArea, window, console;
+        private TreeNode workArea, library, window, console;
 
         public Form1()
         {
-#if DEBUG
-            I386.Test();
-#endif
             InitializeComponent();
             treeView1.Nodes.AddRange(new TreeNode[]
             {
                 workArea = new TreeNode("ワークエリア"),
+                library = new TreeNode("ライブラリ"),
                 window = new TreeNode("ウィンドウ"),
                 console = new TreeNode("コンソール"),
             });
             treeView1.ExpandAll();
-            console.Nodes.Add(CreateItem("stdio.xml"));
-            console.Nodes.Add(CreateItem("string.xml"));
-            console.Nodes.Add(CreateItem("malloc.xml"));
-            console.Nodes.Add(CreateItem("finish.xml"));
+            string[] libs =
+            {
+                "stdio", "string", "malloc", "finish",
+                "cpuid", "mmx", "sse", "win32"
+            };
+            foreach (var lib in libs)
+                library.Nodes.Add(CreateItem(lib + ".xml"));
             ReadSamples(console, "c");
-            window.Nodes.Add(CreateItem("win32.xml"));
             ReadSamples(window, "w");
             newToolStripMenuItem.PerformClick();
         }
@@ -100,35 +100,36 @@ namespace Sample
             try
             {
 #endif
-                var sr = new StringReader(textBox1.Text);
-                var xr = new XmlTextReader(sr);
-                var root = new Root();
-                root.StreamDelegate = name =>
-                {
-                    var n = console.Nodes[name];
-                    if (n == null) n = window.Nodes[name];
-                    if (n == null) return null;
-                    var td = n.Tag as TextData;
-                    if (td == null) return null;
-                    return new StringReader(td.Text);
-                };
-                if (selectedData.Output != null)
-                    root.Output = Path.GetFileNameWithoutExtension(selectedData.Output) + ".exe";
-                root.Read(selectedData.Name, xr);
-                xr.Close();
-                sr.Close();
+            var sr = new StringReader(textBox1.Text);
+            var xr = new XmlTextReader(sr);
+            var root = new Root();
+            root.StreamDelegate = name =>
+            {
+                var n = library.Nodes[name];
+                if (n == null) n = console.Nodes[name];
+                if (n == null) n = window.Nodes[name];
+                if (n == null) return null;
+                var td = n.Tag as TextData;
+                if (td == null) return null;
+                return new StringReader(td.Text);
+            };
+            if (selectedData.Output != null)
+                root.Output = Path.GetFileNameWithoutExtension(selectedData.Output) + ".exe";
+            root.Read(selectedData.Name, xr);
+            xr.Close();
+            sr.Close();
 
-                var module = new Module();
-                module.Specific.SubSystem = root.Subsystem;
+            var module = new Module();
+            module.Specific.SubSystem = root.Subsystem;
 
-                var codes = new OpCodes(module);
-                root.AddCodes(codes);
-                module.Text.OpCodes = codes.ToArray();
+            var codes = new OpCodes(module);
+            root.AddCodes(codes);
+            module.Text.OpCodes = codes.ToArray();
 
-                var exe = GetFullName(root.Output);
-                module.Link(exe);
-                textBox2.AppendText("出力: " + exe + "\r\n");
-                Process.Start(exe);
+            var exe = GetFullName(root.Output);
+            module.Link(exe);
+            textBox2.AppendText("出力: " + exe + "\r\n");
+            Process.Start(exe);
 #if !DEBUG
             }
             catch (Exception ex)
@@ -136,7 +137,7 @@ namespace Sample
                 textBox2.AppendText(ex.ToString() + "\r\n");
             }
 #endif
-                Cursor.Current = cur;
+            Cursor.Current = cur;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

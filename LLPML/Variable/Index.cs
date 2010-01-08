@@ -75,7 +75,7 @@ namespace Girl.LLPML
                         throw Abort("{0}[{1}]: over flow: >= {2}",
                             target.Name, oi.Value, pd.Count);
                 }
-                else
+                else if (!(target is Pointer))
                 {
                     codes.Add(I386.Mov(Reg32.EDX, ret));
                     ret = new Addr32(Reg32.EDX);
@@ -105,6 +105,7 @@ namespace Girl.LLPML
         }
 
         public override bool IsArray { get { return false; } }
+        public override TypeBase Type { get { return Types.GetType(TypeName); } }
         public override string TypeName { get { return target.TypeName; } }
 
         public override Struct.Define GetStruct()

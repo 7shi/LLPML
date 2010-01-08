@@ -18,8 +18,6 @@ namespace Girl.LLPML
                 case "ushort":
                 case "byte":
                     return TypeUInt.Instance;
-                case null:
-                    return TypeInt.Instance;
                 default:
                     return null;
             }

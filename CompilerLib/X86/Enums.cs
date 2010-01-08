@@ -45,4 +45,14 @@ namespace Girl.X86
         LE, NG = LE,
         NLE, G = NLE
     }
+
+    public enum Mm
+    {
+        _0, _1, _2, _3, _4, _5, _6, _7
+    }
+
+    public enum Xmm
+    {
+        _0, _1, _2, _3, _4, _5, _6, _7
+    }
 }

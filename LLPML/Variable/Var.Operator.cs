@@ -71,8 +71,8 @@ namespace Girl.LLPML
             protected TypeBase.Func GetFunc()
             {
                 var t = Type;
-                TypeBase.Func f;
-                if (!t.TryGetFunc(Tag, out f))
+                var f = t.GetFunc(Tag);
+                if (f == null)
                     throw new Exception(Tag + ": " + t.Name + ": not supported");
                 return f;
             }

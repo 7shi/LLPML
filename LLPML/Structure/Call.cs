@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Call : NodeBase, IIntValue
+    public partial class Call : NodeBase, IIntValue
     {
         private IIntValue target;
         protected List<IIntValue> args = new List<IIntValue>();
@@ -142,6 +142,12 @@ namespace Girl.LLPML
         {
             if (name != null)
             {
+                if (name.StartsWith("__"))
+                {
+                    if (AddIntrinsicCodes(codes)) return;
+                    if (AddSIMDCodes(codes)) return;
+                }
+
                 List<IIntValue> args;
                 Function f = GetFunction(target, out args);
                 if (f == null)

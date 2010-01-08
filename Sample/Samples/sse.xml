@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.11.20080323">
+
+<!-- SSE support -->
+
+<include src="cpuid.xml" />
+
+<?llp
+function __check_sse()
+{
+  CPUID_Result result;
+  result.__cpuid(1);
+  return (result.edx & 0x02000000) != 0;
+}
+
+function __check_sse2()
+{
+  CPUID_Result result;
+  result.__cpuid(1);
+  return (result.edx & 0x04000000) != 0;
+}
+
+function __check_sse3()
+{
+  CPUID_Result result;
+  result.__cpuid(1);
+  return (result.ecx & 1) != 0;
+}
+
+struct __m128ib
+{
+  byte _0, _1, _2, _3, _4, _5, _6, _7,
+       _8, _9, _10, _11, _12, _13, _14, _15;
+  
+  function Show(name)
+  {
+    var p : byte[] = this;
+    printf("%s = { ", name);
+    for (int i = 0; i < 16; i++)
+    {
+      if (i > 0) printf(", ");
+      printf("%02x", p[i]);
+    }
+    printfln(" }");
+  }
+}
+
+struct __m128iw
+{
+  short _0, _1, _2, _3, _4, _5, _6, _7;
+  
+  function Show(name)
+  {
+    var p : short[] = this;
+    printf("%s = { ", name);
+    for (int i = 0; i < 8; i++)
+    {
+      if (i > 0) printf(", ");
+      printf("%04x", p[i]);
+    }
+    printfln(" }");
+  }
+}
+
+struct __m128id
+{
+  int _0, _1, _2, _3;
+  
+  function Show(name)
+  {
+    printfln("%s = { %08x, %08x, %08x, %08x }",
+      name, _0, _1, _2, _3);
+  }
+}
+?>
+
+</llpml>

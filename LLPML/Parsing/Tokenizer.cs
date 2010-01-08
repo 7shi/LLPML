@@ -123,20 +123,28 @@ namespace Girl.LLPML.Parsing
             }
         }
 
-        public int LineNumber
+        public SrcInfo SrcInfo
         {
             get
             {
-                int ret = lineNumber;
-                foreach (char ch in Source.Substring(0, Position))
-                {
-                    if (ch == '\n') ret++;
-                }
-                return ret;
+                return new SrcInfo(file, LineNumber, LinePosition);
             }
         }
 
-        public int LinePosition
+        protected int LineNumber
+        {
+            get
+            {
+                int num = lineNumber;
+                foreach (char ch in Source.Substring(0, Position))
+                {
+                    if (ch == '\n') num++;
+                }
+                return num;
+            }
+        }
+
+        protected int LinePosition
         {
             get
             {

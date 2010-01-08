@@ -20,6 +20,7 @@ namespace Girl.LLPML.Struct
         public Declare(Declare parent)
         {
             this.parent = parent.parent;
+            this.root = parent.root;
             isRoot = false;
         }
 
@@ -37,7 +38,7 @@ namespace Girl.LLPML.Struct
         public Declare(Declare parent, XmlTextReader xr)
             : this(parent)
         {
-            SetLine(xr);
+            SrcInfo = new Parsing.SrcInfo(root.Source, xr);
             Read(xr);
         }
 
@@ -106,7 +107,8 @@ namespace Girl.LLPML.Struct
                 {
                     if (!(mem is Var.Declare))
                         throw Abort("value required: " + mem.Name);
-                    (obj as IIntValue).AddCodes(codes, "mov", new Addr32(ad));
+                    (obj as IIntValue).AddCodes(codes, "mov", null);
+                    Set.AddCodes(mem.Length, codes, new Addr32(ad));
                     ad.Add(mem.Length);
                 }
                 else

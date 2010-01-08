@@ -43,8 +43,9 @@ namespace Girl.LLPML.Struct
         public Member(Member parent, XmlTextReader xr)
         {
             this.parent = parent.parent;
+            this.root = parent.root;
             isRoot = false;
-            SetLine(xr);
+            SrcInfo = new Parsing.SrcInfo(root.Source, xr);
             Read(xr);
         }
 

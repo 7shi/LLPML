@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080314" subsystem="WINDOWS_GUI">
+<llpml version="0.11.20080323" subsystem="WINDOWS_GUI">
 
-<title>ビットマップ</title>
+<title>αブレンド</title>
 
 <include src="stdio.xml" />
-<include src="string.xml" />
 <include src="malloc.xml" />
+<include src="mmx.xml" />
+<include src="sse.xml" />
 <include src="win32.xml" />
 
 <?llp
@@ -15,6 +16,17 @@ var hInstance = GetModuleHandle(null);
 var alive = true;
 char fpsBuf[1025];
 var fpsBufLen = 0;
+var fMMX = __check_mmx();
+var fSSE2 = __check_sse2();
+var mode = 0;
+if (fSSE2)
+  mode = 2;
+else if (fMMX)
+  mode = 1;
+var fpsFormat[3];
+fpsFormat[0] = "%d fps";
+fpsFormat[1] = "%d fps(MMX)";
+fpsFormat[2] = "%d fps(SSE2)";
 
 WNDCLASSEX wcex =
 {
@@ -34,7 +46,7 @@ WNDCLASSEX wcex =
 wcex.RegisterClassEx();
 
 BITMAPINFO bmpInfo;
-memset(bmpInfo, 0, sizeof(bmpInfo));
+__stosb(bmpInfo, 0, sizeof(bmpInfo));
 bmpInfo.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
 bmpInfo.bmiHeader.biWidth       = width;
 bmpInfo.bmiHeader.biHeight      = -height;
@@ -45,7 +57,7 @@ bmpInfo.bmiHeader.biBitCount    = 32;
 struct Color { byte B, G, R, A; }
 var pixelCount = width * height;
 var buffer : Color[] = malloc(sizeof(Color) * pixelCount);
-ClearBuffer(0xffffffff);
+__stosd(buffer, 0xffffffff, pixelCount);
 
 var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 RECT r = { 0, 0, width, height };
@@ -74,7 +86,7 @@ var tick = GetTickCount();
 while (DoEvents())
 {
   // 描画
-  ClearBuffer(0xffffffff);
+  __stosd(buffer, 0xffffffff, pixelCount);
   var bx = (count & 63) - 64;
   for (var i = 0; i < 4; i++)
     for (var j = 0; j < 5; j++)
@@ -95,7 +107,7 @@ while (DoEvents())
   }
   else if (d > 1000)
   {
-    fpsBufLen = wsprintf(fpsBuf, "%d fps", fps);
+    fpsBufLen = wsprintf(fpsBuf, fpsFormat[mode], fps);
     fps = 0;
     tick = t;
   }
@@ -118,6 +130,16 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
       hWnd.EndPaint(ps);
       break;
     }
+    case WM_LBUTTONDOWN:
+      if (fMMX || fSSE2)
+      {
+        if (mode == 0) mode = 2; else mode--;
+        if (mode == 2 && !fSSE2) mode--;
+        fpsBufLen = 0;
+        fps = 0;
+        tick = GetTickCount();
+      }
+      break;
     case WM_DESTROY:
       alive = false;
       PostQuitMessage(0);
@@ -128,22 +150,8 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
   return 0;
 }
 
-function ClearBuffer(color)
-{
-  var end = buffer + pixelCount;
-  if (buffer < end)
-    for (var p = buffer; p < end; p++)
-      p[0] = color;
-}
-
 function FillRectangle(x, y, w, h, color)
 {
-  var c : Color = addrof color;
-  int a = c.A;
-  if (a > 127) a++;
-  var aa = 256 - a;
-  var r = c.R * a, g = c.G * a, b = c.B * a;
-  
   var x1 = x;
   if (x1 < 0) x1 = 0;
   var y1 = y;
@@ -153,15 +161,91 @@ function FillRectangle(x, y, w, h, color)
   var y2 = y + h;
   if (y2 > height) y2 = height;
   
-  for (var yy = y1; yy < y2; yy++)
+  var c : Color = addrof color;
+  int a = c.A;
+  if (a > 127) a++;
+  var aa = 256 - a;
+  
+  if (mode == 2) // SSE2
   {
-    var p : Color = addrof buffer[x1 + yy * width];
-    for (var xx = x1; xx < x2; xx++)
+    var 余り = x2 & 1;
+    x2 -= 余り;
+    __m128iw fore  =
     {
-      p.B = (b + p.B * aa) >> 8;
-      p.G = (g + p.G * aa) >> 8;
-      p.R = (r + p.R * aa) >> 8;
-      p++;
+      c.B * a, c.G * a, c.R * a, 0xff00,
+      c.B * a, c.G * a, c.R * a, 0xff00
+    };
+    __m128iw alpha = { aa, aa, aa, 0, aa, aa, aa, 0 };
+    __movd(__xmm0, 0);
+    __movdqu(__xmm1, fore);
+    __movdqu(__xmm2, alpha);
+    for (var yy = y1; yy < y2; yy++)
+    {
+      var p : int[] = addrof buffer[x1 + yy * width];
+      for (var xx = x1; xx < x2; xx += 2)
+      {
+        __movq(__xmm3, p);
+        __punpcklbw(__xmm3, __xmm0);
+        __pmullw(__xmm3, __xmm2);
+        __paddw(__xmm3, __xmm1);
+        __psrlw(__xmm3, 8);
+        __packuswb(__xmm3, __xmm0);
+        __movq(p, __xmm3);
+        p += 2;
+      }
+      if (余り)
+      {
+        __movd(__xmm3, p);
+        __punpcklbw(__xmm3, __xmm0);
+        __pmullw(__xmm3, __xmm2);
+        __paddw(__xmm3, __xmm1);
+        __psrlw(__xmm3, 8);
+        __packuswb(__xmm3, __xmm0);
+        __movd(p, __xmm3);
+      }
+    }
+  }
+  else if (mode == 1) // MMX
+  {
+    __m64w fore  = { c.B * a, c.G * a, c.R * a, 0xff00 };
+    __m64w alpha = { aa, aa, aa, 0 };
+    __movd(__mm0, 0);
+    __movq(__mm1, fore);
+    __movq(__mm2, alpha);
+    for (var yy = y1; yy < y2; yy++)
+    {
+      var p : int[] = addrof buffer[x1 + yy * width];
+      for (var xx = x1; xx < x2; xx++)
+      {
+        __movd(__mm3, p);
+        __punpcklbw(__mm3, __mm0);
+        __pmullw(__mm3, __mm2);
+        __paddw(__mm3, __mm1);
+        __psrlw(__mm3, 8);
+        __packuswb(__mm3, __mm0);
+        __movd(p, __mm3);
+        p++;
+      }
+    }
+    __emms();
+  }
+  else
+  {
+    var r = c.R * a, g = c.G * a, b = c.B * a;
+    for (var yy = y1; yy < y2; yy++)
+    {
+      var p : Color[] = addrof buffer[x1 + yy * width];
+      for (var xx = x1; xx < x2; xx++)
+      {
+        ((int[])p)[0] =
+          (((r + p[0].R * aa) & 0xff00) << 8)
+          | ((g + p[0].G * aa) & 0xff00)
+          | ((b + p[0].B * aa) >> 8);
+        //p.B = (b + p.B * aa) >> 8;
+        //p.G = (g + p.G * aa) >> 8;
+        //p.R = (r + p.R * aa) >> 8;
+        p++;
+      }
     }
   }
 }

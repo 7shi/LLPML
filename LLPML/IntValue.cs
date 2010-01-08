@@ -9,11 +9,13 @@ using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
-    public class IntValue : IIntValue
+    public class IntValue : NodeBase, IIntValue
     {
         private int value;
-        public int Value { get { return value; } }
+        public virtual int Value { get { return value; } }
 
+        protected IntValue(BlockBase parent, string name) : base(parent, name) { }
+        protected IntValue(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         public IntValue(int value) { this.value = value; }
         public IntValue(string value) : this(Parse(value)) { }
 
@@ -21,7 +23,7 @@ namespace Girl.LLPML
 
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, (uint)value);
+            codes.AddCodes(op, dest, (uint)Value);
         }
 
         private static IIntValue ReadElement(BlockBase parent, XmlTextReader xr)

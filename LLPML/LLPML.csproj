@@ -48,11 +48,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Parsing\Parser.cs" />
+    <Compile Include="Parsing\SrcInfo.cs" />
     <Compile Include="Parsing\Tokenizer.cs" />
     <Compile Include="Parsing\Parser.Expression.cs" />
     <Compile Include="Parsing\Parser.Operator.cs" />
     <Compile Include="Parsing\Parser.Sentence.cs" />
     <Compile Include="Parsing\Parser.Declare.cs" />
+    <Compile Include="Structure\Call.Intrinsics.cs" />
+    <Compile Include="Structure\Call.SIMD.cs" />
     <Compile Include="Struct\Declare.cs" />
     <Compile Include="Struct\Define.cs" />
     <Compile Include="Struct\Member.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="Types\TypePointer.cs" />
     <Compile Include="Types\Types.cs" />
     <Compile Include="Types\TypeUInt.cs" />
+    <Compile Include="Types\TypeArray.cs" />
     <Compile Include="Value\SizeOf.cs" />
     <Compile Include="Struct\This.cs" />
     <Compile Include="Structure\Extern.cs" />

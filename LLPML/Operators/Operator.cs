@@ -51,8 +51,8 @@ namespace Girl.LLPML
         protected TypeBase.Func GetFunc()
         {
             var t = Type;
-            TypeBase.Func f;
-            if (!t.TryGetFunc(Tag, out f))
+            var f = t.GetFunc(Tag);
+            if (f == null)
                 throw new Exception(Tag + ": " + t.Name + ": not supported");
             return f;
         }
@@ -60,8 +60,8 @@ namespace Girl.LLPML
         protected CondPair GetCond()
         {
             var t = Type;
-            CondPair c;
-            if (!t.TryGetCond(Tag, out c))
+            var c = t.GetCond(Tag);
+            if (c == null)
                 throw new Exception(Tag + ": " + t.Name + ": no conditions");
             return c;
         }

@@ -14,13 +14,33 @@ namespace Girl.LLPML.Struct
         private string type;
         public override string TypeName { get { return type; } }
 
-        public override bool IsArray { get { return false; } }
+        public override int TypeSize
+        {
+            get { return SizeOf.GetTypeSize(parent, type); }
+        }
+
+        private bool isArray = false;
+        public override bool IsArray { get { return isArray; } }
+
+        private void SetType(string type)
+        {
+            if (type.EndsWith("[]"))
+            {
+                this.type = type.Substring(0, type.Length - 2).TrimEnd();
+                isArray = true;
+            }
+            else
+            {
+                this.type = type;
+                isArray = false;
+            }
+        }
 
         public Cast(BlockBase parent, string type, IIntValue source)
         {
             this.parent = parent;
             name = "__cast";
-            this.type = type;
+            SetType(type);
             Source = source;
         }
 
@@ -33,7 +53,7 @@ namespace Girl.LLPML.Struct
         {
             name = "__cast";
 
-            type = xr["type"];
+            SetType(xr["type"]);
             if (type == null)
                 throw Abort(xr, "requires type");
 

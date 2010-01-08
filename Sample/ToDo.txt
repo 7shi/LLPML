@@ -21,6 +21,8 @@
 -- Size‚ğSizeOf‚É‰ü–¼
 
 [–¢]
+- ‘ã“ü‚Å•„† ex. ushort => int
+- Œ^ü‚è‚ğ®—‚·‚é
 - ”z—ñ‚Ìctor/dtor
 - ŠÈ—ª‹L–@
 -- include
