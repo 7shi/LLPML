@@ -104,11 +104,12 @@ class string
   }
 }
 
-function cstr(s : string)
+function cstr(s)
 {
-  var len = WideCharToMultiByte(0, 0, s, s.Length, null, null, null, null);
+  var slen = lstrlen(s);
+  var len = WideCharToMultiByte(0, 0, s, slen, null, null, null, null);
   var ret = new byte[len];
-  WideCharToMultiByte(0, 0, s, s.Length, ret, ret.Length, null, null);
+  WideCharToMultiByte(0, 0, s, slen, ret, ret.Length, null, null);
   return ret;
 }
 

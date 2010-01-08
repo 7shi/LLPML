@@ -11,18 +11,20 @@ namespace Compiler
     {
         public static Project[] GetProjects(string path)
         {
-            var list = new List<Project>();
+            var projs = new Projects(path);
             var proj = new Project();
-            proj.ReadDirectory(list, new DirectoryInfo(path), "", false);
-            if (proj.sources.Count > 0) list.Add(proj);
-            return list.ToArray();
+            proj.ReadDirectory(projs, new DirectoryInfo(path), "", false);
+            if (proj.sources.Count > 0) projs.Add(proj);
+            return projs.ToArray();
         }
 
         public string Name { get; private set; }
+        public string BaseDir { get; set; }
         public bool IsAnonymous { get { return string.IsNullOrEmpty(Name); } }
 
         private List<AdmInfo> libsrcs = new List<AdmInfo>();
         private List<AdmInfo> sources = new List<AdmInfo>();
+
         public AdmInfo[] Sources
         {
             get
@@ -42,17 +44,31 @@ namespace Compiler
                 Console.WriteLine("プロジェクト: {0}", Name);
         }
 
-        public ResultInfo Compile(string dir, bool verbose)
+        public ResultInfo Compile(bool verbose)
         {
             var ret = new ResultInfo();
             var start = DateTime.Now;
+            var root = new Root();
+            if (!IsAnonymous) root.Output = Name + ".exe";
+            var exe = Path.Combine(BaseDir, root.Output);
+            if (File.Exists(exe))
+            {
+                var exet = File.GetLastWriteTime(exe);
+                var nobuild = true;
+                foreach (var src in Sources)
+                {
+                    if (src.FileInfo.LastWriteTime > exet)
+                    {
+                        nobuild = false;
+                        break;
+                    }
+                }
+                if (nobuild) return ret;
+            }
 #if !DEBUG
             try
 #endif
             {
-                var root = new Root();
-                if (!IsAnonymous) root.Output = Name + ".exe";
-
                 foreach (var src in Sources)
                 {
                     if (verbose)
@@ -81,7 +97,7 @@ namespace Compiler
                 module.Text.OpCodes = codes.ToArray();
 
                 if (verbose) Console.WriteLine("リンクしています。");
-                var exe = Path.Combine(dir, root.Output);
+                exe = Path.Combine(BaseDir, root.Output);
                 module.Link(exe);
 
                 ret.Exe = exe;
@@ -105,7 +121,7 @@ namespace Compiler
             Name = name;
         }
 
-        private void ReadDirectory(List<Project> list, DirectoryInfo dir, string path, bool lib)
+        private void ReadDirectory(Projects projs, DirectoryInfo dir, string path, bool lib)
         {
             var libs = new List<DirectoryInfo>();
             var exes = new List<DirectoryInfo>();
@@ -134,22 +150,22 @@ namespace Compiler
             }
 
             foreach (var di in libs)
-                ReadDirectory(list, di, Combine(path, di.Name), true);
+                ReadDirectory(projs, di, Combine(path, di.Name), true);
             foreach (var di in exes)
             {
                 var proj = new Project(this, di.Name.Substring(4));
-                proj.ReadDirectory(list, di, Combine(path, di.Name), false);
-                if (proj.sources.Count > 0) list.Add(proj);
+                proj.ReadDirectory(projs, di, Combine(path, di.Name), false);
+                if (proj.sources.Count > 0) projs.Add(proj);
             }
             foreach (var di in dirs)
             {
                 if (hassrc)
-                    ReadDirectory(list, di, Combine(path, di.Name), true);
+                    ReadDirectory(projs, di, Combine(path, di.Name), true);
                 else
                 {
                     var proj = new Project(this, di.Name);
-                    proj.ReadDirectory(list, di, Combine(path, di.Name), false);
-                    if (proj.sources.Count > 0) list.Add(proj);
+                    proj.ReadDirectory(projs, di, Combine(path, di.Name), false);
+                    if (proj.sources.Count > 0) projs.Add(proj);
                 }
             }
             if (lib || exes2.Count > 0)
@@ -160,7 +176,7 @@ namespace Compiler
             {
                 var proj = new Project(this, ai.Name.Substring(4));
                 proj.sources.Add(ai);
-                list.Add(proj);
+                projs.Add(proj);
             }
         }
 
@@ -168,6 +184,22 @@ namespace Compiler
         {
             if (string.IsNullOrEmpty(path)) return name;
             return path + "/" + name;
+        }
+    }
+
+    public class Projects : List<Project>
+    {
+        public string BaseDir { get; private set; }
+
+        public Projects(string baseDir)
+        {
+            BaseDir = baseDir;
+        }
+
+        public new void Add(Project proj)
+        {
+            proj.BaseDir = BaseDir;
+            base.Add(proj);
         }
     }
 
@@ -200,6 +232,8 @@ namespace Compiler
         {
             if (Exception != null)
                 Console.WriteLine(Exception.Message);
+            else if (string.IsNullOrEmpty(Output))
+                Console.WriteLine("更新は不要です。");
             else
             {
                 Console.WriteLine("出力しました: {0}", Output);

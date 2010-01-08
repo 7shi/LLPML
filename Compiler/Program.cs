@@ -19,15 +19,14 @@ namespace Compiler
             {
                 var start = DateTime.Now;
                 Console.WriteLine("Compiler ver." + Root.VERSION);
-                var dir = GetCurrentDirectory();
                 int success = 0;
-                var projs = Project.GetProjects(dir);
+                var projs = Project.GetProjects(GetCurrentDirectory());
                 var verbose = projs.Length <= 10;
                 foreach (var proj in projs)
                 {
                     Console.WriteLine();
                     proj.WriteLine();
-                    var result = proj.Compile(dir, verbose);
+                    var result = proj.Compile(verbose);
                     result.WriteLine();
                     if (result.Exception == null)
                     {
