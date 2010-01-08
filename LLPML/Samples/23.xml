@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.8.20070924">
+<llpml version="0.8.20070926">
 
 <!-- inheritance -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <struct-define name="Test1">
 	<member name="a" />
@@ -66,10 +66,10 @@
 	</method>
 </struct-define>
 
+<struct-declare name="test1" type="Test1">
+	<int>1</int>
+</struct-declare>
 <block>
-	<struct-declare name="test1" type="Test1">
-		<int>1</int>
-	</struct-declare>
 	<struct-declare name="test2" type="Test2">
 		<int>2</int>
 		<int>3</int>
@@ -77,18 +77,31 @@
 			<int>4</int>
 		</struct-declare>
 	</struct-declare>
-	<var-declare name="test2a" type="Test1">
-		<ptr name="test2" />
-	</var-declare>
+	<block>
+		<var-declare name="dummy" />
+		<var-declare name="test2a" type="Test1">
+			<ptr name="test2" />
+		</var-declare>
+		<invoke name="Show">
+			<var name="test2a" />
+		</invoke>
+		<invoke name="Show">
+			<cast type="Test1">
+				<ptr name="test2" />
+			</cast>
+		</invoke>
+		<invoke name="Show">
+			<cast type="Test2">
+				<var name="test2a" />
+			</cast>
+		</invoke>
+	</block>
 	<invoke name="Show"><ptr name="test1" /></invoke>
 	<invoke name="Show"><ptr name="test2" /></invoke>
-	<invoke name="Show"><var name="test2a" /></invoke>
 	<call name="vprintfln">
 		<string>test2: a, b, c = %d, %d, %d</string>
 		<ptr name="test2" />
 	</call>
 </block>
-
-<call name="finish" />
 
 </llpml>

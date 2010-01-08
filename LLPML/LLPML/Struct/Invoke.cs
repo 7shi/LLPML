@@ -37,8 +37,7 @@ namespace Girl.LLPML.Struct
                 }
                 else if (v is Pointer)
                 {
-                    Struct.Declare st = (v as Pointer).Reference as Struct.Declare;
-                    if (st != null) type = st.Type;
+                    type = (v as Pointer).Type;
                 }
                 if (type == null)
                     throw Abort("struct instance or pointer required: " + name);

@@ -22,7 +22,7 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name)
                 : base(parent, name)
             {
-                parent.AddPointer(this);
+                AddToParent();
             }
 
             public Declare(BlockBase parent, string name, int length)
@@ -70,7 +70,13 @@ namespace Girl.LLPML
                         throw Abort(xr, "unknown type: " + type);
                 }
 
-                parent.AddPointer(this);
+                AddToParent();
+            }
+
+            protected virtual void AddToParent()
+            {
+                if (!parent.AddPointer(this))
+                    throw Abort("multiple definitions: " + name);
             }
         }
     }

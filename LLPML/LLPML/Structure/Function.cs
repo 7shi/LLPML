@@ -49,7 +49,8 @@ namespace Girl.LLPML
             type = CallType.CDecl;
             if (xr["type"] == "std") type = CallType.Std;
 
-            parent.AddFunction(this);
+            if (!parent.AddFunction(this))
+                throw Abort(xr, "multiple definitions: " + Name);
 
             base.Read(xr);
         }

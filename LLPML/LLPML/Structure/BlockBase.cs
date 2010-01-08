@@ -39,11 +39,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetInt(name);
         }
 
-        public void AddInt(string name, int value)
+        public bool AddInt(string name, int value)
         {
-            if (ints.ContainsKey(name))
-                throw Abort("multiple definitions: " + name);
+            if (ints.ContainsKey(name)) return false;
             ints.Add(name, value);
+            return true;
         }
 
         public int ParseInt(XmlTextReader xr)
@@ -84,8 +84,10 @@ namespace Girl.LLPML
         public void ReadIntDefine(XmlTextReader xr)
         {
             string name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
-            AddInt(name, ParseInt(xr));
+            if (name == null)
+                throw Abort(xr, "name required");
+            if (!AddInt(name, ParseInt(xr)))
+                throw Abort(xr, "multiple definitions: " + name);
         }
 
         #endregion
@@ -101,11 +103,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetString(name);
         }
 
-        public void AddString(string name, string value)
+        public bool AddString(string name, string value)
         {
-            if (strings.ContainsKey(name))
-                throw Abort("multiple definitions: " + name);
+            if (strings.ContainsKey(name)) return false;
             strings.Add(name, value);
+            return true;
         }
 
         private string ParseString(XmlTextReader xr)
@@ -145,8 +147,10 @@ namespace Girl.LLPML
         public void ReadStringDefine(XmlTextReader xr)
         {
             string name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
-            AddString(name, ParseString(xr));
+            if (name == null)
+                throw Abort(xr, "name required");
+            if (!AddString(name, ParseString(xr)))
+                throw Abort(xr, "multiple definitions: " + name);
         }
 
         public int ReadStringLength(XmlTextReader xr)
@@ -172,11 +176,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetVar(name);
         }
 
-        public void AddVar(Var.Declare src)
+        public bool AddVar(Var.Declare src)
         {
-            if (vars.ContainsKey(src.Name))
-                throw Abort("multiple definitions: " + src.Name);
+            if (vars.ContainsKey(src.Name)) return false;
             vars.Add(src.Name, src);
+            return true;
         }
 
         #endregion
@@ -192,11 +196,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetPointer(name);
         }
 
-        public void AddPointer(Pointer.Declare src)
+        public bool AddPointer(Pointer.Declare src)
         {
-            if (ptrs.ContainsKey(src.Name))
-                throw Abort("multiple definitions: " + src.Name);
+            if (ptrs.ContainsKey(src.Name)) return false;
             ptrs.Add(src.Name, src);
+            return true;
         }
 
         public Pointer.Declare[] GetPointers()
@@ -219,11 +223,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetFunction(name);
         }
 
-        public void AddFunction(Function f)
+        public bool AddFunction(Function f)
         {
-            if (functions.ContainsKey(f.Name))
-                throw Abort("multiple definitions: " + f.Name);
+            if (functions.ContainsKey(f.Name)) return false;
             functions.Add(f.Name, f);
+            return true;
         }
 
         #endregion
@@ -239,11 +243,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetStruct(name);
         }
 
-        public void AddStruct(Struct.Define s)
+        public bool AddStruct(Struct.Define s)
         {
-            if (structs.ContainsKey(s.Name))
-                throw Abort("multiple definitions: " + s.Name);
+            if (structs.ContainsKey(s.Name)) return false;
             structs.Add(s.Name, s);
+            return true;
         }
 
         #endregion

@@ -72,19 +72,21 @@ namespace Girl.LLPML
             return Abort(lineNumber, linePosition, msg);
         }
 
-        public static Exception Abort(int lineNumber, int linePosition, string msg)
+        public Exception Abort(int lineNumber, int linePosition, string msg)
         {
-            if (lineNumber < 1) return new Exception(msg);
-            return new Exception(string.Format(
-                "[{0}:{1}] {2}", lineNumber, linePosition, msg));
+            string s1 = "", s2 = "", src = root.Source;
+            if (src != null) s1 = src + ": ";
+            if (lineNumber > 0)
+                s2 = string.Format("[{0}:{1}] ", lineNumber, linePosition);
+            return new Exception(s1 + s2 + msg);
         }
 
-        public static Exception Abort(XmlTextReader xr, string msg)
+        public Exception Abort(XmlTextReader xr, string msg)
         {
             return Abort(xr.LineNumber, xr.LinePosition, msg);
         }
 
-        public static Exception Abort(XmlTextReader xr)
+        public Exception Abort(XmlTextReader xr)
         {
             return Abort(xr, "invalid element: " + xr.Name);
         }

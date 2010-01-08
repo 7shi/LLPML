@@ -40,8 +40,7 @@ namespace Girl.LLPML
             RequiresName(xr);
 
             type = xr["type"];
-            parent.AddVar(this);
-            parent.AddPointer(this);
+            AddToParent();
         }
     }
 }

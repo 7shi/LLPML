@@ -56,7 +56,9 @@ namespace Girl.LLPML.Struct
                         throw Abort(xr, "element required");
                 }
             });
-            parent.AddStruct(this);
+
+            if (!parent.AddStruct(this))
+                throw Abort("multiple definitions: " + name);
         }
 
         public int GetSize()

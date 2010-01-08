@@ -21,7 +21,6 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name)
                 : base(parent, name)
             {
-                parent.AddVar(this);
             }
 
             public Declare(BlockBase parent, string name, IIntValue value)
@@ -61,8 +60,14 @@ namespace Girl.LLPML
                     }
                 });
 
-                parent.AddVar(this);
-                parent.AddPointer(this);
+                AddToParent();
+            }
+
+            protected override void AddToParent()
+            {
+                if (!parent.AddVar(this))
+                    throw Abort("multiple definitions: " + name);
+                base.AddToParent();
             }
 
             public override void AddCodes(List<OpCode> codes, Module m)

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.8.20070926">
 
 <extern name="GetModuleHandle" alias="GetModuleHandleW" module="kernel32.dll" type="std" />
 <extern name="Sleep" module="kernel32.dll" type="std" />
@@ -78,7 +78,7 @@
 		<cond>
 			<call name="GetMessage">
 				<ptr name="msg" />
-				<int>0</int>
+				<null />
 				<int>0</int>
 				<int>0</int>
 			</call>

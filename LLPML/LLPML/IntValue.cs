@@ -34,6 +34,8 @@ namespace Girl.LLPML
                             return new StringValue(parent.ReadString(xr));
                         case "string-length":
                             return new IntValue(parent.ReadStringLength(xr));
+                        case "null":
+                            return new Null(parent, xr);
                         case "var":
                             return new Var(parent, xr);
                         case "ptr":
@@ -42,6 +44,8 @@ namespace Girl.LLPML
                             return new Struct.This(parent, xr);
                         case "base":
                             return new Struct.Base(parent, xr);
+                        case "cast":
+                            return new Struct.Cast(parent, xr);
                         case "call":
                             return new Call(parent, xr);
                         case "invoke":
@@ -145,7 +149,7 @@ namespace Girl.LLPML
                         case "unsigned-less-equal":
                             return new UnsignedLessEqual(parent, xr);
                         default:
-                            throw NodeBase.Abort(xr);
+                            throw parent.Abort(xr);
                     }
 
                 case XmlNodeType.Text:
@@ -158,7 +162,7 @@ namespace Girl.LLPML
                 case XmlNodeType.Whitespace:
                     return null;
             }
-            throw NodeBase.Abort(xr, "value required");
+            throw parent.Abort(xr, "value required");
         }
 
         public static int Parse(string value)

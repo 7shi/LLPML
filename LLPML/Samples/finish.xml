@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.7.20070917">
+
+<include src="stdio.xml" />
+
+<struct-define name="_Finish">
+	<!-- destructor -->
+	<method name="~this">
+		<call name="finish" />
+	</method>
+</struct-define>
+
+<struct-declare name="_finish" type="_Finish" />
+
+</llpml>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.6.20070904">
+<llpml version="0.8.20070926">
 
 <!-- stdio functions -->
 
@@ -33,7 +33,7 @@
 			<var name="text" />
 		</call>
 		<ptr name="dummy" />
-		<int>0</int>
+		<null />
 	</call>
 </function>
 
@@ -95,7 +95,7 @@
 		<ptr name="buffer" />
 		<int>2</int>
 		<ptr name="dummy" />
-		<int>0</int>
+		<null />
 	</call>
 </function>
 

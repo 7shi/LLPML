@@ -70,7 +70,7 @@ namespace Girl.LLPML.Struct
                 }
             });
 
-            if (isRoot) parent.AddPointer(this);
+            if (isRoot) AddToParent();
         }
 
         public Struct.Define GetStruct()

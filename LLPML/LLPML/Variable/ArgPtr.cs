@@ -17,7 +17,7 @@ namespace Girl.LLPML
             NoChild(xr);
             RequiresName(xr);
 
-            parent.AddPointer(this);
+            AddToParent();
         }
     }
 }

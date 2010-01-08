@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML.Struct
 {
-    public partial class Method : Function
+    public class Method : Function
     {
         private Struct.Define st;
         public Struct.Define GetStruct() { return st; }
@@ -22,6 +22,7 @@ namespace Girl.LLPML.Struct
         {
             st = parent;
             this.parent = parent.Parent;
+            root = parent.Root;
             SetLine(xr);
             Read(xr);
         }

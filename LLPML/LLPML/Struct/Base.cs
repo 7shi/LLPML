@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Girl.LLPML.Struct
 {
-    public partial class Base : Var
+    public class Base : Var
     {
         private Struct.Define target;
 

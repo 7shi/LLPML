@@ -41,7 +41,7 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue v = IntValue.Read(parent, xr, false);
+                    IIntValue v = IntValue.Read(parent, xr, true);
                     if (v != null)
                     {
                         if (dest == null)

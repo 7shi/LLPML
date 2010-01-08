@@ -11,22 +11,34 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.8.20070924";
+        public string Version = "0.8.20070926";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
         public delegate TextReader StreamHandler(string name);
         public StreamHandler StreamDelegate;
 
+        private List<string> included = new List<string>();
+
+        private Stack<string> sources = new Stack<string>();
+        public string Source
+        {
+            get
+            {
+                if (sources.Count == 0) return null;
+                return sources.Peek();
+            }
+        }
+
         public Root()
         {
             root = this;
         }
 
-        public Root(XmlTextReader xr)
+        public Root(string name, XmlTextReader xr)
         {
             SetLine(xr);
-            Read(xr);
+            Read(name, xr);
         }
 
         protected override void ReadBlock(XmlTextReader xr)
@@ -39,24 +51,37 @@ namespace Girl.LLPML
                         {
                             string src = xr["src"];
                             if (src == null) throw Abort(xr, "<include> requires \"src\"");
-                            TextReader tr = null;
-                            if (StreamDelegate != null) tr = StreamDelegate(src);
-                            if (tr == null) tr = new StreamReader(src);
-                            XmlTextReader xr2 = new XmlTextReader(tr);
-                            while (xr2.Read())
+                            if (!included.Contains(src))
                             {
-                                if (xr2.Name == "llpml" && xr2.NodeType == XmlNodeType.Element)
-                                {
-                                    Read(xr2);
-                                }
+                                included.Add(src);
+                                sources.Push(src);
+                                TextReader tr = null;
+                                if (StreamDelegate != null) tr = StreamDelegate(src);
+                                if (tr == null) tr = new StreamReader(src);
+                                XmlTextReader xr2 = new XmlTextReader(tr);
+                                Read(src, xr2);
+                                xr2.Close();
+                                tr.Close();
+                                sources.Pop();
                             }
-                            xr2.Close();
-                            tr.Close();
                             return;
                         }
                 }
             }
             base.ReadBlock(xr);
+        }
+
+        public void Read(string name, XmlTextReader xr)
+        {
+            sources.Push(name);
+            while (xr.Read())
+            {
+                if (xr.Name == "llpml" && xr.NodeType == XmlNodeType.Element)
+                {
+                    Read(xr);
+                }
+            }
+            sources.Pop();
         }
 
         public override void Read(XmlTextReader xr)

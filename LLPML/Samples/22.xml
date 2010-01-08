@@ -3,16 +3,7 @@
 
 <!-- constructor and destructor -->
 
-<include src="stdio.xml" />
-
-<struct-define name="Global">
-	<!-- destructor -->
-	<method name="~this">
-		<call name="finish" />
-	</method>
-</struct-define>
-
-<struct-declare name="global" type="Global" />
+<include src="finish.xml" />
 
 <struct-define name="Name">
 	<member name="name" />

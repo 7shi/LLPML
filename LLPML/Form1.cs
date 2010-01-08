@@ -59,6 +59,7 @@ namespace Test
 #endif
             InitializeComponent();
             AddItem("stdio.xml");
+            AddItem("finish.xml");
             AddItem("win32.xml");
             for (int i = 1; ; i++)
             {
@@ -95,13 +96,7 @@ namespace Test
                 {
                     root.Output = Path.GetFileNameWithoutExtension(selectedData.Output) + ".exe";
                 }
-                while (xr.Read())
-                {
-                    if (xr.Name == "llpml" && xr.NodeType == XmlNodeType.Element)
-                    {
-                        root.Read(xr);
-                    }
-                }
+                root.Read(selectedData.Name, xr);
                 xr.Close();
                 sr.Close();
 

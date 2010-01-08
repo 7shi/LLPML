@@ -42,7 +42,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="LLPML\Extern.cs" />
+    <Compile Include="LLPML\Structure\Extern.cs" />
     <Compile Include="LLPML\Flow\Cond.cs" />
     <Compile Include="LLPML\Flow\While.cs" />
     <Compile Include="LLPML\Flow\For.Init.cs" />
@@ -51,7 +51,7 @@
     <Compile Include="LLPML\Flow\Switch.cs" />
     <Compile Include="LLPML\Flow\Continue.cs" />
     <Compile Include="LLPML\Flow\BreakBase.cs" />
-    <Compile Include="LLPML\Function.cs" />
+    <Compile Include="LLPML\Structure\Function.cs" />
     <Compile Include="LLPML\NodeBase.cs" />
     <Compile Include="LLPML\Operators\Comparers\UnsignedGreaterEqual.cs" />
     <Compile Include="LLPML\Operators\Comparers\UnsignedLess.cs" />
@@ -65,6 +65,8 @@
     <Compile Include="LLPML\Struct\Method.cs" />
     <Compile Include="LLPML\Struct\This.cs" />
     <Compile Include="LLPML\Struct\Base.cs" />
+    <Compile Include="LLPML\Struct\Cast.cs" />
+    <Compile Include="LLPML\Value\Null.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Sub.cs" />
     <Compile Include="LLPML\Operators\Add.cs" />
     <Compile Include="LLPML\Variable\Operators\Dec.cs" />
@@ -89,9 +91,9 @@
     <Compile Include="LLPML\Operators\Mod.cs" />
     <Compile Include="LLPML\Operators\UnsignedMod.cs" />
     <Compile Include="LLPML\Root.cs" />
-    <Compile Include="LLPML\Call.cs" />
-    <Compile Include="LLPML\Block.cs" />
-    <Compile Include="LLPML\IIntValue.cs" />
+    <Compile Include="LLPML\Structure\Call.cs" />
+    <Compile Include="LLPML\Structure\Block.cs" />
+    <Compile Include="LLPML\Value\IIntValue.cs" />
     <Compile Include="LLPML\Struct\Size.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.And.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Or.cs" />
@@ -109,7 +111,7 @@
     <Compile Include="LLPML\Variable\VarBase.cs" />
     <Compile Include="LLPML\Flow\Return.cs" />
     <Compile Include="LLPML\Variable\Pointer.cs" />
-    <Compile Include="LLPML\Function.Ptr.cs" />
+    <Compile Include="LLPML\Structure\Function.Ptr.cs" />
     <Compile Include="LLPML\IntValue.cs" />
     <Compile Include="LLPML\Variable\Var.Declare.cs" />
     <Compile Include="LLPML\Struct\Member.cs" />
@@ -120,7 +122,7 @@
     <Compile Include="LLPML\Variable\DeclareBase.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Add.cs" />
     <Compile Include="LLPML\Operators\Operator.cs" />
-    <Compile Include="LLPML\StringValue.cs" />
+    <Compile Include="LLPML\Value\StringValue.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Operator.cs" />
     <Compile Include="LLPML\Variable\Operators\PostDec.cs" />
     <Compile Include="LLPML\Variable\Operators\PostInc.cs" />
@@ -129,8 +131,8 @@
     <Compile Include="LLPML\Variable\Operators\Var.Div.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.UnsignedDiv.cs" />
     <Compile Include="LLPML\Delegates.cs" />
-    <Compile Include="LLPML\BlockBase.cs" />
-    <Compile Include="LLPML\BlockName.cs" />
+    <Compile Include="LLPML\Structure\BlockBase.cs" />
+    <Compile Include="LLPML\Structure\BlockName.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -240,6 +242,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\23.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\finish.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\24.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ToDo.txt" />

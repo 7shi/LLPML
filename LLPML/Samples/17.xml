@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829" subsystem="WINDOWS_GUI">
+<llpml version="0.8.20070926" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
@@ -14,12 +14,12 @@
 	<!-- cbClsExtra    --> <int>0</int>
 	<!-- cbWndExtra    --> <int>0</int>
 	<!-- hInstance     --> <var name="hInstance" />
-	<!-- hIcon         --> <int>0</int>
+	<!-- hIcon         --> <null />
 	<!-- hCursor       --> <call name="LoadCursor"><int>0</int><int name="IDC_ARROW" /></call>
 	<!-- hbrBackground --> <add><int name="COLOR_WINDOW" /><int>1</int></add>
-	<!-- lpszMenuName  --> <int>0</int>
+	<!-- lpszMenuName  --> <null />
 	<!-- lpszClassName --> <string name="className" />
-	<!-- hIconSm       --> <int>0</int>
+	<!-- hIconSm       --> <null />
 </struct-declare>
 
 <call name="RegisterClassEx">
@@ -36,10 +36,10 @@
 		<!-- Y            --> <int>0</int>
 		<!-- nWidth       --> <int>256</int>
 		<!-- nHeight      --> <int>256</int>
-		<!-- hWndParent   --> <int>0</int>
-		<!-- hMenu        --> <int>0</int>
+		<!-- hWndParent   --> <null />
+		<!-- hMenu        --> <null />
 		<!-- hInstance    --> <var name="hInstance" />
-		<!-- lpParam      --> <int>0</int>
+		<!-- lpParam      --> <null />
 	</call>
 </var-declare>
 

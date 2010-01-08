@@ -11,7 +11,6 @@ namespace Girl.LLPML
     public partial class Pointer : VarBase, IIntValue
     {
         private Declare reference;
-        public Declare Reference { get { return reference; } }
 
         private int length = 0;
         public int Length { get { return length; } }
@@ -41,7 +40,16 @@ namespace Girl.LLPML
                 throw Abort(xr, "undefined pointer: " + name);
         }
 
-        public void GetValue(List<OpCode> codes, Module m)
+        public virtual string Type
+        {
+            get
+            {
+                Struct.Declare st = reference as Struct.Declare;
+                return st == null ? null : st.Type;
+            }
+        }
+
+        public virtual void GetValue(List<OpCode> codes, Module m)
         {
             Addr32 ad = reference.Address;
             if (parent.Level == reference.Parent.Level || ad.IsAddress)

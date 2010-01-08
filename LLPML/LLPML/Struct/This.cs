@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Girl.LLPML.Struct
 {
-    public partial class This : Var
+    public class This : Var
     {
         public This(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
