@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.Binary;
 
 namespace Girl.LLPML
 {
     public class Types
     {
+        public static TypeBase GetType(string type)
+        {
+            return GetType(OpModule.Root, type);
+        }
+
         public static TypeBase GetType(BlockBase parent, string type)
         {
             if (type == null)

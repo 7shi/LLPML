@@ -12,6 +12,18 @@ namespace Girl.LLPML
     {
         public Module Module { get; private set; }
 
+        private static Root root;
+        public static Root Root
+        {
+            get { return root; }
+            set
+            {
+                TypeString.Init();
+                TypeType.Init();
+                root = value;
+            }
+        }
+
         public OpModule(Module m)
         {
             Module = m;
@@ -23,15 +35,93 @@ namespace Girl.LLPML
         {
             if (strings.ContainsKey(s)) return strings[s];
 
-            var db = new Girl.Binary.Block();
-            db.Add(Module.DefaultEncoding.GetBytes(s + "\0"));
-            return strings[s] = AddData("string_constant", s, 0u, 2u, (uint)s.Length, db);
+            var block = new Girl.Binary.Block();
+            block.Add(Module.DefaultEncoding.GetBytes(s + "\0"));
+            var type = new Val32(0, true);
+            var ret = strings[s] = AddData("string_constant", s, type, 2, s.Length, block);
+            type.Reference = GetTypeObject(Root.GetStruct("string"));
+            return ret;
         }
 
-        public Val32 AddData(string category, string name, Val32 dtor, Val32 size, Val32 len, Girl.Binary.Block data)
+        private Dictionary<string, Val32> types = new Dictionary<string, Val32>();
+
+        public Val32 GetTypeObject(Struct.Define st)
+        {
+            if (st == null) return 0;
+
+            var name = st.FullName;
+            if (types.ContainsKey(name)) return types[name];
+
+            return GetTypeObject(
+                name, st.GetFunction(Struct.Define.Destructor),
+                st.GetSize(), GetTypeObject(st.GetBaseStruct()));
+        }
+
+        public Val32 GetTypeObject(string name, Function dtor, int size, Val32 baseType)
+        {
+            if (types.ContainsKey(name)) return types[name];
+
+            var block = new Girl.Binary.Block();
+            var namev = new Val32(0, true);
+            block.Add(namev);
+            if (dtor == null || name == "string" || name == "Type")
+                block.Add(0);
+            else
+                block.Add(GetAddress(dtor));
+            block.Add(size);
+            block.Add(baseType);
+            var type = new Val32(0, true);
+            var tsz = (int)block.Length;
+            var ret = types[name] = AddData("type_object", name, type, tsz, -1, block);
+            namev.Reference = GetString(name);
+            type.Reference = GetTypeObject(Root.GetStruct("Type"));
+            return ret;
+        }
+
+        public Val32 GetTypeObject(TypeBase type)
+        {
+            var tr = type as TypeReference;
+            if (tr != null)
+            {
+                var tt = type.Type;
+                if (!tr.IsArray) return GetTypeObject(tt);
+
+                var tts = tt as TypeStruct;
+                Function dtor = null;
+                string name = tt.Name;
+                Val32 targetType = 0;
+                if (tt is TypeReference)
+                {
+                    dtor = OpModule.Root.GetFunction(Struct.New.DereferencePtr);
+                    var at = tt.Type as TypeStruct;
+                    if (at != null)
+                    {
+                        name = at.Name;
+                        targetType = GetTypeObject(at.GetStruct());
+                    }
+                }
+                else if (tts != null)
+                {
+                    name = tts.Name;
+                    targetType = GetTypeObject(tts.GetStruct());
+                }
+                return GetTypeObject(name + "[]", dtor, tt.Size, targetType);
+            }
+
+            var ts = type as TypeStruct;
+            if (ts != null)
+            {
+                var st = ts.GetStruct();
+                return GetTypeObject(st);
+            }
+
+            return GetTypeObject(type.Name, null, type.Size, 0);
+        }
+
+        public Val32 AddData(string category, string name, Val32 type, int size, int len, Girl.Binary.Block data)
         {
             var db = new DataBlock();
-            db.Block.Add(dtor);
+            db.Block.Add(type);
             db.Block.Add(1);
             db.Block.Add(size);
             db.Block.Add(len);
@@ -43,6 +133,7 @@ namespace Girl.LLPML
 
         public Val32 GetAddress(Function f)
         {
+            if (f == null) return 0;
             return f.GetAddress(Module);
         }
 

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.24.20080824">
 
 <title>クロージャ</title>
 
@@ -29,8 +29,8 @@ printfln("prev() = %d", prev()); // 変化なし
 println();
 
 var f = \a => \b => a + b;
-printfln("typeof f = %s", typeof f);
-printfln("typeof f(2) = %s", typeof f(2));
+printfln("typeof f = %s", typeof(f).Name);
+printfln("typeof f(2) = %s", typeof(f(2)).Name);
 printfln("f(2)(3) = %d", f(2)(3));
 ?>
 

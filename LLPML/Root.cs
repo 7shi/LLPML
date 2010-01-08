@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.23.20080824";
+        public const string LLPMLVersion = "0.24.20080824";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -77,6 +77,7 @@ namespace Girl.LLPML
 
         public void Read(string name, XmlTextReader xr)
         {
+            included.Add(name.ToLower());
             sources.Push(name);
             while (xr.Read())
             {
@@ -140,11 +141,11 @@ namespace Girl.LLPML
         public override void AddCodes(OpModule codes)
         {
             IsCompiling = true;
-            TypeString.Root = this;
+            OpModule.Root = this;
             MakeUpStatics(codes.Module);
             MakeUp();
             base.AddCodes(codes);
-            TypeString.Root = null;
+            OpModule.Root = null;
             IsCompiling = false;
         }
 

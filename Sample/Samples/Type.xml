@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.24.20080824">
+
+<include src="string.xml" />
+
+<?llp
+class Type
+{
+  var Name : string;
+  var Destructor;
+  int Size;
+  var Base : Type;
+}
+?>
+
+</llpml>

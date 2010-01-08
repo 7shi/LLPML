@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.23.20080824">
+<llpml version="0.24.20080824">
 
 <title>文字列</title>
 
 <include src="finish.xml" />
 
 <?llp
-printfln("typeof \"abc\": %s", typeof "abc");
+printfln("typeof \"abc\": %s", typeof("abc").Name);
 printfln("\"abc\".Length: %d", "abc".Length);
 println();
 
 var s1 = "abc";
-printfln("typeof s1: %s", typeof s1);
+printfln("typeof s1: %s", typeof(s1).Name);
 printfln("s1.Length: %d", s1.Length);
 printfln("s1[1]: '%c'", s1[1]);
-printfln("typeof s1[1]: %s", typeof s1[1]);
+printfln("typeof s1[1]: %s", typeof(s1[1]).Name);
 println();
 
 var s2 : string = "def";
-printfln("typeof s2: %s", typeof s2);
+printfln("typeof s2: %s", typeof(s2).Name);
 printfln("s2.Length: %d", s2.Length);
 println();
 
@@ -53,7 +53,7 @@ var ss = new string[3];
 ss[0] = "abc";
 ss[1] = "def";
 ss[2] = "ghi";
-printfln("typeof ss = %s", typeof ss);
+printfln("typeof ss = %s", typeof(ss).Name);
 printfln("ss.Length = %d", ss.Length);
 for (int i = 0; i < ss.Length; i++)
   printfln("ss[%d] = %s", i, ss[i]);
@@ -65,8 +65,8 @@ function test()
   return "test";
 }
 printfln("test(): %s", test());
-printfln("typeof test(): %s", typeof test());
-printfln("typeof test: %s", typeof test);
+printfln("typeof test(): %s", typeof(test()).Name);
+printfln("typeof test: %s", typeof(test).Name);
 println();
 
 var f = string.Format("s1 = \"%s\"", s1);

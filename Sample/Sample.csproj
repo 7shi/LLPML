@@ -303,6 +303,9 @@
     <Content Include="Samples\c51.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Samples\Type.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>

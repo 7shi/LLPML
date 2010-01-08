@@ -77,6 +77,7 @@
     <Compile Include="Types\TypeArray.cs" />
     <Compile Include="Types\TypeFunction.cs" />
     <Compile Include="Types\TypeString.cs" />
+    <Compile Include="Types\TypeType.cs" />
     <Compile Include="Value\SizeOf.cs" />
     <Compile Include="Struct\This.cs" />
     <Compile Include="Structure\Extern.cs" />

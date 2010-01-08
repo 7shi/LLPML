@@ -51,23 +51,14 @@ namespace Girl.LLPML
         }
 
         // recursive type
-        private static Root root;
-        public static Root Root
-        {
-            get { return root; }
-            set
-            {
-                type = null;
-                root = value;
-            }
-        }
         private static TypeBase type;
+        public static void Init() { type = null; }
         public override TypeBase Type
         {
             get
             {
                 if (type != null) return type;
-                return type = Types.GetType(Root, "string");
+                return type = Types.GetType("string");
             }
         }
 
@@ -86,8 +77,6 @@ namespace Girl.LLPML
         private static TypeConstString instance = new TypeConstString();
         public static new TypeConstString Instance { get { return instance; } }
         private TypeConstString() : base() { }
-
-        public override bool UseGC { get { return false; } }
     }
 
     public class TypeConstChar : TypeChar

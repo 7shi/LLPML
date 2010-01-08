@@ -36,7 +36,7 @@ namespace Girl.LLPML
                     var g = GetGetter();
                     if (g != null) return g.ReturnType;
 
-                    throw Abort("can not find: %s", name);
+                    throw Abort("can not find: {0}", name);
                 }
             }
 

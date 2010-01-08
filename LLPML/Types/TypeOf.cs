@@ -34,11 +34,35 @@ namespace Girl.LLPML
                 throw Abort(xr, "target required");
         }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
+        public TypeBase Type { get { return TypeType.Instance; } }
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, codes.GetString(Target.Type.Name));
+            TypeBase tt = null;
+            var fp = Target as Function.Ptr;
+            if (fp != null && Parent.GetFunction(fp.Name) == null)
+                tt = Types.GetType(Parent, (Target as Function.Ptr).Name);
+            else
+                tt = Target.Type;
+            if (Target is Index)
+                codes.Add(I386.Mov(Reg32.EAX, codes.GetString("index")));
+            var tr = tt as TypeReference;
+            var tts = tt.Type as TypeStruct;
+            if (tr != null && (tr.IsArray || (tts != null && tts.IsClass)))
+            {
+                Target.AddCodes(codes, "mov", null);
+                var label = new OpCode();
+                codes.AddRange(new[]
+                {
+                    I386.Test(Reg32.EAX, Reg32.EAX),
+                    I386.Jcc(Cc.Z, label.Address),
+                    I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -16)),
+                    label,
+                });
+                codes.AddCodes(op, dest);
+            }
+            else
+                codes.AddCodes(op, dest, codes.GetTypeObject(tt));
         }
     }
 }

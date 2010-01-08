@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.22.20080818">
+<llpml version="0.24.20080824">
 
 <title>クラスと参照カウント</title>
 
@@ -35,7 +35,9 @@ class Test2 : Test1
 
 printfln("* new Test1");
 var t = new Test1;
-printfln("typeof t = %s", typeof t);
+printfln("typeof t = %s", typeof(t).Name);
+t = new Test2;
+printfln("typeof t = %s", typeof(t).Name);
 printfln("__get_refcount(%p) = %d", t, __get_refcount(t));
 new Test1;
 t = null;
@@ -43,7 +45,7 @@ println();
 
 printfln("* new Test2");
 t = new Test2;
-printfln("typeof t = %s", typeof t);
+printfln("typeof t = %s", typeof(t).Name);
 new Test2;
 t = null;
 println();
@@ -51,11 +53,15 @@ println();
 printfln("* new Test1[3]");
 var tt : Test1[] = new Test1[3];
 printfln("tt.Length = %d", tt.Length);
-printfln("typeof tt = %s", typeof tt);
-printfln("typeof tt[0] = %s", typeof tt[0]);
+printfln("typeof tt = %s", typeof(tt).Name);
 tt[1] = new Test2;
 for (int i = 0; i < tt.Length; i++)
-  printfln("tt[%d] = %p", i, tt[i]);
+{
+  var typeName = "(NULL)";
+  var type = typeof(tt[i]);
+  if (type != null) typeName = type.Name;
+  printfln("tt[%d] = %p : %s", i, tt[i], typeName);
+}
 printfln("__get_refcount(%p) = %d", tt, __get_refcount(tt));
 function len(a : Test1[]) { return a.Length; }
 printfln("len(tt) = %d", len(tt));

@@ -69,32 +69,23 @@ namespace Girl.LLPML.Struct
             var f = Parent.GetFunction(Function);
             if (f == null)
                 throw Abort("new: undefined function: {0}", Function);
-            Val32 izer = 0, ctor = 0, dtor = 0;
-            if (tts != null)
+            Val32 type = codes.GetTypeObject(Type), izer = 0, ctor = 0;
+            if (!IsArray && tts != null)
             {
                 var st = tts.GetStruct();
                 izer = codes.GetAddress(st.GetFunction(Define.Initializer));
                 ctor = codes.GetAddress(st.GetFunction(Define.Constructor));
-                dtor = codes.GetAddress(st.GetFunction(Define.Destructor));
-            }
-            else if (IsArray)
-            {
-                var t = Type.Type;
-                if (t is TypeReference)
-                    dtor = codes.GetAddress(Parent.GetFunction(DereferencePtr));
-                else if (t is TypeStruct)
-                    dtor = codes.GetAddress((t as TypeStruct).GetStruct().GetFunction(Define.Destructor));
             }
             codes.AddRange(new[]
             {
-                I386.Push(dtor),
                 I386.Push(ctor),
                 I386.Push(izer),
-                I386.Push((uint)tt.Size),
             });
             Length.AddCodes(codes, "push", null);
             codes.AddRange(new[]
             {
+                I386.Push((uint)tt.Size),
+                I386.Push(type),
                 I386.Call(f.First),
                 I386.Add(Reg32.ESP, 16),
             });

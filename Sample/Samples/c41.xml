@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.21.20080817">
+<llpml version="0.24.20080824">
 
 <title>関数の戻り値の型</title>
 
@@ -41,8 +41,8 @@ var p1 = new_Point1(1, 2);
 var p2 = new_Point2(3, 4);
 
 // p1, p2の型付けを確認（静的バインド）
-printfln("typeof p1 = %s", typeof p1);
-printfln("typeof p2 = %s", typeof p2);
+printfln("typeof p1 = %s", typeof(p1).Name);
+printfln("typeof p2 = %s", typeof(p2).Name);
 
 // メンバ関数の呼び出しには型付けが必要
 p1.Show();

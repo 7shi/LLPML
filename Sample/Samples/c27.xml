@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.21.20080817">
+<llpml version="0.24.20080824">
 
 <title>整数型</title>
 
@@ -27,11 +27,11 @@ function test()
   show("g", addrof g, sizeof g, typeof g);
   println();
   
-  function show(name, p, size, type)
+  function show(name, p, size, type : Type)
   {
     printfln(
       "%s: addrof = %p (+ %02d), sizeof = %d, typeof = %s",
-      name, p, p - addrof(a), size, type);
+      name, p, p - addrof(a), size, type.Name);
   }
   
   // 代入
@@ -115,7 +115,7 @@ int i1 = b1.a;
 i1++;
 printfln(
   "b1.a : %s = %d, b4 : %s = %d, i1 : %s = %d",
-  typeof b1.a, b1.a, typeof b4, b4, typeof i1, i1);
+  typeof(b1.a).Name, b1.a, typeof(b4).Name, b4, typeof(i1).Name, i1);
 b1.Show();
 b1.a++;
 b1.Show();

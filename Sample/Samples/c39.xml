@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.18.20080421">
+<llpml version="0.24.20080824">
 
 <title>カリー化</title>
 
@@ -12,11 +12,11 @@ var mul2 = \a => mul(2, a);
 printfln("mul2(3) = %d", mul2(3));
 
 var curried = \a => \b => a * b;
-printfln("typeof curried = %s", typeof curried);
+printfln("typeof curried = %s", typeof(curried).Name);
 println();
 
 var curried3 = curried(3);
-printfln("typeof curried3 = %s", typeof curried3);
+printfln("typeof curried3 = %s", typeof(curried3).Name);
 printfln("curried3(2) = %d", curried3(2));
 println();
 

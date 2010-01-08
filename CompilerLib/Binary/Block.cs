@@ -30,12 +30,29 @@ namespace Girl.Binary
         public void Add(byte[] v) { data.Add(v); length += (uint)v.Length; }
         public void Add(char[] v) { data.Add(v); length += (uint)v.Length; }
         public void Add(string v) { data.Add(v); length += (uint)v.Length; }
-        public void Add(Block v) { data.Add(v); length += (uint)v.Length; }
         public void Add(Val32 v)
         {
             data.Add(v);
             if (v.IsNeedForRelocation) relocs.Add(length);
             length += sizeof(uint);
+        }
+
+        public void Add(Block block)
+        {
+            foreach (object obj in block.data)
+            {
+                if (obj is byte) Add((byte)obj);
+                else if (obj is ushort) Add((ushort)obj);
+                else if (obj is uint) Add((uint)obj);
+                else if (obj is int) Add((int)obj);
+                else if (obj is long) Add((long)obj);
+                else if (obj is byte[]) Add((byte[])obj);
+                else if (obj is char[]) Add((char[])obj);
+                else if (obj is string) Add((string)obj);
+                else if (obj is Block) Add((Block)obj);
+                else if (obj is Val32) Add((Val32)obj);
+                else throw new Exception("The method or operation is not implemented.");
+            }
         }
 
         public void Write(BinaryWriter bw)

@@ -133,7 +133,7 @@ namespace Girl.LLPML
         // others
         protected static OpCode GetCall(string tag, string name)
         {
-            var root = TypeString.Root;
+            var root = OpModule.Root;
             var f = root.GetFunction(name);
             if (f == null)
                 throw root.Abort("{0}: can not find: {1}", tag, name);

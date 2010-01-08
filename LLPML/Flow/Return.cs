@@ -55,12 +55,9 @@ namespace Girl.LLPML
                 if (!OpModule.NeedsDtor(value))
                 {
                     codes.Add(I386.Mov(dest, Reg32.EAX));
-                    if (value is Var)
-                    {
-                        var tr = value.Type as TypeReference;
-                        if (tr != null && tr.UseGC)
-                            TypeReference.AddReferenceCodes(codes);
-                    }
+                    var tr = value.Type as TypeReference;
+                    if (tr != null && tr.UseGC)
+                        TypeReference.AddReferenceCodes(codes);
                 }
                 else
                 {
