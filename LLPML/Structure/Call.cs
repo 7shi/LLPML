@@ -85,6 +85,8 @@ namespace Girl.LLPML
                 var memf = mem.GetFunction();
                 if (memf == null)
                     memf = Parent.GetFunction(mem.GetName());
+                if (memf == null)
+                    throw Abort("call: undefined function: {0}", mem.FullName);
                 var memt = mem.GetTarget();
                 args = new List<IIntValue>();
                 if (memt != null && !memf.IsStatic)
@@ -177,8 +179,6 @@ namespace Girl.LLPML
 
             var val = this.val;
             if (f != null) val = f;
-            if (val == null && target is Struct.Member)
-                throw Abort("call: undefined: {0}", (target as Struct.Member).TargetType);
             var t = val.Type;
             if (t is TypeFunction)
                 (t as TypeFunction).CheckArgs(this, args_array);

@@ -51,10 +51,11 @@ namespace Girl.LLPML
             }
         }
 
+        protected Function ovrfunc;
         protected Var ovrptr;
         public bool IsOverride
         {
-            get { return ovrptr != null; }
+            get { return ovrfunc != null; }
 
             set
             {
@@ -65,19 +66,10 @@ namespace Girl.LLPML
                 }
                 else if (Parent is Struct.Define)
                 {
-                    var st = (Parent as Struct.Define).GetBaseStruct();
-                    Function vf = null;
-                    if (st != null) vf = st.GetFunction(name);
-                    if (vf == null || (!vf.IsVirtual && !vf.IsOverride))
-                        throw Abort("can not find virtual: {0}", name);
-                    first = vf.first;
-                    var ovrfunc = new Function(Parent, "override_" + name, IsStatic);
+                    ovrfunc = new Function(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
                     if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
-                    ovrptr = new Var(Parent, "virtual_" + name);
-                    var setvp = new Set(Parent, ovrptr, new Variant(ovrfunc));
-                    Parent.AddSentence(setvp);
                 }
                 else
                     throw Abort("can not make override");
@@ -368,6 +360,18 @@ namespace Girl.LLPML
                 || name == Struct.Define.Destructor))
             {
                 throw Abort("{0}: must be __cdecl", FullName);
+            }
+            if (IsOverride)
+            {
+                var st = (Parent as Struct.Define).GetBaseStruct();
+                Function vf = null;
+                if (st != null) vf = st.GetFunction(name);
+                if (vf == null || (!vf.IsVirtual && !vf.IsOverride))
+                    throw Abort("can not find virtual: {0}", name);
+                first = vf.first;
+                ovrptr = new Var(Parent, "virtual_" + name);
+                var setvp = new Set(Parent, ovrptr, new Variant(ovrfunc));
+                Parent.AddSentence(setvp);
             }
         }
     }

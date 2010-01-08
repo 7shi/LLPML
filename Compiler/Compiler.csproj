@@ -318,6 +318,9 @@
     <None Include="Win32\Console\exe-c54.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Win32\Console\exe-c55.adm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="WinCE\exe-wce01.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -95,6 +95,7 @@
     <Compile Include="Types\TypeOf.cs" />
     <Compile Include="Value\ConstInt.cs" />
     <Compile Include="Value\ConstString.cs" />
+    <Compile Include="Value\CharValue.cs" />
     <Compile Include="Variable\Index.cs" />
     <Compile Include="Operators\Operators.2.cs" />
     <Compile Include="Operators\AndAlso.cs" />

@@ -179,7 +179,7 @@ namespace Girl.LLPML.Parsing
             return new StringValue(GetString(t.Substring(1, t.Length - 2))) { SrcInfo = si };
         }
 
-        private IntValue Char()
+        private CharValue Char()
         {
             var si = SrcInfo;
             var t = Read();
@@ -192,7 +192,7 @@ namespace Girl.LLPML.Parsing
             var s = GetString(t.Substring(1, t.Length - 2));
             if (s.Length != 1)
                 throw Abort("1文字ではありません: {0}", t);
-            return new IntValue(s[0]) { SrcInfo = si };
+            return new CharValue(s[0]) { SrcInfo = si };
         }
 
         private Cast Cast()

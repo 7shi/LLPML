@@ -24,6 +24,12 @@ namespace Girl.LLPML
                 var ad = dest.GetAddress(codes);
                 var ad2 = ad;
                 var f = GetFunc();
+                TypeBase.Func schar = null, sint = null;
+                if (dest.Type is TypeString)
+                {
+                    schar = dest.Type.GetFunc(Tag + "-char");
+                    sint = dest.Type.GetFunc(Tag + "-int");
+                }
                 var size = dest.Type.Size;
                 var cleanup = OpModule.NeedsDtor(dest);
                 var indirect = (dest.Reference != null && dest.Reference.Parent != Parent)
@@ -36,7 +42,15 @@ namespace Girl.LLPML
                     ad2 = new Addr32(Reg32.ESP);
                 }
                 foreach (IIntValue v in values)
-                    codes.AddOperatorCodes(f, ad2, v, false);
+                {
+                    var vv = v;
+                    var ff = f;
+                    if (schar != null && vv.Type is TypeChar)
+                        ff = schar;
+                    else if (sint != null && vv.Type is TypeIntBase)
+                        ff = sint;
+                    codes.AddOperatorCodes(ff, ad2, vv, false);
+                }
                 if (indirect)
                 {
                     codes.Add(I386.Pop(Reg32.EAX));

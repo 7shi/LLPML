@@ -24,10 +24,24 @@ namespace Girl.LLPML
 
             var v = values[0];
             var nb = v as NodeBase;
-            if (nb != null && !OpModule.NeedsDtor(v))
-                nb.AddCodes(codes);
-            else
-                AddCodes(codes, "mov", null);
+            if (nb != null)
+            {
+                bool nd;
+                //try
+                {
+                    nd = OpModule.NeedsDtor(v);
+                }
+                //catch
+                //{
+                //    throw nb.Abort("–¢’è‹`‚ÌŒ^‚Å‚·: {0}", v.Type.Name);
+                //}
+                if (!nd)
+                {
+                    nb.AddCodes(codes);
+                    return;
+                }
+            }
+            AddCodes(codes, "mov", null);
         }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)

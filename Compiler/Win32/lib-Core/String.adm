@@ -23,6 +23,23 @@ function memset(dest, c, count)
 	return dest;
 }
 
+function cstr(s)
+{
+	var slen = lstrlen(s);
+	var len = WideCharToMultiByte(0, 0, s, slen, null, null, null, null);
+	var ret = new byte[len];
+	WideCharToMultiByte(0, 0, s, slen, ret, ret.Length, null, null);
+	return ret;
+}
+
+function wstr(s : byte[])
+{
+	var len = MultiByteToWideChar(0, 0, s, s.Length, null, null);
+	var ret = string.Alloc(len);
+	MultiByteToWideChar(0, 0, s, s.Length, ret, ret.Length);
+	return ret;
+}
+
 function __string_equal(a : string, b : string)
 {
 	//printfln("%s([%d]\"%s\", [%d]\"%s\")", __FUNCTION__, a.Length, a, b.Length, b);
@@ -50,8 +67,49 @@ function __string_add(a : string, b : string) : string
 	return ret;
 }
 
+function __string_add_char(a : string, b) : string
+{
+	var ret = string.Alloc(a.Length + 1);
+	if (a.Length > 0) __movsw(ret, a, a.Length);
+	__movsw(addrof ret[a.Length], addrof b, 1);
+	return ret;
+}
+
+function __string_add_int(a : string, b) : string
+{
+	var bb = string.Format("%d", b);
+	var ret = string.Alloc(a.Length + bb.Length);
+	if (a.Length > 0) __movsw(ret, a, a.Length);
+	__movsw(addrof ret[a.Length], bb, bb.Length);
+	return ret;
+}
+
 class string
 {
+	static function Alloc(length) : string
+	{
+		return __operator_new(typeof(string), sizeof(char), length, 0, 0);
+	}
+	
+	static function Format(format : string, args : params)
+	{
+		return VFormat(format, args);
+	}
+	
+	static function VFormat(format : string, args)
+	{
+		char buffer[1025];
+		int len = wvsprintf(buffer, format, args);
+		var ret = Alloc(len);
+		if (len > 0) __movsw(ret, buffer, len);
+		return ret;
+	}
+	
+	static function IsNullOrEmpty(s : string)
+	{
+		return s == null || s.Length == 0;
+	}
+	
 	function Substring(start, length) : string
 	{
 		if (start < 0) return null;
@@ -84,39 +142,87 @@ class string
 		return SubstringFrom(this.Length - s.Length) == s;
 	}
 	
-	static function Format(format : string, args : params)
+	function ToLower() : string
 	{
-		return VFormat(format, args);
-	}
-	
-	static function VFormat(format : string, args)
-	{
-		char buffer[1025];
-		int len = wvsprintf(buffer, format, args);
-		var ret = Alloc(len);
-		if (len > 0) __movsw(ret, buffer, len);
+		var ret = Alloc(this.Length);
+		var p : char* = ret;
+		for (int i = 0; i < this.Length; i++)
+		{
+			char ch = this[i];
+			if ('A' <= ch && ch <= 'Z') ch += 32;
+			p[i] = ch;
+		}
 		return ret;
 	}
 	
-	static function Alloc(length) : string
+	function ToUpper() : string
 	{
-		return __operator_new(typeof(string), sizeof(char), length, 0, 0);
+		var ret = Alloc(this.Length);
+		var p : char* = ret;
+		for (int i = 0; i < this.Length; i++)
+		{
+			char ch = this[i];
+			if ('a' <= ch && ch <= 'z') ch -= 32;
+			p[i] = ch;
+		}
+		return ret;
 	}
-}
-
-function cstr(s)
-{
-	var slen = lstrlen(s);
-	var len = WideCharToMultiByte(0, 0, s, slen, null, null, null, null);
-	var ret = new byte[len];
-	WideCharToMultiByte(0, 0, s, slen, ret, ret.Length, null, null);
-	return ret;
-}
-
-function wstr(s : byte[])
-{
-	var len = MultiByteToWideChar(0, 0, s, s.Length, null, null);
-	var ret = string.Alloc(len);
-	MultiByteToWideChar(0, 0, s, s.Length, ret, ret.Length);
-	return ret;
+	
+	function TrimStart() : string
+	{
+		int ps = 0;
+		for (int i = 0; i < this.Length; i++)
+		{
+			ps = i;
+			if (this[i] > ' ') break;
+		}
+		return SubstringFrom(ps);
+	}
+	
+	function TrimEnd() : string
+	{
+		int pe = this.Length;
+		for (int i = pe - 1; i >= 0; i--)
+		{
+			if (this[i] > ' ') break;
+			pe = i;
+		}
+		return Substring(0, pe);
+	}
+	
+	function Trim() : string
+	{
+		int ps = 0;
+		for (int i = 0; i < this.Length; i++)
+		{
+			ps = i;
+			if (this[i] > ' ') break;
+		}
+		int pe = this.Length;
+		for (int i = pe - 1; i >= 0; i--)
+		{
+			if (this[i] > ' ') break;
+			pe = i;
+		}
+		//printfln("%s(%s) => %d-%d", __FUNCTION__, this, ps, pe);
+		return Substring(ps, pe - ps);
+	}
+	
+	function Remove(start, length) : string
+	{
+		if (start < 0) return this;
+		int maxlen = this.Length - start;
+		if (length > maxlen) length = maxlen;
+		if (length <= 0) return this;
+		var ret = Alloc(this.Length - length);
+		__movsw(ret, this, start);
+		var pos = start + length;
+		__movsw(addrof ret[start], addrof this[pos], this.Length - pos);
+		return ret;
+	}
+	
+	function RemoveFrom(start) : string
+	{
+		return Remove(start, this.Length - start);
+	}
 }

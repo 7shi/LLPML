@@ -93,7 +93,12 @@ namespace Girl.LLPML
 
         public bool IsClass
         {
-            get { return GetStruct().IsClass; }
+            get
+            {
+                var st = GetStruct();
+                if (st != null) return st.IsClass;
+                return false;
+            }
         }
 
         public TypeStruct(BlockBase parent, string name)

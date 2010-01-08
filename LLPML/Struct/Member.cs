@@ -414,5 +414,19 @@ namespace Girl.LLPML.Struct
             else
                 AddCodesInternal(codes, op, dest);
         }
+
+        public string FullName
+        {
+            get
+            {
+                string n = null;
+                if (target is Member)
+                    n = (target as Member).FullName;
+                else if (target is NodeBase)
+                    n = (target as NodeBase).Name;
+                if (string.IsNullOrEmpty(n)) return name;
+                return n + "." + name;
+            }
+        }
     }
 }

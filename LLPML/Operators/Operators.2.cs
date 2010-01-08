@@ -20,6 +20,12 @@ namespace Girl.LLPML
             var ad = new Addr32(Reg32.ESP);
             var f = GetFunc();
             var v = values[0];
+            TypeBase.Func schar = null, sint = null;
+            if (v.Type is TypeString)
+            {
+                schar = v.Type.GetFunc(Tag + "-char");
+                sint = v.Type.GetFunc(Tag + "-int");
+            }
             var tr = v.Type as TypeReference;
             if (tr != null && tr.UseGC && !OpModule.NeedsDtor(v))
             {
@@ -30,7 +36,15 @@ namespace Girl.LLPML
             else
                 v.AddCodes(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
-                codes.AddOperatorCodes(f, ad, values[i], false);
+            {
+                var vv = values[i];
+                var ff = f;
+                if (schar != null && vv.Type is TypeChar)
+                    ff = schar;
+                else if (sint != null && vv.Type is TypeIntBase)
+                    ff = sint;
+                codes.AddOperatorCodes(ff, ad, vv, false);
+            }
             if (op != "push")
             {
                 codes.Add(I386.Pop(Reg32.EAX));

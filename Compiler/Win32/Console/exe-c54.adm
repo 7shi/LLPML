@@ -7,11 +7,12 @@ printfln("sizeof(array2) = %d", sizeof(array2));
 printfln("C = %d", C);
 printfln("D = %d", D);
 printfln("E = %s", E);
+println();
 
 // 定義
 int array1[1 + 1], array2[A * B];
 const int C = A * B;
-const string E = "test1";
+const string E = "This is E.";
 
 const int A = 2;
 const int B = 3;
@@ -22,3 +23,32 @@ const int D = function
 	printfln(__FUNCTION__);
 	return A + B;
 }();
+
+// 継承
+
+var t1 = new Test1;
+var t2 = new Test2;
+t1.Test();
+t2.Test();
+
+var t : Test1;
+t = t1;
+t.Test();
+t = t2;
+t.Test();
+
+class Test2 : Test1
+{
+	override Test
+	{
+		printfln(__FUNCTION__);
+	}
+}
+
+class Test1
+{
+	virtual Test
+	{
+		printfln(__FUNCTION__);
+	}
+}

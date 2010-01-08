@@ -33,20 +33,24 @@ namespace Girl.LLPML
             conds["equal"] = new CondPair(Cc.NZ, Cc.Z);
             conds["not-equal"] = new CondPair(Cc.Z, Cc.NZ);
 
-            funcs["add"] = (codes, dest) =>
+            funcs["add"] = (codes, dest) => AddFunc(codes, dest, Add);
+            funcs["add-char"] = (codes, dest) => AddFunc(codes, dest, Add + "_char");
+            funcs["add-int"] = (codes, dest) => AddFunc(codes, dest, Add + "_int");
+        }
+
+        private void AddFunc(OpModule codes, Addr32 dest, string func)
+        {
+            codes.AddRange(new[]
             {
-                codes.AddRange(new[]
-                {
-                    I386.Push(dest),
-                    I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
-                    I386.Push(Reg32.EAX),
-                    codes.GetCall("string", Add),
-                    I386.Add(Reg32.ESP, 8),
-                    I386.Xchg(Reg32.EAX, dest),
-                    I386.Push(Reg32.EAX),
-                });
-                codes.AddDtorCodes(TypeString.Instance);
-            };
+                I386.Push(dest),
+                I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
+                I386.Push(Reg32.EAX),
+                codes.GetCall("string", func),
+                I386.Add(Reg32.ESP, 8),
+                I386.Xchg(Reg32.EAX, dest),
+                I386.Push(Reg32.EAX),
+            });
+            codes.AddDtorCodes(TypeString.Instance);
         }
 
         // cast

@@ -131,8 +131,15 @@ namespace Girl.LLPML
 
             public override void AddCodes(OpModule codes)
             {
-                if (type.NeedsCtor)
-                    type.AddConstructor(codes, GetAddress(codes, Parent));
+                try
+                {
+                    if (type.NeedsCtor)
+                        type.AddConstructor(codes, GetAddress(codes, Parent));
+                }
+                catch
+                {
+                    throw Abort("–¢’è‹`‚ÌŒ^‚Å‚·: {0}", type.Name);
+                }
 
                 if (Value != null)
                 {
