@@ -125,5 +125,13 @@ namespace Girl.LLPML.Struct
             ret.Add(GetOffset(st));
             return ret;
         }
+
+        public string Type
+        {
+            get
+            {
+                return src.GetStruct().GetMeber(name).Type;
+            }
+        }
     }
 }

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.6.20070904">
+
+<!-- method in struct in struct -->
+
+<include src="stdio.xml" />
+
+<struct-define name="Point">
+	<member name="x" />
+	<member name="y" />
+	
+	<method name="Show">
+		<call name="vprintfln">
+			<string>Show: (%d, %d)</string>
+			<this />
+		</call>
+	</method>
+</struct-define>
+
+<struct-define name="DoublePoint">
+	<member name="a" type="Point" />
+	<member name="b" type="Point" />
+</struct-define>
+
+<struct-declare name="p" type="DoublePoint">
+	<struct-declare>
+		<int>1</int>
+		<int>2</int>
+	</struct-declare>
+	<struct-declare>
+		<int>3</int>
+		<int>4</int>
+	</struct-declare>
+</struct-declare>
+
+<call name="printfln">
+	<string>&amp;p = %p</string>
+	<ptr name="p" />
+</call>
+<call name="printfln">
+	<string>&amp;p.a = %p</string>
+	<struct-member-ptr src="p" name="a" />
+</call>
+<call name="printfln">
+	<string>&amp;p.b = %p</string>
+	<struct-member-ptr src="p" name="b" />
+</call>
+<call name="printfln">
+	<string>&amp;p.b.y = %p</string>
+	<struct-member-ptr src="p" name="b">
+		<struct-member name="y" />
+	</struct-member-ptr>
+</call>
+
+<call name="vprintfln">
+	<string>p = ((%d, %d), (%d, %d))</string>
+	<ptr name="p" />
+</call>
+<invoke name="Show">
+	<struct-member-ptr src="p" name="a" />
+</invoke>
+<invoke name="Show">
+	<struct-member-ptr src="p" name="b" />
+</invoke>
+
+<call name="finish" />
+
+</llpml>

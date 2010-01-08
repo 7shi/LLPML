@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Var : VarBase
+    public partial class Var : VarBase, IIntValue
     {
         public class Sub : Add
         {

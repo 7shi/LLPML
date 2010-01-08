@@ -36,8 +36,6 @@ namespace Girl.LLPML
                             return new IntValue(parent.ReadStringLength(xr));
                         case "var":
                             return new Var(parent, xr);
-                        case "var-ptr":
-                            return new Var.Ptr(parent, xr);
                         case "ptr":
                             return new Pointer(parent, xr);
                         case "this":
@@ -50,6 +48,8 @@ namespace Girl.LLPML
                             return new Function.Ptr(parent, xr);
                         case "struct-member":
                             return new Struct.Member(parent, xr);
+                        case "struct-member-ptr":
+                            return new Struct.MemberPtr(parent, xr);
                         case "struct-size":
                             return new Struct.Size(parent, xr);
                         case "inc":

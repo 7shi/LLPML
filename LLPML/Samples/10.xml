@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.6.20070904">
 
 <!-- variable pointer -->
 
@@ -12,8 +12,8 @@
 
 	<call name="printfln">
 		<string>&amp;a = %p, &amp;b = %p</string>
-		<var-ptr name="a" />
-		<var-ptr name="b" />
+		<ptr name="a" />
+		<ptr name="b" />
 	</call>
 </block>
 

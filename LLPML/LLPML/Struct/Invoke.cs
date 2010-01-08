@@ -21,7 +21,11 @@ namespace Girl.LLPML.Struct
             if (args.Count == 0)
             {
                 string type = null;
-                if (v is Var)
+                if (v is Struct.MemberPtr)
+                {
+                    type = (v as Struct.MemberPtr).Type;
+                }
+                else if (v is Var)
                 {
                     type = (v as Var).Reference.Type;
                 }

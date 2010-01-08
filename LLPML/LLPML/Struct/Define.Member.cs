@@ -10,6 +10,7 @@ namespace Girl.LLPML.Struct
         public class Member : NodeBase
         {
             protected string type;
+            public string Type { get { return type; } }
 
             public Member() { }
             public Member(Block parent, XmlTextReader xr) : base(parent, xr) { }

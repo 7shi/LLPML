@@ -200,5 +200,11 @@ namespace Test
                 selectedData.To(textBox1);
             }
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Root r = new Root();
+            MessageBox.Show(this, "LLPML ver." + r.Version, "About...");
+        }
     }
 }

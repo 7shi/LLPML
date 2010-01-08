@@ -60,6 +60,7 @@
     <Compile Include="LLPML\Operators\UnsignedShiftLeft.cs" />
     <Compile Include="LLPML\Operators\UnsignedShiftRight.cs" />
     <Compile Include="LLPML\Struct\Invoke.cs" />
+    <Compile Include="LLPML\Struct\MemberPtr.cs" />
     <Compile Include="LLPML\Struct\Method.cs" />
     <Compile Include="LLPML\Struct\This.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Sub.cs" />
@@ -105,7 +106,6 @@
     <Compile Include="LLPML\Variable\ArgPtr.cs" />
     <Compile Include="LLPML\Variable\VarBase.cs" />
     <Compile Include="LLPML\Flow\Return.cs" />
-    <Compile Include="LLPML\Variable\Var.Ptr.cs" />
     <Compile Include="LLPML\Variable\Pointer.cs" />
     <Compile Include="LLPML\Function.Ptr.cs" />
     <Compile Include="LLPML\IntValue.cs" />
@@ -226,6 +226,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\20.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\21.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ToDo.txt" />

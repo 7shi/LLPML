@@ -7,13 +7,14 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Var : VarBase
+    public partial class Var : VarBase, IIntValue
     {
-        public class Declare : DeclareBase
+        public class Declare : Pointer.Declare
         {
             private IIntValue value;
             protected string type;
             public string Type { get { return type; } }
+            public override int Length { get { return sizeof(int); } }
 
             public Declare() { }
 
@@ -55,6 +56,7 @@ namespace Girl.LLPML
                 });
 
                 parent.AddVar(this);
+                parent.AddPointer(this);
             }
 
             public override void AddCodes(List<OpCode> codes, Module m)
