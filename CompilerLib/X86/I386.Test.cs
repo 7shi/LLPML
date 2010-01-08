@@ -95,6 +95,40 @@ namespace Girl.X86
                 .Test("lea eax, [edx-4]", "8D-42-FC");
             I386.Lea(Reg32.EAX, new Addr32(Reg32.EBP, -4))
                 .Test("lea eax, [ebp-4]", "8D-45-FC");
+            I386.Inc(new Addr32(Reg32.EAX))
+                .Test("inc dword [eax]", "FF-00");
+            I386.Dec(new Addr32(Reg32.EAX))
+                .Test("dec dword [eax]", "FF-08");
+            I386.Add(new Addr32(Reg32.EAX), 1)
+                .Test("add dword [eax], 1", "81-00-01-00-00-00");
+            I386.Add(new Addr32(Reg32.EBP, -4), 8)
+                .Test("add dword [ebp-4], 8", "81-45-FC-08-00-00-00");
+            I386.Sub(new Addr32(Reg32.EAX), 1)
+                .Test("sub dword [eax], 1", "81-28-01-00-00-00");
+            I386.Sub(new Addr32(Reg32.EBP, -4), 8)
+                .Test("sub dword [ebp-4], 8", "81-6D-FC-08-00-00-00");
+            I386.Cmp(Reg32.EAX, 4)
+                .Test("cmp eax, 4", "3D-04-00-00-00");
+            I386.Cmp(Reg32.ESP, 4)
+                .Test("cmp esp, 4", "81-FC-04-00-00-00");
+            I386.Cmp(Reg32.EAX, Reg32.EBX)
+                .Test("cmp eax, ebx", "39-D8");
+            I386.Cmp(new Addr32(Reg32.EDX), Reg32.EAX)
+                .Test("cmp [edx], eax", "39-02");
+            I386.Cmp(new Addr32(Reg32.EAX), Reg32.EBX)
+                .Test("cmp [eax], ebx", "39-18");
+            I386.Cmp(new Addr32(Reg32.ESP), Reg32.ECX)
+                .Test("cmp [esp], ecx", "39-0C-24");
+            I386.Cmp(new Addr32(Reg32.EAX, 0x1000), Reg32.EBP)
+                .Test("cmp [eax+0x1000], ebp", "39-A8-00-10-00-00");
+            I386.Cmp(new Addr32(Reg32.EAX), 1)
+                .Test("cmp dword [eax], 1", "81-38-01-00-00-00");
+            I386.Cmp(new Addr32(Reg32.EBP, -4), 8)
+                .Test("cmp dword [ebp-4], 8", "81-7D-FC-08-00-00-00");
+            I386.Add(Reg32.EAX, 4)
+                .Test("add eax, 4", "05-04-00-00-00");
+            I386.Sub(Reg32.EAX, 4)
+                .Test("sub eax, 4", "2D-04-00-00-00");
         }
     }
 }

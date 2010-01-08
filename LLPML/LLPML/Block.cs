@@ -183,11 +183,26 @@ namespace Girl.LLPML
                     case "var-int":
                         sentences.Add(new VarInt(this, xr));
                         break;
+                    case "var-int-inc":
+                        sentences.Add(new VarInt.Inc(this, xr));
+                        break;
+                    case "var-int-dec":
+                        sentences.Add(new VarInt.Dec(this, xr));
+                        break;
+                    case "var-int-add":
+                        sentences.Add(new VarInt.Add(this, xr));
+                        break;
+                    case "var-int-sub":
+                        sentences.Add(new VarInt.Sub(this, xr));
+                        break;
                     case "ptr":
                         sentences.Add(new Pointer(this, xr));
                         break;
                     case "loop":
                         sentences.Add(new Loop(this, xr));
+                        break;
+                    case "for":
+                        sentences.Add(new For(this, xr));
                         break;
                     default:
                         throw Abort(xr);
