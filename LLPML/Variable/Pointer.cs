@@ -51,7 +51,9 @@ namespace Girl.LLPML
             get
             {
                 Struct.Declare st = reference as Struct.Declare;
-                return st == null ? null : st.Type;
+                if (st != null) return st.Type;
+                Struct2.Declare st2 = reference as Struct2.Declare;
+                return st2 == null ? null : st2.Type;
             }
         }
 

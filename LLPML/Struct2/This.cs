@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace Girl.LLPML.Struct
+namespace Girl.LLPML.Struct2
 {
     public class This : Var
     {

@@ -13,6 +13,7 @@ namespace Girl.LLPML.Parsing
         private void Rewind() { tokenizer.Rewind(); }
 
         private Operator[][] operators;
+        private string[] reserved;
         private Dictionary<string, Operator>[] orders;
 
         public Parser(Tokenizer tokenizer, BlockBase parent)
@@ -21,6 +22,64 @@ namespace Girl.LLPML.Parsing
             this.parent = parent;
             operators = new Operator[][]
             {
+                new Operator[]
+                {
+                    new Operator("=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Let(parent, dest, arg2);
+                    }),
+                    new Operator("+=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Add(parent, dest, arg2);
+                    }),
+                    new Operator("-=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Sub(parent, dest, arg2);
+                    }),
+                    new Operator("*=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Mul(parent, dest, arg2);
+                    }),
+                    new Operator("/=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Div(parent, dest, arg2);
+                    }),
+                    new Operator("%=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Mod(parent, dest, arg2);
+                    }),
+                    new Operator("&=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.And(parent, dest, arg2);
+                    }),
+                    new Operator("|=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Or(parent, dest, arg2);
+                    }),
+                    new Operator("^=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.Xor(parent, dest, arg2);
+                    }),
+                    new Operator("<<=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.ShiftLeft(parent, dest, arg2);
+                    }),
+                    new Operator(">>=", delegate(IIntValue arg1, IIntValue arg2)
+                    {
+                        Var dest = arg1 as Var;
+                        return dest == null ? null : new Var.ShiftRight(parent, dest, arg2);
+                    }),
+                },
                 new Operator[]
                 {
                     new Operator("&&", delegate(IIntValue arg1, IIntValue arg2)
@@ -38,7 +97,7 @@ namespace Girl.LLPML.Parsing
                     new Operator("orelse", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new OrElse(parent, arg1, arg2);
-                    })
+                    }),
                 },
                 new Operator[]
                 {
@@ -65,7 +124,7 @@ namespace Girl.LLPML.Parsing
                     new Operator("xor", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new Xor(parent, arg1, arg2);
-                    })
+                    }),
                 },
                 new Operator[]
                 {
@@ -76,7 +135,7 @@ namespace Girl.LLPML.Parsing
                     new Operator("!=", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new NotEqual(parent, arg1, arg2);
-                    })
+                    }),
                 },
                 new Operator[]
                 {
@@ -111,7 +170,7 @@ namespace Girl.LLPML.Parsing
                     new Operator("ge", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new GreaterEqual(parent, arg1, arg2);
-                    })
+                    }),
                 },
                 new Operator[]
                 {
@@ -130,7 +189,7 @@ namespace Girl.LLPML.Parsing
                     new Operator("shr", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new ShiftRight(parent, arg1, arg2);
-                    })
+                    }),
                 },
                 new Operator[]
                 {
@@ -141,7 +200,7 @@ namespace Girl.LLPML.Parsing
                     new Operator("-", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new Sub(parent, arg1, arg2);
-                    })
+                    }),
                 },
                 new Operator[]
                 {
@@ -156,15 +215,31 @@ namespace Girl.LLPML.Parsing
                     new Operator("%", delegate(IIntValue arg1, IIntValue arg2)
                     {
                         return new Mod(parent, arg1, arg2);
-                    })
-                }
+                    }),
+                },
             };
+            reserved = new string[] { "->" };
             Init();
         }
 
-        public IIntValue[] Parse()
+        public IIntValue[] ParseExpressions()
         {
-            return Arguments(",", null);
+            return Arguments(",", null, false);
+        }
+
+        public NodeBase[] Parse()
+        {
+            IIntValue[] exprs = Arguments(";", null, true);
+            if (exprs == null) return null;
+            NodeBase[] ret = new NodeBase[exprs.Length];
+            for (int i = 0; i < exprs.Length; i++)
+            {
+                if (exprs[i] is NodeBase)
+                    ret[i] = exprs[i] as NodeBase;
+                else
+                    return null;
+            }
+            return ret;
         }
 
         public static string GetString(string s)
@@ -227,6 +302,7 @@ namespace Girl.LLPML.Parsing
                     if (op.Name.Length > 1) reserved.Add(op.Name);
                 }
             }
+            reserved.AddRange(this.reserved);
             tokenizer.Reserved = reserved.ToArray();
         }
 
@@ -452,9 +528,31 @@ namespace Girl.LLPML.Parsing
                         if (inv == null) return m;
                         return new Struct.Invoke(inv, m);
                     }
+                case "->":
+                    {
+                        Struct2.Declare st = p as Struct2.Declare;
+                        if (var == null && st == null) return null;
+                        Struct2.Invoke inv;
+                        Struct2.Member m = Member2(out inv);
+                        if (m == null)
+                        {
+                            if (inv == null)
+                                return null;
+                            else if (var != null)
+                                return new Struct2.Invoke(inv, var);
+                            else if (st != null)
+                                return new Struct2.Invoke(inv, ptr);
+                        }
+                        if (var != null)
+                            m.Var = var;
+                        else if (st != null)
+                            m.Ptr = st;
+                        if (inv == null) return m;
+                        return new Struct2.Invoke(inv, m);
+                    }
                 case "(":
                     {
-                        IIntValue[] args = Arguments(",", ")");
+                        IIntValue[] args = Arguments(",", ")", false);
                         if (args == null) return null;
                         if (var != null)
                             return new Call(parent, var, args);
@@ -506,7 +604,7 @@ namespace Girl.LLPML.Parsing
             return new StringValue(GetString(t.Substring(1, t.Length - 2)));
         }
 
-        private IIntValue[] Arguments(string sep, string end)
+        private IIntValue[] Arguments(string sep, string end, bool mustSep)
         {
             string br = Read();
             if (br == null) return null;
@@ -521,7 +619,15 @@ namespace Girl.LLPML.Parsing
                 if (arg == null) return null;
                 ret.Add(arg);
                 string t = Read();
-                if (t == end)
+                if (mustSep)
+                {
+                    if (t != sep)
+                    {
+                        Rewind();
+                        return null;
+                    }
+                }
+                else if (t == end)
                     return ret.ToArray();
                 else if (t == null)
                     return null;
@@ -533,7 +639,7 @@ namespace Girl.LLPML.Parsing
                     return null;
                 }
             }
-            return null;
+            return ret.ToArray();
         }
 
         private Struct.Member Member(out Struct.Invoke inv)
@@ -552,7 +658,7 @@ namespace Girl.LLPML.Parsing
                     break;
                 case "(":
                     {
-                        IIntValue[] args = Arguments(",", ")");
+                        IIntValue[] args = Arguments(",", ")", false);
                         if (args != null)
                             inv = new Struct.Invoke(parent, name, args);
                         return null;
@@ -562,6 +668,34 @@ namespace Girl.LLPML.Parsing
                     break;
             }
             return new Struct.Member(parent, name, child);
+        }
+
+        private Struct2.Member Member2(out Struct2.Invoke inv)
+        {
+            inv = null;
+            string name = Read();
+            if (name == null) return null;
+
+            Struct2.Member child = null;
+            switch (Read())
+            {
+                case null:
+                    break;
+                case "->":
+                    child = Member2(out inv);
+                    break;
+                case "(":
+                    {
+                        IIntValue[] args = Arguments(",", ")", false);
+                        if (args != null)
+                            inv = new Struct2.Invoke(parent, name, args);
+                        return null;
+                    }
+                default:
+                    Rewind();
+                    break;
+            }
+            return new Struct2.Member(parent, name, child);
         }
     }
 }

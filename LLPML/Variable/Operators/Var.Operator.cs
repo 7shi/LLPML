@@ -25,7 +25,7 @@ namespace Girl.LLPML
                 this.dest = dest;
             }
 
-            public Operator(BlockBase parent, Var dest, IntValue[] values)
+            public Operator(BlockBase parent, Var dest, params IIntValue[] values)
                 : this(parent, dest)
             {
                 if (values.Length < Min)

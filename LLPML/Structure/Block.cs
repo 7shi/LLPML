@@ -5,6 +5,7 @@ using System.Xml;
 using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
+using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
@@ -44,6 +45,9 @@ namespace Girl.LLPML
                             break;
                         case "invoke":
                             sentences.Add(new Struct.Invoke(this, xr));
+                            break;
+                        case "invoke2":
+                            sentences.Add(new Struct2.Invoke(this, xr));
                             break;
                         case "if":
                             sentences.Add(new If(this, xr));
@@ -129,6 +133,12 @@ namespace Girl.LLPML
                         case "struct-declare":
                             sentences.Add(new Struct.Declare(this, xr));
                             break;
+                        case "struct2-define":
+                            new Struct2.Define(this, xr);
+                            break;
+                        case "struct2-declare":
+                            sentences.Add(new Struct2.Declare(this, xr));
+                            break;
                         default:
                             throw Abort(xr);
                     }
@@ -138,9 +148,28 @@ namespace Girl.LLPML
                 case XmlNodeType.Comment:
                     break;
 
+                case XmlNodeType.Text:
+                    {
+                        string src = xr.Value.Trim();
+                        NodeBase[] sents = ReadText(this, src);
+                        if (sents == null)
+                            throw Abort(xr, "invalid sentence: " + src);
+                        sentences.AddRange(sents);
+                        break;
+                    }
+
                 default:
                     throw Abort(xr, "element required");
             }
+        }
+
+        public static NodeBase[] ReadText(BlockBase parent, string src)
+        {
+            Tokenizer token = new Tokenizer(src);
+            Parser parser = new Parser(token, parent);
+            NodeBase[] ret = parser.Parse();
+            if (token.CanRead) ret = null;
+            return ret;
         }
 
         public override void Read(XmlTextReader xr)

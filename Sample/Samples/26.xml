@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.9.20071016">
+
+<!-- struct2 -->
+
+<include src="finish.xml" />
+
+<struct2-define name="Test">
+	<var-declare name="a">1</var-declare>
+	<var-declare name="b">2</var-declare>
+	
+	<function name="Show">
+		printfln("this, a, b = %p, %d, %d", this, a, b);
+	</function>
+	
+	<function name="Add">
+		<return>a + b</return>
+	</function>
+</struct2-define>
+
+<call name="printfln">
+	"sizeof(Test) = %d"
+	<struct2-size name="Test" />
+</call>
+println();
+
+<struct2-declare name="t1" type="Test" />
+printfln("&amp;t1 = %p", t1);
+show(t1);
+println();
+
+<struct2-declare name="t2" type="Test">3, 4</struct2-declare>
+printfln("&amp;t2 = %p", t2);
+show(t2);
+t2->a = 5;
+t2->b = 6;
+show(t2);
+
+<function name="show">
+	<arg name="p" type="Test" />
+	println();
+	printfln("p, p->a, p->b = %p, %d, %d", p, p->a, p->b);
+	printfln("p->Add() = %d", p->Add());
+	p->Show();
+</function>
+
+</llpml>

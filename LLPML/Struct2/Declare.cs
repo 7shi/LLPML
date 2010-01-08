@@ -6,19 +6,11 @@ using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
-namespace Girl.LLPML.Struct
+namespace Girl.LLPML.Struct2
 {
     public class Declare : Pointer.Declare
     {
-        public override int Length
-        {
-            get
-            {
-                Define st = parent.GetStruct(type);
-                if (st == null) throw Abort("undefined struct: " + type);
-                return st.GetSize();
-            }
-        }
+        public override int Length { get { return GetStruct().GetSize(); } }
 
         private string type;
         public string Type { get { return type; } }
@@ -58,7 +50,7 @@ namespace Girl.LLPML.Struct
 
             Parse(xr, delegate
             {
-                if (xr.NodeType == XmlNodeType.Element && xr.Name == "struct-declare")
+                if (xr.NodeType == XmlNodeType.Element && xr.Name == "struct2-declare")
                 {
                     Declare d = new Declare(this, xr);
                     values.Add(d);
@@ -75,7 +67,7 @@ namespace Girl.LLPML.Struct
 
         public Define GetStruct()
         {
-            Define st = parent.GetStruct(type);
+            Define st = parent.GetStruct2(type);
             if (st != null) return st;
             throw Abort("undefined struct: " + type);
         }
@@ -83,6 +75,7 @@ namespace Girl.LLPML.Struct
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             Define st = GetStruct();
+            st.AddInitializer(codes, m, address);
             AddCodes(codes, m, st, new Addr32(address));
             st.AddConstructor(codes, m, address);
         }
@@ -91,14 +84,14 @@ namespace Girl.LLPML.Struct
         {
             if (values.Count == 0) return;
 
-            Define.Member[] members = st.GetMembers();
+            Pointer.Declare[] members = st.GetMembers();
             if (members.Length != values.Count)
                 throw Abort("can not initialize: " + st.Name);
 
             for (int i = 0; i < values.Count; i++)
             {
-                Define.Member mem = members[i];
-                Define memst = mem.GetStruct();
+                Pointer.Declare mem = members[i];
+                Define memst = st.GetStruct(mem);
                 object obj = values[i];
                 if (obj is Declare)
                 {
@@ -111,7 +104,7 @@ namespace Girl.LLPML.Struct
                     if (memst != null)
                         throw Abort("struct required: " + mem.Name);
                     (obj as IIntValue).AddCodes(codes, m, "mov", new Addr32(ad));
-                    ad.Add(mem.GetSize());
+                    ad.Add(mem.Length);
                 }
                 else
                 {

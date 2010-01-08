@@ -13,7 +13,7 @@ namespace Girl.LLPML
         {
             public Add() { }
             public Add(BlockBase parent, Var dest) : base(parent, dest) { }
-            public Add(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public Add(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected virtual void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)

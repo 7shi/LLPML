@@ -199,6 +199,9 @@ namespace Girl.LLPML
         public Struct.Define GetStruct(string name) { return GetMemberRecursive<Struct.Define>(name); }
         public bool AddStruct(Struct.Define s) { return AddMember(s.Name, s); }
 
+        public Struct2.Define GetStruct2(string name) { return GetMemberRecursive<Struct2.Define>(name); }
+        public bool AddStruct2(Struct2.Define s) { return AddMember(s.Name, s); }
+
         #endregion
 
         public BlockBase() { }
@@ -268,6 +271,7 @@ namespace Girl.LLPML
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             CheckStructs();
+            CheckStructs2();
             codes.Add(first);
             BeforeAddCodes(codes, m);
             codes.Add(construct);
@@ -282,6 +286,10 @@ namespace Girl.LLPML
             {
                 func.AddCodes(codes, m);
             }
+            foreach (Struct2.Define st in GetMembers<Struct2.Define>())
+            {
+                st.AddCodes(codes, m);
+            }
             codes.Add(last);
         }
 
@@ -293,12 +301,23 @@ namespace Girl.LLPML
             }
         }
 
+        private void CheckStructs2()
+        {
+            foreach (Struct2.Define st in GetMembers<Struct2.Define>())
+            {
+                st.CheckStruct();
+            }
+        }
+
         protected virtual void AfterAddCodes(List<OpCode> codes, Module m)
         {
             if (IsTerminated) return;
             AddExitCodes(codes, m);
-            if (GetMembers<Function>().Length > 0)
+            if (GetMembers<Function>().Length > 0
+                || GetMembers<Struct2.Define>().Length > 0)
+            {
                 codes.Add(I386.Jmp(last.Address));
+            }
         }
 
         public bool IsTerminated
@@ -339,6 +358,15 @@ namespace Girl.LLPML
                 if (b is Function) return b;
             }
             return root;
+        }
+
+        public virtual Struct2.Define ThisStruct
+        {
+            get
+            {
+                if (parent == null) return null;
+                return parent.ThisStruct;
+            }
         }
     }
 }

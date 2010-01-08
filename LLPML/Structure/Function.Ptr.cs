@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Function : Block
+    public partial class Function
     {
         public class Ptr : VarBase, IIntValue
         {

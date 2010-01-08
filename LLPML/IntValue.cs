@@ -48,6 +48,8 @@ namespace Girl.LLPML
                     return new Call(parent, xr);
                 case "invoke":
                     return new Struct.Invoke(parent, xr);
+                case "invoke2":
+                    return new Struct2.Invoke(parent, xr);
                 case "function-ptr":
                     return new Function.Ptr(parent, xr);
                 case "struct-member":
@@ -56,8 +58,14 @@ namespace Girl.LLPML
                     return new Struct.MemberPtr(parent, xr);
                 case "struct-size":
                     return new Struct.Size(parent, xr);
+                case "struct2-size":
+                    return new Struct2.Size(parent, xr);
+                case "struct2-member":
+                    return new Struct2.Member(parent, xr);
                 case "block-name":
                     return new BlockName(parent);
+                case "let":
+                    return new Let(parent, xr);
                 case "inc":
                     return new Inc(parent, xr);
                 case "dec":
@@ -155,15 +163,6 @@ namespace Girl.LLPML
             }
         }
 
-        public static IIntValue[] ReadText(BlockBase parent, string src)
-        {
-            Tokenizer token = new Tokenizer(src);
-            Parser parser = new Parser(token, parent);
-            IIntValue[] ret = parser.Parse();
-            if (token.CanRead) ret = null;
-            return ret;
-        }
-
         public static IIntValue[] Read(BlockBase parent, XmlTextReader xr)
         {
             switch (xr.NodeType)
@@ -185,6 +184,15 @@ namespace Girl.LLPML
                     return null;
             }
             throw parent.Abort(xr, "value required");
+        }
+
+        public static IIntValue[] ReadText(BlockBase parent, string src)
+        {
+            Tokenizer token = new Tokenizer(src);
+            Parser parser = new Parser(token, parent);
+            IIntValue[] ret = parser.ParseExpressions();
+            if (token.CanRead) ret = null;
+            return ret;
         }
 
         public static int Parse(string value)

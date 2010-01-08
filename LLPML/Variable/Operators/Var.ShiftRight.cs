@@ -13,7 +13,7 @@ namespace Girl.LLPML
         {
             public ShiftRight() { }
             public ShiftRight(BlockBase parent, Var dest) : base(parent, dest) { }
-            public ShiftRight(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public ShiftRight(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
             public ShiftRight(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override string Shift { get { return "sar"; } }

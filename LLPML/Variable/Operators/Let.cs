@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Let : Var.Operator
+    public class Let : Var.Operator, IIntValue
     {
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
@@ -15,7 +15,7 @@ namespace Girl.LLPML
         public Let() { }
         public Let(BlockBase parent, Var dest) : base(parent, dest) { }
 
-        public Let(BlockBase parent, Var dest, IntValue value)
+        public Let(BlockBase parent, Var dest, IIntValue value)
             : base(parent, dest)
         {
             this.values.Add(value);
@@ -32,6 +32,11 @@ namespace Girl.LLPML
         {
             values[0].AddCodes(codes, m, "mov", null);
             codes.Add(I386.Mov(dest.GetAddress(codes, m), Reg32.EAX));
+        }
+
+        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        {
+            values[0].AddCodes(codes, m, op, dest);
         }
     }
 }

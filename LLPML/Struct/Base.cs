@@ -20,9 +20,7 @@ namespace Girl.LLPML.Struct
             if (m == null || m.IsStatic)
                 throw Abort(xr, "base requires non-static method");
 
-            reference = parent.GetVar("this");
-            if (reference == null)
-                throw Abort(xr, "undefined variable: this");
+            Reference = parent.GetVar("this");
 
             target = m.GetStruct();
             if (target.BaseType == null)

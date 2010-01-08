@@ -17,6 +17,8 @@ namespace Girl.LLPML
             = new List<DeclareBase>();
         public virtual DeclareBase[] GetArgs() { return args.ToArray(); }
 
+        private Arg thisptr;
+
         public Function() { }
         public Function(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
@@ -40,6 +42,10 @@ namespace Girl.LLPML
         protected virtual void ReadName(XmlTextReader xr)
         {
             RequiresName(xr);
+
+            Struct2.Define st = ThisStruct;
+            if (st != null)
+                args.Add(thisptr = new Arg(this, "this", st.Name));
         }
 
         public override void Read(XmlTextReader xr)
@@ -75,6 +81,9 @@ namespace Girl.LLPML
             }
 
             base.AddCodes(codes, m);
+
+            if (thisptr != null)
+                ThisStruct.AddPreCtor(codes, m, thisptr.Address);
         }
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)

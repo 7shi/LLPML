@@ -42,6 +42,12 @@
     <Compile Include="Operators\Rev.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Parsing\Tokenizer.cs" />
+    <Compile Include="Struct2\Declare.cs" />
+    <Compile Include="Struct2\Define.cs" />
+    <Compile Include="Struct2\Invoke.cs" />
+    <Compile Include="Struct2\Member.cs" />
+    <Compile Include="Struct2\Size.cs" />
+    <Compile Include="Struct2\This.cs" />
     <Compile Include="Structure\Extern.cs" />
     <Compile Include="Flow\Cond.cs" />
     <Compile Include="Flow\While.cs" />
@@ -101,6 +107,8 @@
     <Compile Include="Variable\Operators\Var.ShiftRight.cs" />
     <Compile Include="Variable\Operators\Var.UnsignedShiftRight.cs" />
     <Compile Include="Variable\Operators\Var.UnsignedShiftLeft.cs" />
+    <Compile Include="Variable\Operators\Var.Mod.cs" />
+    <Compile Include="Variable\Operators\Var.Xor.cs" />
     <Compile Include="Variable\Var.cs" />
     <Compile Include="Variable\Pointer.Declare.cs" />
     <Compile Include="Flow\For.cs" />

@@ -72,11 +72,16 @@ namespace Girl.LLPML
             });
         }
 
+        public virtual Function GetFunction()
+        {
+            return parent.GetFunction(name);
+        }
+
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             if (name != null)
             {
-                Function f = parent.GetFunction(name);
+                Function f = GetFunction();
                 if (f == null)
                     throw Abort("undefined function: " + name);
                 DeclareBase[] fargs = f.GetArgs();
