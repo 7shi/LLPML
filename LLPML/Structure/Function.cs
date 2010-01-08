@@ -11,6 +11,7 @@ namespace Girl.LLPML
     public partial class Function : Block, IIntValue
     {
         public CallType CallType { get; set; }
+        public bool IsStatic { get; protected set; }
 
         protected List<Var.Declare> args
             = new List<Var.Declare>();
@@ -35,7 +36,7 @@ namespace Girl.LLPML
                 }
                 else if (parent is Struct.Define)
                 {
-                    var ovrfunc = new Function(parent, "override_" + name);
+                    var ovrfunc = new Function(parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
                     if (!parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
@@ -43,7 +44,7 @@ namespace Girl.LLPML
                         parent, "virtual_" + name,
                         null, /// todo: delegate type
                         new Function.Ptr(ovrfunc));
-                    parent.Sentences.Add(virtptr);
+                    parent.AddSentence(virtptr);
                 }
                 else
                     throw Abort("can not make virtual");
@@ -70,13 +71,13 @@ namespace Girl.LLPML
                     if (vf == null || (!vf.IsVirtual && !vf.IsOverride))
                         throw Abort("can not find virtual: {0}", name);
                     first = vf.first;
-                    var ovrfunc = new Function(parent, "override_" + name);
+                    var ovrfunc = new Function(parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
                     if (!parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
                     ovrptr = new Var(parent, "virtual_" + name);
                     var setvp = new Set(parent, ovrptr, new Function.Ptr(ovrfunc));
-                    parent.Sentences.Add(setvp);
+                    parent.AddSentence(setvp);
                 }
                 else
                     throw Abort("can not make override");
@@ -96,9 +97,9 @@ namespace Girl.LLPML
         }
 
         public Function() { }
-        public Function(BlockBase parent) : this(parent, "") { }
+        public Function(BlockBase parent) : this(parent, "", false) { }
 
-        public Function(BlockBase parent, string name)
+        public Function(BlockBase parent, string name, bool isStatic)
             : base(parent)
         {
             if (string.IsNullOrEmpty(name))
@@ -109,11 +110,8 @@ namespace Girl.LLPML
             this.name = name;
             CallType = CallType.CDecl;
 
-            if (this.parent is Struct.Define)
-            {
-                args.Add(new Arg(this, "this", GetParentType()));
-                thisptr = new Struct.This(this);
-            }
+            IsStatic = isStatic;
+            CheckThisArg();
             CheckAnonymousMember();
         }
 
@@ -148,16 +146,16 @@ namespace Girl.LLPML
                 name = parent.GetAnonymousFunctionName();
             }
 
+            if (xr["static"] == "1")
+                IsStatic = true;
+
             if (xr["virtual"] == "1")
                 IsVirtual = true;
             else if (xr["override"] == "1")
                 IsOverride = true;
 
-            if (parent is Struct.Define)
-            {
-                args.Add(new Arg(this, "this", GetParentType()));
-                thisptr = new Struct.This(this);
-            }
+            CheckThisArg();
+            CheckAnonymousMember();
 
             CallType = CallType.CDecl;
             if (xr["type"] == "std") CallType = CallType.Std;
@@ -166,8 +164,6 @@ namespace Girl.LLPML
                 throw Abort(xr, "multiple definitions: " + name);
 
             base.Read(xr);
-
-            CheckAnonymousMember();
         }
 
         protected bool isAnonymous = false;
@@ -311,11 +307,20 @@ namespace Girl.LLPML
             if (v != null) return v;
 
             var vp = parent.GetVar(name);
-            if (vp == null || vp.IsMember) return vp;
+            if (vp == null || vp.IsMember || vp.IsStatic) return vp;
 
             var arg = new Arg(this, name, vp.Type);
             InsertArg(arg);
             return arg;
+        }
+
+        protected void CheckThisArg()
+        {
+            if (this.parent is Struct.Define && !IsStatic)
+            {
+                args.Add(new Arg(this, "this", GetParentType()));
+                thisptr = new Struct.This(this);
+            }
         }
 
         protected void CheckAnonymousMember()

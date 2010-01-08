@@ -65,8 +65,8 @@ namespace Girl.LLPML
         {
             sentences.Clear();
             Cond.First = Block.First;
-            sentences.Add(Block);
-            sentences.Add(Cond);
+            AddSentence(Block);
+            AddSentence(Cond);
             base.AddCodes(codes);
         }
     }

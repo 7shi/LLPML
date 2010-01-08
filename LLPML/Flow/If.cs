@@ -115,7 +115,7 @@ namespace Girl.LLPML
             {
                 CondBlock cb = blocks[i];
                 cb.Next = i < len - 1 ? blocks[i + 1] : null;
-                sentences.Add(cb);
+                AddSentence(cb);
             }
             base.AddCodes(codes);
         }

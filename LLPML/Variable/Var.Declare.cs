@@ -15,6 +15,7 @@ namespace Girl.LLPML
             public Addr32 Address { get; set; }
             public bool IsMember { get; protected set; }
             public IIntValue Value { get; set; }
+            public bool IsStatic { get; set; }
 
             public virtual bool NeedsInit { get { return Value != null; } }
             public virtual bool NeedsCtor { get { return type.NeedsCtor; } }
@@ -62,6 +63,7 @@ namespace Girl.LLPML
             {
                 if (type == null) type = TypeVar.Instance;
                 IsMember = parent is Struct.Define;
+                if (parent.Parent == null) IsStatic = true;
             }
 
             public override void Read(XmlTextReader xr)
@@ -69,6 +71,7 @@ namespace Girl.LLPML
                 RequiresName(xr);
 
                 var t = Types.GetType(parent, xr["type"]);
+                if (xr["static"] == "1") IsStatic = true;
 
                 string slen = xr["length"];
                 if (slen != null)
@@ -103,7 +106,7 @@ namespace Girl.LLPML
 
             public Addr32 GetAddress(OpCodes codes, BlockBase scope)
             {
-                if (IsMember)
+                if (IsMember && !IsStatic)
                 {
                     var thisptr = new Struct.This(scope);
                     codes.Add(I386.Mov(Var.DestRegister, thisptr.GetAddress(codes)));
@@ -114,7 +117,7 @@ namespace Girl.LLPML
                 if (plv == lv || Address.IsAddress)
                     return new Addr32(Address);
                 if (lv <= 0 || lv >= plv)
-                    throw Abort("Invalid variable scope: " + name);
+                    throw Abort("Invalid variable scope: " + Name);
                 codes.Add(I386.Mov(Var.DestRegister, new Addr32(Reg32.EBP, -lv * 4)));
                 return new Addr32(Var.DestRegister, Address.Disp);
             }
@@ -152,6 +155,11 @@ namespace Girl.LLPML
                         type = Types.ConvertVarType(Value.Type);
                     return type;
                 }
+            }
+
+            public string FullName
+            {
+                get { return parent.GetFullName(name); }
             }
         }
     }

@@ -51,7 +51,6 @@ namespace Girl.LLPML
                             nb = new Block(target, xr);
                             break;
                         case "call":
-                        case "invoke":
                             nb = new Call(target, xr);
                             break;
                         case "if":
@@ -139,7 +138,7 @@ namespace Girl.LLPML
                     {
                         NodeBase[] sents = ReadText(target,
                             new Tokenizer(target.Root.Source, xr));
-                        if (sents != null) Sentences.AddRange(sents);
+                        if (sents != null) AddSentences(sents);
                         break;
                     }
 
@@ -151,7 +150,7 @@ namespace Girl.LLPML
                         var t = new Tokenizer(target.Root.Source,
                             xr.Value, xr.LineNumber + 1, 1);
                         var sents = Block.ReadText(target, t);
-                        if (sents != null) Sentences.AddRange(sents);
+                        if (sents != null) AddSentences(sents);
                         break;
                     }
                     else
@@ -160,7 +159,7 @@ namespace Girl.LLPML
                 default:
                     throw Abort(xr, "element required");
             }
-            if (nb != null) Sentences.Add(nb);
+            if (nb != null) AddSentence(nb);
         }
 
         public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)

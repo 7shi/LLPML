@@ -2,30 +2,46 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML.Struct
 {
     public class Base : Var
     {
-        private Struct.Define target;
-
+        public Base(BlockBase parent) : base(parent) { Init(); }
         public Base(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+
+        private void Init()
+        {
+            name = "base";
+            Reference = parent.GetVar("this");
+        }
 
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-            name = "base";
-
-            target = parent.ThisStruct;
-            if (target.BaseType == null)
-                throw Abort(xr, "has no base type: " + target.Name);
+            Init();
         }
+
+        protected TypeBase type;
+        protected bool doneInferType = false;
 
         public override TypeBase Type
         {
             get
             {
-                return new TypeReference(target.GetBaseStruct().Type);
+                if (doneInferType || !root.IsCompiling)
+                    return type;
+
+                doneInferType = true;
+                var st = Reference.GetStruct();
+                if (st == null)
+                    throw Abort("base: is not struct member: {0}", parent.FullName);
+                var bst = st.GetBaseStruct();
+                if (bst == null)
+                    throw Abort("base: has no base type: {0}", st.Name);
+                type = new TypeReference(bst.Type);
+                return type;
             }
         }
     }

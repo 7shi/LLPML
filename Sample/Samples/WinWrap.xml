@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.18.20080421">
+<llpml version="0.19.20080511">
 
 <include src="win32.xml" />
 <include src="stdio.xml" />
@@ -31,7 +31,7 @@ struct Event : ArrayList
   
   function Add(delg)
   {
-    ((ArrayList)this).Add(__jit_dup(delg));
+    base.Add(__jit_dup(delg));
   }
   
   function Invoke(sender, e)
@@ -150,7 +150,7 @@ struct MenuItem : MENUITEMINFO
       hMenu.SetMenuItemInfo(wID, false, this);
   }
   
-  virtual OnClick(e)
+  virtual OnClick(e : EventArgs)
   {
     Click.Invoke(this, e);
   }
@@ -232,7 +232,7 @@ struct Control
   virtual OnPaint(e : PaintEventArgs) { }
   virtual OnMouseDown(e : MouseEventArgs) { }
   virtual OnMouseUp(e : MouseEventArgs) { }
-  virtual OnClosed(e) { Application_Exit(); }
+  virtual OnClosed(e : EventArgs) { }
   
   virtual WndProc(hWnd, uMsg, wParam, lParam)
   {
@@ -300,10 +300,13 @@ struct Form : Control
   {
     if (hWnd != null) return;
     wcex.RegisterClassEx();
-    ((Control)this).override_Create();
+    base.Create();
   }
   
-  override OnClosed(e) { Application_Exit(); }
+  override OnClosed(e : EventArgs)
+  {
+    Application.Exit();
+  }
   
   override WndProc(hWnd, uMsg, wParam, lParam)
   {
@@ -317,17 +320,19 @@ struct Form : Control
         }
         return 0;
     }
-    return ((Control)this).override_WndProc(hWnd, uMsg, wParam, lParam);
+    return base.WndProc(hWnd, uMsg, wParam, lParam);
   }
 }
 
-struct PaintEventArgs
+struct EventArgs {}
+
+struct PaintEventArgs : EventArgs
 {
   PAINTSTRUCT ps;
   var hDC;
 }
 
-struct MouseEventArgs
+struct MouseEventArgs : EventArgs
 {
   int Button, X, Y;
   
@@ -356,33 +361,36 @@ struct MouseEventArgs
   }
 }
 
-function Application_Run()
+struct Application
 {
-  MSG uMsg;
-  while (uMsg.GetMessage(null, 0, 0))
+  static function Run()
   {
-    uMsg.TranslateMessage();
-    uMsg.DispatchMessage();
+    MSG uMsg;
+    while (uMsg.GetMessage(null, 0, 0))
+    {
+      uMsg.TranslateMessage();
+      uMsg.DispatchMessage();
+    }
   }
-}
 
-int g_fAlive = true;
+  static bool alive = true;
 
-function Application_DoEvents()
-{
-  MSG uMsg;
-  while (g_fAlive && uMsg.PeekMessage(null, 0, 0, PM_REMOVE))
+  static function DoEvents()
   {
-    uMsg.TranslateMessage();
-    uMsg.DispatchMessage();
+    MSG uMsg;
+    while (alive && uMsg.PeekMessage(null, 0, 0, PM_REMOVE))
+    {
+      uMsg.TranslateMessage();
+      uMsg.DispatchMessage();
+    }
+    return alive;
   }
-  return g_fAlive;
-}
 
-function Application_Exit()
-{
-  g_fAlive = false;
-  PostQuitMessage(0);
+  static function Exit()
+  {
+    alive = false;
+    PostQuitMessage(0);
+  }
 }
 ?>
 

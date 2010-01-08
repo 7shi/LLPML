@@ -26,6 +26,8 @@ namespace Girl.LLPML
         {
             this.target = target;
             this.args.AddRange(args);
+            if (string.IsNullOrEmpty(name) && target is Struct.Member)
+                this.name = (target as Struct.Member).GetName();
         }
 
         public Call(BlockBase parent, IIntValue val, IIntValue target, params IIntValue[] args)
@@ -43,7 +45,6 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            bool invoke = xr.Name == "invoke";
             string name = xr["name"];
             string var = xr["var"];
             if (name != null && var == null)
@@ -55,10 +56,6 @@ namespace Girl.LLPML
                 this.val = new Var(parent, var);
                 if (xr["type"] == "std") callType = CallType.Std;
             }
-            else
-            {
-                throw Abort(xr, "either name or var required");
-            }
 
             Parse(xr, delegate
             {
@@ -66,17 +63,36 @@ namespace Girl.LLPML
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
-                    if (invoke && target == null)
+                    if (this.name == null && target == null)
+                    {
                         target = v;
+                        this.name = (target as Struct.Member).GetName();
+                    }
                     else
                         args.Add(v);
                 }
             });
+
+            if (this.name == null && val == null)
+                throw Abort(xr, "either name or var required");
         }
 
         public IIntValue GetFunction(OpCodes codes, IIntValue target, out List<IIntValue> args)
         {
-            if (string.IsNullOrEmpty(name))
+            if (val == null && target is Struct.Member)
+            {
+                var mem = target as Struct.Member;
+                var memf = mem.GetFunction();
+                if (memf == null)
+                    memf = parent.GetFunction(mem.GetName());
+                var memt = mem.GetTarget();
+                args = new List<IIntValue>();
+                if (memt != null && !memf.IsStatic)
+                    args.Add(memt);
+                args.AddRange(this.args);
+                return memf;
+            }
+            else if (string.IsNullOrEmpty(name))
             {
                 args = new List<IIntValue>();
                 if (target != null) args.Add(target);
@@ -128,7 +144,7 @@ namespace Girl.LLPML
                 if (st == null)
                     throw Abort("undefined function: " + name);
                 else
-                    throw Abort("undefined method: " + st.GetMemberName(name));
+                    throw Abort("undefined method: " + st.GetFullName(name));
             }
             args = new List<IIntValue>();
             args.Add(target);
@@ -138,13 +154,18 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpCodes codes)
         {
+            List<IIntValue> args = new List<IIntValue>();
+            if (this.val == null && target is Struct.Member)
+                args.Add((target as Struct.Member).GetTarget());
+            else if (target != null)
+                args.Add(target);
+            args.AddRange(this.args);
             if (name != null && name.StartsWith("__"))
             {
-                if (AddIntrinsicCodes(codes)) return;
-                if (AddSIMDCodes(codes)) return;
+                if (AddIntrinsicCodes(codes, args)) return;
+                if (AddSIMDCodes(codes, args)) return;
             }
 
-            List<IIntValue> args;
             var f = GetFunction(codes, target, out args);
             var args_array = args.ToArray();
             if (f is Function)

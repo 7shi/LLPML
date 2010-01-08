@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.19.20080511">
 
 <title>仮想関数</title>
 
@@ -15,7 +15,7 @@ struct Test1
   
   virtual Virt()
   {
-    printfln("Test1.Virt");
+    printfln("[%p] %s", this, __FUNCTION__);
   }
 }
 
@@ -23,7 +23,8 @@ struct Test2 : Test1
 {
   override Virt()
   {
-    printfln("Test2.Virt");
+    printfln("[%p] %s", this, __FUNCTION__);
+    base.Virt();
   };
 }
 

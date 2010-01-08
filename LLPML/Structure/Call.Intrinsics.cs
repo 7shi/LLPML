@@ -10,12 +10,8 @@ namespace Girl.LLPML
 {
     public partial class Call
     {
-        public bool AddIntrinsicCodes(OpCodes codes)
+        public bool AddIntrinsicCodes(OpCodes codes, List<IIntValue> args)
         {
-            var args = new List<IIntValue>();
-            if (target != null) args.Add(target);
-            args.AddRange(this.args);
-
             switch (name)
             {
                 case "__stosb":

@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.18.20080421";
+        public const string LLPMLVersion = "0.19.20080511";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -140,9 +140,20 @@ namespace Girl.LLPML
         public override void AddCodes(OpCodes codes)
         {
             IsCompiling = true;
+            MakeUpStatics(codes.Module);
             MakeUp();
             base.AddCodes(codes);
             IsCompiling = false;
+        }
+
+        private void MakeUpStatics(Module m)
+        {
+            foreach (var s in sentences)
+            {
+                var vd = s as Var.Declare;
+                if (vd != null && vd.IsStatic)
+                    vd.Address = new Addr32(m.GetBuffer(vd.FullName, vd.Type.Size));
+            }
         }
     }
 }

@@ -32,8 +32,19 @@ namespace Girl.LLPML.Parsing
                 case "function":
                 case "virtual":
                 case "override":
-                    Function(t).SrcInfo = si;
+                    Function(t, false).SrcInfo = si;
                     return null;
+                case "static":
+                    {
+                        var tt = Read();
+                        if (tt == "function")
+                        {
+                            Function(t, true).SrcInfo = si;
+                            return null;
+                        }
+                        Rewind();
+                        return Declare(true);
+                    }
                 case "extern":
                     Extern();
                     return null;
@@ -103,7 +114,7 @@ namespace Girl.LLPML.Parsing
             Rewind();
             if (t == ";") return null;
 
-            var dec = Declare();
+            var dec = Declare(false);
             if (dec != null) return dec;
 
             var e = Expression() as NodeBase;
@@ -202,7 +213,7 @@ namespace Girl.LLPML.Parsing
 
                 Rewind();
                 var s = Sentence();
-                if (s != null) block.Sentences.AddRange(s);
+                if (s != null) block.AddSentences(s);
             }
 
             this.parent = parent;
@@ -225,7 +236,7 @@ namespace Girl.LLPML.Parsing
             };
         }
 
-        private Function Function(string type)
+        private Function Function(string type, bool isStatic)
         {
             if (!CanRead) throw Abort("{0}: 定義が必要です。", type);
 
@@ -242,7 +253,7 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
-            var ret = new Function(this.parent, name);
+            var ret = new Function(this.parent, name, isStatic);
             ret.CallType = ct;
             if (Peek() == "(") ReadArgs(type, ret);
 
@@ -468,7 +479,7 @@ namespace Girl.LLPML.Parsing
                 if (target == null) target = ret;
                 this.parent = target;
                 var s = Sentence(separator);
-                if (s != null) ret.Sentences.AddRange(s);
+                if (s != null) ret.AddSentences(s);
             }
             if (ret == null)
                 throw p.Abort(si, "{0}: ブロックが必要です。", type);
@@ -608,7 +619,7 @@ namespace Girl.LLPML.Parsing
                             var p = parent;
                             parent = target;
                             var s = Sentence();
-                            if (s != null) scb.Block.Sentences.AddRange(s);
+                            if (s != null) scb.Block.AddSentences(s);
                             parent = p;
                             break;
                         }

@@ -83,12 +83,12 @@ namespace Girl.LLPML
         public override void AddCodes(OpCodes codes)
         {
             sentences.Clear();
-            sentences.Add(Block);
-            if (Loop != null) sentences.Add(Loop);
+            AddSentence(Block);
+            if (Loop != null) AddSentence(Loop);
             if (Cond == null)
                 Cond = new Cond(this, new IntValue(1));
             Cond.First = Block.First;
-            sentences.Add(Cond);
+            AddSentence(Cond);
             base.AddCodes(codes);
         }
     }

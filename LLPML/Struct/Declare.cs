@@ -76,6 +76,7 @@ namespace Girl.LLPML.Struct
                 RequiresName(xr);
                 type = Types.GetType(parent, xr["type"]) as TypeStruct;
                 if (type == null) throw Abort(xr, "type required");
+                if (xr["static"] == "1") IsStatic = true;
             }
 
             Parse(xr, delegate
@@ -155,7 +156,7 @@ namespace Girl.LLPML.Struct
             if (st1 == st2)
                 throw Abort(
                     "can not define recursive field: {0}",
-                    st1.GetMemberName(name));
+                    st1.GetFullName(name));
             var b = st2.GetBaseStruct();
             if (b != null) CheckField(st1, b);
         }

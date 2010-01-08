@@ -134,11 +134,6 @@ namespace Girl.LLPML.Struct
             return list.ToArray();
         }
 
-        public string GetMemberName(string name)
-        {
-            return this.name + Separator + name;
-        }
-
         public override Struct.Define ThisStruct { get { return this; } }
 
         private void CallBlock(OpCodes codes, Addr32 ad, Block b, CallType ct)
@@ -222,7 +217,8 @@ namespace Girl.LLPML.Struct
             thisptr.Address = new Addr32(Reg32.EBP, 8);
             ForEachMembers((p, pos) =>
             {
-                p.Address = new Addr32(Var.DestRegister, offset + pos);
+                if (!p.IsStatic)
+                    p.Address = new Addr32(Var.DestRegister, offset + pos);
                 return false;
             }, null);
             int lv = Level + 1;
@@ -344,7 +340,7 @@ namespace Girl.LLPML.Struct
             foreach (var func in funcs)
             {
                 var f = base.GetMember<Function>(func);
-                if (f == null) AddFunction(new Function(this, func));
+                if (f == null) AddFunction(new Function(this, func, false));
             }
         }
 

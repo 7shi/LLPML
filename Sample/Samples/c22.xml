@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080314">
+<llpml version="0.19.20080511">
 
 <title>表記</title>
 
@@ -45,9 +45,11 @@ printfln("sub(%d, %d) = %d", t.a, t.b, t.sub());
   <struct-member name="b">
     <ptr name="t" />
   </struct-member>
-  <invoke name="sub">
-    <ptr name="t" />
-  </invoke>
+  <call>
+    <struct-member name="sub">
+      <ptr name="t" />
+    </struct-member>    
+  </call>
 </call>
 
 test2 t2 = { { 11, 3 } };
@@ -65,11 +67,12 @@ printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
     <ptr name="t2" />
     <struct-member name="b" />
   </struct-member>
-  <invoke name="sub">
+  <call>
     <struct-member name="t">
       <ptr name="t2" />
+      <struct-member name="sub" />
     </struct-member>
-  </invoke>
+  </call>
 </call>
 
 <!-- -->

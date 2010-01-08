@@ -49,7 +49,6 @@ namespace Girl.LLPML
                 case "cast":
                     return new Cast(parent, xr);
                 case "call":
-                case "invoke":
                     return new Call(parent, xr);
                 case "delegate":
                     return new Delegate(parent, xr);
@@ -68,7 +67,7 @@ namespace Girl.LLPML
                 case "index":
                     return new Index(parent, xr);
                 case "get-function":
-                    return new StringValue(parent.GetName());
+                    return new StringValue(parent.FullName);
                 case "get-file":
                     return new StringValue(parent.Root.Source);
                 case "get-line":

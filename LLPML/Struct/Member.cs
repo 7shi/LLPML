@@ -88,6 +88,13 @@ namespace Girl.LLPML.Struct
 
         protected Addr32 GetAddressInternal(OpCodes codes)
         {
+            var st = GetTargetStruct();
+            if (st == null)
+                throw Abort("can not find member: {0}", name);
+            var mem = st.GetMember(name);
+            if (mem != null && mem.IsStatic)
+                return new Addr32(mem.Address);
+
             Addr32 ret = null;
             TypeBase t = null;
             if (target is Member)
@@ -108,18 +115,15 @@ namespace Girl.LLPML.Struct
                 codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
                 ret = new Addr32(Var.DestRegister);
             }
+
             if (t != null && t.IsValue)
             {
                 codes.Add(I386.Mov(Var.DestRegister, ret));
                 ret = new Addr32(Var.DestRegister);
             }
-            var st = GetTargetStruct();
-            if (st == null)
-                throw Abort("can not find member: {0}", name);
-            var offset = st.GetOffset(name);
-            if (offset >= 0)
+            if (mem != null)
             {
-                ret.Add(offset);
+                ret.Add(st.GetOffset(name));
                 return ret;
             }
 
@@ -248,7 +252,21 @@ namespace Girl.LLPML.Struct
             return delg;
         }
 
-        private Function GetFunction(string prefix)
+        public Function GetFunction()
+        {
+            if (Child == null)
+            {
+                var t = GetTargetStruct();
+                if (t == null) return null;
+                var ret = t.GetFunction(name);
+                if (target is Base && ret.IsVirtual)
+                    ret = t.GetFunction("override_" + name);
+                return ret;
+            }
+            return Child.GetFunction();
+        }
+
+        protected Function GetFunction(string prefix)
         {
             var st = GetTargetStruct();
             if (st == null) return null;
@@ -257,7 +275,7 @@ namespace Girl.LLPML.Struct
             return st.GetFunction(prefix + name);
         }
 
-        private bool CheckFunction(string prefix)
+        protected bool CheckFunction(string prefix)
         {
             return GetFunction(prefix) != null;
         }

@@ -194,18 +194,18 @@ namespace Girl.LLPML
         public override void AddCodes(OpCodes codes)
         {
             sentences.Clear();
-            sentences.Add(expr);
+            AddSentence(expr);
             int len = blocks.Count;
             for (int i = 0; i < len; i++)
             {
                 CaseBlock cb = blocks[i];
                 cb.Case.Block = cb.Block;
                 cb.Case.IsLast = i == len - 1;
-                sentences.Add(cb.Case);
+                AddSentence(cb.Case);
             }
             foreach (CaseBlock cb in blocks)
             {
-                sentences.Add(cb.Block);
+                AddSentence(cb.Block);
             }
             base.AddCodes(codes);
         }

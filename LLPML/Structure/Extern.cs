@@ -16,7 +16,7 @@ namespace Girl.LLPML
         }
 
         public Extern(BlockBase parent, string name, string module, string alias)
-            : base(parent, name)
+            : base(parent, name, false)
         {
             this.module = module;
             this.alias = alias;

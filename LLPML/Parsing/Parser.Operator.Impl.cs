@@ -22,7 +22,7 @@ namespace Girl.LLPML.Parsing
             if (target is Struct.Member)
             {
                 var mem = target as Struct.Member;
-                return new Call(parent, mem.GetName(), mem.GetTarget(), args);
+                return new Call(parent, "", mem, args);
             }
             return new Call(parent, target, null, args);
         }

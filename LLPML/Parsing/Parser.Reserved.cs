@@ -20,9 +20,11 @@ namespace Girl.LLPML.Parsing
                     return new Cast(parent, "bool", new IntValue(1)) { SrcInfo = si };
                 case "false":
                     return new Cast(parent, "bool", new IntValue(0)) { SrcInfo = si };
+                case "base":
+                    return new Struct.Base(parent) { SrcInfo = si };
                 case "function":
                     {
-                        var f = Function(t);
+                        var f = Function(t, false);
                         if (f == null) break;
                         f.SrcInfo = si;
                         return AutoDelegate(f);
@@ -77,7 +79,7 @@ namespace Girl.LLPML.Parsing
                 case "typeof":
                     return new TypeOf(parent, Expression()) { SrcInfo = si };
                 case "__FUNCTION__":
-                    return new StringValue(parent.GetName());
+                    return new StringValue(parent.FullName);
                 case "__FILE__":
                     return new StringValue(si.Source);
                 case "__LINE__":
@@ -113,7 +115,7 @@ namespace Girl.LLPML.Parsing
                 this.parent = ret;
                 var ex = Expression();
                 this.parent = parent;
-                ret.Sentences.Add(new Return(ret, ex));
+                ret.AddSentence(new Return(ret, ex));
             }
 
             if (!ret.Parent.AddFunction(ret))

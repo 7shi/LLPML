@@ -6,15 +6,15 @@ namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
-        private NodeBase[] Declare()
+        private NodeBase[] Declare(bool isStatic)
         {
             if (!CanRead) return null;
 
             var t = Read();
             if (t == "var")
-                return VarDeclare();
+                return VarDeclare(isStatic);
             else if (t == "delegate" && Peek() != "(")
-                return DelegateDeclare();
+                return DelegateDeclare(isStatic);
 
             if (Tokenizer.IsWord(t) && CanRead)
             {
@@ -28,7 +28,7 @@ namespace Girl.LLPML.Parsing
                         case "=":
                         case "[":
                             Rewind();
-                            return TypedDeclare(t);
+                            return TypedDeclare(t, isStatic);
                     }
                 }
                 Rewind();
@@ -137,7 +137,7 @@ namespace Girl.LLPML.Parsing
                 });
         }
 
-        private Var.Declare[] VarDeclare()
+        private Var.Declare[] VarDeclare(bool isStatic)
         {
             var list = new List<Var.Declare>();
             string type = null;
@@ -172,44 +172,45 @@ namespace Girl.LLPML.Parsing
                 },
                 (name, eq, si, array) =>
                 {
-                    Var.Declare p;
+                    Var.Declare v;
                     var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
                         if (tb != null) tb = Types.ConvertVarType(tb);
                         var vd = new Var.Declare(parent, name, tb);
                         if (eq) vd.Value = Expression();
-                        p = vd;
+                        v = vd;
                     }
                     else
                     {
                         /// todo: 配列を初期化できるようにする
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
-                        p = new Var.Declare(
+                        v = new Var.Declare(
                             parent, name, Types.ConvertVarType(tb), (int)array);
                     }
-                    p.SrcInfo = si;
-                    list.Add(p);
+                    v.SrcInfo = si;
+                    v.IsStatic = isStatic;
+                    list.Add(v);
                 });
             return list.ToArray();
         }
 
-        private Var.Declare[] TypedDeclare(string type)
+        private Var.Declare[] TypedDeclare(string type, bool isStatic)
         {
             var list = new List<Var.Declare>();
             ReadDeclare(type, null,
                 (name, eq, si, array) =>
                 {
-                    Var.Declare p;
+                    Var.Declare v;
                     var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
                         var vs = Types.GetValueType(type);
                         if (vs == null)
                         {
-                            p = new Struct.Declare(parent, name, type);
-                            if (eq) ReadInitializers(p as Struct.Declare, type);
+                            v = new Struct.Declare(parent, name, type);
+                            if (eq) ReadInitializers(v as Struct.Declare, type);
                         }
                         else
                         {
@@ -219,7 +220,7 @@ namespace Girl.LLPML.Parsing
                                 var ex = Expression();
                                 vd.Value = ex;
                             }
-                            p = vd;
+                            v = vd;
                         }
                     }
                     else
@@ -228,10 +229,11 @@ namespace Girl.LLPML.Parsing
                         if (eq)
                             throw parent.Abort(si, "{0}: 配列を初期化できません。", type);
                         if (tb == null) tb = TypeInt.Instance;
-                        p = new Var.Declare(parent, name, tb, (int)array);
+                        v = new Var.Declare(parent, name, tb, (int)array);
                     }
-                    p.SrcInfo = si;
-                    list.Add(p);
+                    v.SrcInfo = si;
+                    v.IsStatic = isStatic;
+                    list.Add(v);
                 });
             return list.ToArray();
         }
@@ -263,28 +265,29 @@ namespace Girl.LLPML.Parsing
             }
         }
 
-        private Var.Declare[] DelegateDeclare()
+        private Var.Declare[] DelegateDeclare(bool isStatic)
         {
             var list = new List<Var.Declare>();
             var type = Delegate.GetDefaultType(parent);
             ReadDeclare("delegate", null,
                 (name, eq, si, array) =>
                 {
-                    Var.Declare p;
+                    Var.Declare v;
                     if (array == null)
                     {
                         var vd = new Var.Declare(parent, name, type);
                         if (eq) vd.Value = Expression();
-                        p = vd;
+                        v = vd;
                     }
                     else
                     {
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
-                        p = new Var.Declare(parent, name, type, (int)array);
+                        v = new Var.Declare(parent, name, type, (int)array);
                     }
-                    p.SrcInfo = si;
-                    list.Add(p);
+                    v.SrcInfo = si;
+                    v.IsStatic = isStatic;
+                    list.Add(v);
                 });
             return list.ToArray();
         }

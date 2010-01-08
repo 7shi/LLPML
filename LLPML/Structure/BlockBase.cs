@@ -256,7 +256,7 @@ namespace Girl.LLPML
                     var pad = pos % len;
                     if (pad > 0) pos += len - pad;
                     if (delg1 != null && delg1(p, pos)) return;
-                    pos += p.Type.Size;
+                    if (!p.IsStatic) pos += p.Type.Size;
                 }
             }
             var padv = pos % Var.DefaultSize;
@@ -272,14 +272,15 @@ namespace Girl.LLPML
                 ForEachMembers(null, size => stackSize += size);
                 ForEachMembers((p, pos) =>
                 {
-                    p.Address = new Addr32(Reg32.EBP, pos - stackSize);
+                    if (!p.IsStatic)
+                        p.Address = new Addr32(Reg32.EBP, pos - stackSize);
                     return false;
                 }, null);
                 codes.Add(I386.Enter((ushort)stackSize, (byte)Level));
             }
-            string n = GetName();
+            string n = FullName;
             if (!string.IsNullOrEmpty(n)
-                && (parent == null || parent.GetName() != n))
+                && (parent == null || parent.FullName != n))
                 codes.Add(I386.Mov(Reg32.EAX, codes.Module.GetString(n)));
         }
 
@@ -361,22 +362,31 @@ namespace Girl.LLPML
             }
         }
 
-        public string GetName()
+        public string FullName
         {
-            if (parent == null) return "(root)";
-
-            string ret = "";
-            for (BlockBase b = this; b != root; b = b.Parent)
+            get
             {
-                if (!string.IsNullOrEmpty(b.Name))
+                if (parent == null) return "(root)";
+
+                string ret = "";
+                for (BlockBase b = this; b != root; b = b.Parent)
                 {
-                    if (ret == "")
-                        ret = b.Name;
-                    else
-                        ret = b.Name + Separator + ret;
+                    if (!string.IsNullOrEmpty(b.Name))
+                    {
+                        if (ret == "")
+                            ret = b.Name;
+                        else
+                            ret = b.Name + Separator + ret;
+                    }
                 }
+                return ret;
             }
-            return ret;
+        }
+
+        public string GetFullName(string name)
+        {
+            if (parent == null) return name;
+            return FullName + Separator + name;
         }
 
         private int funcNo = 0;
@@ -472,6 +482,24 @@ namespace Girl.LLPML
 
         protected virtual void MakeUpInternal()
         {
+        }
+
+        public void AddSentence(NodeBase nb)
+        {
+            if (nb is Var.Declare)
+            {
+                if ((nb as Var.Declare).IsStatic)
+                {
+                    parent.root.sentences.Add(nb);
+                    return;
+                }
+            }
+            sentences.Add(nb);
+        }
+
+        public void AddSentences(IEnumerable<NodeBase> nbs)
+        {
+            foreach (var nb in nbs) AddSentence(nb);
         }
     }
 }
