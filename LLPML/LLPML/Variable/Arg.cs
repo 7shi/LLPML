@@ -41,6 +41,7 @@ namespace Girl.LLPML
 
             type = xr["type"];
             parent.AddVar(this);
+            parent.AddPointer(this);
         }
     }
 }

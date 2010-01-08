@@ -12,6 +12,7 @@ namespace Girl.LLPML.Struct
         private Member src;
 
         public MemberPtr() { }
+        public MemberPtr(Member src) { this.src = src; }
         public MemberPtr(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)

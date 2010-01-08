@@ -18,6 +18,8 @@ namespace Girl.LLPML
         protected Root root;
         public Root Root { get { return root; } }
 
+        protected int lineNumber, linePosition;
+
         public NodeBase()
         {
         }
@@ -36,7 +38,14 @@ namespace Girl.LLPML
 
         public NodeBase(BlockBase parent, XmlTextReader xr) : this(parent)
         {
+            SetLine(xr);
             Read(xr);
+        }
+
+        protected void SetLine(XmlTextReader xr)
+        {
+            lineNumber = xr.LineNumber;
+            linePosition = xr.LinePosition;
         }
 
         public static void Parse(XmlTextReader xr, VoidDelegate delg)
@@ -58,10 +67,21 @@ namespace Girl.LLPML
             Parse(xr, null);
         }
 
+        public Exception Abort(string msg)
+        {
+            return Abort(lineNumber, linePosition, msg);
+        }
+
+        public static Exception Abort(int lineNumber, int linePosition, string msg)
+        {
+            if (lineNumber < 1) return new Exception(msg);
+            return new Exception(string.Format(
+                "[{0}:{1}] {2}", lineNumber, linePosition, msg));
+        }
+
         public static Exception Abort(XmlTextReader xr, string msg)
         {
-            return new Exception(string.Format(
-                "[{0}:{1}] {2}", xr.LineNumber, xr.LinePosition, msg));
+            return Abort(xr.LineNumber, xr.LinePosition, msg);
         }
 
         public static Exception Abort(XmlTextReader xr)

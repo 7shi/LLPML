@@ -23,7 +23,7 @@ namespace Girl.LLPML
         {
             reference = parent.GetPointer(name);
             if (reference == null)
-                throw new Exception("undefined pointer: " + name);
+                throw Abort("undefined pointer: " + name);
         }
 
         public Pointer(BlockBase parent, XmlTextReader xr)
@@ -52,7 +52,7 @@ namespace Girl.LLPML
             int lv = reference.Parent.Level;
             if (lv <= 0 || lv >= parent.Level)
             {
-                throw new Exception("Invalid variable scope: " + name);
+                throw Abort("Invalid variable scope: " + name);
             }
             codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
             codes.Add(I386.Sub(Reg32.EAX, (uint)-ad.Disp));

@@ -11,12 +11,18 @@ namespace Girl.LLPML.Struct
     public partial class Method : Function
     {
         private Struct.Define st;
+        public Struct.Define GetStruct() { return st; }
+
+        private bool isStatic;
+        public bool IsStatic { get { return isStatic; } }
+
         private string memberName;
 
         public Method(Struct.Define parent, XmlTextReader xr)
         {
             st = parent;
             this.parent = parent.Parent;
+            SetLine(xr);
             Read(xr);
         }
 
@@ -26,9 +32,8 @@ namespace Girl.LLPML.Struct
             if (memberName == null) throw Abort(xr, "name required");
             name = st.GetMemberName(memberName);
 
-            string sta = xr["static"];
-            if (sta == null || sta != "true")
-                args.Add(new Arg(this, "this", st.Name));
+            isStatic = "true" == xr["static"];
+            if (!isStatic) args.Add(new Arg(this, "this", st.Name));
         }
     }
 }

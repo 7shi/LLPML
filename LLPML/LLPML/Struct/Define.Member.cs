@@ -32,7 +32,7 @@ namespace Girl.LLPML.Struct
             {
                 if (type == null) return null;
                 Define st = parent.GetStruct(type);
-                if (st == null) throw new Exception("undefined type: " + type);
+                if (st == null) throw Abort("undefined type: " + type);
                 return st;
             }
         }

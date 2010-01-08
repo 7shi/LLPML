@@ -22,9 +22,9 @@ namespace Girl.LLPML
             : this(parent)
         {
             if (values.Length < Min)
-                throw new Exception("too few operands");
+                throw Abort("too few operands");
             else if (values.Length > Max)
-                throw new Exception("too many operands");
+                throw Abort("too many operands");
             this.values.AddRange(values);
         }
 

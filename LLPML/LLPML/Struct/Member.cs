@@ -24,6 +24,7 @@ namespace Girl.LLPML.Struct
         {
             this.parent = parent.parent;
             isRoot = false;
+            SetLine(xr);
             Read(xr);
         }
 
@@ -89,7 +90,7 @@ namespace Girl.LLPML.Struct
                 int lv = src.Parent.Level;
                 if (lv <= 0 || lv >= parent.Level)
                 {
-                    throw new Exception("Invalid variable scope: " + name);
+                    throw Abort("Invalid variable scope: " + name);
                 }
                 codes.Add(I386.Mov(Reg32.EDX, new Addr32(Reg32.EBP, -lv * 4)));
                 return new Addr32(Reg32.EDX, ad.Disp);
@@ -100,13 +101,13 @@ namespace Girl.LLPML.Struct
                 return new Addr32(Reg32.EDX);
             }
             else
-                throw new Exception("can not get address");
+                throw Abort("can not get address");
         }
 
         public int GetOffset(Define st)
         {
             int ret = st.GetOffset(name);
-            if (ret < 0) throw new Exception("undefined member: " + name);
+            if (ret < 0) throw Abort("undefined member: " + name);
             if (member == null) return ret;
             return ret + member.GetOffset(st.GetMember(name).GetStruct());
         }
@@ -118,14 +119,14 @@ namespace Girl.LLPML.Struct
             if (src != null)
                 st = src.GetStruct();
             else if (var != null)
-                st = var.Reference.GetStruct();
+                st = var.GetStruct();
             else
-                throw new Exception("can not get address");
+                throw Abort("can not get address");
             ret.Add(GetOffset(st));
             return ret;
         }
 
-        public string Type
+        public override string Type
         {
             get
             {
@@ -133,7 +134,7 @@ namespace Girl.LLPML.Struct
                 if (src != null)
                     st = src.GetStruct();
                 else
-                    st = var.Reference.GetStruct();
+                    st = var.GetStruct();
                 return st.GetMember(name).Type;
             }
         }

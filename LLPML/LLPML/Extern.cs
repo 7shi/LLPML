@@ -14,6 +14,8 @@ namespace Girl.LLPML
         public Extern() { }
         public Extern(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
+        public override DeclareBase[] GetArgs() { return null; }
+
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);

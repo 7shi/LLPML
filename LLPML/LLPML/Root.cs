@@ -11,15 +11,23 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.7.20070917";
+        public string Version = "0.8.20070924";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
         public delegate TextReader StreamHandler(string name);
         public StreamHandler StreamDelegate;
 
-        public Root() { root = this; }
-        public Root(XmlTextReader xr) : this() { Read(xr); }
+        public Root()
+        {
+            root = this;
+        }
+
+        public Root(XmlTextReader xr)
+        {
+            SetLine(xr);
+            Read(xr);
+        }
 
         protected override void ReadBlock(XmlTextReader xr)
         {

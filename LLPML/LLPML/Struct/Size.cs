@@ -23,7 +23,7 @@ namespace Girl.LLPML.Struct
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {
             Define st = parent.GetStruct(name);
-            if (st == null) throw new Exception("undefined struct: " + name);
+            if (st == null) throw Abort("undefined struct: " + name);
 
             IntValue.AddCodes(codes, op, dest, (uint)st.GetSize());
         }

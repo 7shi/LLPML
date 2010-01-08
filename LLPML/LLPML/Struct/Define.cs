@@ -10,7 +10,9 @@ namespace Girl.LLPML.Struct
     public partial class Define : NodeBase
     {
         protected List<Member> members = new List<Member>();
-        public List<Member> Members { get { return members; } }
+
+        protected string baseType;
+        public string BaseType { get { return baseType; } }
 
         public Define() { }
         public Define(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
@@ -18,6 +20,11 @@ namespace Girl.LLPML.Struct
         public override void Read(XmlTextReader xr)
         {
             RequiresName(xr);
+
+            baseType = xr["base"];
+            if (name == baseType)
+                throw Abort(xr, "can not define recursive base type: " + name);
+
             Parse(xr, delegate
             {
                 switch (xr.NodeType)
@@ -55,6 +62,8 @@ namespace Girl.LLPML.Struct
         public int GetSize()
         {
             int ret = 0;
+            Define st = GetBaseStruct();
+            if (st != null) ret = st.GetSize();
             foreach (Member m in members)
             {
                 ret += m.GetSize();
@@ -66,11 +75,14 @@ namespace Girl.LLPML.Struct
         public int GetOffset(string name)
         {
             int ret = 0;
+            Define st = GetBaseStruct();
+            if (st != null) ret = st.GetSize();
             foreach (Member m in members)
             {
                 if (m.Name == name) return ret;
                 ret += m.GetSize();
             }
+            if (st != null) return st.GetOffset(name);
             return -1;
         }
 
@@ -80,7 +92,18 @@ namespace Girl.LLPML.Struct
             {
                 if (m.Name == name) return m;
             }
+            Define st = GetBaseStruct();
+            if (st != null) return st.GetMember(name);
             return null;
+        }
+
+        public Member[] GetMembers()
+        {
+            List<Member> list = new List<Member>();
+            Define st = GetBaseStruct();
+            if (st != null) list.AddRange(st.GetMembers());
+            list.AddRange(members);
+            return list.ToArray();
         }
 
         public string GetMemberName(string name)
@@ -90,11 +113,27 @@ namespace Girl.LLPML.Struct
 
         public Method GetMethod(string name)
         {
-            return parent.GetFunction(GetMemberName(name)) as Method;
+            Method ret = parent.GetFunction(GetMemberName(name)) as Method;
+            if (ret != null) return ret;
+            Define st = GetBaseStruct();
+            if (st != null) return st.GetMethod(name);
+            return null;
         }
 
         public void AddConstructor(List<OpCode> codes, Module m, Addr32 ad)
         {
+            Define st = GetBaseStruct();
+            if (st != null) st.AddConstructor(codes, m, ad);
+
+            Addr32 ad2 = new Addr32(ad);
+            if (st != null) ad2.Add(st.GetSize());
+            foreach (Member mem in members)
+            {
+                Define memst = mem.GetStruct();
+                if (memst != null) memst.AddConstructor(codes, m, ad2);
+                ad2.Add(mem.GetSize());
+            }
+
             Method ctor = GetMethod("this");
             if (ctor == null) return;
 
@@ -127,13 +166,55 @@ namespace Girl.LLPML.Struct
                 }
             }
 
+            Define st = GetBaseStruct();
             Addr32 ad2 = new Addr32(ad);
+            if (st != null) ad2.Add(st.GetSize());
             foreach (Member mem in members)
             {
                 Define memst = mem.GetStruct();
                 if (memst != null) memst.AddDestructor(codes, m, ad2);
                 ad2.Add(mem.GetSize());
             }
+            if (st != null) st.AddDestructor(codes, m, ad);
+        }
+
+        public Define GetBaseStruct()
+        {
+            if (baseType == null) return null;
+            Define st = parent.GetStruct(baseType);
+            if (st != null) return st;
+            throw Abort("undefined struct: " + baseType);
+        }
+
+        public void CheckStruct()
+        {
+            CheckBaseStruct(name);
+            foreach (Member mem in members)
+            {
+                Define st = mem.GetStruct();
+                if (st != null) st.CheckStruct(name);
+            }
+        }
+
+        public void CheckStruct(string type)
+        {
+            if (type == name)
+                throw Abort("can not define recursive type: " + name);
+            foreach (Member mem in members)
+            {
+                Define st = mem.GetStruct();
+                if (st != null) st.CheckStruct(type);
+            }
+        }
+
+        public void CheckBaseStruct(string name)
+        {
+            Define b = GetBaseStruct();
+            if (b == null) return;
+
+            if (b.name == name)
+                throw Abort("can not define recursive base type: " + name);
+            b.CheckBaseStruct(name);
         }
     }
 }

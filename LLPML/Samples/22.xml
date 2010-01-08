@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.7.20070917">
+<llpml version="0.8.20070924">
 
 <!-- constructor and destructor -->
 
@@ -19,19 +19,27 @@
 	
 	<!-- constructor -->
 	<method name="this">
-		<call name="printf">{%p}<this /></call>
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
 		<invoke name="Show"><this /></invoke>
 	</method>
 	
 	<!-- destructor -->
 	<method name="~this">
-		<call name="printf">~{%p}<this /></call>
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
 		<invoke name="Show"><this /></invoke>
 	</method>
 	
 	<method name="Show">
 		<call name="printfln">
-			<string> "%s"</string>
+			<string>"%s"</string>
 			<struct-member name="name" />
 		</call>
 	</method>
@@ -42,15 +50,23 @@
 	
 	<!-- constructor -->
 	<method name="this">
-		<call name="printf">[%p]<this /></call>
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
 		<invoke name="Show">
-			<struct-member-ptr name="name" />
+			<struct-member name="name" />
 		</invoke>
 	</method>
 	
 	<!-- destructor -->
 	<method name="~this">
-		<call name="printf">~[%p]<this /></call>
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
 		<invoke name="Show">
 			<struct-member-ptr name="name" />
 		</invoke>

@@ -37,7 +37,7 @@ namespace Girl.LLPML
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)
-                    throw new Exception("invalid continue");
+                    throw Abort("invalid continue");
                 b.AddDestructors(codes, m, ptrs);
                 if (b.AcceptsContinue) break;
                 b.AddExitCodes(codes, m);

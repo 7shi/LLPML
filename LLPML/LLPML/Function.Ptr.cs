@@ -26,7 +26,7 @@ namespace Girl.LLPML
             {
                 Function f = parent.GetFunction(name);
                 if (f == null)
-                    throw new Exception("undefined function: " + name);
+                    throw Abort("undefined function: " + name);
                 return new Val32(m.Specific.ImageBase, f.First);
             }
 

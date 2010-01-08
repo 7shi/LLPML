@@ -50,7 +50,14 @@ namespace Girl.LLPML
             {
                 Function f = parent.GetFunction(name);
                 if (f == null)
-                    throw new Exception("undefined function: " + name);
+                    throw Abort("undefined function: " + name);
+                DeclareBase[] fargs = f.GetArgs();
+                if (fargs != null)
+                {
+                    int len = fargs.Length;
+                    if (!(len > 0 && fargs[len - 1] is ArgPtr) && args.Count != len)
+                        throw Abort("argument mismatched: " + name);
+                }
                 AddCodes(codes, m, f, args);
             }
             else

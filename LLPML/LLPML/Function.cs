@@ -15,6 +15,7 @@ namespace Girl.LLPML
 
         protected List<DeclareBase> args
             = new List<DeclareBase>();
+        public virtual DeclareBase[] GetArgs() { return args.ToArray(); }
 
         public Function() { }
         public Function(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
@@ -87,7 +88,7 @@ namespace Girl.LLPML
                 IIntValue retval = new Var(this, "__retval") as IIntValue;
                 retval.AddCodes(codes, m, "mov", null);
             }
-            codes.Add(I386.Leave());
+            base.AddExitCodes(codes, m);
             if (type == CallType.Std && argStack > 0)
             {
                 codes.Add(I386.Ret(argStack));

@@ -42,7 +42,7 @@ namespace Girl.LLPML
         public void AddInt(string name, int value)
         {
             if (ints.ContainsKey(name))
-                throw new Exception("multiple definitions: " + name);
+                throw Abort("multiple definitions: " + name);
             ints.Add(name, value);
         }
 
@@ -104,7 +104,7 @@ namespace Girl.LLPML
         public void AddString(string name, string value)
         {
             if (strings.ContainsKey(name))
-                throw new Exception("multiple definitions: " + name);
+                throw Abort("multiple definitions: " + name);
             strings.Add(name, value);
         }
 
@@ -175,7 +175,7 @@ namespace Girl.LLPML
         public void AddVar(Var.Declare src)
         {
             if (vars.ContainsKey(src.Name))
-                throw new Exception("multiple definitions: " + src.Name);
+                throw Abort("multiple definitions: " + src.Name);
             vars.Add(src.Name, src);
         }
 
@@ -195,7 +195,7 @@ namespace Girl.LLPML
         public void AddPointer(Pointer.Declare src)
         {
             if (ptrs.ContainsKey(src.Name))
-                throw new Exception("multiple definitions: " + src.Name);
+                throw Abort("multiple definitions: " + src.Name);
             ptrs.Add(src.Name, src);
         }
 
@@ -222,7 +222,7 @@ namespace Girl.LLPML
         public void AddFunction(Function f)
         {
             if (functions.ContainsKey(f.Name))
-                throw new Exception("multiple definitions: " + f.Name);
+                throw Abort("multiple definitions: " + f.Name);
             functions.Add(f.Name, f);
         }
 
@@ -242,7 +242,7 @@ namespace Girl.LLPML
         public void AddStruct(Struct.Define s)
         {
             if (structs.ContainsKey(s.Name))
-                throw new Exception("multiple definitions: " + s.Name);
+                throw Abort("multiple definitions: " + s.Name);
             structs.Add(s.Name, s);
         }
 
@@ -320,6 +320,7 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
+            CheckStructs();
             codes.Add(first);
             BeforeAddCodes(codes, m);
             codes.Add(construct);
@@ -335,6 +336,14 @@ namespace Girl.LLPML
                 func.AddCodes(codes, m);
             }
             codes.Add(last);
+        }
+
+        private void CheckStructs()
+        {
+            foreach (Struct.Define st in structs.Values)
+            {
+                st.CheckStruct();
+            }
         }
 
         protected virtual void AfterAddCodes(List<OpCode> codes, Module m)

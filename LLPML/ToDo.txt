@@ -1,11 +1,7 @@
-- コンストラクタ＆デストラクタ
-
-- 自前leaveのためデストラクタ非対応（デストラクタ自体未実装だが）
--- return
--- break
--- continue
-
+- 型指定とunsignedの自動化
+- callの型チェック
 - callのretが64bitのときに怪しい
+-- 64bit自体未サポートだが
 
 - switchのテーブル化
 

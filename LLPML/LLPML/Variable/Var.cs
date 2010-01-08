@@ -10,7 +10,6 @@ namespace Girl.LLPML
     public partial class Var : VarBase, IIntValue
     {
         protected Declare reference;
-        public Declare Reference { get { return reference; } }
 
         public Var() { }
 
@@ -19,7 +18,7 @@ namespace Girl.LLPML
         {
             reference = parent.GetVar(name);
             if (reference == null)
-                throw new Exception("undefined variable: " + name);
+                throw Abort("undefined variable: " + name);
         }
 
         public Var(BlockBase parent, XmlTextReader xr)
@@ -37,6 +36,19 @@ namespace Girl.LLPML
                 throw Abort(xr, "undefined variable: " + name);
         }
 
+        public virtual Struct.Define GetStruct()
+        {
+            return reference.GetStruct();
+        }
+
+        public virtual string Type
+        {
+            get
+            {
+                return reference.Type;
+            }
+        }
+
         public virtual Addr32 GetAddress(List<OpCode> codes, Module m)
         {
             Addr32 ad = reference.Address;
@@ -47,7 +59,7 @@ namespace Girl.LLPML
             int lv = reference.Parent.Level;
             if (lv <= 0 || lv >= parent.Level)
             {
-                throw new Exception("Invalid variable scope: " + name);
+                throw Abort("Invalid variable scope: " + name);
             }
             codes.Add(I386.Mov(Reg32.EDX, new Addr32(Reg32.EBP, -lv * 4)));
             return new Addr32(Reg32.EDX, ad.Disp);

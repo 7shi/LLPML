@@ -25,9 +25,15 @@ namespace Girl.LLPML.Struct
                 {
                     type = (v as Struct.MemberPtr).Type;
                 }
+                else if (v is Struct.Member)
+                {
+                    Member mem = v as Struct.Member;
+                    type = mem.Type;
+                    args[0] = new MemberPtr(mem);
+                }
                 else if (v is Var)
                 {
-                    type = (v as Var).Reference.Type;
+                    type = (v as Var).Type;
                 }
                 else if (v is Pointer)
                 {
@@ -35,8 +41,14 @@ namespace Girl.LLPML.Struct
                     if (st != null) type = st.Type;
                 }
                 if (type == null)
-                    throw new Exception("struct instance or pointer required: " + name);
-                name = type + "::" + name;
+                    throw Abort("struct instance or pointer required: " + name);
+                Define st2 = parent.GetStruct(type);
+                if (st2 == null)
+                    throw Abort("undefined struct: " + type);
+                Method target = st2.GetMethod(name);
+                if (target == null)
+                    throw Abort("undefined method: " + st2.GetMemberName(name));
+                name = target.Name;
                 initialized = true;
             }
             base.AddCodes(codes, m);

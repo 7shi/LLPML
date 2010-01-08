@@ -64,6 +64,7 @@
     <Compile Include="LLPML\Struct\MemberPtr.cs" />
     <Compile Include="LLPML\Struct\Method.cs" />
     <Compile Include="LLPML\Struct\This.cs" />
+    <Compile Include="LLPML\Struct\Base.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Sub.cs" />
     <Compile Include="LLPML\Operators\Add.cs" />
     <Compile Include="LLPML\Variable\Operators\Dec.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="LLPML\Variable\Operators\Var.UnsignedDiv.cs" />
     <Compile Include="LLPML\Delegates.cs" />
     <Compile Include="LLPML\BlockBase.cs" />
+    <Compile Include="LLPML\BlockName.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -235,6 +237,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\22.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\23.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ToDo.txt" />

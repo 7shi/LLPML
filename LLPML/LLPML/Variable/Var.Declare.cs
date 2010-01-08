@@ -35,6 +35,12 @@ namespace Girl.LLPML
             {
             }
 
+            public Declare(BlockBase parent, string name, string type)
+                : this(parent, name)
+            {
+                this.type = type;
+            }
+
             public Declare(BlockBase parent, XmlTextReader xr)
                 : base(parent, xr)
             {
@@ -73,7 +79,7 @@ namespace Girl.LLPML
 
                 Struct.Define st = parent.GetStruct(type);
                 if (st != null) return st;
-                throw new Exception("undefined struct: " + type);
+                throw Abort("undefined struct: " + type);
             }
         }
     }

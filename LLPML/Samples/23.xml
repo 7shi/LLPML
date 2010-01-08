@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.8.20070924">
+
+<!-- inheritance -->
+
+<include src="stdio.xml" />
+
+<struct-define name="Test1">
+	<member name="a" />
+	
+	<method name="this">
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
+		<invoke name="Show"><this /></invoke>
+	</method>
+	
+	<method name="~this">
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
+		<invoke name="Show"><this /></invoke>
+	</method>
+	
+	<method name="Show">
+		<call name="printfln">
+			<string>a = %d</string>
+			<struct-member name="a" />
+		</call>
+	</method>
+</struct-define>
+
+<struct-define name="Test2" base="Test1">
+	<member name="b" />
+	<member name="c" type="Test1" />
+	
+	<method name="this">
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
+		<invoke name="Show"><this /></invoke>
+	</method>
+	
+	<method name="~this">
+		<call name="printf">
+			<string>[%p] %s: </string>
+			<this />
+			<block-name />
+		</call>
+		<invoke name="Show"><this /></invoke>
+	</method>
+	
+	<method name="Show">
+		<!-- <invoke name="Show"><base /></invoke> -->
+		<call name="printfln">
+			<string>a, b = %d, %d</string>
+			<struct-member name="a" />
+			<struct-member name="b" />
+		</call>
+	</method>
+</struct-define>
+
+<block>
+	<struct-declare name="test1" type="Test1">
+		<int>1</int>
+	</struct-declare>
+	<struct-declare name="test2" type="Test2">
+		<int>2</int>
+		<int>3</int>
+		<struct-declare>
+			<int>4</int>
+		</struct-declare>
+	</struct-declare>
+	<var-declare name="test2a" type="Test1">
+		<ptr name="test2" />
+	</var-declare>
+	<invoke name="Show"><ptr name="test1" /></invoke>
+	<invoke name="Show"><ptr name="test2" /></invoke>
+	<invoke name="Show"><var name="test2a" /></invoke>
+	<call name="vprintfln">
+		<string>test2: a, b, c = %d, %d, %d</string>
+		<ptr name="test2" />
+	</call>
+</block>
+
+<call name="finish" />
+
+</llpml>

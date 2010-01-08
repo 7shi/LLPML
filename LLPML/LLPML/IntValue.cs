@@ -40,6 +40,8 @@ namespace Girl.LLPML
                             return new Pointer(parent, xr);
                         case "this":
                             return new Struct.This(parent, xr);
+                        case "base":
+                            return new Struct.Base(parent, xr);
                         case "call":
                             return new Call(parent, xr);
                         case "invoke":
@@ -52,6 +54,8 @@ namespace Girl.LLPML
                             return new Struct.MemberPtr(parent, xr);
                         case "struct-size":
                             return new Struct.Size(parent, xr);
+                        case "block-name":
+                            return new BlockName(parent);
                         case "inc":
                             return new Inc(parent, xr);
                         case "dec":
