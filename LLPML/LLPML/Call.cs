@@ -40,19 +40,9 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                switch (xr.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        args.Add(new IntValue(parent, xr));
-                        break;
-
-                    case XmlNodeType.Whitespace:
-                    case XmlNodeType.Comment:
-                        break;
-
-                    default:
-                        throw Abort(xr, "value required");
-                }
+                IntValue v = new IntValue(parent);
+                v.ReadValue(xr, true);
+                if (v.HasValue) args.Add(v);
             });
         }
 
@@ -62,7 +52,7 @@ namespace Girl.LLPML
             Array.Reverse(args);
             foreach (IntValue arg in args)
             {
-                arg.GetValue(codes, m, null);
+                arg.AddCodes(codes, m, "push", null);
             }
             if (name != null)
             {

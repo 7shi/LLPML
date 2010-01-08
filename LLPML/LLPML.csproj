@@ -49,20 +49,27 @@
     <Compile Include="LLPML\Call.cs" />
     <Compile Include="LLPML\Block.cs" />
     <Compile Include="LLPML\VarInt.cs" />
-    <Compile Include="LLPML\Pointer.Define.cs" />
+    <Compile Include="LLPML\Pointer.Declare.cs" />
     <Compile Include="LLPML\Loop.cs" />
     <Compile Include="LLPML\For.cs" />
     <Compile Include="LLPML\Break.cs" />
     <Compile Include="LLPML\ArgInt.cs" />
-    <Compile Include="LLPML\VarInt.Methods.cs" />
+    <Compile Include="LLPML\Operators.cs" />
     <Compile Include="LLPML\ArgPtr.cs" />
     <Compile Include="LLPML\VarBase.cs" />
     <Compile Include="LLPML\Return.cs" />
-    <Compile Include="LLPML\VarInt.Define.cs" />
-    <Compile Include="LLPML\VarInt.Let.cs" />
+    <Compile Include="LLPML\VarInt.Ptr.cs" />
     <Compile Include="LLPML\Pointer.cs" />
     <Compile Include="LLPML\Function.Ptr.cs" />
     <Compile Include="LLPML\IntValue.cs" />
+    <Compile Include="LLPML\VarInt.Declare.cs" />
+    <Compile Include="LLPML\Struct.Member.cs" />
+    <Compile Include="LLPML\Struct.Define.cs" />
+    <Compile Include="LLPML\Struct.Define.Member.cs" />
+    <Compile Include="LLPML\Struct.Declare.cs" />
+    <Compile Include="LLPML\Let.cs" />
+    <Compile Include="LLPML\Operand1.cs" />
+    <Compile Include="LLPML\Operand2.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -133,6 +140,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\11.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\12.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\13.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

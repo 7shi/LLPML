@@ -18,19 +18,18 @@ namespace Girl.LLPML
 
             public override void Read(XmlTextReader xr)
             {
-                if (!xr.IsEmptyElement)
-                    throw Abort(xr, "<" + xr.Name + "> can not have any children");
+                NoChild(xr);
 
                 name = xr["name"];
                 if (name == null) throw Abort(xr, "name required");
             }
 
-            public ValueWrap GetAddress(Module m)
+            public Val32 GetAddress(Module m)
             {
                 Function f = parent.GetFunction(name);
                 if (f == null)
                     throw new Exception("undefined function: " + name);
-                return new ValueWrap(m.Specific.ImageBase, f.Address);
+                return new Val32(m.Specific.ImageBase, f.Address);
             }
         }
     }

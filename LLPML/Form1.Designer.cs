@@ -117,7 +117,7 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 418);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 474);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(464, 22);
             this.statusStrip1.TabIndex = 2;
@@ -132,7 +132,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(456, 227);
+            this.textBox1.Size = new System.Drawing.Size(456, 273);
             this.textBox1.TabIndex = 0;
             this.textBox1.WordWrap = false;
             // 
@@ -150,8 +150,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.textBox2);
-            this.splitContainer1.Size = new System.Drawing.Size(464, 394);
-            this.splitContainer1.SplitterDistance = 252;
+            this.splitContainer1.Size = new System.Drawing.Size(464, 450);
+            this.splitContainer1.SplitterDistance = 298;
             this.splitContainer1.TabIndex = 1;
             // 
             // tabControl1
@@ -163,7 +163,7 @@
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(464, 252);
+            this.tabControl1.Size = new System.Drawing.Size(464, 298);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.TabStop = false;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
@@ -173,7 +173,7 @@
             this.tabPage1.Controls.Add(this.textBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 21);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(456, 227);
+            this.tabPage1.Size = new System.Drawing.Size(456, 273);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "New";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -187,7 +187,7 @@
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox2.Size = new System.Drawing.Size(464, 138);
+            this.textBox2.Size = new System.Drawing.Size(464, 148);
             this.textBox2.TabIndex = 0;
             this.textBox2.WordWrap = false;
             // 
@@ -195,7 +195,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 440);
+            this.ClientSize = new System.Drawing.Size(464, 496);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);

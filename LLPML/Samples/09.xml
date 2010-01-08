@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815">
+<llpml version="0.4.20070816">
 
 <!-- function -->
 
@@ -15,9 +15,11 @@
 <function name="test">
 	<arg-int name="a" />
 	<arg-int name="b" />
-	<var-int-define name="c" />
-	<var-int-let name="c"><var-int name="a" /></var-int-let>
-	<var-int-add name="c"><var-int name="b" /></var-int-add>
+	<var-int-declare name="c"><var-int name="a" /></var-int-declare>
+	<add>
+		<var-int name="c" />
+		<var-int name="b" />
+	</add>
 	<call name="printfln">
 		<string>%d + %d = %d</string>
 		<var-int name="a" />

@@ -9,7 +9,7 @@ namespace Girl.LLPML
 {
     public partial class VarInt : VarBase
     {
-        protected VarInt.Define reference;
+        protected VarInt.Declare reference;
 
         public VarInt() { }
 
@@ -28,8 +28,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            if (!xr.IsEmptyElement)
-                throw Abort(xr, "<" + xr.Name + "> can not have any children");
+            NoChild(xr);
 
             name = xr["name"];
             if (name == null) throw Abort(xr, "name required");
@@ -39,9 +38,8 @@ namespace Girl.LLPML
                 throw Abort(xr, "undefined variable: " + name);
         }
 
-        public Addr32 GetAddress(List<OpCode> codes, Module m)
+        public virtual Addr32 GetAddress(List<OpCode> codes, Module m)
         {
-            AddCodes(codes, m);
             Addr32 ad = reference.Address;
             if (parent == reference.Parent || ad.IsAddress)
             {

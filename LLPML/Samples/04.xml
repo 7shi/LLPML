@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815">
+<llpml version="0.4.20070816">
 
 <include src="stdio.xml" />
 
-<string name="hello">こんにちは、世界！</string>
+<string-declare name="hello">こんにちは、世界！</string-declare>
 
 <call name="printfln">
 	<string name="hello" />
@@ -14,7 +14,7 @@
 		<string name="hello" />
 	</call>
 
-	<string name="hello">スコープのテスト</string>
+	<string-declare name="hello">スコープのテスト</string-declare>
 	
 	<call name="printfln">
 		<string name="hello" />

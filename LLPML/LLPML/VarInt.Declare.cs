@@ -9,27 +9,25 @@ namespace Girl.LLPML
 {
     public partial class VarInt : VarBase
     {
-        public class Define : DefineBase
+        public class Declare : DefineBase
         {
-            private int? value;
-            public int Value { get { return (int)value; } }
-            public bool HasValue { get { return value != null; } }
+            private IntValue value;
 
-            public Define() { }
+            public Declare() { }
 
-            public Define(Block parent, string name)
+            public Declare(Block parent, string name)
                 : base(parent, name)
             {
                 parent.AddVarInt(this);
             }
 
-            public Define(Block parent, string name, int value)
+            public Declare(Block parent, string name, int value)
                 : this(parent, name)
             {
-                this.value = value;
+                this.value = new IntValue(value);
             }
 
-            public Define(Block parent, XmlTextReader xr)
+            public Declare(Block parent, XmlTextReader xr)
                 : base(parent, xr)
             {
             }
@@ -37,18 +35,15 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 name = xr["name"];
-                value = null;
+                if (name == null) throw Abort(xr, "name required");
+
+                IntValue v = new IntValue(parent);
                 Parse(xr, delegate
                 {
-                    if (xr.NodeType == XmlNodeType.Text)
-                    {
-                        value = int.Parse(xr.Value);
-                    }
-                    else if (xr.NodeType != XmlNodeType.Whitespace)
-                    {
-                        throw Abort(xr, "invalid node");
-                    }
+                    v.ReadValue(xr, false);
                 });
+                if (v.HasValue) value = v;
+
                 parent.AddVarInt(this);
             }
 
@@ -56,7 +51,7 @@ namespace Girl.LLPML
             {
                 if (value != null)
                 {
-                    codes.Add(I386.Mov(Address, (uint)value));
+                    value.AddCodes(codes, m, "mov", address);
                 }
             }
         }

@@ -11,10 +11,10 @@ namespace Girl.PE
         public ushort Hint;
         public string Name;
 
-        private ValueWrap hintAddress = 0;
+        private Val32 hintAddress = 0;
 
-        private ValueWrap importRef = new ValueWrap(0, true);
-        public ValueWrap ImportRef { get { return importRef; } }
+        private Val32 importRef = new Val32(0, true);
+        public Val32 ImportRef { get { return importRef; } }
 
         public Symbol(ushort hint, string name)
         {

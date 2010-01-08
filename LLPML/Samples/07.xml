@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815">
+<llpml version="0.4.20070816">
 
 <include src="stdio.xml" />
 
-<var-int-define name="result">0</var-int-define>
+<var-int-declare name="result">0</var-int-declare>
 
 <for name="i" from="1" to="10000">
-	<var-int-add name="result"><var-int name="i" /></var-int-add>
+	<add>
+		<var-int name="result" />
+		<var-int name="i" />
+	</add>
 </for>
 
 <call name="printfln">

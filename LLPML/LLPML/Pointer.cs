@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Pointer : VarBase
     {
-        private Pointer.Define reference;
+        private Pointer.Declare reference;
 
         private int length = 0;
         public int Length { get { return length; } }
@@ -32,8 +32,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            if (!xr.IsEmptyElement)
-                throw Abort(xr, "<" + xr.Name + "> can not have any children");
+            NoChild(xr);
 
             name = xr["name"];
             if (name == null) throw Abort(xr, "name required");
@@ -45,7 +44,6 @@ namespace Girl.LLPML
 
         public void GetValue(List<OpCode> codes, Module m)
         {
-            AddCodes(codes, m);
             Addr32 ad = reference.Address;
             if (parent == reference.Parent || ad.IsAddress)
             {

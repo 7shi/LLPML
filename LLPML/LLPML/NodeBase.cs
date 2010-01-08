@@ -73,5 +73,11 @@ namespace Girl.LLPML
                 return parent == null ? 0 : parent.Level + 1;
             }
         }
+
+        protected void NoChild(XmlTextReader xr)
+        {
+            if (!xr.IsEmptyElement)
+                throw Abort(xr, "<" + xr.Name + "> can not have any children");
+        }
     }
 }

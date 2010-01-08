@@ -16,8 +16,8 @@ namespace Girl.X86
         private int disp = 0;
         public int Disp { get { return disp; } }
 
-        private ValueWrap address;
-        public ValueWrap Address { get { return address; } }
+        private Val32 address;
+        public Val32 Address { get { return address; } }
         public bool IsAddress { get { return address != null; } }
 
         private byte middleBits = 0;
@@ -25,10 +25,11 @@ namespace Girl.X86
         public Addr32() { isInitialized = false; }
         public Addr32(Reg32 r) { reg = r; }
         public Addr32(Reg32 r, int offset) { reg = r; disp = offset; }
-        public Addr32(ValueWrap ad) { address = ad; }
+        public Addr32(Val32 ad) { address = ad; }
+        public Addr32(Addr32 src) { Set(src); }
         public Addr32(Addr32 src, byte middleBits)
+            : this(src)
         {
-            Set(src);
             this.middleBits = middleBits;
         }
 
@@ -38,6 +39,7 @@ namespace Girl.X86
             reg = src.reg;
             disp = src.disp;
             address = src.address;
+            middleBits = src.middleBits;
         }
 
         private byte[] GetModRM()
@@ -85,6 +87,20 @@ namespace Girl.X86
             else
             {
                 block.Add(GetCodes());
+            }
+        }
+
+        public void Add(int n)
+        {
+            if (n == 0) return;
+
+            if (address != null)
+            {
+                address = new Val32(address, (uint)n);
+            }
+            else
+            {
+                disp += n;
             }
         }
     }

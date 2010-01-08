@@ -17,7 +17,7 @@ namespace Girl.LLPML
         public CallType Type { get { return type; } }
 
         protected OpCode entry = new OpCode();
-        public ValueWrap Address { get { return entry.Address; } }
+        public Val32 Address { get { return entry.Address; } }
 
         protected List<VarBase.DefineBase> args
             = new List<VarBase.DefineBase>();
@@ -84,7 +84,7 @@ namespace Girl.LLPML
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)
         {
-            foreach (VarInt.Define v in var_ints.Values)
+            foreach (VarInt.Declare v in var_ints.Values)
             {
                 if (v.Name == "__retval") codes.Add(I386.Mov(Reg32.EAX, v.Address));
             }

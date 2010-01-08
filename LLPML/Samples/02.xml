@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815" subsystem="WINDOWS_GUI">
+<llpml version="0.4.20070816" subsystem="WINDOWS_GUI">
 
 <extern name="MessageBox" alias="MessageBoxW" module="user32.dll" type="std" />
 <extern name="wsprintf" alias="wsprintfW" module="user32.dll" />
 
 <loop name="i" count="3">
-	<ptr-define name="dest"><char count="32" /></ptr-define>
+	<ptr-declare name="dest" type="char" length="32" />
 	<call name="wsprintf">
 		<ptr name="dest" />
 		<string>こんにちは、世界！(%d)</string>

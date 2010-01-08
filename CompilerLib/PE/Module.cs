@@ -45,17 +45,17 @@ namespace Girl.PE
             return new Function(this, ad, call);
         }
 
-        public ValueWrap GetString(string s)
+        public Val32 GetString(string s)
         {
             return RData.AddString(s).Address;
         }
 
-        public ValueWrap GetBuffer(string name, int size)
+        public Val32 GetBuffer(string name, int size)
         {
             return BSS.AddBuffer(name, size).Address;
         }
 
-        public ValueWrap GetInt32(string name)
+        public Val32 GetInt32(string name)
         {
             return Data.AddBuffer(name, sizeof(int)).Address;
         }

@@ -17,9 +17,7 @@
 </function>
 
 <function name="test">
-	<call name="printfln">
-		<string>Hello, World!</string>
-	</call>
+	<call name="printfln">Hello, World!</call>
 </function>
 
 </llpml>

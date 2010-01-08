@@ -8,8 +8,8 @@ namespace Girl.PE
 {
     public class ByteData
     {
-        private ValueWrap address = new ValueWrap(0, true);
-        public ValueWrap Address { get { return address; } }
+        private Val32 address = new Val32(0, true);
+        public Val32 Address { get { return address; } }
 
         private byte[] data;
         public byte[] Data { get { return data; } }

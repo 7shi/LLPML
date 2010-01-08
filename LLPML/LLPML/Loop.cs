@@ -10,7 +10,7 @@ namespace Girl.LLPML
     public class Loop : Block
     {
         private string name;
-        private VarInt.Define count;
+        private VarInt.Declare count;
         private OpCode start;
 
         public Loop() { }
@@ -24,7 +24,7 @@ namespace Girl.LLPML
             string count = xr["count"];
             if (count != null)
             {
-                this.count = new VarInt.Define(this, name, int.Parse(count));
+                this.count = new VarInt.Declare(this, name, int.Parse(count));
             }
             base.Read(xr);
         }

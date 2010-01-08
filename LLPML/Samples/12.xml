@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.4.20070816">
+
+<!-- variable pointer -->
+
+<include src="stdio.xml" />
+
+<var-int-declare name="a" />
+
+<block>
+	<var-int-declare name="b" />
+
+	<call name="printfln">
+		<string>&amp;a = %p, &amp;b = %p</string>
+		<var-int-ptr name="a" />
+		<var-int-ptr name="b" />
+	</call>
+</block>
+
+<call name="finish" />
+
+</llpml>

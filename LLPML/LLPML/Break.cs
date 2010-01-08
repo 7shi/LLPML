@@ -15,8 +15,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            if (!xr.IsEmptyElement)
-                throw Abort(xr, "<" + xr.Name + "> can not have any children");
+            NoChild(xr);
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)

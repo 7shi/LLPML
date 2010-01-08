@@ -12,50 +12,80 @@ namespace Girl.LLPML
     {
         protected List<NodeBase> sentences = new List<NodeBase>();
         protected OpCode last = new OpCode(), next = new OpCode();
-        public ValueWrap Last { get { return last.Address; } }
+        public Val32 Last { get { return last.Address; } }
 
         #region int
 
-        private Dictionary<string, int> ints = new Dictionary<string, int>();
+        protected Dictionary<string, int> ints
+            = new Dictionary<string, int>();
 
-        public int GetInt(string name)
+        public int? GetInt(string name)
         {
             if (ints.ContainsKey(name)) return ints[name];
-            return parent == null ? 0 : parent.GetInt(name);
+            return parent == null ? null : parent.GetInt(name);
+        }
+
+        public void AddInt(string name, int value)
+        {
+            if (ints.ContainsKey(name))
+                throw new Exception("multiple definition: " + name);
+            ints.Add(name, value);
         }
 
         public int ReadInt(XmlTextReader xr)
         {
             int? ret = null;
             string name = xr["name"];
-            string len = xr["len"];
+            if (name != null)
+            {
+                if (!xr.IsEmptyElement)
+                    throw Abort(xr, "do not specify value with name");
+                ret = GetInt(name);
+                if (ret == null)
+                    throw Abort(xr, "undefined value: " + name);
+                return (int)ret;
+            }
+            Parse(xr, delegate
+            {
+                if (xr.NodeType == XmlNodeType.Text)
+                {
+                    ret = (int)int.Parse(xr.Value);
+                }
+                else
+                {
+                    throw Abort(xr, "value required");
+                }
+            });
+            if (ret == null) throw Abort(xr, "value required");
+            return (int)ret;
+        }
+
+        public void ReadIntDefine(XmlTextReader xr)
+        {
+            string name = xr["name"];
+            if (name == null) throw Abort(xr, "name required");
+            int? ret = null;
             Parse(xr, delegate
             {
                 if (xr.NodeType == XmlNodeType.Text)
                 {
                     ret = int.Parse(xr.Value);
                 }
-            });
-            if (name != null)
-            {
-                if (ret == null)
-                {
-                    ret = GetInt(name);
-                }
                 else
                 {
-                    ints[name] = (int)ret;
+                    throw Abort(xr, "value required");
                 }
-            }
-            if (len != null) ret = GetString(len).Length;
-            return (int)ret;
+            });
+            if (ret == null) throw Abort(xr, "value required");
+            AddInt(name, (int)ret);
         }
 
         #endregion
 
         #region string
 
-        private Dictionary<string, string> strings = new Dictionary<string, string>();
+        protected Dictionary<string, string> strings
+            = new Dictionary<string, string>();
 
         public string GetString(string name)
         {
@@ -63,10 +93,26 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetString(name);
         }
 
+        public void AddString(string name, string value)
+        {
+            if (strings.ContainsKey(name))
+                throw new Exception("multiple definition: " + name);
+            strings.Add(name, value);
+        }
+
         public string ReadString(XmlTextReader xr)
         {
             string ret = null;
             string name = xr["name"];
+            if (name != null)
+            {
+                if (!xr.IsEmptyElement)
+                    throw Abort(xr, "do not specify string with name");
+                ret = GetString(name);
+                if (ret == null)
+                    throw Abort(xr, "undefined string: " + name);
+                return ret;
+            }
             Parse(xr, delegate
             {
                 switch (xr.NodeType)
@@ -76,37 +122,58 @@ namespace Girl.LLPML
                         ret = xr.Value;
                         break;
                     default:
-                        throw Abort(xr, "text required");
+                        throw Abort(xr, "string required");
                 }
             });
-            if (name != null)
-            {
-                if (ret == null)
-                {
-                    ret = GetString(name);
-                }
-                else
-                {
-                    strings[name] = ret;
-                }
-            }
+            if (ret == null) throw Abort(xr, "string required");
             return ret;
+        }
+
+        public void ReadStringDefine(XmlTextReader xr)
+        {
+            string name = xr["name"];
+            if (name == null) throw Abort(xr, "name required");
+            string ret = null;
+            Parse(xr, delegate
+            {
+                switch (xr.NodeType)
+                {
+                    case XmlNodeType.Text:
+                    case XmlNodeType.Whitespace:
+                        ret = xr.Value;
+                        break;
+                    default:
+                        throw Abort(xr, "string required");
+                }
+            });
+            if (ret == null) throw Abort(xr, "string required");
+            AddString(name, ret);
+        }
+
+        public int ReadStringLength(XmlTextReader xr)
+        {
+            NoChild(xr);
+
+            string name = xr["name"];
+            if (name == null) throw Abort(xr, "name required");
+
+            return GetString(name).Length;
         }
 
         #endregion
 
         #region var-int
 
-        protected Dictionary<string, VarInt.Define> var_ints
-            = new Dictionary<string, VarInt.Define>();
+        protected Dictionary<string, VarInt.Declare> var_ints
+            = new Dictionary<string, VarInt.Declare>();
 
-        public VarInt.Define GetVarInt(string name)
+        public VarInt.Declare GetVarInt(string name)
         {
             if (var_ints.ContainsKey(name)) return var_ints[name];
             return parent == null ? null : parent.GetVarInt(name);
         }
 
-        public void AddVarInt(VarInt.Define src)
+        public void AddVarInt(VarInt.Declare src)
         {
             if (var_ints.ContainsKey(src.Name))
                 throw new Exception("multiple definition: " + src.Name);
@@ -117,16 +184,16 @@ namespace Girl.LLPML
 
         #region pointer
 
-        protected Dictionary<string, Pointer.Define> ptrs
-            = new Dictionary<string, Pointer.Define>();
+        protected Dictionary<string, Pointer.Declare> ptrs
+            = new Dictionary<string, Pointer.Declare>();
 
-        public Pointer.Define GetPointer(string name)
+        public Pointer.Declare GetPointer(string name)
         {
             if (ptrs.ContainsKey(name)) return ptrs[name];
             return parent == null ? null : parent.GetPointer(name);
         }
 
-        public void AddPointer(Pointer.Define src)
+        public void AddPointer(Pointer.Declare src)
         {
             if (ptrs.ContainsKey(src.Name))
                 throw new Exception("multiple definition: " + src.Name);
@@ -137,7 +204,7 @@ namespace Girl.LLPML
 
         #region function
 
-        private Dictionary<string, Function> functions
+        protected Dictionary<string, Function> functions
             = new Dictionary<string, Function>();
 
         public Function GetFunction(string name)
@@ -155,6 +222,26 @@ namespace Girl.LLPML
 
         #endregion
 
+        #region struct
+
+        protected Dictionary<string, Struct.Define> structs
+            = new Dictionary<string, Struct.Define>();
+
+        public Struct.Define GetStruct(string name)
+        {
+            if (structs.ContainsKey(name)) return structs[name];
+            return parent == null ? null : parent.GetStruct(name);
+        }
+
+        public void AddStruct(Struct.Define s)
+        {
+            if (structs.ContainsKey(s.Name))
+                throw new Exception("multiple definition: " + s.Name);
+            structs.Add(s.Name, s);
+        }
+
+        #endregion
+
         public Block() { }
         public Block(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
@@ -165,11 +252,11 @@ namespace Girl.LLPML
                 case XmlNodeType.Element:
                     switch (xr.Name)
                     {
-                        case "int":
-                            ReadInt(xr);
+                        case "int-declare":
+                            ReadIntDefine(xr);
                             break;
-                        case "string":
-                            ReadString(xr);
+                        case "string-declare":
+                            ReadStringDefine(xr);
                             break;
                         case "function":
                             new Function(this, xr);
@@ -183,27 +270,6 @@ namespace Girl.LLPML
                         case "call":
                             sentences.Add(new Call(this, xr));
                             break;
-                        case "var-int-define":
-                            sentences.Add(new VarInt.Define(this, xr));
-                            break;
-                        case "var-int-let":
-                            sentences.Add(new VarInt.Let(this, xr));
-                            break;
-                        case "var-int-inc":
-                            sentences.Add(new VarInt.Inc(this, xr));
-                            break;
-                        case "var-int-dec":
-                            sentences.Add(new VarInt.Dec(this, xr));
-                            break;
-                        case "var-int-add":
-                            sentences.Add(new VarInt.Add(this, xr));
-                            break;
-                        case "var-int-sub":
-                            sentences.Add(new VarInt.Sub(this, xr));
-                            break;
-                        case "ptr-define":
-                            sentences.Add(new Pointer.Define(this, xr));
-                            break;
                         case "loop":
                             sentences.Add(new Loop(this, xr));
                             break;
@@ -212,6 +278,33 @@ namespace Girl.LLPML
                             break;
                         case "break":
                             sentences.Add(new Break(this, xr));
+                            break;
+                        case "let":
+                            sentences.Add(new Let(this, xr));
+                            break;
+                        case "var-int-declare":
+                            sentences.Add(new VarInt.Declare(this, xr));
+                            break;
+                        case "inc":
+                            sentences.Add(new Inc(this, xr));
+                            break;
+                        case "dec":
+                            sentences.Add(new Dec(this, xr));
+                            break;
+                        case "add":
+                            sentences.Add(new Add(this, xr));
+                            break;
+                        case "sub":
+                            sentences.Add(new Sub(this, xr));
+                            break;
+                        case "ptr-declare":
+                            sentences.Add(new Pointer.Declare(this, xr));
+                            break;
+                        case "struct-define":
+                            new Struct.Define(this, xr);
+                            break;
+                        case "struct-declare":
+                            sentences.Add(new Struct.Declare(this, xr));
                             break;
                         default:
                             throw Abort(xr);
@@ -238,17 +331,18 @@ namespace Girl.LLPML
         protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             int size = Level * 4;
-            foreach (VarInt.Define v in var_ints.Values)
+            foreach (VarInt.Declare v in var_ints.Values)
             {
-                if (v.GetType() == typeof(VarInt.Define))
+                if (v.GetType() == typeof(VarInt.Declare))
                 {
                     size += 4;
                     v.Address = new Addr32(Reg32.EBP, -size);
                 }
             }
-            foreach (Pointer.Define p in ptrs.Values)
+            foreach (Pointer.Declare p in ptrs.Values)
             {
-                if (p.GetType() == typeof(Pointer.Define))
+                Type t = p.GetType();
+                if (t == typeof(Pointer.Declare) || t == typeof(Struct.Declare))
                 {
                     size += (p.Length + 3) / 4 * 4;
                     p.Address = new Addr32(Reg32.EBP, -size);

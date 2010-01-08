@@ -10,7 +10,7 @@ namespace Girl.LLPML
     public class For : Block
     {
         private string name;
-        private VarInt.Define count;
+        private VarInt.Declare count;
         private int to, step;
         private OpCode start, cmp;
 
@@ -27,7 +27,7 @@ namespace Girl.LLPML
             {
                 this.to = int.Parse(to);
                 this.step = step == null ? 1 : int.Parse(step);
-                this.count = new VarInt.Define(this, name, int.Parse(from));
+                this.count = new VarInt.Declare(this, name, int.Parse(from));
             }
             base.Read(xr);
         }

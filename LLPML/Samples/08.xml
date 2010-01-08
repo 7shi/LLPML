@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815">
+<llpml version="0.4.20070816">
 
 <include src="stdio.xml" />
 
-<var-int-define name="i">1</var-int-define>
+<var-int-declare name="i">1</var-int-declare>
 
 <call name="test" />
 <call name="test" />
@@ -18,7 +18,9 @@
 		<string>i=%d</string>
 		<var-int name="i" />
 	</call>
-	<var-int-inc name="i" />
+	<inc>
+		<var-int name="i" />
+	</inc>
 </function>
 
 </llpml>
