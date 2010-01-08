@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Function : Block, IIntValue
+    public class Function : Block, IIntValue
     {
         public CallType CallType { get; set; }
         public bool IsStatic { get; protected set; }
@@ -43,7 +43,7 @@ namespace Girl.LLPML
                     virtptr = new Var.Declare(
                         Parent, "virtual_" + name,
                         null, /// todo: delegate type
-                        new Function.Ptr(ovrfunc));
+                        new Variant(ovrfunc));
                     Parent.AddSentence(virtptr);
                 }
                 else
@@ -76,7 +76,7 @@ namespace Girl.LLPML
                     if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
                     ovrptr = new Var(Parent, "virtual_" + name);
-                    var setvp = new Set(Parent, ovrptr, new Function.Ptr(ovrfunc));
+                    var setvp = new Set(Parent, ovrptr, new Variant(ovrfunc));
                     Parent.AddSentence(setvp);
                 }
                 else

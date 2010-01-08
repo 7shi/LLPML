@@ -86,6 +86,11 @@ class string
   
   static function Format(format : string, args : params)
   {
+    return VFormat(format, args);
+  }
+  
+  static function VFormat(format : string, args)
+  {
     char buffer[1025];
     int len = wvsprintf(buffer, format, args);
     var ret = Alloc(len);

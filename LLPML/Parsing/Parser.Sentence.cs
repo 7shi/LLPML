@@ -680,6 +680,9 @@ namespace Girl.LLPML.Parsing
                 case "subsystem":
                     PragmaSubsystem();
                     break;
+                case "output":
+                    PragmaOutput();
+                    break;
                 default:
                     throw Abort("pragma: 不明な指示です: {0}", t);
             }
@@ -690,7 +693,8 @@ namespace Girl.LLPML.Parsing
             Check("pragma: subsystem", "(");
 
             var t = Read();
-            if (t == null) throw Abort("pragma: subsystem: サブシステム名が必要です。");
+            if (t == null)
+                throw Abort("pragma: subsystem: サブシステム名が必要です。");
 
             switch (t)
             {
@@ -705,6 +709,18 @@ namespace Girl.LLPML.Parsing
             }
 
             Check("pragma: subsystem", ")");
+        }
+
+        private void PragmaOutput()
+        {
+            Check("pragma: output", "(");
+
+            var output = String();
+            if (output == null)
+                throw Abort("pragma: output: 出力名を文字列で指定してください。");
+
+            parent.Root.Output = output.Value;
+            Check("pragma: output", ")");
         }
     }
 }

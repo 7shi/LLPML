@@ -15,6 +15,15 @@ namespace Girl.LLPML.Struct
         {
             get
             {
+                if (target == null && !string.IsNullOrEmpty(TargetType))
+                {
+                    var t = Variant.GetTarget(Parent, TargetType);
+                    if (t != null)
+                    {
+                        target = t;
+                        TargetType = null;
+                    }
+                }
                 return target;
             }
 
@@ -91,17 +100,26 @@ namespace Girl.LLPML.Struct
             var st = GetTargetStruct();
             if (st == null)
                 throw Abort("can not find member: {0}", name);
+
             var mem = st.GetMember(name);
             if (mem != null && mem.IsStatic)
                 return new Addr32(mem.Address);
 
             Addr32 ret = null;
             TypeBase t = null;
+            var target = Target;
             if (target is Member)
             {
                 var tsm = target as Member;
                 ret = tsm.GetAddressInternal(codes);
-                t = tsm.TypeInternal;
+                if (ret != null)
+                    t = tsm.TypeInternal;
+                else
+                {
+                    tsm.AddCodesInternal(codes, "mov", null);
+                    codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
+                    ret = new Addr32(Var.DestRegister);
+                }
             }
             else if (target is Var)
             {
@@ -128,10 +146,17 @@ namespace Girl.LLPML.Struct
             }
 
             if (IsFunctionInternal)
+            {
                 GetCall("").AddCodes(codes, "mov", null);
-            else
+                return null;
+            }
+            else if (IsGetterInternal)
+            {
                 GetCall("get_").AddCodes(codes, "mov", null);
-            return null;
+                return null;
+            }
+
+            throw Abort("undefined member: {0}.{1}", st.FullName, name);
         }
 
         public override Addr32 GetAddress(OpModule codes)
@@ -144,6 +169,7 @@ namespace Girl.LLPML.Struct
 
         public Define GetTargetStruct()
         {
+            var target = Target;
             if (target is Member)
                 return (target as Member).GetStructInternal();
             else if (target != null)
@@ -166,6 +192,7 @@ namespace Girl.LLPML.Struct
 
         protected bool GetIsStatic()
         {
+            var target = Target;
             if (target == null) return true;
             if (target is Member)
                 return (target as Member).GetIsStatic();
@@ -230,6 +257,7 @@ namespace Girl.LLPML.Struct
 
         public IIntValue GetTargetInternal()
         {
+            var target = Target;
             if (target is Member)
                 return (target as Member).Duplicate();
             return target;
@@ -254,7 +282,7 @@ namespace Girl.LLPML.Struct
             var f = st.GetFunction(name);
             if (f == null || GetIsStatic()) return null;
 
-            delg = new Delegate(Parent, f.CallType, new[] { target }, f);
+            delg = new Delegate(Parent, f.CallType, new[] { Target }, f);
             return delg;
         }
 
@@ -265,6 +293,7 @@ namespace Girl.LLPML.Struct
             var t = GetTargetStruct();
             if (t == null) return null;
             var ret = t.GetFunction(name);
+            var target = Target;
             if (target is Base && ret.IsVirtual)
                 ret = t.GetFunction("override_" + name);
             return ret;
@@ -308,7 +337,7 @@ namespace Girl.LLPML.Struct
             {
                 if (name != "Length") return false;
 
-                var t = target.Type;
+                var t = Target.Type;
                 if (t is TypeString) return true;
 
                 var tr = t as TypeReference;
@@ -319,6 +348,7 @@ namespace Girl.LLPML.Struct
         public Member Duplicate()
         {
             var m = new Member(Parent, name);
+            var target = Target;
             if (target is Member)
             {
                 var t = (target as Member).Duplicate();
@@ -351,7 +381,7 @@ namespace Girl.LLPML.Struct
         {
             if (IsLengthInternal)
             {
-                target.AddCodes(codes, "mov", null);
+                Target.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -4)));
                 codes.AddCodes(op, dest);
             }
@@ -364,7 +394,7 @@ namespace Girl.LLPML.Struct
                     delg.AddCodes(codes, op, dest);
                 else
                 {
-                    var fp = new Function.Ptr(GetTargetStruct(), name);
+                    var fp = new Variant(GetTargetStruct(), name);
                     fp.AddCodes(codes, op, dest);
                 }
             }

@@ -43,9 +43,9 @@ namespace Girl.LLPML
 
         public static TypeBase GetType(BlockBase parent, IIntValue target)
         {
-            var fp = target as Function.Ptr;
+            var fp = target as Variant;
             if (fp != null && parent.GetFunction(fp.Name) == null)
-                return Types.GetType(parent, (target as Function.Ptr).Name);
+                return Types.GetType(parent, (target as Variant).Name);
             else
                 return target.Type;
         }

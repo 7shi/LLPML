@@ -114,7 +114,7 @@
     <Compile Include="Variable\Var.Operators.0.cs" />
     <Compile Include="Flow\Return.cs" />
     <Compile Include="Variable\Var.cs" />
-    <Compile Include="Structure\Function.Ptr.cs" />
+    <Compile Include="Structure\Variant.cs" />
     <Compile Include="Value\IntValue.cs" />
     <Compile Include="Variable\Set.cs" />
     <Compile Include="Variable\Var.Operators.1.cs" />

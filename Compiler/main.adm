@@ -1,4 +1,5 @@
-﻿#pragma subsystem(WINDOWS_GUI)
+﻿#pragma output("test.exe")
+#pragma subsystem(WINDOWS_GUI)
 
 extern "user32.dll" __stdcall __widecharset
   MessageBox(hWnd, lpText, lpCation, uType);

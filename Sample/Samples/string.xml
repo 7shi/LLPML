@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.23.20080824">
+<llpml version="0.99.20080914">
 
 <!-- string functions -->
 
@@ -94,6 +94,11 @@ class string
   }
   
   static function Format(format : string, args : params)
+  {
+    return VFormat(format, args);
+  }
+  
+  static function VFormat(format : string, args)
   {
     char buffer[1025];
     int len = wvsprintf(buffer, format, args);

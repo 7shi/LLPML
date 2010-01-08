@@ -55,7 +55,7 @@ namespace Girl.LLPML
                 case "function":
                     return new Function(parent, xr);
                 case "function-ptr":
-                    return new Function.Ptr(parent, xr);
+                    return new Variant(parent, xr);
                 case "struct-member":
                     return new Struct.Member(parent, xr);
                 case "size-of":
@@ -197,8 +197,8 @@ namespace Girl.LLPML
                 return v as IntValue;
             else if (v is Operator)
                 return (v as Operator).GetConst();
-            else if (v is Function.Ptr)
-                return GetValue((v as Function.Ptr).GetConst());
+            else if (v is Variant)
+                return GetValue((v as Variant).GetConst());
             else
                 return null;
         }

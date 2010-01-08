@@ -158,9 +158,9 @@ namespace Girl.LLPML.Parsing
             {
                 Parser parser = handler.Target as Parser;
                 var dest = arg as Var;
-                if (arg is Function.Ptr)
+                if (arg is Variant)
                 {
-                    var fp = arg as Function.Ptr;
+                    var fp = arg as Variant;
                     if (fp.GetSetter() != null)
                     {
                         var m = new Struct.Member(fp.Parent, fp.Name);

@@ -94,7 +94,7 @@ namespace Girl.LLPML
 
         private Mm? GetMm(IIntValue v)
         {
-            var fp = v as Function.Ptr;
+            var fp = v as Variant;
             if (fp == null || !fp.Name.StartsWith("__mm") || fp.Name.Length != 5)
                 return null;
             var n = fp.Name[4];
@@ -104,7 +104,7 @@ namespace Girl.LLPML
 
         private Xmm? GetXmm(IIntValue v)
         {
-            var fp = v as Function.Ptr;
+            var fp = v as Variant;
             if (fp == null || !fp.Name.StartsWith("__xmm") || fp.Name.Length != 6)
                 return null;
             var n = fp.Name[5];

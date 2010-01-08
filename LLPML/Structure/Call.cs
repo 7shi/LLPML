@@ -99,8 +99,8 @@ namespace Girl.LLPML
                 args.AddRange(this.args);
                 if (val is Function)
                     return val;
-                else if (val is Function.Ptr)
-                    return (val as Function.Ptr).GetFunction();
+                else if (val is Variant)
+                    return (val as Variant).GetFunction();
                 return null;
             }
 

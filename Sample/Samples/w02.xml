@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.23.20080819" subsystem="WINDOWS_GUI">
+<llpml version="0.99.20080914" subsystem="WINDOWS_GUI">
 
 <title>ウィンドウ</title>
 
@@ -59,7 +59,7 @@ function __stdcall WndProc(hWnd, uMsg, wParam, lParam)
     {
       PAINTSTRUCT ps;
       var hdc = hWnd.BeginPaint(ps);
-      hdc.TextOut(8, 8, className, className.lstrlen());
+      hdc.TextOut(8, 8, className, className.Length);
       hWnd.EndPaint(ps);
       break;
     }

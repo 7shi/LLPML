@@ -17,7 +17,7 @@ namespace Girl.LLPML.Parsing
             var args = Arguments(",", ")", false);
             if (args == null)
                 throw Abort("{0}: ˆø”‚ª•sŠ®‘S‚Å‚·B", fn);
-            if (target is Function.Ptr)
+            if (target is Variant)
                 return new Call(parent, fn, null, args);
             if (target is Struct.Member)
             {
@@ -42,8 +42,8 @@ namespace Girl.LLPML.Parsing
                 mem.Append(t2m);
                 return mem;
             }
-            if (target is Function.Ptr)
-                t2m.TargetType = (target as Function.Ptr).Name;
+            if (target is Variant)
+                t2m.TargetType = (target as Variant).Name;
             else
                 t2m.Target = target;
             return t2m;
@@ -88,8 +88,8 @@ namespace Girl.LLPML.Parsing
         {
             if (v is Call)
                 return v as Call;
-            if (v is Function.Ptr)
-                return new Call(parent, (v as Function.Ptr).Name);
+            if (v is Variant)
+                return new Call(parent, (v as Variant).Name);
             if (!(v is Struct.Member))
                 return new Call(parent, v, null);
             var mem = v as Struct.Member;
