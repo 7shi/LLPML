@@ -61,9 +61,6 @@
     <None Include="Win32\lib-Core\VarList.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Win32\lib-Core\Binary.adm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Win32\lib-Core\CriticalSection.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

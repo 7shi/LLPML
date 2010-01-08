@@ -338,6 +338,8 @@ namespace Girl.LLPML.Struct
                 if (name != "Length") return false;
 
                 var t = Target;
+                if (t == null) return false;
+
                 TypeBase tt;
                 if (t is Member)
                     tt = (t as Member).TypeInternal;
@@ -389,9 +391,13 @@ namespace Girl.LLPML.Struct
                 Target.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -4)));
                 codes.AddCodes(op, dest);
+                return;
             }
             else if (IsGetterInternal)
+            {
                 GetCall("get_").AddCodes(codes, op, dest);
+                return;
+            }
             else if (IsFunctionInternal)
             {
                 var delg = GetDelegate();
@@ -402,9 +408,25 @@ namespace Girl.LLPML.Struct
                     var fp = new Variant(GetTargetStruct(), name);
                     fp.AddCodes(codes, op, dest);
                 }
+                return;
             }
-            else
-                TypeInternal.AddGetCodes(codes, op, dest, GetAddressInternal(codes));
+            var st = GetTargetStruct();
+            if (st != null)
+            {
+                var ci = st.GetInt(name);
+                if (ci != null)
+                {
+                    ci.AddCodes(codes, op, dest);
+                    return;
+                }
+                var cs = st.GetString(name);
+                if (cs != null)
+                {
+                    cs.AddCodes(codes, op, dest);
+                    return;
+                }
+            }
+            TypeInternal.AddGetCodes(codes, op, dest, GetAddressInternal(codes));
         }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)

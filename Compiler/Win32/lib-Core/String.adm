@@ -32,11 +32,12 @@ function cstr(s)
 	return ret;
 }
 
-function wstr(s : byte[])
+function wstr(s)
 {
-	var len = MultiByteToWideChar(0, 0, s, s.Length, null, null);
+	var slen = lstrlenA(s);
+	var len = MultiByteToWideChar(0, 0, s, slen, null, null);
 	var ret = string.Alloc(len);
-	MultiByteToWideChar(0, 0, s, s.Length, ret, ret.Length);
+	MultiByteToWideChar(0, 0, s, slen, ret, ret.Length);
 	return ret;
 }
 

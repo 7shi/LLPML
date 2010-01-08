@@ -1,10 +1,13 @@
 ﻿extern "kernel32.dll" __stdcall
+{
 	GetStdHandle(nStdHandle);
+	lstrlenA(lpString : byte*);
+}
 extern "kernel32.dll" __stdcall __widecharset
 {
 	WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
 	ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pInputControl);
-	lstrlen(lpString);
+	lstrlen(lpString : char*);
 }
 extern "user32.dll" __widecharset
 	wsprintf(lpOutput, lpFmt, args : params);

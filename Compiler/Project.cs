@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Girl.LLPML;
@@ -9,13 +10,13 @@ namespace Compiler
 {
     public class Project
     {
-        public static Project[] GetProjects(string path)
+        public static Projects GetProjects(string path)
         {
             var projs = new Projects(path);
             var proj = new Project();
             proj.ReadDirectory(projs, new DirectoryInfo(path), "", false);
             if (proj.sources.Count > 0) projs.Add(proj);
-            return projs.ToArray();
+            return projs;
         }
 
         public string Name { get; private set; }
@@ -24,6 +25,7 @@ namespace Compiler
 
         private List<AdmInfo> libsrcs = new List<AdmInfo>();
         private List<AdmInfo> sources = new List<AdmInfo>();
+        private Dictionary<string, Project> generators = new Dictionary<string, Project>();
 
         public AdmInfo[] Sources
         {
@@ -50,6 +52,7 @@ namespace Compiler
             var start = DateTime.Now;
             var root = new Root();
             if (!IsAnonymous) root.Output = Name + ".exe";
+            ret.Output = root.Output;
             ret.Exe = Path.Combine(BaseDir, root.Output);
             if (File.Exists(ret.Exe))
             {
@@ -57,7 +60,8 @@ namespace Compiler
                 var nobuild = true;
                 foreach (var src in Sources)
                 {
-                    if (src.FileInfo.LastWriteTime > exet)
+                    if ((src.FileInfo.Exists && src.FileInfo.LastWriteTime > exet)
+                        || (src.Source != null && src.Source.LastWriteTime > exet))
                     {
                         nobuild = false;
                         break;
@@ -71,21 +75,37 @@ namespace Compiler
             {
                 foreach (var src in Sources)
                 {
+                    if (src.Source != null
+                        && (!src.FileInfo.Exists
+                        || src.Source.LastWriteTime > src.FileInfo.LastWriteTime))
+                    {
+                        var p = new Process();
+                        p.StartInfo.FileName = src.Generator + ".exe";
+                        p.StartInfo.Arguments = "\"" + src.Source.FullName + "\"";
+                        p.StartInfo.UseShellExecute = false;
+                        if (verbose)
+                            Console.WriteLine("生成しています: {0} => {1}",
+                                src.SourceName, src.FileName);
+                        if (p.Start()) p.WaitForExit();
+                    }
                     if (verbose)
                         Console.WriteLine("パースしています: {0}", src.FileName);
                     var sr = src.FileInfo.OpenText();
                     var text = sr.ReadToEnd();
                     sr.Close();
-                    root.ReadText(src.Name, text);
+                    root.ReadText(src.FileName, text);
                 }
 
                 var main = root.GetFunction("main");
                 if (main != null)
                 {
+                    var call_main = "main();";
+                    if (main.Args.Count == 1)
+                        call_main = "main(__get_main_args());";
                     if (main.HasRetVal)
-                        root.ReadText("CRT", "return main();");
+                        root.ReadText("CRT", "return " + call_main);
                     else
-                        root.ReadText("CRT", "main();");
+                        root.ReadText("CRT", call_main);
                 }
 
                 var module = new Module();
@@ -113,11 +133,21 @@ namespace Compiler
         }
 
         private Project() { }
+        private Project(string name) { Name = name; }
+
         private Project(Project parent, string name)
+            : this(name)
+        {
+            Name = name;
+            Set(parent);
+        }
+
+        private void Set(Project parent)
         {
             libsrcs.AddRange(parent.libsrcs);
             libsrcs.AddRange(parent.sources);
-            Name = name;
+            foreach (var e in parent.generators)
+                generators.Add(e.Key, e.Value);
         }
 
         private void ReadDirectory(Projects projs, DirectoryInfo dir, string path, bool lib)
@@ -125,12 +155,20 @@ namespace Compiler
             var libs = new List<DirectoryInfo>();
             var exes = new List<DirectoryInfo>();
             var dirs = new List<DirectoryInfo>();
+            var gens = new Dictionary<string, DirectoryInfo>();
             foreach (var di in dir.GetDirectories())
             {
-                if (di.Name.StartsWith("lib-"))
+                var dn = di.Name;
+                if (dn.StartsWith("lib-"))
                     libs.Add(di);
-                else if (di.Name.StartsWith("exe-"))
+                else if (dn.StartsWith("exe-"))
                     exes.Add(di);
+                else if (dn.StartsWith("gen-"))
+                {
+                    var ext = "." + dn.Substring(4).ToLower();
+                    gens.Add(ext, di);
+                    generators.Add(ext, new Project(dn));
+                }
                 else
                     dirs.Add(di);
             }
@@ -138,10 +176,27 @@ namespace Compiler
             bool hassrc = false;
             var exes2 = new List<AdmInfo>();
             var srcs = new List<AdmInfo>();
+            var without = new List<string>();
+            foreach (var fi in dir.GetFiles("src-*.*"))
+            {
+                var ext = fi.Extension.ToLower();
+                if (!generators.ContainsKey(ext)) continue;
+                var name = Path.ChangeExtension(fi.Name, null);
+                var adm = name + ".adm";
+                without.Add(adm);
+                var ai = new AdmInfo(name, path, new FileInfo(adm));
+                ai.Source = fi;
+                ai.Generator = generators[ext].Name;
+                srcs.Add(ai);
+                hassrc = true;
+                projs.Generated.Add(ai.FileName);
+            }
             foreach (var fi in dir.GetFiles("*.adm"))
             {
-                var ai = new AdmInfo(fi.Name.Substring(0, fi.Name.Length - 4), path, fi);
-                if (ai.Name.StartsWith("exe-"))
+                if (without.Contains(fi.Name)) continue;
+                var name = Path.ChangeExtension(fi.Name, null);
+                var ai = new AdmInfo(name, path, fi);
+                if (name.StartsWith("exe-"))
                     exes2.Add(ai);
                 else
                     srcs.Add(ai);
@@ -150,6 +205,14 @@ namespace Compiler
 
             foreach (var di in libs)
                 ReadDirectory(projs, di, Combine(path, di.Name), true);
+            foreach (var e in gens)
+            {
+                var di = e.Value;
+                var proj = generators[e.Key];
+                proj.Set(this);
+                proj.ReadDirectory(projs, di, Combine(path, di.Name), false);
+                if (proj.sources.Count > 0) projs.Add(proj);
+            }
             foreach (var di in exes)
             {
                 var proj = new Project(this, di.Name.Substring(4));
@@ -189,6 +252,7 @@ namespace Compiler
     public class Projects : List<Project>
     {
         public string BaseDir { get; private set; }
+        public List<string> Generated = new List<string>();
 
         public Projects(string baseDir)
         {
@@ -207,6 +271,8 @@ namespace Compiler
         public string Name { get; private set; }
         public string Path { get; private set; }
         public FileInfo FileInfo { get; private set; }
+        public FileInfo Source { get; set; }
+        public string Generator { get; set; }
 
         public AdmInfo(string name, string path, FileInfo fi)
         {
@@ -218,6 +284,11 @@ namespace Compiler
         public string FileName
         {
             get { return Project.Combine(Path, FileInfo.Name); }
+        }
+
+        public string SourceName
+        {
+            get { return Project.Combine(Path, Source.Name); }
         }
     }
 
