@@ -12,6 +12,12 @@ namespace Girl.LLPML
     {
         public string Value { get; private set; }
 
+        protected StringValue(BlockBase parent, string value)
+            : base(parent)
+        {
+            Value = value;
+        }
+
         public StringValue(string value)
         {
             Value = value;

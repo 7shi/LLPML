@@ -27,7 +27,8 @@ namespace Girl.LLPML
                     || size < Var.DefaultSize || cleanup;
                 if (indirect)
                 {
-                    if (ad.Register != Reg32.EBP) codes.Add(I386.Push(ad.Register));
+                    if (!ad.IsAddress && ad.Register != Reg32.EBP)
+                        codes.Add(I386.Push(ad.Register));
                     dest.Type.AddGetCodes(codes, "push", null, ad);
                     ad2 = new Addr32(Reg32.ESP);
                 }
@@ -36,7 +37,8 @@ namespace Girl.LLPML
                 if (indirect)
                 {
                     codes.Add(I386.Pop(Reg32.EAX));
-                    if (ad.Register != Reg32.EBP) codes.Add(I386.Pop(ad.Register));
+                    if (!ad.IsAddress && ad.Register != Reg32.EBP)
+                        codes.Add(I386.Pop(ad.Register));
                     codes.Add(I386.Mov(ad, Reg32.EAX));
                 }
                 return ad;

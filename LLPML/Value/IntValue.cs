@@ -193,7 +193,9 @@ namespace Girl.LLPML
 
         public static IntValue GetValue(IIntValue v)
         {
-            if (v is IntValue)
+            if (v is ConstInt)
+                return GetValue((v as ConstInt).Value);
+            else if (v is IntValue)
                 return v as IntValue;
             else if (v is Operator)
                 return (v as Operator).GetConst();

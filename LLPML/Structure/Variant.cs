@@ -110,20 +110,19 @@ namespace Girl.LLPML
 
         public static IIntValue GetTarget(BlockBase parent, string name)
         {
-            if (parent == null || name == null) return null;
+            if (parent == null || name == null)
+                return null;
 
             var i = parent.GetInt(name);
-            if (i != null) return i;
+            if (i != null && i.Parent.Parent == null) return i;
 
             var s = parent.GetString(name);
-            if (s != null) return new StringValue(s);
+            if (s != null && s.Parent.Parent == null) return s;
 
-            if (parent.Parent != null)
-            {
-                var v = parent.GetVar(name);
-                if (v != null && v.Parent.Parent == null)
-                    return new Var(parent, v);
-            }
+            if (parent.Parent == null) return null;
+
+            var v = parent.GetVar(name);
+            if (v != null && v.Parent.Parent == null) return new Var(parent, v);
 
             return null;
         }

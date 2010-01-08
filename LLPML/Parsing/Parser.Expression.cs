@@ -143,6 +143,12 @@ namespace Girl.LLPML.Parsing
             var v = parent.GetVar(t);
             if (v != null) return new Var(parent, v) { SrcInfo = si };
 
+            var i = parent.GetInt(t);
+            if (i != null) return i;
+
+            var s = parent.GetString(t);
+            if (s != null) return s;
+
             // 未定義語を関数ポインタとして解釈
             if (Tokenizer.IsWord(t))
                 return new Variant(parent, t) { SrcInfo = si };

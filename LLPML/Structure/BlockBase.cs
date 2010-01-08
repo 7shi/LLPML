@@ -78,21 +78,21 @@ namespace Girl.LLPML
 
         #region int
 
-        public IIntValue GetInt(string name)
+        public ConstInt GetInt(string name)
         {
             object obj = GetMember<object>(name);
-            if (obj is IIntValue) return obj as IIntValue;
+            if (obj is ConstInt) return obj as ConstInt;
             return Parent == null ? null : Parent.GetInt(name);
         }
 
         public bool AddInt(string name, IIntValue value)
         {
-            return AddMember(name, value);
+            return AddMember(name, new ConstInt(this, value));
         }
 
         public bool AddInt(string name, int value)
         {
-            return AddMember(name, new IntValue(value));
+            return AddInt(name, new IntValue(value));
         }
 
         public int ParseInt(XmlTextReader xr)
@@ -143,8 +143,15 @@ namespace Girl.LLPML
 
         #region string
 
-        public string GetString(string name) { return GetMemberRecursive<string>(name); }
-        public bool AddString(string name, string value) { return AddMember(name, value); }
+        public ConstString GetString(string name)
+        {
+            return GetMemberRecursive<ConstString>(name);
+        }
+
+        public bool AddString(string name, string value)
+        {
+            return AddMember(name, new ConstString(this, value));
+        }
 
         private string ParseString(XmlTextReader xr)
         {
@@ -172,10 +179,10 @@ namespace Girl.LLPML
             {
                 if (!xr.IsEmptyElement)
                     throw Abort(xr, "do not specify string with name");
-                string ret = GetString(name);
+                var ret = GetString(name);
                 if (ret == null)
                     throw Abort(xr, "undefined string: " + name);
-                return ret;
+                return ret.Value;
             }
             return ParseString(xr);
         }
@@ -196,7 +203,7 @@ namespace Girl.LLPML
             string name = xr["name"];
             if (name == null) throw Abort(xr, "name required");
 
-            return GetString(name).Length;
+            return GetString(name).Value.Length;
         }
 
         #endregion
