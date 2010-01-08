@@ -8,9 +8,6 @@ namespace Girl.X86
 {
     public class OpCodes : List<OpCode>
     {
-        public Module Module { get; private set; }
-        public OpCodes(Module m) { this.Module = m; }
-
         public void AddCodes(string op, Addr32 dest)
         {
             AddCodes(op, dest, (Addr32)null);

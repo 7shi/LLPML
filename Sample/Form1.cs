@@ -119,7 +119,7 @@ namespace Sample
             var module = new Module();
             module.Specific.SubSystem = root.Subsystem;
 
-            var codes = new OpCodes(module);
+            var codes = new OpModule(module, root);
             root.AddCodes(codes);
             module.Text.OpCodes = codes.ToArray();
 

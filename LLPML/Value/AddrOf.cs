@@ -19,7 +19,7 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
@@ -36,7 +36,7 @@ namespace Girl.LLPML
 
         public TypeBase Type { get { return new TypePointer(Target.Type); } }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var ad = Target.GetAddress(codes);
             codes.Add(I386.Lea(Reg32.EAX, ad));

@@ -20,12 +20,13 @@ function __operator_new(len, size, izer, ctor, dtor)
   if (len == -1)
     ptr = calloc(1, size + 16);
   else
-    ptr = calloc(1, len * size + 16);
+    ptr = calloc(1, (len + 1) * size + 16);
   if (ptr == null) return null;
   
   var ret = ptr + 16;
   var h = (var*)ptr;
   h[0] = dtor;
+  h[1] = 1;
   h[2] = size;
   h[3] = len;
   if (izer != null)
@@ -83,7 +84,8 @@ function __get_refcount(ptr)
   
   var h = (var*)(ptr - 16);
   //printfln("%s: %p, %d", __FUNCTION__, ptr, h[1]);
-  return h[1] - 1;
+  if (h[1] == 0) return 0;
+  return h[1] - 2;
 }
 
 function __reference(ptr)
@@ -92,7 +94,7 @@ function __reference(ptr)
 
   var h = (var*)(ptr - 16);
   //printfln("%s: %p, %d", __FUNCTION__, ptr, h[1]);
-  h[1]++;
+  if (h[1] > 0) h[1]++;
 }
 
 function __dereference(ptr)
@@ -101,9 +103,9 @@ function __dereference(ptr)
 
   var h = (var*)(ptr - 16);
   //printfln("%s: %p, %d", __FUNCTION__, ptr, h[1]);
-  if (h[1] == 1)
+  if (h[1] == 2)
     __operator_delete(ptr);
-  else if (h[1] > 1)
+  else if (h[1] > 2)
     h[1]--;
 }
 

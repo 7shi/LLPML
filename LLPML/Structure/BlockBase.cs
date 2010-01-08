@@ -55,7 +55,7 @@ namespace Girl.LLPML
         {
             T ret = GetMember<T>(name);
             if (ret != null) return ret;
-            return parent == null ? null : parent.GetMemberRecursive<T>(name);
+            return Parent == null ? null : Parent.GetMemberRecursive<T>(name);
         }
 
         public T[] GetMembers<T>() where T : class
@@ -81,7 +81,7 @@ namespace Girl.LLPML
         {
             object obj = GetMember<object>(name);
             if (obj is int) return (int?)(int)obj;
-            return parent == null ? null : parent.GetInt(name);
+            return Parent == null ? null : Parent.GetInt(name);
         }
 
         public bool AddInt(string name, int value)
@@ -233,11 +233,11 @@ namespace Girl.LLPML
         {
             get
             {
-                if (parent == null) return 0;
+                if (Parent == null) return 0;
                 if (HasStackFrame)
-                    return parent.Level + 1;
+                    return Parent.Level + 1;
                 else
-                    return parent.Level;
+                    return Parent.Level;
             }
         }
 
@@ -264,7 +264,7 @@ namespace Girl.LLPML
             if (delg2 != null) delg2(pos);
         }
 
-        protected virtual void BeforeAddCodes(OpCodes codes)
+        protected virtual void BeforeAddCodes(OpModule codes)
         {
             if (HasStackFrame)
             {
@@ -280,11 +280,11 @@ namespace Girl.LLPML
             }
             string n = FullName;
             if (!string.IsNullOrEmpty(n)
-                && (parent == null || parent.FullName != n))
-                codes.Add(I386.Mov(Reg32.EAX, codes.Module.GetString(n)));
+                && (Parent == null || Parent.FullName != n))
+                codes.Add(I386.Mov(Reg32.EAX, codes.GetString(n)));
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             codes.Add(first);
             BeforeAddCodes(codes);
@@ -311,7 +311,7 @@ namespace Girl.LLPML
             codes.Add(last);
         }
 
-        protected virtual void AfterAddCodes(OpCodes codes)
+        protected virtual void AfterAddCodes(OpModule codes)
         {
             if (IsTerminated) return;
             AddExitCodes(codes);
@@ -334,7 +334,7 @@ namespace Girl.LLPML
         }
 
         public virtual void AddDestructors(
-            OpCodes codes, IEnumerable<Var.Declare> ptrs)
+            OpModule codes, IEnumerable<Var.Declare> ptrs)
         {
             if (ptrs == null) return;
 
@@ -347,7 +347,7 @@ namespace Girl.LLPML
             }
         }
 
-        public virtual void AddExitCodes(OpCodes codes)
+        public virtual void AddExitCodes(OpModule codes)
         {
             if (HasStackFrame) codes.Add(I386.Leave());
         }
@@ -365,8 +365,8 @@ namespace Girl.LLPML
         {
             get
             {
-                if (parent == null) return null;
-                return parent.ThisStruct;
+                if (Parent == null) return null;
+                return Parent.ThisStruct;
             }
         }
 
@@ -374,7 +374,7 @@ namespace Girl.LLPML
         {
             get
             {
-                if (parent == null) return "(root)";
+                if (Parent == null) return "(root)";
 
                 string ret = "";
                 for (BlockBase b = this; b != root; b = b.Parent)
@@ -393,7 +393,7 @@ namespace Girl.LLPML
 
         public string GetFullName(string name)
         {
-            if (parent == null) return name;
+            if (Parent == null) return name;
             return FullName + Separator + name;
         }
 
@@ -404,19 +404,19 @@ namespace Girl.LLPML
             return "__anonymous_" + (funcNo++);
         }
 
-        public void AddDebug(OpCodes codes, string message)
+        public void AddDebug(OpModule codes, string message)
         {
             codes.Add(I386.Push(Reg32.EAX));
-            codes.Add(I386.Push(codes.Module.GetString(message)));
+            codes.Add(I386.Push(codes.GetString(message)));
             AddDebug(codes, "%s", 1);
             codes.Add(I386.Pop(Reg32.EAX));
         }
 
-        public void AddDebug(OpCodes codes, string format, int argCount)
+        public void AddDebug(OpModule codes, string format, int argCount)
         {
             codes.AddRange(new[]
             {
-                I386.Push(codes.Module.GetString(format)),
+                I386.Push(codes.GetString(format)),
                 I386.Call(GetFunction("printfln").First),
                 I386.Add(Reg32.ESP, (uint)((argCount + 1) * 4))
             });
@@ -470,7 +470,7 @@ namespace Girl.LLPML
                     return true;
                 return false;
             }
-            returnType = Types.Cast(t, Types.ConvertVarType(this, vt));
+            returnType = Types.Cast(t, Types.ToVarType(vt));
             return returnType != null;
         }
 
@@ -500,7 +500,7 @@ namespace Girl.LLPML
             {
                 if ((nb as Var.Declare).IsStatic)
                 {
-                    parent.root.sentences.Add(nb);
+                    Parent.root.sentences.Add(nb);
                     return;
                 }
             }

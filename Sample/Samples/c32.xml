@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.16.20080410">
+<llpml version="0.23.20080819">
 
 <title>プロパティ</title>
 
@@ -19,6 +19,12 @@ struct Test1
   {
     this.value = value;
   }
+  
+  function test(v)
+  {
+    Value = v;
+    printfln("%s(%d): Value = %d", __FUNCTION__, v, Value);
+  }
 }
 
 Test1 t1;
@@ -33,6 +39,8 @@ printfln("GetTest1().Value = %d", GetTest1().Value);
 GetTest1().Value = 7;
 printfln("GetTest1().Value = %d", GetTest1().Value);
 
+t1.test(9);
+
 struct Test2
 {
   function get_Test1 { return t1; }
@@ -41,7 +49,7 @@ struct Test2
 Test2 t2;
 
 printfln("t2.get_Test1().Value = %d", t2.get_Test1().Value);
-t2.get_Test1().Value = 9;
+t2.get_Test1().Value = 11;
 printfln("t2.get_Test1().Value = %d", t2.get_Test1().Value);
 
 printfln("t2.Test1.Value = %d", t2.Test1.Value);

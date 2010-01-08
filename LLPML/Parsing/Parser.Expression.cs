@@ -130,10 +130,9 @@ namespace Girl.LLPML.Parsing
 
             if (t == "::")
             {
-                var p = parent;
-                parent = p.Root;
                 var ret = Expression();
-                parent = p;
+                if (ret is NodeBase)
+                    (ret as NodeBase).Parent = parent.Root;
                 return ret;
             }
 

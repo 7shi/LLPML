@@ -19,7 +19,7 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
@@ -36,9 +36,9 @@ namespace Girl.LLPML
 
         public TypeBase Type { get { return TypeInt.Instance; } }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, codes.Module.GetString(Target.Type.Name));
+            codes.AddCodes(op, dest, codes.GetString(Target.Type.Name));
         }
     }
 }

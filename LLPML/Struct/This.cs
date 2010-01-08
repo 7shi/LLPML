@@ -13,7 +13,7 @@ namespace Girl.LLPML.Struct
         private void Init()
         {
             name = "this";
-            Reference = parent.GetVar(name);
+            Reference = Parent.GetVar(name);
         }
 
         public override void Read(XmlTextReader xr)

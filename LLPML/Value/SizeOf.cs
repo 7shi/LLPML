@@ -24,11 +24,11 @@ namespace Girl.LLPML
             get
             {
                 int size = 0;
-                var vd = parent.GetVar(name);
+                var vd = Parent.GetVar(name);
                 if (vd != null)
                     size = vd.Type.Size;
                 else
-                    size = Types.GetType(parent, name).Size;
+                    size = Types.GetType(Parent, name).Size;
                 if (size == 0) throw Abort("undefined type: " + name);
                 return size;
             }

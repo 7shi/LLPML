@@ -23,7 +23,7 @@ namespace Girl.LLPML
 
         public bool CanContinue()
         {
-            for (BlockBase p = parent; p != null; p = p.Parent)
+            for (BlockBase p = Parent; p != null; p = p.Parent)
             {
                 if (p is Function) return false;
                 if (p.AcceptsContinue) return true;
@@ -31,9 +31,9 @@ namespace Girl.LLPML
             return false;
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
-            BlockBase b = parent;
+            BlockBase b = Parent;
             Var.Declare[] ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {

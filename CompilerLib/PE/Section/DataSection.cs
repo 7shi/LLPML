@@ -6,21 +6,21 @@ using Girl.X86;
 
 namespace Girl.PE
 {
-    public class ByteData
+    public class DataBlock
     {
         private Val32 address = new Val32(0, true);
         public Val32 Address { get { return address; } }
 
-        private byte[] data;
-        public byte[] Data { get { return data; } }
+        public Block Block { get; private set; }
 
-        public ByteData(byte[] d) { data = d; }
+        public DataBlock() { Block = new Block(); }
+        public DataBlock(byte[] d) : this() { Block.Add(d); }
 
         public void Write(Block block)
         {
             address.Value = block.Current;
-            block.Add(data);
-            uint padlen = Module.Align((uint)data.Length, 4) - (uint)data.Length;
+            block.Add(Block);
+            uint padlen = Module.Align((uint)Block.Length, 4) - (uint)Block.Length;
             if (padlen > 0) block.Add(new byte[padlen]);
         }
     }
@@ -35,61 +35,51 @@ namespace Girl.PE
             this.name = name;
         }
 
-        private Dictionary<string, Dictionary<string, ByteData>> data =
-            new Dictionary<string, Dictionary<string, ByteData>>();
+        private Dictionary<string, Dictionary<string, DataBlock>> data =
+            new Dictionary<string, Dictionary<string, DataBlock>>();
 
         public bool IsEmtpy { get { return data.Count == 0; } }
 
-        private Dictionary<string, ByteData> GetCategory(string name)
+        private Dictionary<string, DataBlock> GetCategory(string name)
         {
-            Dictionary<string, ByteData> ret;
-            if (data.ContainsKey(name))
-            {
-                ret = data[name];
-            }
-            else
-            {
-                ret = new Dictionary<string, ByteData>();
-                data.Add(name, ret);
-            }
+            if (data.ContainsKey(name)) return data[name];
+
+            var ret = new Dictionary<string, DataBlock>();
+            data.Add(name, ret);
             return ret;
         }
 
-        public ByteData Add(string category, string name, byte[] data)
+        public void Add(string category, string name, DataBlock data)
         {
-            Dictionary<string, ByteData> ctg = GetCategory(category);
-            ByteData ret;
-            if (ctg.ContainsKey(name))
-            {
-                ret = ctg[name];
-            }
-            else
-            {
-                ret = new ByteData(data);
-                ctg.Add(name, ret);
-            }
+            var ctg = GetCategory(category);
+            if (!ctg.ContainsKey(name)) ctg.Add(name, data);
+        }
+
+        public DataBlock Add(string category, string name, byte[] data)
+        {
+            var ctg = GetCategory(category);
+            if (ctg.ContainsKey(name)) return ctg[name];
+
+            var ret = new DataBlock(data);
+            ctg.Add(name, ret);
             return ret;
         }
 
-        public ByteData AddString(string s)
+        public DataBlock AddString(string s)
         {
             return Add("string", s, Module.DefaultEncoding.GetBytes(s + "\0"));
         }
 
-        public ByteData AddBuffer(string name, int size)
+        public DataBlock AddBuffer(string name, int size)
         {
             return Add("buffer", name, new byte[size]);
         }
 
         public override void Write(Block block)
         {
-            foreach (Dictionary<string, ByteData> ctg in data.Values)
-            {
-                foreach (ByteData bd in ctg.Values)
-                {
-                    bd.Write(block);
-                }
-            }
+            foreach (var ctg in data.Values)
+                foreach (var db in ctg.Values)
+                    db.Write(block);
             if (IsEmtpy) block.Add(new byte[16]);
         }
     }

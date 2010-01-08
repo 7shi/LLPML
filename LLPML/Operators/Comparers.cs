@@ -16,7 +16,7 @@ namespace Girl.LLPML
         public Equal(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Equal(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             OpCode last = new OpCode();
             Addr32 ad = new Addr32(Reg32.ESP);

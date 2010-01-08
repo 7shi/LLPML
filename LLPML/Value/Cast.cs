@@ -16,16 +16,16 @@ namespace Girl.LLPML
         {
             get
             {
-                var t = Types.GetType(parent, type);
+                var t = Types.GetType(Parent, type);
                 if (!(Source is Call || Source.Type.IsValue))
                     return t;
-                return Types.ConvertVarType(parent, t);
+                return Types.ToVarType(t);
             }
         }
 
         public Cast(BlockBase parent, string type, IIntValue source)
         {
-            this.parent = parent;
+            this.Parent = parent;
             name = "__cast";
             this.type = type;
             Source = source;
@@ -43,7 +43,7 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                IIntValue[] v = IntValue.Read(parent, xr);
+                IIntValue[] v = IntValue.Read(Parent, xr);
                 if (v != null)
                 {
                     if (v.Length > 1 || Source != null)
@@ -56,7 +56,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "requires a source");
         }
 
-        public override Addr32 GetAddress(OpCodes codes)
+        public override Addr32 GetAddress(OpModule codes)
         {
             if (Source is Var)
                 return (Source as Var).GetAddress(codes);
@@ -65,7 +65,7 @@ namespace Girl.LLPML
                     (uint)(Source as IntValue).Value));
             else if (Source is StringValue)
                 codes.Add(I386.Mov(Var.DestRegister,
-                    codes.Module.GetString((Source as StringValue).Value)));
+                    codes.GetString((Source as StringValue).Value)));
             else
             {
                 Source.AddCodes(codes, "mov", null);
@@ -74,7 +74,7 @@ namespace Girl.LLPML
             return new Addr32(Var.DestRegister);
         }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var t = Type;
             var st = Source.Type;

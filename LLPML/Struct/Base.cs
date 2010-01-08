@@ -14,7 +14,7 @@ namespace Girl.LLPML.Struct
         private void Init()
         {
             name = "base";
-            Reference = parent.GetVar("this");
+            Reference = Parent.GetVar("this");
         }
 
         public override void Read(XmlTextReader xr)
@@ -36,11 +36,11 @@ namespace Girl.LLPML.Struct
                 doneInferType = true;
                 var st = Reference.GetStruct();
                 if (st == null)
-                    throw Abort("base: is not struct member: {0}", parent.FullName);
+                    throw Abort("base: is not struct member: {0}", Parent.FullName);
                 var bst = st.GetBaseStruct();
                 if (bst == null)
                     throw Abort("base: has no base type: {0}", st.Name);
-                type = new TypeReference(parent, bst.Type);
+                type = Types.ToVarType(bst.Type);
                 return type;
             }
         }

@@ -35,7 +35,7 @@ namespace Girl.LLPML.Struct
             : base(parent)
         {
             this.name = name;
-            thisptr = new Arg(this, "this", new TypeReference(this, Type));
+            thisptr = new Arg(this, "this", Types.ToVarType(Type));
         }
 
         public Define(BlockBase parent, string name, string baseType)
@@ -57,10 +57,10 @@ namespace Girl.LLPML.Struct
             if (name == BaseType)
                 throw Abort(xr, "can not define recursive base type: " + name);
 
-            thisptr = new Arg(this, "this", new TypeReference(this, Type));
+            thisptr = new Arg(this, "this", Types.ToVarType(Type));
             base.Read(xr);
 
-            if (!parent.AddStruct(this))
+            if (!Parent.AddStruct(this))
                 throw Abort("multiple definitions: " + name);
         }
 
@@ -76,7 +76,7 @@ namespace Girl.LLPML.Struct
         public Define GetBaseStruct()
         {
             if (BaseType == null) return null;
-            Define st = parent.GetStruct(BaseType);
+            Define st = Parent.GetStruct(BaseType);
             if (st != null) return st;
             throw Abort("undefined struct: " + BaseType);
         }
@@ -144,7 +144,7 @@ namespace Girl.LLPML.Struct
 
         public override Struct.Define ThisStruct { get { return this; } }
 
-        private void CallBlock(OpCodes codes, Addr32 ad, Block b, CallType ct)
+        private void CallBlock(OpModule codes, Addr32 ad, Block b, CallType ct)
         {
             if (ad != null)
                 codes.Add(I386.Push(ad));
@@ -155,7 +155,7 @@ namespace Girl.LLPML.Struct
                 codes.Add(I386.Add(Reg32.ESP, 4));
         }
 
-        public void AddInit(OpCodes codes, Addr32 ad)
+        public void AddInit(OpModule codes, Addr32 ad)
         {
             if (!NeedsInit) return;
 
@@ -163,7 +163,7 @@ namespace Girl.LLPML.Struct
             CallBlock(codes, ad, this, CallType.CDecl);
         }
 
-        public void AddConstructor(OpCodes codes, Addr32 ad)
+        public void AddConstructor(OpModule codes, Addr32 ad)
         {
             if (!NeedsCtor) return;
 
@@ -172,7 +172,7 @@ namespace Girl.LLPML.Struct
             CallBlock(codes, ad, f, f.CallType);
         }
 
-        private void AddDestructor(OpCodes codes, Addr32 ad)
+        private void AddDestructor(OpModule codes, Addr32 ad)
         {
             if (!NeedsDtor) return;
 
@@ -183,14 +183,14 @@ namespace Girl.LLPML.Struct
             CallBlock(codes, ad, dtor, dtor.CallType);
         }
 
-        public void AddBeforeCtor(OpCodes codes)
+        public void AddBeforeCtor(OpModule codes)
         {
             Define st = GetBaseStruct();
             if (st != null)
                 st.AddConstructor(codes, new Addr32(Reg32.EBP, 8));
         }
 
-        public void AddAfterDtor(OpCodes codes)
+        public void AddAfterDtor(OpModule codes)
         {
             var list = new List<Var.Declare>();
             var poslist = new Dictionary<Var.Declare, int>();
@@ -219,7 +219,7 @@ namespace Girl.LLPML.Struct
 
         public override bool HasStackFrame { get { return false; } }
 
-        protected override void BeforeAddCodes(OpCodes codes)
+        protected override void BeforeAddCodes(OpModule codes)
         {
             Define st = GetBaseStruct();
             int offset = 0;
@@ -236,19 +236,19 @@ namespace Girl.LLPML.Struct
             if (st != null) st.AddInit(codes, thisptr.Address);
         }
 
-        protected override void AfterAddCodes(OpCodes codes)
+        protected override void AfterAddCodes(OpModule codes)
         {
             AddExitCodes(codes);
         }
 
-        public override void AddExitCodes(OpCodes codes)
+        public override void AddExitCodes(OpModule codes)
         {
             codes.Add(I386.Leave());
             codes.Add(I386.Ret());
         }
 
         public override void AddDestructors(
-            OpCodes codes, IEnumerable<Var.Declare> ptrs)
+            OpModule codes, IEnumerable<Var.Declare> ptrs)
         {
         }
 

@@ -61,7 +61,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "block required");
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             sentences.Clear();
             Cond.First = Block.First;

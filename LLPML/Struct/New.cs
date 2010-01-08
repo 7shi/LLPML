@@ -28,7 +28,7 @@ namespace Girl.LLPML.Struct
         public New(BlockBase parent, string type, IIntValue length)
             : base(parent)
         {
-            Type = new TypeReference(parent, Types.GetType(parent, type), true);
+            Type = new TypeReference(Types.GetType(parent, type), true);
             Length = length;
         }
 
@@ -46,17 +46,17 @@ namespace Girl.LLPML.Struct
             int len;
             if (length != null && int.TryParse(length, out len))
             {
-                Type = new TypeReference(parent, Types.GetType(parent, type), true);
+                Type = new TypeReference(Types.GetType(Parent, type), true);
                 Length = new IntValue(len);
             }
             else
             {
-                Type = Types.GetVarType(parent, type);
+                Type = Types.GetVarType(Parent, type);
                 Length = new IntValue(-1);
             }
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             if (!NoSet)
                 AddCodes(codes, "mov", null);
@@ -74,13 +74,13 @@ namespace Girl.LLPML.Struct
             }
         }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var tt = Type.Type;
             var tts = tt as TypeStruct;
             if (!IsArray && tts != null && !tts.IsClass)
                 throw Abort("new: is not class: {0}", tts.Name);
-            var f = parent.GetFunction(Function);
+            var f = Parent.GetFunction(Function);
             if (f == null)
                 throw Abort("new: undefined function: {0}", Function);
             Val32 izer = 0, ctor = 0, dtor = 0;
@@ -93,7 +93,7 @@ namespace Girl.LLPML.Struct
             }
             else if (IsArray)
             {
-                dtor = parent.GetFunction(DereferencePtr).GetAddress(codes.Module);
+                dtor = Parent.GetFunction(DereferencePtr).GetAddress(codes.Module);
             }
             codes.AddRange(new[]
             {

@@ -29,7 +29,7 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
@@ -51,7 +51,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "order required");
         }
 
-        public override Addr32 GetAddress(OpCodes codes)
+        public override Addr32 GetAddress(OpModule codes)
         {
             var t = target.Type;
             if (!t.IsArray)
@@ -98,7 +98,7 @@ namespace Girl.LLPML
 
         public override TypeBase Type { get { return target.Type.Type; } }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }

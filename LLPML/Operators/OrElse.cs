@@ -16,7 +16,7 @@ namespace Girl.LLPML
         public OrElse(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public OrElse(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             OpCode last = new OpCode();
             for (int i = 0; i < values.Count; i++)

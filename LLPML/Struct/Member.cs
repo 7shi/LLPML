@@ -43,7 +43,7 @@ namespace Girl.LLPML.Struct
         }
 
         public Member(Member parent, XmlTextReader xr)
-            : base(parent.parent)
+            : base(parent.Parent)
         {
             this.root = parent.root;
             isRoot = false;
@@ -66,7 +66,7 @@ namespace Girl.LLPML.Struct
                     return;
                 }
 
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
@@ -83,10 +83,10 @@ namespace Girl.LLPML.Struct
                 }
             });
             if (isRoot && target == null)
-                target = new Var(parent, "this");
+                target = new Var(Parent, "this");
         }
 
-        protected Addr32 GetAddressInternal(OpCodes codes)
+        protected Addr32 GetAddressInternal(OpModule codes)
         {
             var st = GetTargetStruct();
             if (st == null)
@@ -134,7 +134,7 @@ namespace Girl.LLPML.Struct
             return null;
         }
 
-        public override Addr32 GetAddress(OpCodes codes)
+        public override Addr32 GetAddress(OpModule codes)
         {
             if (Child != null)
                 return Child.GetAddress(codes);
@@ -149,7 +149,7 @@ namespace Girl.LLPML.Struct
             else if (target != null)
                 return Types.GetStruct(target.Type);
             else
-                return parent.GetStruct(TargetType);
+                return Parent.GetStruct(TargetType);
         }
 
         protected Define GetStructInternal()
@@ -250,7 +250,7 @@ namespace Girl.LLPML.Struct
             var f = st.GetFunction(name);
             if (f == null || GetIsStatic()) return null;
 
-            delg = new Delegate(parent, f.CallType, new[] { target }, f);
+            delg = new Delegate(Parent, f.CallType, new[] { target }, f);
             return delg;
         }
 
@@ -306,14 +306,17 @@ namespace Girl.LLPML.Struct
             {
                 if (name != "Length") return false;
 
-                var tr = target.Type as TypeReference;
+                var t = target.Type;
+                if (t is TypeString) return true;
+
+                var tr = t as TypeReference;
                 return tr != null && tr.IsArray;
             }
         }
 
         public Member Duplicate()
         {
-            var m = new Member(parent, name);
+            var m = new Member(Parent, name);
             if (target is Member)
             {
                 var t = (target as Member).Duplicate();
@@ -326,15 +329,15 @@ namespace Girl.LLPML.Struct
 
         protected Call GetCall(string prefix, params IIntValue[] args)
         {
-            return new Call(parent, GetFunction(prefix), GetTargetInternal(), args);
+            return new Call(Parent, GetFunction(prefix), GetTargetInternal(), args);
         }
 
-        protected void AddSetterCodesInternal(OpCodes codes, IIntValue arg)
+        protected void AddSetterCodesInternal(OpModule codes, IIntValue arg)
         {
             GetCall("set_", arg).AddCodes(codes);
         }
 
-        public void AddSetterCodes(OpCodes codes, IIntValue arg)
+        public void AddSetterCodes(OpModule codes, IIntValue arg)
         {
             if (Child != null)
                 Child.AddSetterCodes(codes, arg);
@@ -342,7 +345,7 @@ namespace Girl.LLPML.Struct
                 AddSetterCodesInternal(codes, arg);
         }
 
-        protected void AddCodesInternal(OpCodes codes, string op, Addr32 dest)
+        protected void AddCodesInternal(OpModule codes, string op, Addr32 dest)
         {
             if (IsLengthInternal)
             {
@@ -367,7 +370,7 @@ namespace Girl.LLPML.Struct
                 TypeInternal.AddGetCodes(codes, op, dest, GetAddressInternal(codes));
         }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             if (Child != null)
                 Child.AddCodes(codes, op, dest);

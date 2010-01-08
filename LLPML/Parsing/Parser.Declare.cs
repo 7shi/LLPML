@@ -184,7 +184,7 @@ namespace Girl.LLPML.Parsing
                     var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
-                        if (tb != null) tb = Types.ConvertVarType(parent, tb);
+                        if (tb != null) tb = Types.ToVarType(tb);
                         var vd = new Var.Declare(parent, name, tb);
                         if (eq) vd.Value = Expression();
                         v = vd;
@@ -195,7 +195,7 @@ namespace Girl.LLPML.Parsing
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
                         v = new Var.Declare(
-                            parent, name, Types.ConvertVarType(parent, tb), (int)array);
+                            parent, name, Types.ToVarType(tb), (int)array);
                     }
                     v.SrcInfo = si;
                     v.IsStatic = isStatic;

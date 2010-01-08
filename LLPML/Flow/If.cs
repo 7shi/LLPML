@@ -30,7 +30,7 @@ namespace Girl.LLPML
                 Block = block;
             }
 
-            public override void AddCodes(OpCodes codes)
+            public override void AddCodes(OpModule codes)
             {
                 OpCode next = new OpCode();
                 codes.Add(first);
@@ -41,7 +41,7 @@ namespace Girl.LLPML
                 }
                 Block.AddCodes(codes);
                 if (Next != null)
-                    codes.Add(I386.Jmp(parent.Destruct));
+                    codes.Add(I386.Jmp(Parent.Destruct));
                 codes.Add(next);
             }
         }
@@ -107,7 +107,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "condition and block required");
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             sentences.Clear();
             int len = blocks.Count;

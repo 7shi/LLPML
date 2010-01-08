@@ -17,11 +17,11 @@ namespace Girl.LLPML
             Value = value;
         }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
+        public TypeBase Type { get { return TypeConstString.Instance; } }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, codes.Module.GetString(Value));
+            codes.AddCodes(op, dest, codes.GetString(Value));
         }
     }
 }

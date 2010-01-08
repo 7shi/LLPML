@@ -17,9 +17,10 @@ namespace Girl.LLPML
         {
             get
             {
-                var t = "var:" + Type.Name;
-                if (IsArray) return t + "[]";
-                return t;
+                if (IsArray)
+                    return Type.Name + "[]";
+                else
+                    return "var:" + Type.Name;
             }
         }
 
@@ -48,16 +49,21 @@ namespace Girl.LLPML
         // cast
         public override TypeBase Cast(TypeBase type)
         {
-            if (type is TypeVar)
-                return type;
-            else if (type is TypeReference)
-                return Type.Cast(type.Type);
-            else
+            if (type is TypeVar) return type;
+            if (!(type is TypeReference))
                 return null;
+            else if (Type is TypeReference && type.Type is TypeReference)
+            {
+                var c = Type.Cast(type.Type);
+                if (c == null) return null;
+                return Types.ToVarType(c);
+            }
+            else
+                return base.Cast(type);
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpModule codes, Addr32 ad)
         {
             if (UseGC)
             {
@@ -68,10 +74,13 @@ namespace Girl.LLPML
                 {
                     I386.Push(Reg32.EAX),
                     I386.Push(ad),
-                    GetCall("var", Dereference),
+                    GetCall(codes.Root, "var", Dereference),
                     I386.Add(Reg32.ESP, 4),
                     I386.Pop(Reg32.EAX),
                     I386.Test(Reg32.EAX, Reg32.EAX),
+                    I386.Jcc(Cc.Z, label.Address),
+                    I386.Mov(Reg32.EDX, new Addr32(Reg32.EAX, -12)),
+                    I386.Test(Reg32.EDX, Reg32.EDX),
                     I386.Jcc(Cc.Z, label.Address),
                     I386.Inc(new Addr32(Reg32.EAX, -12)),
                     label,
@@ -94,7 +103,7 @@ namespace Girl.LLPML
                 {
                     var ts = base.Type as TypeStruct;
                     if (ts != null && ts.IsClass)
-                        Type = new TypeReference(ts.Parent, ts);
+                        Type = Types.ToVarType(ts);
                 }
                 return base.Type;
             }
@@ -102,7 +111,7 @@ namespace Girl.LLPML
 
         // type constructor
         public override bool NeedsCtor { get { return UseGC; } }
-        public override void AddConstructor(OpCodes codes)
+        public override void AddConstructor(OpModule codes)
         {
             if (!NeedsCtor) return;
             codes.AddRange(new[]
@@ -114,19 +123,19 @@ namespace Girl.LLPML
 
         // type destructor
         public override bool NeedsDtor { get { return UseGC; } }
-        public override void AddDestructor(OpCodes codes)
+        public override void AddDestructor(OpModule codes)
         {
             if (!NeedsDtor) return;
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(new Addr32(Reg32.EAX)),
-                GetCall("var", Dereference),
+                GetCall(codes.Root, "var", Dereference),
                 I386.Add(Reg32.ESP, 4),
             });
         }
 
-        public bool UseGC
+        public virtual bool UseGC
         {
             get
             {
@@ -139,14 +148,13 @@ namespace Girl.LLPML
         private bool isArray = false;
         public override bool IsArray { get { return isArray; } }
 
-        public TypeReference(BlockBase parent, TypeBase type)
-            : this(parent, type, false)
+        public TypeReference(TypeBase type)
+            : this(type, false)
         {
         }
 
-        public TypeReference(BlockBase parent, TypeBase type, bool isArray)
+        public TypeReference(TypeBase type, bool isArray)
         {
-            Parent = parent;
             Type = type;
             this.isArray = isArray;
         }

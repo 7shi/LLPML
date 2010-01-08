@@ -118,13 +118,13 @@ namespace Girl.LLPML
         protected TypeShort() { }
 
         // get value
-        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
             codes.AddCodesSW(op, dest, src);
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 dest)
+        public override void AddSetCodes(OpModule codes, Addr32 dest)
         {
             codes.Add(I386.MovW(dest, Reg16.AX));
         }
@@ -156,13 +156,13 @@ namespace Girl.LLPML
         protected TypeSByte() { }
 
         // get value
-        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
             codes.AddCodesSB(op, dest, src);
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 dest)
+        public override void AddSetCodes(OpModule codes, Addr32 dest)
         {
             codes.Add(I386.MovB(dest, Reg8.AL));
         }

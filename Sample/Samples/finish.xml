@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.23.20080819">
 
 <include src="stdio.xml" />
+<include src="string.xml" />
 
 <?llp
 struct _Finish

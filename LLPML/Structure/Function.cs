@@ -34,17 +34,17 @@ namespace Girl.LLPML
                     if (virtptr != null)
                         throw Abort("can not remove virtual");
                 }
-                else if (parent is Struct.Define)
+                else if (Parent is Struct.Define)
                 {
-                    var ovrfunc = new Function(parent, "override_" + name, IsStatic);
+                    var ovrfunc = new Function(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
-                    if (!parent.AddFunction(ovrfunc))
+                    if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
                     virtptr = new Var.Declare(
-                        parent, "virtual_" + name,
+                        Parent, "virtual_" + name,
                         null, /// todo: delegate type
                         new Function.Ptr(ovrfunc));
-                    parent.AddSentence(virtptr);
+                    Parent.AddSentence(virtptr);
                 }
                 else
                     throw Abort("can not make virtual");
@@ -63,21 +63,21 @@ namespace Girl.LLPML
                     if (ovrptr != null)
                         throw Abort("can not remove override");
                 }
-                else if (parent is Struct.Define)
+                else if (Parent is Struct.Define)
                 {
-                    var st = (parent as Struct.Define).GetBaseStruct();
+                    var st = (Parent as Struct.Define).GetBaseStruct();
                     Function vf = null;
                     if (st != null) vf = st.GetFunction(name);
                     if (vf == null || (!vf.IsVirtual && !vf.IsOverride))
                         throw Abort("can not find virtual: {0}", name);
                     first = vf.first;
-                    var ovrfunc = new Function(parent, "override_" + name, IsStatic);
+                    var ovrfunc = new Function(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
-                    if (!parent.AddFunction(ovrfunc))
+                    if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
-                    ovrptr = new Var(parent, "virtual_" + name);
-                    var setvp = new Set(parent, ovrptr, new Function.Ptr(ovrfunc));
-                    parent.AddSentence(setvp);
+                    ovrptr = new Var(Parent, "virtual_" + name);
+                    var setvp = new Set(Parent, ovrptr, new Function.Ptr(ovrfunc));
+                    Parent.AddSentence(setvp);
                 }
                 else
                     throw Abort("can not make override");
@@ -105,7 +105,7 @@ namespace Girl.LLPML
             if (string.IsNullOrEmpty(name))
             {
                 isAnonymous = true;
-                name = this.parent.GetAnonymousFunctionName();
+                name = this.Parent.GetAnonymousFunctionName();
             }
             this.name = name;
             CallType = CallType.CDecl;
@@ -143,7 +143,7 @@ namespace Girl.LLPML
             if (string.IsNullOrEmpty(name))
             {
                 isAnonymous = true;
-                name = parent.GetAnonymousFunctionName();
+                name = Parent.GetAnonymousFunctionName();
             }
 
             if (xr["static"] == "1")
@@ -160,7 +160,7 @@ namespace Girl.LLPML
             CallType = CallType.CDecl;
             if (xr["type"] == "std") CallType = CallType.Std;
 
-            if (!parent.AddFunction(this))
+            if (!Parent.AddFunction(this))
                 throw Abort(xr, "multiple definitions: " + name);
 
             base.Read(xr);
@@ -180,11 +180,11 @@ namespace Girl.LLPML
         private ushort argStack;
         public override bool HasStackFrame { get { return true; } }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             if (IsVirtual)
             {
-                var st = parent as Struct.Define;
+                var st = Parent as Struct.Define;
                 var offset = st.GetOffset(virtptr.Name);
                 codes.AddRange(new[]
                 {
@@ -199,7 +199,7 @@ namespace Girl.LLPML
             }
         }
 
-        protected override void BeforeAddCodes(OpCodes codes)
+        protected override void BeforeAddCodes(OpModule codes)
         {
             argStack = 0;
             foreach (var arg in args)
@@ -229,7 +229,7 @@ namespace Girl.LLPML
             }
         }
 
-        protected override void AfterAddCodes(OpCodes codes)
+        protected override void AfterAddCodes(OpModule codes)
         {
             var name = this.name;
             if (virtfunc != null) name = virtfunc.name;
@@ -238,7 +238,7 @@ namespace Girl.LLPML
             AddExitCodes(codes);
         }
 
-        public override void AddExitCodes(OpCodes codes)
+        public override void AddExitCodes(OpModule codes)
         {
             if (thisptr != null && name == Struct.Define.Constructor)
                 thisptr.AddCodes(codes, "mov", null);
@@ -256,7 +256,7 @@ namespace Girl.LLPML
             return new Val32(m.Specific.ImageBase, First);
         }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodes(op, dest, GetAddress(codes.Module));
         }
@@ -303,7 +303,7 @@ namespace Girl.LLPML
             var v = GetMember<Var.Declare>(name);
             if (v != null) return v;
 
-            var vp = parent.GetVar(name);
+            var vp = Parent.GetVar(name);
             if (vp == null || vp.IsMember || vp.IsStatic) return vp;
 
             var arg = new Arg(this, name, vp.Type);
@@ -313,9 +313,9 @@ namespace Girl.LLPML
 
         protected void CheckThisArg()
         {
-            if (parent is Struct.Define && !IsStatic)
+            if (Parent is Struct.Define && !IsStatic)
             {
-                var type = new TypeReference(this, (parent as Struct.Define).Type);
+                var type = Types.ToVarType((Parent as Struct.Define).Type);
                 args.Add(new Arg(this, "this", type));
                 thisptr = new Struct.This(this);
             }
@@ -325,7 +325,7 @@ namespace Girl.LLPML
         {
             if (!isAnonymous || HasThis) return;
 
-            var f = parent as Function;
+            var f = Parent as Function;
             if (f == null || !f.HasThis) return;
 
             InsertArg(new Arg(this, "this", f.thisptr.Type));

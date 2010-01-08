@@ -26,17 +26,21 @@ namespace Girl.LLPML
                 RequiresName(xr);
             }
 
-            public Val32 GetAddress(Module m)
+            public TypeBase Type
             {
-                var f = GetFunction();
-                if (f == null)
-                    throw Abort("undefined function: " + name);
-                return f.GetAddress(m);
+                get
+                {
+                    var f = GetFunction();
+                    if (f != null) return f.Type;
+
+                    var g = GetGetter();
+                    if (g != null) return g.ReturnType;
+
+                    throw Abort("can not find: %s", name);
+                }
             }
 
-            public TypeBase Type { get { return GetFunction().Type; } }
-
-            public void AddCodes(OpCodes codes, string op, Addr32 dest)
+            public void AddCodes(OpModule codes, string op, Addr32 dest)
             {
                 Val32 v;
                 var m = codes.Module;
@@ -45,26 +49,49 @@ namespace Girl.LLPML
                 else if (func != null)
                     v = func.GetAddress(m);
                 else
-                    v = GetAddress(m);
+                {
+                    var f = GetFunction();
+                    if (f == null)
+                    {
+                        var g = GetGetter();
+                        if (g != null)
+                        {
+                            new Call(Parent, g.Name).AddCodes(codes, op, dest);
+                            return;
+                        }
+                        throw Abort("undefined function: " + name);
+                    }
+                    v = f.GetAddress(m);
+                }
                 codes.AddCodes(op, dest, v);
             }
 
             public Function GetFunction()
             {
                 if (func != null) return func;
-                return parent.GetFunction(name);
+                return Parent.GetFunction(name);
             }
 
             public Function GetGetter()
             {
                 if (GetFunction() != null) return null;
-                return parent.GetFunction("get_" + name);
+                return Parent.GetFunction("get_" + name);
             }
 
             public Function GetSetter()
             {
                 if (GetFunction() != null) return null;
-                return parent.GetFunction("set_" + name);
+                return Parent.GetFunction("set_" + name);
+            }
+
+            public bool IsGetter
+            {
+                get { return GetGetter() != null; }
+            }
+
+            public bool IsSetter
+            {
+                get { return GetSetter() != null; }
             }
         }
     }

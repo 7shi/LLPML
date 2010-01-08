@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329" subsystem="WINDOWS_GUI">
+<llpml version="0.23.20080819" subsystem="WINDOWS_GUI">
 
 <title>ウィンドウ</title>
 
 <include src="stdio.xml" />
+<include src="string.xml" />
 <include src="win32.xml" />
 
 <?llp

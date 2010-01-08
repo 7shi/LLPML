@@ -16,7 +16,7 @@ namespace Girl.LLPML
         public NotEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var last = new OpCode();
             var ad = new Addr32(Reg32.ESP);

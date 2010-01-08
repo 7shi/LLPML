@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Call
     {
-        public bool AddIntrinsicCodes(OpCodes codes, List<IIntValue> args)
+        public bool AddIntrinsicCodes(OpModule codes, List<IIntValue> args)
         {
             switch (name)
             {
@@ -50,7 +50,7 @@ namespace Girl.LLPML
             return false;
         }
 
-        public static void Stos(OpCodes codes, string op, IIntValue dest, IIntValue data, IIntValue count)
+        public static void Stos(OpModule codes, string op, IIntValue dest, IIntValue data, IIntValue count)
         {
             codes.AddRange(new[]
             {
@@ -72,7 +72,7 @@ namespace Girl.LLPML
             });
         }
 
-        public static void Movs(OpCodes codes, string op, IIntValue dest, IIntValue src, IIntValue count)
+        public static void Movs(OpModule codes, string op, IIntValue dest, IIntValue src, IIntValue count)
         {
             var direction = I386.Cld();
             if (op.EndsWith("_rev"))
@@ -103,7 +103,7 @@ namespace Girl.LLPML
             });
         }
 
-        public static void Memcpy(OpCodes codes, IIntValue dest, IIntValue src, IIntValue count)
+        public static void Memcpy(OpModule codes, IIntValue dest, IIntValue src, IIntValue count)
         {
             if (count is IntValue)
             {
@@ -139,7 +139,7 @@ namespace Girl.LLPML
             });
         }
 
-        public static void Memcpy(OpCodes codes, IIntValue dest, IIntValue src, int count)
+        public static void Memcpy(OpModule codes, IIntValue dest, IIntValue src, int count)
         {
             switch (count)
             {
@@ -259,7 +259,7 @@ namespace Girl.LLPML
             }
         }
 
-        public static void MemcpyRev(OpCodes codes, IIntValue dest, IIntValue src, IIntValue count)
+        public static void MemcpyRev(OpModule codes, IIntValue dest, IIntValue src, IIntValue count)
         {
             codes.AddRange(new[]
             {
@@ -291,7 +291,7 @@ namespace Girl.LLPML
             });
         }
 
-        public static void Cpuid(OpCodes codes, IIntValue result, IIntValue eax)
+        public static void Cpuid(OpModule codes, IIntValue result, IIntValue eax)
         {
             codes.AddRange(new[]
             {

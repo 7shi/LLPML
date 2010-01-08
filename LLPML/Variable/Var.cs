@@ -43,7 +43,7 @@ namespace Girl.LLPML
             NoChild(xr);
             RequiresName(xr);
 
-            Reference = parent.GetVar(name);
+            Reference = Parent.GetVar(name);
             if (Reference == null)
                 throw Abort(xr, "undefined variable: " + name);
         }
@@ -53,12 +53,12 @@ namespace Girl.LLPML
             return Types.GetStruct(Type);
         }
 
-        public virtual Addr32 GetAddress(OpCodes codes)
+        public virtual Addr32 GetAddress(OpModule codes)
         {
-            return Reference.GetAddress(codes, parent);
+            return Reference.GetAddress(codes, Parent);
         }
 
-        public virtual void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public virtual void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }

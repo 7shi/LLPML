@@ -18,7 +18,7 @@ namespace Girl.LLPML
         public Neg(BlockBase parent, IIntValue value) : base(parent, value) { }
         public Neg(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             values[0].AddCodes(codes, "mov", null);
             GetFunc()(codes, dest, values[0]);

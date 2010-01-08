@@ -13,7 +13,7 @@ namespace Girl.LLPML
             else if (type == "delegate")
                 return Delegate.GetDefaultType(parent);
             else if (type.StartsWith("var:"))
-                return new TypeReference(parent, GetType(parent, type.Substring(4)));
+                return ToVarType(GetType(parent, type.Substring(4)));
             else if (type.EndsWith("*"))
             {
                 var t = type.Substring(0, type.Length - 1).TrimEnd();
@@ -22,7 +22,7 @@ namespace Girl.LLPML
             else if (type.EndsWith("[]"))
             {
                 var t = type.Substring(0, type.Length - 2).TrimEnd();
-                return new TypeReference(parent, GetType(parent, t), true);
+                return new TypeReference(GetType(parent, t), true);
             }
             else if (type.EndsWith("]"))
             {
@@ -63,12 +63,17 @@ namespace Girl.LLPML
             }
         }
 
-        public static TypeBase ConvertVarType(BlockBase parent, TypeBase t)
+        public static TypeBase ToVarType(TypeBase t)
         {
             if (t == null)
                 return TypeVar.Instance;
-            if (t is TypeStruct)
-                return new TypeReference(parent, t);
+            else if (t is TypeStruct)
+            {
+                if (t.Name == "string")
+                    return TypeString.Instance;
+                else
+                    return new TypeReference(t);
+            }
             else if (t is TypeArray)
                 return new TypePointer(t.Type);
             else
@@ -77,7 +82,7 @@ namespace Girl.LLPML
 
         public static TypeBase GetVarType(BlockBase parent, string type)
         {
-            return ConvertVarType(parent, GetType(parent, type));
+            return ToVarType(GetType(parent, type));
         }
 
         public static Struct.Define GetStruct(TypeBase t)

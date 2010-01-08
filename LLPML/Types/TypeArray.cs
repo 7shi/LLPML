@@ -31,7 +31,7 @@ namespace Girl.LLPML
 
         // type constructor
         public override bool NeedsCtor { get { return Type.NeedsCtor; } }
-        public override void AddConstructor(OpCodes codes)
+        public override void AddConstructor(OpModule codes)
         {
             if (Count == 0) return;
 
@@ -54,7 +54,7 @@ namespace Girl.LLPML
 
         // type destructor
         public override bool NeedsDtor { get { return Type.NeedsDtor; } }
-        public override void AddDestructor(OpCodes codes)
+        public override void AddDestructor(OpModule codes)
         {
             if (Count == 0) return;
 

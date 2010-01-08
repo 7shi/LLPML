@@ -33,7 +33,7 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (IIntValue v in vs)
                 {
@@ -75,6 +75,6 @@ namespace Girl.LLPML
             }
         }
 
-        public abstract void AddCodes(OpCodes codes, string op, Addr32 dest);
+        public abstract void AddCodes(OpModule codes, string op, Addr32 dest);
     }
 }

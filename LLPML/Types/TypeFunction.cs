@@ -112,7 +112,7 @@ namespace Girl.LLPML
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpModule codes, Addr32 ad)
         {
             var flag = !ad.IsAddress && ad.Register == Var.DestRegister;
             if (flag) codes.Add(I386.Push(ad.Register));
@@ -121,9 +121,9 @@ namespace Girl.LLPML
             {
                 I386.Push(Reg32.EAX),
                 I386.Push(ad),
-                GetCall("delegate", Delegate.Free),
+                GetCall(codes.Root, "delegate", Delegate.Free),
                 I386.Add(Reg32.ESP, 4),
-                GetCall("delegate", Delegate.Duplicate),
+                GetCall(codes.Root, "delegate", Delegate.Duplicate),
                 I386.Add(Reg32.ESP, 4),
             });
 
@@ -133,7 +133,7 @@ namespace Girl.LLPML
 
         // type constructor
         public override bool NeedsCtor { get { return true; } }
-        public override void AddConstructor(OpCodes codes)
+        public override void AddConstructor(OpModule codes)
         {
             codes.AddRange(new[]
             {
@@ -144,13 +144,13 @@ namespace Girl.LLPML
 
         // type destructor
         public override bool NeedsDtor { get { return true; } }
-        public override void AddDestructor(OpCodes codes)
+        public override void AddDestructor(OpModule codes)
         {
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(new Addr32(Reg32.EAX)),
-                GetCall("delegate", Delegate.Free),
+                GetCall(codes.Root, "delegate", Delegate.Free),
                 I386.Add(Reg32.ESP, 4),
             });
         }

@@ -15,20 +15,20 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            if (!(parent is Function))
+            if (!(Parent is Function))
                 throw Abort(xr, "arg must be in function root");
-            else if (parent.ThisStruct != null)
+            else if (Parent.ThisStruct != null)
             {
-                if (parent.Name == Struct.Define.Constructor)
+                if (Parent.Name == Struct.Define.Constructor)
                     throw Abort(xr, "constructor can not have any arguments");
-                else if (parent.Name == Struct.Define.Destructor)
+                else if (Parent.Name == Struct.Define.Destructor)
                     throw Abort(xr, "destructor can not have any arguments");
             }
 
             NoChild(xr);
             RequiresName(xr);
 
-            var t = Types.GetType(parent, xr["type"]);
+            var t = Types.GetType(Parent, xr["type"]);
             if (t != null) type = t;
             AddToParent();
         }

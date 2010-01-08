@@ -11,6 +11,6 @@ namespace Girl.LLPML
     public interface IIntValue
     {
         TypeBase Type { get; }
-        void AddCodes(OpCodes codes, string op, Addr32 dest);
+        void AddCodes(OpModule codes, string op, Addr32 dest);
     }
 }

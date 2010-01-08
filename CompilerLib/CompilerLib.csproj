@@ -88,9 +88,9 @@
     <Compile Include="X86\I386.Test.Movx.8.cs" />
     <Compile Include="X86\I386.Movx.16.cs" />
     <Compile Include="X86\I386.Movx.8.cs" />
-    <Compile Include="X86\OpCodes.cs" />
     <Compile Include="X86\MMX.cs" />
     <Compile Include="X86\MMX.Test.cs" />
+    <Compile Include="X86\OpCodes.cs" />
     <Compile Include="X86\SSE2.cs" />
     <Compile Include="X86\SSE2.Test.cs" />
   </ItemGroup>

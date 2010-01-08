@@ -65,7 +65,7 @@ namespace Girl.LLPML
                 return st.NeedsInit || st.NeedsCtor;
             }
         }
-        public override void AddConstructor(OpCodes codes)
+        public override void AddConstructor(OpModule codes)
         {
             var st = GetStruct();
             var f1 = st.GetFunction(Struct.Define.Initializer);
@@ -79,7 +79,7 @@ namespace Girl.LLPML
 
         // type destructor
         public override bool NeedsDtor { get { return GetStruct().NeedsDtor; } }
-        public override void AddDestructor(OpCodes codes)
+        public override void AddDestructor(OpModule codes)
         {
             var dtor = GetStruct().GetFunction(Struct.Define.Destructor);
             codes.Add(I386.Call(dtor.First));
@@ -87,7 +87,9 @@ namespace Girl.LLPML
 
         public Struct.Define GetStruct()
         {
-            return Parent.GetStruct(name);
+            var ret = Parent.GetStruct(name);
+            if (ret != null) return ret;
+            throw Parent.Abort("can not find struct: {0}", name);
         }
 
         public bool IsClass

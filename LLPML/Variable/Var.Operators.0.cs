@@ -17,7 +17,7 @@ namespace Girl.LLPML
         public Inc(BlockBase parent, Var dest) : base(parent, dest) { }
         public Inc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        private Addr32 Calculate(OpCodes codes)
+        private Addr32 Calculate(OpModule codes)
         {
             var ad1 = dest.GetAddress(codes);
             var ad2 = ad1;
@@ -35,12 +35,12 @@ namespace Girl.LLPML
             return ad1;
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             Calculate(codes);
         }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var ad = Calculate(codes);
             if (this.dest.Type.Size < Var.DefaultSize)
@@ -64,7 +64,7 @@ namespace Girl.LLPML
         public PostInc(BlockBase parent, Var dest) : base(parent, dest) { }
         public PostInc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var ad1 = this.dest.GetAddress(codes);
             var ad2 = ad1;

@@ -54,13 +54,13 @@ namespace Girl.LLPML
             }
             else if (name == null && var != null)
             {
-                this.val = new Var(parent, var);
+                this.val = new Var(Parent, var);
                 if (xr["type"] == "std") callType = CallType.Std;
             }
 
             Parse(xr, delegate
             {
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
@@ -78,14 +78,14 @@ namespace Girl.LLPML
                 throw Abort(xr, "either name or var required");
         }
 
-        public IIntValue GetFunction(OpCodes codes, IIntValue target, out List<IIntValue> args)
+        public IIntValue GetFunction(OpModule codes, IIntValue target, out List<IIntValue> args)
         {
             if (val == null && target is Struct.Member)
             {
                 var mem = target as Struct.Member;
                 var memf = mem.GetFunction();
                 if (memf == null)
-                    memf = parent.GetFunction(mem.GetName());
+                    memf = Parent.GetFunction(mem.GetName());
                 var memt = mem.GetTarget();
                 args = new List<IIntValue>();
                 if (memt != null && !memf.IsStatic)
@@ -108,11 +108,11 @@ namespace Girl.LLPML
             Function ret = null;
             if (target == null)
             {
-                ret = parent.GetFunction(name);
+                ret = Parent.GetFunction(name);
                 if (ret == null)
                     throw Abort("undefined function: {0}", name);
                 else if (ret.HasThis)
-                    return GetFunction(codes, new Struct.This(parent), out args);
+                    return GetFunction(codes, new Struct.This(Parent), out args);
                 args = this.args;
                 return ret;
             }
@@ -127,7 +127,7 @@ namespace Girl.LLPML
                     if (mem != null)
                     {
                         args = this.args;
-                        var mem2 = new Struct.Member(parent, name);
+                        var mem2 = new Struct.Member(Parent, name);
                         if (target is Struct.Member)
                         {
                             var mem3 = (target as Struct.Member).Duplicate();
@@ -139,7 +139,7 @@ namespace Girl.LLPML
                     }
                 }
             }
-            if (ret == null) ret = parent.GetFunction(name);
+            if (ret == null) ret = Parent.GetFunction(name);
             if (ret == null)
             {
                 if (st == null)
@@ -153,7 +153,7 @@ namespace Girl.LLPML
             return ret;
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             List<IIntValue> args = new List<IIntValue>();
             if (this.val == null && target is Struct.Member)
@@ -213,7 +213,7 @@ namespace Girl.LLPML
             CheckNoSet(codes);
         }
 
-        public void CheckNoSet(OpCodes codes)
+        public void CheckNoSet(OpModule codes)
         {
             if (!NoSet) return;
 
@@ -229,13 +229,13 @@ namespace Girl.LLPML
             codes.Add(I386.Add(Reg32.ESP, 8));
         }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
         }
 
-        public static void AddCodes(OpCodes codes, Function f, IIntValue[] args)
+        public static void AddCodes(OpModule codes, Function f, IIntValue[] args)
         {
             AddCodes(codes, args, f.CallType, delegate
             {
@@ -259,7 +259,7 @@ namespace Girl.LLPML
         }
 
         public static void AddCodes(
-            OpCodes codes, IIntValue[] args, CallType type, Action delg)
+            OpModule codes, IIntValue[] args, CallType type, Action delg)
         {
             var args2 = args.Clone() as IIntValue[];
             Array.Reverse(args2);
@@ -273,6 +273,9 @@ namespace Girl.LLPML
                     codes.AddRange(new[]
                     {
                         I386.Test(Reg32.EAX, Reg32.EAX),
+                        I386.Jcc(Cc.Z, label.Address),
+                        I386.Mov(Reg32.EDX, new Addr32(Reg32.EAX, -12)),
+                        I386.Test(Reg32.EDX, Reg32.EDX),
                         I386.Jcc(Cc.Z, label.Address),
                         I386.Inc(new Addr32(Reg32.EAX, -12)),
                         label,

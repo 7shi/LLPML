@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Call
     {
-        public bool AddSIMDCodes(OpCodes codes, List<IIntValue> args)
+        public bool AddSIMDCodes(OpModule codes, List<IIntValue> args)
         {
             switch (name)
             {
@@ -94,12 +94,12 @@ namespace Girl.LLPML
             return (Xmm)n - '0';
         }
 
-        public static void __emms(OpCodes codes)
+        public static void __emms(OpModule codes)
         {
             codes.Add(MMX.EMMS());
         }
 
-        private void __movd(OpCodes codes, IIntValue m1, IIntValue m2)
+        private void __movd(OpModule codes, IIntValue m1, IIntValue m2)
         {
             var m1m = GetMm(m1);
             var m2m = GetMm(m2);
@@ -177,7 +177,7 @@ namespace Girl.LLPML
                 throw Abort("__movd: invalid argument 2");
         }
 
-        private void __movq(OpCodes codes, IIntValue m1, IIntValue m2)
+        private void __movq(OpModule codes, IIntValue m1, IIntValue m2)
         {
             var m1m = GetMm(m1);
             var m2m = GetMm(m2);
@@ -211,7 +211,7 @@ namespace Girl.LLPML
                 throw Abort("__movq: invalid arguments");
         }
 
-        private void __movdq(OpCodes codes, string op, IIntValue m1, IIntValue m2)
+        private void __movdq(OpModule codes, string op, IIntValue m1, IIntValue m2)
         {
             var m1x = GetXmm(m1);
             var m2x = GetXmm(m2);
@@ -232,7 +232,7 @@ namespace Girl.LLPML
                 throw Abort("{0}: invalid arguments", op);
         }
 
-        private void __simd(OpCodes codes, string op, IIntValue m1, IIntValue m2)
+        private void __simd(OpModule codes, string op, IIntValue m1, IIntValue m2)
         {
             var m1m = GetMm(m1);
             var m2m = GetMm(m2);
@@ -263,7 +263,7 @@ namespace Girl.LLPML
                 throw Abort("{0}: invalid argument 1", op);
         }
 
-        private void __simd_shift(OpCodes codes, string op, IIntValue m1, IIntValue m2)
+        private void __simd_shift(OpModule codes, string op, IIntValue m1, IIntValue m2)
         {
             IntValue m2i = m2 as IntValue;
             if (m2i == null)

@@ -70,7 +70,7 @@ namespace Girl.LLPML
             if (Block == null) throw Abort(xr, "block required");
         }
 
-        protected override void BeforeAddCodes(OpCodes codes)
+        protected override void BeforeAddCodes(OpModule codes)
         {
             base.BeforeAddCodes(codes);
             if (Init != null) Init.AddCodes(codes);
@@ -80,7 +80,7 @@ namespace Girl.LLPML
                 codes.Add(I386.Jmp(Block.Last));
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             sentences.Clear();
             AddSentence(Block);

@@ -12,7 +12,7 @@ namespace Girl.LLPML
         public While(BlockBase parent) : base(parent) { }
         public While(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        protected override void BeforeAddCodes(OpCodes codes)
+        protected override void BeforeAddCodes(OpModule codes)
         {
             base.BeforeAddCodes(codes);
             codes.Add(I386.Jmp(Block.Last));

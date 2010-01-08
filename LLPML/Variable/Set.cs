@@ -29,7 +29,7 @@ namespace Girl.LLPML
 
         public Set(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             if (dest is Struct.Member)
             {
@@ -56,7 +56,7 @@ namespace Girl.LLPML
             }
         }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);

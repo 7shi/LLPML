@@ -16,12 +16,12 @@ namespace Girl.LLPML
             public Add(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-            private Addr32 Calculate(OpCodes codes)
+            private Addr32 Calculate(OpModule codes)
             {
                 var ad = dest.GetAddress(codes);
                 var f = GetFunc();
                 var size = dest.Type.Size;
-                var indirect = (dest.Reference != null && dest.Reference.Parent != parent)
+                var indirect = (dest.Reference != null && dest.Reference.Parent != Parent)
                     || size < Var.DefaultSize;
                 if (indirect)
                 {
@@ -39,12 +39,12 @@ namespace Girl.LLPML
                 return ad;
             }
 
-            public override void AddCodes(OpCodes codes)
+            public override void AddCodes(OpModule codes)
             {
                 Calculate(codes);
             }
 
-            public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+            public override void AddCodes(OpModule codes, string op, Addr32 dest)
             {
                 var ad = Calculate(codes);
                 if (this.dest.Type.Size < Var.DefaultSize)

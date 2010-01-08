@@ -14,9 +14,9 @@ namespace Girl.LLPML
 
         private void SetUsingPointers()
         {
-            if (parent == null) return;
+            if (Parent == null) return;
             var list = new List<Var.Declare>();
-            foreach (var obj in parent.GetMembers<Var.Declare>())
+            foreach (var obj in Parent.GetMembers<Var.Declare>())
                 if (!(obj is Arg)) list.Add(obj);
             UsingPointers = list.ToArray();
         }

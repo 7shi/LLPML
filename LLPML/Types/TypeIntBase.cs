@@ -10,13 +10,13 @@ namespace Girl.LLPML
     public abstract class TypeVarBase : TypeBase
     {
         // get value
-        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
             codes.AddCodes(op, dest, src);
         }
 
         // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        public override void AddSetCodes(OpModule codes, Addr32 ad)
         {
             codes.Add(I386.Mov(ad, Reg32.EAX));
         }
@@ -65,7 +65,7 @@ namespace Girl.LLPML
             conds["not-equal"] = new CondPair(Cc.NE, Cc.E);
         }
 
-        public static void Shift(string shift, OpCodes codes, Addr32 dest, IIntValue arg)
+        public static void Shift(string shift, OpModule codes, Addr32 dest, IIntValue arg)
         {
             if (arg is IntValue)
             {

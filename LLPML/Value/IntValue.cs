@@ -21,7 +21,7 @@ namespace Girl.LLPML
 
         public TypeBase Type { get { return TypeInt.Instance; } }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodes(op, dest, (uint)Value);
         }

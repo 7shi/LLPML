@@ -30,6 +30,7 @@ namespace Girl.Binary
         public void Add(byte[] v) { data.Add(v); length += (uint)v.Length; }
         public void Add(char[] v) { data.Add(v); length += (uint)v.Length; }
         public void Add(string v) { data.Add(v); length += (uint)v.Length; }
+        public void Add(Block v) { data.Add(v); length += (uint)v.Length; }
         public void Add(Val32 v)
         {
             data.Add(v);
@@ -49,6 +50,7 @@ namespace Girl.Binary
                 else if (obj is byte[]) bw.Write((byte[])obj);
                 else if (obj is char[]) bw.Write((char[])obj);
                 else if (obj is string) bw.Write(((string)obj).ToCharArray());
+                else if (obj is Block) (obj as Block).Write(bw);
                 else if (obj is Val32) bw.Write(((Val32)obj).Value);
                 else throw new Exception("The method or operation is not implemented.");
             }

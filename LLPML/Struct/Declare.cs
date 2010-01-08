@@ -45,7 +45,7 @@ namespace Girl.LLPML.Struct
 
         public Declare(Declare parent)
         {
-            this.parent = parent.parent;
+            this.Parent = parent.Parent;
             this.root = parent.root;
             isRoot = false;
         }
@@ -74,7 +74,7 @@ namespace Girl.LLPML.Struct
             if (isRoot)
             {
                 RequiresName(xr);
-                type = Types.GetType(parent, xr["type"]) as TypeStruct;
+                type = Types.GetType(Parent, xr["type"]) as TypeStruct;
                 if (type == null) throw Abort(xr, "type required");
                 if (xr["static"] == "1") IsStatic = true;
             }
@@ -88,7 +88,7 @@ namespace Girl.LLPML.Struct
                 }
                 else
                 {
-                    IIntValue[] v = IntValue.Read(parent, xr);
+                    IIntValue[] v = IntValue.Read(Parent, xr);
                     if (v != null) values.AddRange(v);
                 }
             });
@@ -96,14 +96,14 @@ namespace Girl.LLPML.Struct
             if (isRoot) AddToParent();
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             var st = GetStruct();
             if (!st.NeedsInit && values.Count == 0 && !st.NeedsCtor)
                 return;
             codes.AddRange(new[]
             {
-                I386.Lea(Reg32.EAX, GetAddress(codes, parent)),
+                I386.Lea(Reg32.EAX, GetAddress(codes, Parent)),
                 I386.Push(Reg32.EAX)
             });
             var ad = new Addr32(Reg32.ESP);
@@ -113,7 +113,7 @@ namespace Girl.LLPML.Struct
             codes.Add(I386.Add(Reg32.ESP, 4));
         }
 
-        private bool AddInitValues(OpCodes codes, Define st)
+        private bool AddInitValues(OpModule codes, Define st)
         {
             if (values.Count == 0) return false;
 

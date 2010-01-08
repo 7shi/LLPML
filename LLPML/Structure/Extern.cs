@@ -69,7 +69,7 @@ namespace Girl.LLPML
             }
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             codes.Add(first);
             string n = alias != null ? alias : name;

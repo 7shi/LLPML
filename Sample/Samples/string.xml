@@ -3,6 +3,8 @@
 
 <!-- string functions -->
 
+<include src="malloc.xml" />
+
 <?llp
 function memcpy(dest, src, count)
 {
@@ -17,6 +19,14 @@ function memset(dest, c, count)
 {
   __stosb(dest, c, count);
   return dest;
+}
+
+class string
+{
+  function test()
+  {
+    printfln("%d: %s", this.Length, this);
+  }
 }
 ?>
 

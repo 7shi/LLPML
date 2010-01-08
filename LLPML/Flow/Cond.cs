@@ -22,9 +22,9 @@ namespace Girl.LLPML
         public Cond(BlockBase parent, XmlTextReader xr)
             : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest) { }
+        public override void AddCodes(OpModule codes, string op, Addr32 dest) { }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             if (Next != null)
             {

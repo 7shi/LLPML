@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.22.20080818";
+        public const string LLPMLVersion = "0.23.20080819";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -96,7 +96,7 @@ namespace Girl.LLPML
             base.Read(xr);
         }
 
-        protected override void BeforeAddCodes(OpCodes codes)
+        protected override void BeforeAddCodes(OpModule codes)
         {
             ForEachMembers((p, pos) =>
             {
@@ -105,13 +105,13 @@ namespace Girl.LLPML
             }, null);
         }
 
-        protected override void AfterAddCodes(OpCodes codes)
+        protected override void AfterAddCodes(OpModule codes)
         {
             AddExitCodes(codes);
             codes.Add(I386.Ret());
         }
 
-        public override void AddExitCodes(OpCodes codes)
+        public override void AddExitCodes(OpModule codes)
         {
             if (retVal != null)
                 GetRetVal(this).AddCodes(codes, "push", null);
@@ -137,12 +137,14 @@ namespace Girl.LLPML
 
         public bool IsCompiling { get; protected set; }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             IsCompiling = true;
+            TypeString.Root = this;
             MakeUpStatics(codes.Module);
             MakeUp();
             base.AddCodes(codes);
+            TypeString.Root = null;
             IsCompiling = false;
         }
 

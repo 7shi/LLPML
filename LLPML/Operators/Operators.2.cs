@@ -13,7 +13,7 @@ namespace Girl.LLPML
         public Add(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var ad = new Addr32(Reg32.ESP);
             var f = GetFunc();

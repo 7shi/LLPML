@@ -62,15 +62,15 @@ namespace Girl.LLPML
             protected virtual void Init()
             {
                 if (type == null) type = TypeVar.Instance;
-                IsMember = parent is Struct.Define;
-                if (parent.Parent == null) IsStatic = true;
+                IsMember = Parent is Struct.Define;
+                if (Parent.Parent == null) IsStatic = true;
             }
 
             public override void Read(XmlTextReader xr)
             {
                 RequiresName(xr);
 
-                var t = Types.GetType(parent, xr["type"]);
+                var t = Types.GetType(Parent, xr["type"]);
                 if (xr["static"] == "1") IsStatic = true;
 
                 string slen = xr["length"];
@@ -84,7 +84,7 @@ namespace Girl.LLPML
                     if (t != null) type = t;
                     Parse(xr, delegate
                     {
-                        IIntValue[] v = IntValue.Read(parent, xr);
+                        IIntValue[] v = IntValue.Read(Parent, xr);
                         if (v != null)
                         {
                             if (v.Length > 1 || Value != null)
@@ -104,7 +104,7 @@ namespace Girl.LLPML
                 throw Abort("undefined struct: " + Type.Name);
             }
 
-            public Addr32 GetAddress(OpCodes codes, BlockBase scope)
+            public Addr32 GetAddress(OpModule codes, BlockBase scope)
             {
                 if (IsMember && !IsStatic)
                 {
@@ -113,7 +113,7 @@ namespace Girl.LLPML
                     return new Addr32(Address);
                 }
 
-                int plv = scope.Level, lv = parent.Level;
+                int plv = scope.Level, lv = Parent.Level;
                 if (plv == lv || Address.IsAddress)
                     return new Addr32(Address);
                 if (lv <= 0 || lv >= plv)
@@ -124,18 +124,18 @@ namespace Girl.LLPML
 
             protected virtual void AddToParent()
             {
-                if (!parent.AddVar(this))
+                if (!Parent.AddVar(this))
                     throw Abort("multiple definitions: " + name);
             }
 
-            public override void AddCodes(OpCodes codes)
+            public override void AddCodes(OpModule codes)
             {
                 if (type.NeedsCtor)
-                    type.AddConstructor(codes, GetAddress(codes, parent));
+                    type.AddConstructor(codes, GetAddress(codes, Parent));
 
                 if (Value != null)
                 {
-                    var s = new Set(parent, new Var(parent, this), Value);
+                    var s = new Set(Parent, new Var(Parent, this), Value);
                     s.AddCodes(codes);
                 }
             }
@@ -152,14 +152,14 @@ namespace Girl.LLPML
 
                     doneInferType = true;
                     if (Value != null)
-                        type = Types.ConvertVarType(parent, Value.Type);
+                        type = Types.ToVarType(Value.Type);
                     return type;
                 }
             }
 
             public string FullName
             {
-                get { return parent.GetFullName(name); }
+                get { return Parent.GetFullName(name); }
             }
 
             public void CheckClass()

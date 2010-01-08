@@ -59,7 +59,7 @@ namespace Girl.LLPML
             IIntValue last = null;
             Parse(xr, delegate
             {
-                var vs = IntValue.Read(parent, xr);
+                var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
@@ -93,18 +93,18 @@ namespace Girl.LLPML
                     throw Abort("delegate: argument mismatched");
                 var args = new Var.Declare[len];
                 Array.Copy(fargs, Args.Length, args, 0, len);
-                type = new TypeDelegate(parent.Root, CallType, f.RetType, args);
+                type = new TypeDelegate(Parent.Root, CallType, f.RetType, args);
                 return type;
             }
         }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             var f = Function.Type as TypeFunction;
             if (f == null)
@@ -122,7 +122,7 @@ namespace Girl.LLPML
             if (length > 64)
                 throw Abort("delegate: too many arguments");
 
-            var alloc = parent.Root.GetFunction(Alloc);
+            var alloc = Parent.Root.GetFunction(Alloc);
             if (alloc == null)
                 throw Abort("delegate: can not find: {0}", Alloc);
             Call.AddCodes(codes, alloc, new[] { new IntValue(DefaultSize) });

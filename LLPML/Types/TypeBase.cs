@@ -17,7 +17,7 @@ namespace Girl.LLPML
         public virtual int Size { get { return Var.DefaultSize; } }
 
         // functions
-        public delegate void Func(OpCodes codes, Addr32 dest, IIntValue arg);
+        public delegate void Func(OpModule codes, Addr32 dest, IIntValue arg);
         protected Dictionary<string, Func> funcs = new Dictionary<string, Func>();
         public virtual Func GetFunc(string key)
         {
@@ -36,14 +36,14 @@ namespace Girl.LLPML
         }
 
         // get value
-        public virtual void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        public virtual void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
             if (src != null) codes.Add(I386.Lea(Reg32.EAX, src));
             codes.AddCodes(op, dest);
         }
 
         // set value
-        public virtual void AddSetCodes(OpCodes codes, Addr32 dest)
+        public virtual void AddSetCodes(OpModule codes, Addr32 dest)
         {
             throw new Exception("can not set value!");
         }
@@ -76,9 +76,9 @@ namespace Girl.LLPML
 
         // type constructor
         public virtual bool NeedsCtor { get { return false; } }
-        public virtual void AddConstructor(OpCodes codes) { }
+        public virtual void AddConstructor(OpModule codes) { }
 
-        public void AddConstructor(OpCodes codes, Addr32 ad)
+        public void AddConstructor(OpModule codes, Addr32 ad)
         {
             if (ad != null)
                 codes.Add(I386.Lea(Reg32.EAX, ad));
@@ -89,9 +89,9 @@ namespace Girl.LLPML
 
         // type destructor
         public virtual bool NeedsDtor { get { return false; } }
-        public virtual void AddDestructor(OpCodes codes) { }
+        public virtual void AddDestructor(OpModule codes) { }
 
-        public void AddDestructor(OpCodes codes, Addr32 ad)
+        public void AddDestructor(OpModule codes, Addr32 ad)
         {
             if (ad != null)
                 codes.Add(I386.Lea(Reg32.EAX, ad));
@@ -131,11 +131,11 @@ namespace Girl.LLPML
         }
 
         // others
-        protected OpCode GetCall(string tag, string name)
+        protected OpCode GetCall(Root root, string tag, string name)
         {
-            var f = Parent.GetFunction(name);
+            var f = root.GetFunction(name);
             if (f == null)
-                throw Parent.Abort("{0}: can not find: {1}", tag, name);
+                throw root.Abort("{0}: can not find: {1}", tag, name);
             return I386.Call(f.First);
         }
     }

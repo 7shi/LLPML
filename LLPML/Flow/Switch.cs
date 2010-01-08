@@ -29,7 +29,7 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue[] v = IntValue.Read(parent, xr);
+                    IIntValue[] v = IntValue.Read(Parent, xr);
                     if (v != null)
                     {
                         if (v.Length > 1 || value != null)
@@ -42,7 +42,7 @@ namespace Girl.LLPML
                     throw Abort(xr, "expression required");
             }
 
-            public override void AddCodes(OpCodes codes)
+            public override void AddCodes(OpModule codes)
             {
                 value.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
@@ -64,7 +64,7 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    var vs = IntValue.Read(parent, xr);
+                    var vs = IntValue.Read(Parent, xr);
                     if (vs == null) return;
                     foreach (IIntValue v in vs)
                     {
@@ -77,7 +77,7 @@ namespace Girl.LLPML
                     throw Abort(xr, "value(s) required");
             }
 
-            public override void AddCodes(OpCodes codes)
+            public override void AddCodes(OpModule codes)
             {
                 int len = values.Count;
                 if (len == 0)
@@ -94,7 +94,7 @@ namespace Girl.LLPML
                         codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
                         codes.Add(I386.Jcc(Cc.E, Block.First));
                     }
-                    if (IsLast) codes.Add(I386.Jmp(parent.Destruct));
+                    if (IsLast) codes.Add(I386.Jmp(Parent.Destruct));
                 }
             }
         }
@@ -191,7 +191,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "case and block required");
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             sentences.Clear();
             AddSentence(expr);

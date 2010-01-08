@@ -9,8 +9,7 @@ namespace Girl.LLPML
 {
     public abstract class NodeBase
     {
-        protected BlockBase parent;
-        public BlockBase Parent { get { return parent; } }
+        public BlockBase Parent { get; set; }
 
         protected string name;
         public string Name { get { return name; } }
@@ -26,7 +25,7 @@ namespace Girl.LLPML
 
         public NodeBase(BlockBase parent)
         {
-            this.parent = parent;
+            Parent = parent;
             root = parent.root;
         }
 
@@ -88,7 +87,7 @@ namespace Girl.LLPML
             return Abort(xr, "”FŽ¯‚Å‚«‚Ü‚¹‚ñ: {0}", xr.Name);
         }
 
-        public virtual void AddCodes(OpCodes codes) { }
+        public virtual void AddCodes(OpModule codes) { }
 
         protected void NoChild(XmlTextReader xr)
         {

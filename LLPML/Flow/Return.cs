@@ -19,7 +19,7 @@ namespace Girl.LLPML
             set
             {
                 this.value = value;
-                parent.GetFunction().AddTypeInfo(value);
+                Parent.GetFunction().AddTypeInfo(value);
             }
         }
 
@@ -31,7 +31,7 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                var v = IntValue.Read(parent, xr);
+                var v = IntValue.Read(Parent, xr);
                 if (v != null)
                 {
                     if (v.Length > 1 || value != null)
@@ -43,14 +43,14 @@ namespace Girl.LLPML
             base.Read(xr);
         }
 
-        public override void AddCodes(OpCodes codes)
+        public override void AddCodes(OpModule codes)
         {
             ///if (castFailed != null) throw Abort(castFailed);
-            var f = parent.GetFunction();
+            var f = Parent.GetFunction();
             if (value != null)
             {
                 value.AddCodes(codes, "mov", null);
-                var retval = f.GetRetVal(parent);
+                var retval = f.GetRetVal(Parent);
                 var dest = retval.GetAddress(codes);
                 var rt = f.ReturnType as TypeReference;
                 if (rt != null)
@@ -61,7 +61,7 @@ namespace Girl.LLPML
                 else
                     codes.Add(I386.Mov(dest, Reg32.EAX));
             }
-            var b = parent;
+            var b = Parent;
             var ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
