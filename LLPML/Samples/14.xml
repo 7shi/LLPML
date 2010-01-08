@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.4.20070817">
+
+<!-- calculation -->
+
+<include src="stdio.xml" />
+
+<var-int-declare name="a">4</var-int-declare>
+
+<call name="printfln">a = %d<var-int name="a" /></call>
+<call name="printfln">
+	<string>1 + 2 + a - 3 = %d</string>
+	<sub>
+		<add>
+			<int>1</int>
+			<int>2</int>
+			<var-int name="a" />
+		</add>
+		<int>3</int>
+	</sub>
+</call>
+
+<call name="finish" />
+
+</llpml>

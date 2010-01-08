@@ -8,191 +8,129 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class IntValue : NodeBase
+    public class IntValue : IIntValue
     {
-        private object src;
-        public object Source { get { return src; } }
-        public bool IsVarInt { get { return src is VarInt; } }
-        public bool HasValue { get { return src != null; } }
-
-        public IntValue() { }
-        public IntValue(int value) { src = value; }
-        public IntValue(Block parent) : base(parent) { }
-        public IntValue(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            if (xr.NodeType == XmlNodeType.Element)
-            {
-                src = null;
-                string n = xr["name"];
-                switch (xr.Name)
-                {
-                    case "int":
-                        src = parent.ReadInt(xr);
-                        break;
-                    case "string":
-                        src = parent.ReadString(xr);
-                        break;
-                    case "string-length":
-                        src = parent.ReadStringLength(xr);
-                        break;
-                    case "var-int":
-                        src = new VarInt(parent, xr);
-                        break;
-                    case "var-int-ptr":
-                        src = new VarInt.Ptr(parent, xr);
-                        break;
-                    case "ptr":
-                        src = new Pointer(parent, xr);
-                        break;
-                    case "call":
-                        src = new Call(parent, xr);
-                        break;
-                    case "function-ptr":
-                        src = new Function.Ptr(parent, xr);
-                        break;
-                    case "struct-member":
-                        src = new Struct.Member(parent, xr);
-                        break;
-                    default:
-                        throw Abort(xr);
-                }
-                if (src == null)
-                {
-                    string msg = "invalid argument";
-                    if (n != null) msg += ": " + n;
-                    throw Abort(xr, msg);
-                }
-            }
-            else
-            {
-                throw Abort(xr, "value required");
-            }
-        }
-
-        public void ReadValue(XmlTextReader xr, bool text)
+        public static IIntValue Read(Block parent, XmlTextReader xr, bool isInt)
         {
             switch (xr.NodeType)
             {
-                case XmlNodeType.Text:
-                    if (src != null) throw Abort(xr, "multiple value");
-                    if (text) src = xr.Value; else src = int.Parse(xr.Value);
-                    break;
-
                 case XmlNodeType.Element:
-                    if (src != null) throw Abort(xr, "multiple value");
-                    Read(xr);
-                    break;
+                    switch (xr.Name)
+                    {
+                        case "int":
+                            return new IntValue(parent.ReadInt(xr));
+                        case "string":
+                            return new StringValue(parent.ReadString(xr));
+                        case "string-length":
+                            return new IntValue(parent.ReadStringLength(xr));
+                        case "var-int":
+                            return new VarInt(parent, xr);
+                        case "var-int-ptr":
+                            return new VarInt.Ptr(parent, xr);
+                        case "ptr":
+                            return new Pointer(parent, xr);
+                        case "call":
+                            return new Call(parent, xr);
+                        case "function-ptr":
+                            return new Function.Ptr(parent, xr);
+                        case "struct-member":
+                            return new Struct.Member(parent, xr);
+                        case "add":
+                            return new Add(parent, xr);
+                        case "sub":
+                            return new Sub(parent, xr);
+                        default:
+                            throw NodeBase.Abort(xr);
+                    }
 
-                case XmlNodeType.Whitespace:
+                case XmlNodeType.Text:
+                    if (isInt)
+                        return new IntValue(int.Parse(xr.Value));
+                    else
+                        return new StringValue(xr.Value);
+
                 case XmlNodeType.Comment:
-                    break;
+                case XmlNodeType.Whitespace:
+                    return null;
+            }
+            throw NodeBase.Abort(xr, "value required");
+        }
 
+        private int value;
+
+        public IntValue(int value) { this.value = value; }
+
+        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        {
+            AddCodes(codes, op, dest, (uint)value);
+        }
+
+        public static void AddCodes(List<OpCode> codes, string op, Addr32 dest, Val32 v)
+        {
+            switch (op)
+            {
+                case "push":
+                    codes.Add(I386.Push(v));
+                    break;
+                case "mov":
+                    if (dest != null)
+                        codes.Add(I386.Mov(dest, v));
+                    else
+                        codes.Add(I386.Mov(Reg32.EAX, v));
+                    break;
+                case "add":
+                    codes.Add(I386.Add(dest, v));
+                    break;
+                case "sub":
+                    codes.Add(I386.Sub(dest, v));
+                    break;
                 default:
-                    throw Abort(xr, "value required");
+                    throw new Exception("unknown operation: " + op);
             }
         }
 
-        public void AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public static void AddCodes(List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
         {
-            Val32 v = null;
-            Addr32 ad = null;
-            if (src is int)
+            switch (op)
             {
-                v = (uint)(int)src;
+                case "push":
+                    codes.Add(I386.Push(ad));
+                    break;
+                case "mov":
+                    codes.Add(I386.Mov(Reg32.EAX, ad));
+                    if (dest != null) codes.Add(I386.Mov(dest, Reg32.EAX));
+                    break;
+                case "add":
+                    codes.Add(I386.Mov(Reg32.EAX, ad));
+                    codes.Add(I386.Add(dest, Reg32.EAX));
+                    break;
+                case "sub":
+                    codes.Add(I386.Mov(Reg32.EAX, ad));
+                    codes.Add(I386.Sub(dest, Reg32.EAX));
+                    break;
+                default:
+                    throw new Exception("unknown operation: " + op);
             }
-            else if (src is string)
-            {
-                v = m.GetString(src as string);
-            }
-            else if (src is VarInt)
-            {
-                ad = (src as VarInt).GetAddress(codes, m);
-            }
-            else if (src is VarInt.Ptr)
-            {
-                codes.Add(I386.Lea(Reg32.EAX, (src as VarInt.Ptr).GetAddress(codes, m)));
-            }
-            else if (src is Pointer)
-            {
-                (src as Pointer).GetValue(codes, m);
-            }
-            else if (src is Call)
-            {
-                (src as Call).AddCodes(codes, m);
-            }
-            else if (src is Function.Ptr)
-            {
-                v = (src as Function.Ptr).GetAddress(m);
-            }
-            else
-            {
-                throw new Exception("unknown value");
-            }
+        }
 
-            if (v != null)
+        public static void AddCodes(List<OpCode> codes, string op, Addr32 dest)
+        {
+            switch (op)
             {
-                switch (op)
-                {
-                    case "push":
-                        codes.Add(I386.Push(v));
-                        break;
-                    case "mov":
-                        codes.Add(I386.Mov(dest, v));
-                        break;
-                    case "add":
-                        codes.Add(I386.Add(dest, v));
-                        break;
-                    case "sub":
-                        codes.Add(I386.Sub(dest, v));
-                        break;
-                    default:
-                        throw new Exception("unknown operation: " + op);
-                }
-            }
-            else if (ad != null)
-            {
-                switch (op)
-                {
-                    case "push":
-                        codes.Add(I386.Push(ad));
-                        break;
-                    case "mov":
-                        codes.Add(I386.Mov(Reg32.EAX, ad));
-                        codes.Add(I386.Mov(dest, Reg32.EAX));
-                        break;
-                    case "add":
-                        codes.Add(I386.Mov(Reg32.EAX, ad));
-                        codes.Add(I386.Add(dest, Reg32.EAX));
-                        break;
-                    case "sub":
-                        codes.Add(I386.Mov(Reg32.EAX, ad));
-                        codes.Add(I386.Sub(dest, Reg32.EAX));
-                        break;
-                    default:
-                        throw new Exception("unknown operation: " + op);
-                }
-            }
-            else
-            {
-                switch (op)
-                {
-                    case "push":
-                        codes.Add(I386.Push(Reg32.EAX));
-                        break;
-                    case "mov":
-                        codes.Add(I386.Mov(dest, Reg32.EAX));
-                        break;
-                    case "add":
-                        codes.Add(I386.Add(dest, Reg32.EAX));
-                        break;
-                    case "sub":
-                        codes.Add(I386.Sub(dest, Reg32.EAX));
-                        break;
-                    default:
-                        throw new Exception("unknown operation: " + op);
-                }
+                case "push":
+                    codes.Add(I386.Push(Reg32.EAX));
+                    break;
+                case "mov":
+                    if (dest != null) codes.Add(I386.Mov(dest, Reg32.EAX));
+                    break;
+                case "add":
+                    codes.Add(I386.Add(dest, Reg32.EAX));
+                    break;
+                case "sub":
+                    codes.Add(I386.Sub(dest, Reg32.EAX));
+                    break;
+                default:
+                    throw new Exception("unknown operation: " + op);
             }
         }
     }

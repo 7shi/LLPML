@@ -8,11 +8,10 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Call : NodeBase
+    public class Call : NodeBase, IIntValue
     {
-        public List<IntValue> args = new List<IntValue>();
+        public List<IIntValue> args = new List<IIntValue>();
 
-        private string name;
         private VarInt ptr;
         private CallType type;
 
@@ -40,9 +39,8 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                IntValue v = new IntValue(parent);
-                v.ReadValue(xr, true);
-                if (v.HasValue) args.Add(v);
+                IIntValue v = IntValue.Read(parent, xr, false);
+                if (v != null) args.Add(v);
             });
         }
 
@@ -50,7 +48,7 @@ namespace Girl.LLPML
         {
             object[] args = this.args.ToArray();
             Array.Reverse(args);
-            foreach (IntValue arg in args)
+            foreach (IIntValue arg in args)
             {
                 arg.AddCodes(codes, m, "push", null);
             }
@@ -70,6 +68,12 @@ namespace Girl.LLPML
             {
                 codes.Add(I386.Add(Reg32.ESP, (byte)(args.Length * 4)));
             }
+        }
+
+        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        {
+            AddCodes(codes, m);
+            IntValue.AddCodes(codes, op, dest);
         }
     }
 }

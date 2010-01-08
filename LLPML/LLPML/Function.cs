@@ -10,17 +10,14 @@ namespace Girl.LLPML
 {
     public partial class Function : Block
     {
-        protected string name;
-        public string Name { get { return name; } }
-
         protected CallType type;
         public CallType Type { get { return type; } }
 
         protected OpCode entry = new OpCode();
         public Val32 Address { get { return entry.Address; } }
 
-        protected List<VarBase.DefineBase> args
-            = new List<VarBase.DefineBase>();
+        protected List<DeclareBase> args
+            = new List<DeclareBase>();
 
         public Function() { }
         public Function(Block parent, XmlTextReader xr) : base(parent, xr) { }
@@ -47,8 +44,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
+            RequireName(xr);
 
             type = CallType.CDecl;
             if (xr["type"] == "std") type = CallType.Std;
@@ -65,7 +61,7 @@ namespace Girl.LLPML
             codes.Add(entry);
 
             stack = 0;
-            foreach (VarBase.DefineBase arg in args)
+            foreach (DeclareBase arg in args)
             {
                 arg.Address = new Addr32(Reg32.EBP, stack + 8);
                 stack += 4;

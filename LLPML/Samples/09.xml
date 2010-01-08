@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.4.20070817">
 
 <!-- function -->
 
@@ -16,10 +16,10 @@
 	<arg-int name="a" />
 	<arg-int name="b" />
 	<var-int-declare name="c"><var-int name="a" /></var-int-declare>
-	<add>
+	<var-int-add>
 		<var-int name="c" />
 		<var-int name="b" />
-	</add>
+	</var-int-add>
 	<call name="printfln">
 		<string>%d + %d = %d</string>
 		<var-int name="a" />

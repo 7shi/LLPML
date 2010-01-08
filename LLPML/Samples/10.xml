@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.4.20070817">
 
 <!-- function returns value -->
 
@@ -23,12 +23,11 @@
 <function name="add">
 	<arg-int name="a" />
 	<arg-int name="b" />
-	<add>
-		<var-int name="a" />
-		<var-int name="b" />
-	</add>
 	<return>
-		<var-int name="a" />
+		<add>
+			<var-int name="a" />
+			<var-int name="b" />
+		</add>
 	</return>
 </function>
 

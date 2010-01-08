@@ -7,10 +7,11 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Let : Operand2
+    public class Let : VarInt.Operand2
     {
         public Let() { }
         public Let(Block parent, string name) : base(parent, name) { }
+        public Let(Block parent, string name, IntValue value) : base(parent, name, value) { }
         public Let(Block parent, string name, int value) : base(parent, name, value) { }
         public Let(Block parent, XmlTextReader xr) : base(parent, xr) { }
 

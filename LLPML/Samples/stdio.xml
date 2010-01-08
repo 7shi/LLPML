@@ -12,21 +12,16 @@
 <int-declare name="STD_OUTPUT_HANDLE">-11</int-declare>
 <int-declare name="STD_INPUT_HANDLE">-10</int-declare>
 
-<var-int-declare name="stdout" />
-<var-int-declare name="stdin" />
-
-<let>
-	<var-int name="stdout" />
+<var-int-declare name="stdout">
 	<call name="GetStdHandle">
 		<int name="STD_OUTPUT_HANDLE" />
 	</call>
-</let>
-<let>
-	<var-int name="stdin" />
+</var-int-declare>
+<var-int-declare name="stdin">
 	<call name="GetStdHandle">
 		<int name="STD_INPUT_HANDLE" />
 	</call>
-</let>
+</var-int-declare>
 
 <function name="print">
 	<arg-int name="text" />

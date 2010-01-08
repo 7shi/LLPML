@@ -14,15 +14,28 @@ namespace Girl.LLPML
         protected Block parent;
         public Block Parent { get { return parent; } }
 
+        protected string name;
+        public string Name { get { return name; } }
+
         protected Root root;
         public Root Root { get { return root; } }
 
-        public NodeBase() { }
+        public NodeBase()
+        {
+        }
+
         public NodeBase(Block parent)
         {
             this.parent = parent;
             root = parent.root;
         }
+
+        public NodeBase(Block parent, string name)
+            : this(parent)
+        {
+            this.name = name;
+        }
+
         public NodeBase(Block parent, XmlTextReader xr) : this(parent)
         {
             Read(xr);
@@ -53,7 +66,7 @@ namespace Girl.LLPML
                 "[{0}:{1}] {2}", xr.LineNumber, xr.LinePosition, msg));
         }
 
-        protected Exception Abort(XmlTextReader xr)
+        public static Exception Abort(XmlTextReader xr)
         {
             return Abort(xr, "invalid element: " + xr.Name);
         }
@@ -72,6 +85,12 @@ namespace Girl.LLPML
             {
                 return parent == null ? 0 : parent.Level + 1;
             }
+        }
+
+        protected void RequireName(XmlTextReader xr)
+        {
+            name = xr["name"];
+            if (name == null) throw Abort(xr, "name required");
         }
 
         protected void NoChild(XmlTextReader xr)

@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class VarInt : VarBase
+    public partial class VarInt : VarBase, IIntValue
     {
         protected VarInt.Declare reference;
 
@@ -29,9 +29,7 @@ namespace Girl.LLPML
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-
-            name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
+            RequireName(xr);
 
             reference = parent.GetVarInt(name);
             if (reference == null)
@@ -52,6 +50,11 @@ namespace Girl.LLPML
             }
             codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
             return new Addr32(Reg32.EAX, ad.Disp);
+        }
+
+        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        {
+            IntValue.AddCodes(codes, op, dest, GetAddress(codes, m));
         }
     }
 }

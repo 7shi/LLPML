@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Pointer : VarBase
+    public partial class Pointer : VarBase, IIntValue
     {
         private Pointer.Declare reference;
 
@@ -33,9 +33,7 @@ namespace Girl.LLPML
         public override void Read(XmlTextReader xr)
         {
             NoChild(xr);
-
-            name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
+            RequireName(xr);
 
             reference = parent.GetPointer(name);
             if (reference == null)
@@ -57,6 +55,12 @@ namespace Girl.LLPML
             }
             codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
             codes.Add(I386.Sub(Reg32.EAX, (uint)-ad.Disp));
+        }
+
+        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        {
+            GetValue(codes, m);
+            IntValue.AddCodes(codes, op, dest);
         }
     }
 }

@@ -6,8 +6,8 @@
 <include src="stdio.xml" />
 
 <struct-define name="Point">
-	<member name="x"/>
-	<member name="y"/>
+	<member name="x" />
+	<member name="y" />
 </struct-define>
 
 <!-- global -->

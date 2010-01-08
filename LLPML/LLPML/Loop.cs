@@ -9,7 +9,6 @@ namespace Girl.LLPML
 {
     public class Loop : Block
     {
-        private string name;
         private VarInt.Declare count;
         private OpCode start;
 

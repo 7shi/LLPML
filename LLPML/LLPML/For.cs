@@ -9,7 +9,6 @@ namespace Girl.LLPML
 {
     public class For : Block
     {
-        private string name;
         private VarInt.Declare count;
         private int to, step;
         private OpCode start, cmp;

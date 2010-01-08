@@ -9,7 +9,7 @@ namespace Girl.LLPML
 {
     public partial class VarInt : VarBase
     {
-        public class Ptr : NodeBase
+        public class Ptr : NodeBase, IIntValue
         {
             private VarInt src;
 
@@ -34,6 +34,12 @@ namespace Girl.LLPML
             public Addr32 GetAddress(List<OpCode> codes, Module m)
             {
                 return src.GetAddress(codes, m);
+            }
+
+            void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+            {
+                codes.Add(I386.Lea(Reg32.EAX, GetAddress(codes, m)));
+                IntValue.AddCodes(codes, op, dest);
             }
         }
     }

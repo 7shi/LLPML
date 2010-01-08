@@ -11,7 +11,7 @@ namespace Girl.LLPML
     public class Return : NodeBase
     {
         public bool IsLast = false;
-        private IntValue value;
+        private IIntValue value;
         private VarInt.Declare retval;
 
         public Return() { }
@@ -19,12 +19,16 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
-            value = new IntValue(parent);
             Parse(xr, delegate
             {
-                value.ReadValue(xr, false);
+                IIntValue v = IntValue.Read(parent, xr, false);
+                if (v != null)
+                {
+                    if (value != null) throw Abort(xr, "multiple values");
+                    value = v;
+                }
             });
-            if (value.HasValue)
+            if (value != null)
             {
                 retval = new VarInt.Declare(parent, "__retval", 0);
             }

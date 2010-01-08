@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Pointer : VarBase
     {
-        public class Declare : DefineBase
+        public class Declare : DeclareBase
         {
             private int length = 0;
             public virtual int Length { get { return length; } }
@@ -39,9 +39,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 NoChild(xr);
-
-                name = xr["name"];
-                if (name == null) throw Abort(xr, "name required");
+                RequireName(xr);
 
                 type = xr["type"];
                 if (type == null) type = "byte";

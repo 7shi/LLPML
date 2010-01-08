@@ -45,31 +45,40 @@
     <Compile Include="LLPML\Extern.cs" />
     <Compile Include="LLPML\Function.cs" />
     <Compile Include="LLPML\NodeBase.cs" />
+    <Compile Include="LLPML\Operators\VarInt.Sub.cs" />
+    <Compile Include="LLPML\Operators\Add.cs" />
+    <Compile Include="LLPML\Operators\Dec.cs" />
+    <Compile Include="LLPML\Operators\Sub.cs" />
     <Compile Include="LLPML\Root.cs" />
     <Compile Include="LLPML\Call.cs" />
     <Compile Include="LLPML\Block.cs" />
-    <Compile Include="LLPML\VarInt.cs" />
-    <Compile Include="LLPML\Pointer.Declare.cs" />
+    <Compile Include="LLPML\IIntValue.cs" />
+    <Compile Include="LLPML\Variable\VarInt.cs" />
+    <Compile Include="LLPML\Variable\Pointer.Declare.cs" />
     <Compile Include="LLPML\Loop.cs" />
     <Compile Include="LLPML\For.cs" />
     <Compile Include="LLPML\Break.cs" />
-    <Compile Include="LLPML\ArgInt.cs" />
-    <Compile Include="LLPML\Operators.cs" />
-    <Compile Include="LLPML\ArgPtr.cs" />
-    <Compile Include="LLPML\VarBase.cs" />
+    <Compile Include="LLPML\Variable\ArgInt.cs" />
+    <Compile Include="LLPML\Operators\Inc.cs" />
+    <Compile Include="LLPML\Variable\ArgPtr.cs" />
+    <Compile Include="LLPML\Variable\VarBase.cs" />
     <Compile Include="LLPML\Return.cs" />
-    <Compile Include="LLPML\VarInt.Ptr.cs" />
-    <Compile Include="LLPML\Pointer.cs" />
+    <Compile Include="LLPML\Variable\VarInt.Ptr.cs" />
+    <Compile Include="LLPML\Variable\Pointer.cs" />
     <Compile Include="LLPML\Function.Ptr.cs" />
     <Compile Include="LLPML\IntValue.cs" />
-    <Compile Include="LLPML\VarInt.Declare.cs" />
-    <Compile Include="LLPML\Struct.Member.cs" />
-    <Compile Include="LLPML\Struct.Define.cs" />
-    <Compile Include="LLPML\Struct.Define.Member.cs" />
-    <Compile Include="LLPML\Struct.Declare.cs" />
-    <Compile Include="LLPML\Let.cs" />
-    <Compile Include="LLPML\Operand1.cs" />
-    <Compile Include="LLPML\Operand2.cs" />
+    <Compile Include="LLPML\Variable\VarInt.Declare.cs" />
+    <Compile Include="LLPML\Struct\Member.cs" />
+    <Compile Include="LLPML\Struct\Define.cs" />
+    <Compile Include="LLPML\Struct\Define.Member.cs" />
+    <Compile Include="LLPML\Struct\Declare.cs" />
+    <Compile Include="LLPML\Operators\Let.cs" />
+    <Compile Include="LLPML\Variable\VarInt.Operand1.cs" />
+    <Compile Include="LLPML\Variable\VarInt.Operand2.cs" />
+    <Compile Include="LLPML\Variable\DeclareBase.cs" />
+    <Compile Include="LLPML\Operators\VarInt.Add.cs" />
+    <Compile Include="LLPML\Operators\Operands.cs" />
+    <Compile Include="LLPML\StringValue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -146,6 +155,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\13.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\14.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

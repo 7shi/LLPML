@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Function : Block
     {
-        public class Ptr : VarBase
+        public class Ptr : VarBase, IIntValue
         {
             public Ptr() { }
             public Ptr(Block parent, string name) : base(parent, name) { }
@@ -19,9 +19,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 NoChild(xr);
-
-                name = xr["name"];
-                if (name == null) throw Abort(xr, "name required");
+                RequireName(xr);
             }
 
             public Val32 GetAddress(Module m)
@@ -30,6 +28,11 @@ namespace Girl.LLPML
                 if (f == null)
                     throw new Exception("undefined function: " + name);
                 return new Val32(m.Specific.ImageBase, f.Address);
+            }
+
+            void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+            {
+                IntValue.AddCodes(codes, op, dest, GetAddress(m));
             }
         }
     }

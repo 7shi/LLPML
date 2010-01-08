@@ -9,9 +9,9 @@ namespace Girl.LLPML
 {
     public partial class VarInt : VarBase
     {
-        public class Declare : DefineBase
+        public class Declare : DeclareBase
         {
-            private IntValue value;
+            private IIntValue value;
 
             public Declare() { }
 
@@ -34,15 +34,17 @@ namespace Girl.LLPML
 
             public override void Read(XmlTextReader xr)
             {
-                name = xr["name"];
-                if (name == null) throw Abort(xr, "name required");
+                RequireName(xr);
 
-                IntValue v = new IntValue(parent);
                 Parse(xr, delegate
                 {
-                    v.ReadValue(xr, false);
+                    IIntValue v = IntValue.Read(parent, xr, true);
+                    if (v != null)
+                    {
+                        if (value != null) throw Abort(xr, "multiple values");
+                        value = v;
+                    }
                 });
-                if (v.HasValue) value = v;
 
                 parent.AddVarInt(this);
             }

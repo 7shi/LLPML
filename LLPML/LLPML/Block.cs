@@ -28,7 +28,7 @@ namespace Girl.LLPML
         public void AddInt(string name, int value)
         {
             if (ints.ContainsKey(name))
-                throw new Exception("multiple definition: " + name);
+                throw new Exception("multiple definitions: " + name);
             ints.Add(name, value);
         }
 
@@ -42,7 +42,7 @@ namespace Girl.LLPML
                     throw Abort(xr, "do not specify value with name");
                 ret = GetInt(name);
                 if (ret == null)
-                    throw Abort(xr, "undefined value: " + name);
+                    throw Abort(xr, "undefined values: " + name);
                 return (int)ret;
             }
             Parse(xr, delegate
@@ -96,7 +96,7 @@ namespace Girl.LLPML
         public void AddString(string name, string value)
         {
             if (strings.ContainsKey(name))
-                throw new Exception("multiple definition: " + name);
+                throw new Exception("multiple definitions: " + name);
             strings.Add(name, value);
         }
 
@@ -176,7 +176,7 @@ namespace Girl.LLPML
         public void AddVarInt(VarInt.Declare src)
         {
             if (var_ints.ContainsKey(src.Name))
-                throw new Exception("multiple definition: " + src.Name);
+                throw new Exception("multiple definitions: " + src.Name);
             var_ints.Add(src.Name, src);
         }
 
@@ -196,7 +196,7 @@ namespace Girl.LLPML
         public void AddPointer(Pointer.Declare src)
         {
             if (ptrs.ContainsKey(src.Name))
-                throw new Exception("multiple definition: " + src.Name);
+                throw new Exception("multiple definitions: " + src.Name);
             ptrs.Add(src.Name, src);
         }
 
@@ -216,7 +216,7 @@ namespace Girl.LLPML
         public void AddFunction(Function f)
         {
             if (functions.ContainsKey(f.Name))
-                throw new Exception("multiple definition: " + f.Name);
+                throw new Exception("multiple definitions: " + f.Name);
             functions.Add(f.Name, f);
         }
 
@@ -236,7 +236,7 @@ namespace Girl.LLPML
         public void AddStruct(Struct.Define s)
         {
             if (structs.ContainsKey(s.Name))
-                throw new Exception("multiple definition: " + s.Name);
+                throw new Exception("multiple definitions: " + s.Name);
             structs.Add(s.Name, s);
         }
 
@@ -291,11 +291,11 @@ namespace Girl.LLPML
                         case "dec":
                             sentences.Add(new Dec(this, xr));
                             break;
-                        case "add":
-                            sentences.Add(new Add(this, xr));
+                        case "var-int-add":
+                            sentences.Add(new VarInt.Add(this, xr));
                             break;
-                        case "sub":
-                            sentences.Add(new Sub(this, xr));
+                        case "var-int-sub":
+                            sentences.Add(new VarInt.Sub(this, xr));
                             break;
                         case "ptr-declare":
                             sentences.Add(new Pointer.Declare(this, xr));
