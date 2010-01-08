@@ -171,12 +171,17 @@ namespace Girl.LLPML.Parsing
             var si = SrcInfo;
             var t = Read();
             if (t == null) return null;
-            if (t.Length < 2 || !t.StartsWith("\"") || !t.EndsWith("\""))
+            if (t.EndsWith("\""))
             {
-                Rewind();
-                return null;
+                if (t.Length >= 2 && t.StartsWith("\""))
+                    return new StringValue(GetString(
+                        t.Substring(1, t.Length - 2))) { SrcInfo = si };
+                else if (t.Length >= 3 && t.StartsWith("@\""))
+                    return new StringValue(
+                        t.Substring(2, t.Length - 3)) { SrcInfo = si };
             }
-            return new StringValue(GetString(t.Substring(1, t.Length - 2))) { SrcInfo = si };
+            Rewind();
+            return null;
         }
 
         private CharValue Char()

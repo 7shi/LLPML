@@ -10,6 +10,7 @@ namespace Girl.LLPML
     {
         public const string Equal = "__string_equal";
         public const string Add = "__string_add";
+        public const string Sub = "__string_sub";
         public const string Mul = "__string_mul";
 
         // singleton
@@ -37,6 +38,9 @@ namespace Girl.LLPML
             funcs["add"] = (codes, dest) => AddFunc(codes, dest, Add);
             funcs["add-char"] = (codes, dest) => AddFunc(codes, dest, Add + "_char");
             funcs["add-int"] = (codes, dest) => AddFunc(codes, dest, Add + "_int");
+            funcs["sub"] = (codes, dest) => AddFunc(codes, dest, Sub);
+            funcs["sub-char"] = (codes, dest) => AddFunc(codes, dest, Sub + "_char");
+            funcs["sub-int"] = (codes, dest) => AddFunc(codes, dest, Sub + "_int");
             funcs["mul"] = (codes, dest) => AddFunc(codes, dest, Add);
             funcs["mul-int"] = (codes, dest) => AddFunc(codes, dest, Mul + "_int");
         }

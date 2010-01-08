@@ -1,12 +1,19 @@
-﻿/// 文字列加算
+﻿/// 部分クラス
 
 _Finish _finish;
 
-var s = "1 + 1 " + '=' + ' ' + (1 + 1);
-printfln("%s", s);
+class Test
+{
+	function Show
+	{
+		printfln("%d", a);
+	}
+}
 
-var ss = "1 + 1 ";
-ss += '=';
-ss += ' ';
-ss += 1 + 1;
-printfln("%s", ss);
+var t = new Test;
+t.Show();
+
+class Test
+{
+	int a = 1234;
+}

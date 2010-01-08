@@ -67,3 +67,8 @@ println();
 
 var f = string.Format("s1 = \"%s\"", s1);
 printfln("f: %s", f);
+println();
+
+// 表記
+printfln("C:\\WINDOWS\\system32");
+printfln(@"C:\WINDOWS\system32");

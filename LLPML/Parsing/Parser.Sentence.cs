@@ -197,10 +197,19 @@ namespace Girl.LLPML.Parsing
             else
                 Rewind();
 
-            var ret = new Struct.Define(parent, name, baseType);
-            if (type == "class") ret.IsClass = true;
+            var ret = parent.GetStruct(name);
+            var first = ret == null;
+            if (first) ret = new Struct.Define(parent, name, baseType);
+            if (type == "class")
+            {
+                if (!first && !ret.IsClass)
+                    throw Abort("{0}: {1}: 構造体として定義されています。", type, name);
+                ret.IsClass = true;
+            }
+            else if (!first && ret.IsClass)
+                throw Abort("{0}: {1}: クラスとして定義されています。", type, name);
             ReadBlock(type, ret);
-            if (!parent.AddStruct(ret))
+            if (first && !parent.AddStruct(ret))
                 throw Abort("{0}: {1}: 定義が重複しています。", type, name);
             return ret;
         }

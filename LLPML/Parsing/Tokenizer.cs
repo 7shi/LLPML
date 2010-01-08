@@ -219,22 +219,42 @@ namespace Girl.LLPML.Parsing
             SkipSpaces();
             var ret = new Data(pos, SrcInfo);
             StringBuilder sb = new StringBuilder();
-            char? ch, pre = null, str = null;
-            bool isWord = true;
+            char? ch, str = null;
+            bool isWord = true, useEscape = true;
             while ((ch = ReadChar()) != null)
             {
-                if (ch == '\'' || ch == '"')
+                if (str != null && ch == '\\' && useEscape)
                 {
-                    if (sb.Length == 0)
+                    sb.Append(ch);
+                    ch = ReadChar();
+                    if (ch == null) break;
+                    sb.Append(ch);
+                }
+                else if (ch == '@' && sb.Length == 0)
+                {
+                    sb.Append(ch);
+                    ch = ReadChar();
+                    if (ch == null)
+                        break;
+                    else if (ch == '"')
                     {
                         str = ch;
+                        useEscape = false;
+                        sb.Append(ch);
                     }
+                    else
+                        RewindChar();
+                }
+                else if (ch == '\'' || ch == '"')
+                {
+                    if (sb.Length == 0)
+                        str = ch;
                     else if (str == null)
                     {
                         RewindChar();
                         break;
                     }
-                    else if (pre != '\\' && str == ch)
+                    else if (str == ch)
                     {
                         sb.Append(ch);
                         break;
@@ -242,9 +262,7 @@ namespace Girl.LLPML.Parsing
                     sb.Append(ch);
                 }
                 else if (str != null)
-                {
                     sb.Append(ch);
-                }
                 else if (ch <= ' ')
                 {
                     if (sb.Length > 0) break;
@@ -271,11 +289,8 @@ namespace Girl.LLPML.Parsing
                         if (b != null) break;
                     }
                     else
-                    {
                         sb.Append(ch);
-                    }
                 }
-                pre = ch;
             }
             if (sb.Length == 0) return null;
             ret.String = sb.ToString();
