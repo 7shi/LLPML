@@ -83,19 +83,35 @@ namespace Girl.LLPML
                 if (len == 0)
                 {
                     codes.Add(I386.Jmp(Block.First));
+                    return;
                 }
-                else
+
+                foreach (var v in values)
                 {
-                    for (int i = 0; i < len; i++)
+                    codes.Add(I386.Push(Reg32.EDX));
+                    if (v.Type is TypeString)
                     {
-                        codes.Add(I386.Push(Reg32.EDX));
-                        values[i].AddCodes(codes, "mov", null);
-                        codes.Add(I386.Pop(Reg32.EDX));
-                        codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
-                        codes.Add(I386.Jcc(Cc.E, Block.First));
+                        v.AddCodes(codes, "push", null);
+                        codes.AddRange(new[]
+                        {
+                            codes.GetCall("case", TypeString.Equal),
+                            I386.Add(Reg32.ESP, 8),
+                            I386.Test(Reg32.EAX, Reg32.EAX),
+                            I386.Jcc(Cc.NZ, Block.First),
+                        });
                     }
-                    if (IsLast) codes.Add(I386.Jmp(Parent.Destruct));
+                    else
+                    {
+                        v.AddCodes(codes, "mov", null);
+                        codes.AddRange(new[]
+                        {
+                            I386.Pop(Reg32.EDX),
+                            I386.Cmp(Reg32.EDX, Reg32.EAX),
+                            I386.Jcc(Cc.E, Block.First),
+                        });
+                    }
                 }
+                if (IsLast) codes.Add(I386.Jmp(Parent.Destruct));
             }
         }
 

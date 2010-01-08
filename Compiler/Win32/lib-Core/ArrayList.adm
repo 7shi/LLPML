@@ -1,124 +1,61 @@
-﻿struct ArrayList
+﻿class ArrayList : VarList
 {
-	var Ptr : var*;
-	int Count, Capacity;
-	
-	function ctor
+	override Clear
 	{
-		Capacity = 16;
-		Ptr = calloc(Capacity, sizeof(var));
-		//Ptr = malloc(Capacity * sizeof(var));
-		Count = 0;
+		ForEachRev(\obj => __dereference(obj));
+		base.Clear();
 	}
 	
-	function dtor
+	function ToArray
 	{
-		free(Ptr);
-	}
-	
-	function Clear
-	{
-		Count = 0;
-	}
-	
-	function Add(obj)
-	{
-		var cap = Capacity;
-		while (Count >= Capacity)
-			Capacity += Capacity;
-		if (Capacity != cap)
-		{
-			var oldPtr = Ptr;
-			Ptr = calloc(Capacity, sizeof(var));
-			//Ptr = malloc(Capacity * sizeof(var));
-			__movsd(Ptr, oldPtr, Count);
-			free(oldPtr);
-		}
-		Ptr[Count++] = obj;
-	}
-	
-	function Remove(obj)
-	{
-		var p : var* = Ptr;
+		var ret = new object[Count];
 		for (int i = 0; i < Count; i++)
-		{
-			if (p[0] == obj)
-			{
-				Count--;
-				__movsd(p, p + 1, Count - i);
-				return i;
-			}
-			p++;
-		}
-		return -1;
+			ret[i] = buffer[i];
+		return ret;
+	}
+	
+	function Get(order)
+	{
+		return (object)base.Get(order);
+	}
+	
+	function Set(order, obj : object)
+	{
+		if (0 <= order && order < Count)
+			__dereference(buffer[order]);
+		__reference(obj);
+		base.Set(order, obj);
+	}
+	
+	function Add(obj : object)
+	{
+		__reference(obj);
+		base.Add(obj);
+	}
+	
+	function Remove(obj : object)
+	{
+		__dereference(obj);
+		return base.Remove(obj);
 	}
 	
 	function RemoveAt(order)
 	{
-		if (order < 0 || order >= Count) return null;
-		
-		var ret = Ptr[order];
-		var p : var* = addrof Ptr[order];
-		Count--;
-		__movsd(p, p + 1, Count - order);
-		return ret;
+		return (object)base.RemoveAt(order);
 	}
 	
-	function ForEach(delg)
+	function IndexOf(obj : object)
 	{
-		for (int i = 0; i < Count; i++)
-			delg(Ptr[i]);
+		return base.IndexOf(obj);
 	}
 	
-	function ForEachWithOrder(delg)
+	function LastIndexOf(obj : object)
 	{
-		for (int i = 0; i < Count; i++)
-			delg(Ptr[i], i);
+		return base.LastIndexOf(obj);
 	}
 	
-	function ForEachRev(delg)
+	function Contains(obj : object)
 	{
-		for (int i = Count - 1; i >= 0; i--)
-			delg(Ptr[i]);
-	}
-	
-	function ForEachRevWithOrder(delg)
-	{
-		for (int i = Count - 1; i >= 0; i--)
-			delg(Ptr[i], i);
-	}
-	
-	function Find(item)
-	{
-		for (int i = 0; i < Count; i++)
-		{
-			var n = Ptr[i];
-			if (n == item) return i;
-		}
-		return -1;
-	}
-	
-	function FindLast(item)
-	{
-		for (int i = Count - 1; i >= 0; i--)
-		{
-			var n = Ptr[i];
-			if (n == item) return i;
-		}
-		return -1;
-	}
-	
-	function FindAll(dest : ArrayList, cond)
-	{
-		FindPartial(dest, 0, cond);
-	}
-	
-	function FindPartial(dest : ArrayList, start, cond)
-	{
-		for (int i = start; i < Count; i++)
-		{
-			var n = Ptr[i];
-			if (cond(n)) dest.Add(n);
-		}
+		return base.Contains(obj);
 	}
 }

@@ -61,7 +61,8 @@ const int PAGE_NOCACHE           = 0x0200;
 struct _JIT_Allocator
 {
 	var buffer, current, end;
-	ArrayList allocated, freed;
+	var allocated = new VarList;
+	var freed = new VarList;
 
 	function ctor()
 	{
@@ -126,15 +127,15 @@ struct _JIT_Allocator
 
 struct _JIT_Manager
 {
-	ArrayList allocators;
+	var allocators = new VarList;
 	
 	function dtor()
 	{
 		for (int i = allocators.Count - 1; i >= 0; i--)
 		{
-			var allocator = (_JIT_Allocator)allocators.Ptr[i];
+			var allocator = (_JIT_Allocator)allocators.Get(i);
 			for (int j = 0; j < allocator.allocated.Count; j++)
-				printfln("%s: leaked: %p", __FUNCTION__, allocator.allocated.Ptr[j]);
+				printfln("%s: leaked: %p", __FUNCTION__, allocator.allocated.Get(j));
 			allocators.RemoveAt(i);
 			allocator.dtor();
 			free(allocator);
@@ -148,7 +149,7 @@ struct _JIT_Manager
 		var ret;
 		for (int i = allocators.Count - 1; i >= 0; i--)
 		{
-			var allocator = (_JIT_Allocator)allocators.Ptr[i];
+			var allocator = (_JIT_Allocator)allocators.Get(i);
 			ret = allocator.Alloc();
 			if (ret != null) return ret;
 		}
@@ -168,7 +169,7 @@ struct _JIT_Manager
 		var c = allocators.Count;
 		for (int i = c - 1; i >= 0; i--)
 		{
-			var allocator = (_JIT_Allocator)allocators.Ptr[i];
+			var allocator = (_JIT_Allocator)allocators.Get(i);
 			if (allocator.Free(ptr))
 			{
 				if (allocator.IsEmpty && c > 1)

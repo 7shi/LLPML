@@ -1,0 +1,158 @@
+﻿class VarList
+{
+	int Count = 0, Capacity = 16;
+	var buffer = new var[Capacity];
+	
+	function dtor
+	{
+		Clear();
+		free(buffer);
+	}
+	
+	virtual Clear
+	{
+		Count = 0;
+	}
+	
+	function ToArray
+	{
+		var ret = new var[Count];
+		__movsd(ret, buffer, Count);
+		return ret;
+	}
+	
+	function Get(order)
+	{
+		if (order < 0 || order >= Count) return 0;
+		return buffer[order];
+	}
+	
+	function Set(order, v)
+	{
+		if (order < 0) return;
+		
+		var cap = Capacity;
+		while (order >= Capacity)
+		{
+			Capacity += Capacity;
+			Capacity += Capacity;
+		}
+		if (Capacity != cap)
+		{
+			var tmp = new var[Capacity];
+			__movsd(tmp, buffer, Count);
+			buffer = tmp;
+		}
+		buffer[order] = v;
+		if (Count <= order) Count = order + 1;
+	}
+	
+	function Add(v)
+	{
+		Set(Count, v);
+	}
+	
+	function Remove(v)
+	{
+		var p : var* = buffer;
+		for (int i = 0; i < Count; i++)
+		{
+			if (p[0] == v)
+			{
+				Count--;
+				__movsd(p, p + 1, Count - i);
+				return i;
+			}
+			p++;
+		}
+		return -1;
+	}
+	
+	function RemoveAt(order)
+	{
+		if (order < 0 || order >= Count) return 0;
+		
+		var ret = buffer[order];
+		var p : var* = addrof buffer[order];
+		Count--;
+		__movsd(p, p + 1, Count - order);
+		return ret;
+	}
+	
+	function IndexOf(v)
+	{
+		for (int i = 0; i < Count; i++)
+			if (v == buffer[i]) return i;
+		return -1;
+	}
+	
+	function LastIndexOf(v)
+	{
+		for (int i = Count - 1; i >= 0; i--)
+			if (v == buffer[i]) return i;
+		return -1;
+	}
+	
+	function Contains(v)
+	{
+		return IndexOf(v) != -1;
+	}
+	
+	function ForEach(delg)
+	{
+		for (int i = 0; i < Count; i++)
+			delg(buffer[i]);
+	}
+	
+	function ForEachWithOrder(delg)
+	{
+		for (int i = 0; i < Count; i++)
+			delg(buffer[i], i);
+	}
+	
+	function ForEachRev(delg)
+	{
+		for (int i = Count - 1; i >= 0; i--)
+			delg(buffer[i]);
+	}
+	
+	function ForEachRevWithOrder(delg)
+	{
+		for (int i = Count - 1; i >= 0; i--)
+			delg(buffer[i], i);
+	}
+	
+	function Find(item)
+	{
+		for (int i = 0; i < Count; i++)
+		{
+			var n = buffer[i];
+			if (n == item) return i;
+		}
+		return -1;
+	}
+	
+	function FindLast(item)
+	{
+		for (int i = Count - 1; i >= 0; i--)
+		{
+			var n = buffer[i];
+			if (n == item) return i;
+		}
+		return -1;
+	}
+	
+	function FindAll(dest : VarList, cond)
+	{
+		FindPartial(dest, 0, cond);
+	}
+	
+	function FindPartial(dest : VarList, start, cond)
+	{
+		for (int i = start; i < Count; i++)
+		{
+			var n = buffer[i];
+			if (cond(n)) dest.Add(n);
+		}
+	}
+}

@@ -301,6 +301,8 @@ namespace Girl.LLPML.Struct
             if (doneCheckStruct) return;
             doneCheckStruct = true;
 
+            if (IsClass && BaseType == null && FullName != "object")
+                BaseType = "object";
             var list = new List<Define>();
             CheckStruct(list);
             CheckField();
@@ -310,10 +312,16 @@ namespace Girl.LLPML.Struct
         {
             MakeUp();
             if (list.Contains(this))
-                throw Abort("can not define recursive type: " + list[0].name);
+                throw Abort("can not define recursive type: {0}", list[0].name);
             list.Add(this);
             var b = GetBaseStruct();
-            if (b != null) b.CheckStruct(list);
+            if (b == null) return;
+
+            if (IsClass && !b.IsClass)
+                throw Abort("class: can not inherit from struct: {0} <= {1}", FullName, b.FullName);
+            else if (!IsClass && b.IsClass)
+                throw Abort("struct: can not inherit from class: {0} <= {1}", FullName, b.FullName);
+            b.CheckStruct(list);
         }
 
         private bool doneCheckField = false;

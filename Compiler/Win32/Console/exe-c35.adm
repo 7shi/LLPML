@@ -2,7 +2,7 @@
 
 _Finish _finish;
 
-ArrayList arr;
+var arr = new VarList;
 
 arr.Add("abc");
 arr.Add("def");

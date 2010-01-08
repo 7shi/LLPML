@@ -63,8 +63,8 @@ printfln("len(tt) = %d", len(tt));
 tt = null;
 println();
 
-printfln("* GCList");
-var list = new GCList;
+printfln("* ArrayList");
+var list = new ArrayList;
 list.Add(new Test1);
 list.Add(new Test2);
 list = null;

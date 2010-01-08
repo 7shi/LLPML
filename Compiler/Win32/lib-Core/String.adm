@@ -58,7 +58,7 @@ function __string_equal(a : string, b : string)
 	return true;
 }
 
-function __string_add(a : string, b : string) : string
+function __string_add(a : string, b : string)
 {
 	var ret = string.Alloc(a.Length + b.Length);
 	if (a.Length > 0) __movsw(ret, a, a.Length);
@@ -67,7 +67,7 @@ function __string_add(a : string, b : string) : string
 	return ret;
 }
 
-function __string_add_char(a : string, b) : string
+function __string_add_char(a : string, b)
 {
 	var ret = string.Alloc(a.Length + 1);
 	if (a.Length > 0) __movsw(ret, a, a.Length);
@@ -75,12 +75,25 @@ function __string_add_char(a : string, b) : string
 	return ret;
 }
 
-function __string_add_int(a : string, b) : string
+function __string_add_int(a : string, b)
 {
 	var bb = string.Format("%d", b);
 	var ret = string.Alloc(a.Length + bb.Length);
 	if (a.Length > 0) __movsw(ret, a, a.Length);
 	__movsw(addrof ret[a.Length], bb, bb.Length);
+	return ret;
+}
+
+function __string_mul_int(s : string, count)
+{
+	if (count < 1) return "";
+	var ret = string.Alloc(s.Length * count);
+	var p : char* = ret;
+	for (int i = 0; i < count; i++)
+	{
+		__movsw(p, s, s.Length);
+		p += s.Length;
+	}
 	return ret;
 }
 
@@ -224,5 +237,190 @@ class string
 	function RemoveFrom(start) : string
 	{
 		return Remove(start, this.Length - start);
+	}
+	
+	function ToInt32() : int
+	{
+		int ret = 0;
+		bool minus = false;
+		bool first = true;
+		for (int i = 0; i < this.Length; i++)
+		{
+			char ch = this[i];
+			if (ch <= ' ')
+				continue;
+			else if (ch == '-' && first)
+				minus = true;
+			else if ('0' <= ch && ch <= '9')
+			{
+				ret *= 10;
+				ret += ch - '0';
+			}
+			else
+				break;
+			first = false;
+		}
+		if (minus) ret = -ret;
+		return ret;
+	}
+	
+	function IndexWithLengthFrom(s : char*, length, start)
+	{
+		if (length < 1) return -1;
+		int last = this.Length - length;
+		for (int i = start; i <= last; i++)
+		{
+			if (this[i] == s[0])
+			{
+				var ok = true;
+				for (int j = 1; j < length; j++)
+				{
+					if (this[i + j] != s[j])
+					{
+						ok = false;
+						break;
+					}
+				}
+				if (ok) return i;
+			}
+		}
+		return -1;
+	}
+	
+	function IndexFrom(s : string, start)
+	{
+		return IndexWithLengthFrom(s, s.Length, start);
+	}
+	
+	function Index(s : string)
+	{
+		return IndexWithLengthFrom(s, s.Length, 0);
+	}
+	
+	function IndexCharFrom(ch : char, start)
+	{
+		return IndexWithLengthFrom(addrof ch, 1, start);
+	}
+	
+	function IndexChar(ch : char)
+	{
+		return IndexWithLengthFrom(addrof ch, 1, 0);
+	}
+	
+	function LastIndexWithLengthFrom(s : char*, length, start)
+	{
+		if (length < 1) return -1;
+		int last = this.Length - length;
+		if (start > last) start = last;
+		for (int i = start; i >= 0; i--)
+		{
+			if (this[i] == s[0])
+			{
+				var ok = true;
+				for (int j = 1; j < length; j++)
+				{
+					if (this[i + j] != s[j])
+					{
+						ok = false;
+						break;
+					}
+				}
+				if (ok) return i;
+			}
+		}
+		return -1;
+	}
+	
+	function LastIndexFrom(s : string, start)
+	{
+		return LastIndexWithLengthFrom(s, s.Length, start);
+	}
+	
+	function LastIndex(s : string)
+	{
+		return LastIndexWithLengthFrom(s, s.Length, this.Length);
+	}
+	
+	function LastIndexCharFrom(ch : char, start)
+	{
+		return LastIndexWithLengthFrom(addrof ch, 1, start);
+	}
+	
+	function LastIndexChar(ch : char)
+	{
+		return LastIndexWithLengthFrom(addrof ch, 1, this.Length);
+	}
+	
+	function CountWithLength(s : char*, length)
+	{
+		if (length < 1) return 0;
+		int ret = 0, last = this.Length - length;
+		for (int i = 0; i <= last; i++)
+		{
+			if (this[i] == s[0])
+			{
+				var ok = true;
+				for (int j = 1; j < length; j++)
+				{
+					if (this[i + j] != s[j])
+					{
+						ok = false;
+						break;
+					}
+				}
+				if (ok)
+				{
+					ret++;
+					i += length - 1;
+				}
+			}
+		}
+		return ret;
+	}
+	
+	function Count(s : string)
+	{
+		return CountWithLength(s, s.Length);
+	}
+	
+	function CountChar(ch : char)
+	{
+		return CountWithLength(addrof ch, 1);
+	}
+	
+	function Replace(before : string, after : string)
+	{
+		var count = Count(before);
+		if (count == 0) return this;
+		
+		var len = this.Length + (after.Length - before.Length) * count;
+		var ret = Alloc(len);
+		var p : char* = ret;
+		int last = this.Length - before.Length;
+		for (int i = 0; i < this.Length; i++)
+		{
+			if (i <= last && this[i] == before[0])
+			{
+				var ok = true;
+				for (int j = 1; j < before.Length; j++)
+				{
+					if (this[i + j] != before[j])
+					{
+						ok = false;
+						break;
+					}
+				}
+				if (ok)
+				{
+					__movsw(p, after, after.Length);
+					p += after.Length;
+					i += before.Length - 1;
+					continue;
+				}
+			}
+			p[0] = this[i];
+			p++;
+		}
+		return ret;
 	}
 }

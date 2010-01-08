@@ -21,8 +21,8 @@ namespace Girl.LLPML
         public bool HasThis { get { return thisptr != null; } }
 
         protected Function virtfunc;
-
         protected Var.Declare virtptr;
+
         public bool IsVirtual
         {
             get { return virtptr != null; }
@@ -53,6 +53,7 @@ namespace Girl.LLPML
 
         protected Function ovrfunc;
         protected Var ovrptr;
+
         public bool IsOverride
         {
             get { return ovrfunc != null; }
@@ -79,6 +80,7 @@ namespace Girl.LLPML
         protected void SetOverride(Function virtfunc)
         {
             this.virtfunc = virtfunc;
+            retVal = virtfunc.retVal;
             args = virtfunc.args;
             members = virtfunc.members;
             sentences = virtfunc.sentences;

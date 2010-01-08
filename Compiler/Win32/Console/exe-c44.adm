@@ -2,7 +2,7 @@
 
 _Finish _finish;
 
-ArrayList a;
+var a = new VarList;
 a.Add(53);
 a.Add(12);
 a.Add(90);
@@ -11,18 +11,19 @@ a.Add(15);
 a.Add(3);
 a.Add(25);
 
-ArrayList b;
+var b = new VarList;
 b |< a.QuickSort;
 
 a |> Show;
 b |> Show;
 
-function QuickSort(src : ArrayList, dest : ArrayList)
+function QuickSort(src : VarList, dest : VarList)
 {
 	if (src.Count == 0) return;
 	
-	var x = src.Ptr[0];
-	ArrayList lt, ge;
+	var x = src.Get(0);
+	var lt = new VarList;
+	var ge = new VarList;
 	lt |< src.FindPartial(1, \n => n <  x);
 	ge |< src.FindPartial(1, \n => n >= x);
 	dest |< lt.QuickSort;
@@ -30,7 +31,7 @@ function QuickSort(src : ArrayList, dest : ArrayList)
 	dest |< ge.QuickSort;
 }
 
-function Show(list : ArrayList)
+function Show(list : VarList)
 {
 	list.ForEachWithOrder(\(n, i) =>
 	{

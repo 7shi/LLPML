@@ -58,7 +58,7 @@
     <Compile Include="Project.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Win32\lib-Core\ArrayList.adm">
+    <None Include="Win32\lib-Core\VarList.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Win32\lib-Core\Binary.adm">
@@ -67,7 +67,7 @@
     <None Include="Win32\lib-Core\CriticalSection.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Win32\lib-Core\GCList.adm">
+    <None Include="Win32\lib-Core\ArrayList.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Win32\lib-Core\JIT.adm">
@@ -76,7 +76,7 @@
     <None Include="Win32\lib-Core\Memory.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Win32\lib-Core\IO.adm">
+    <None Include="Win32\lib-Core\Console.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Win32\lib-Core\String.adm">
@@ -319,6 +319,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Win32\Console\exe-c55.adm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Win32\lib-Core\Object.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="WinCE\exe-wce01.adm">

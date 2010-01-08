@@ -6,7 +6,7 @@ function winforms_get_auto_id()
 	return g_nAutoID++;
 }
 
-struct Event : ArrayList
+class Event : VarList
 {
 	function dtor()
 	{
@@ -16,7 +16,7 @@ struct Event : ArrayList
 	function Clear()
 	{
 		for (int i = 0; i < Count; i++)
-			__jit_free(Ptr[i]);
+			__jit_free(buffer[i]);
 		Count = 0;
 	}
 	
@@ -28,14 +28,14 @@ struct Event : ArrayList
 	function Invoke(sender, e)
 	{
 		for (int i = 0; i < Count; i++)
-			Ptr[i](sender, e);
+			buffer[i](sender, e);
 	}
 }
 
 struct MainMenu
 {
 	var hMenu;
-	ArrayList MenuItems;
+	var MenuItems = new VarList;
 	
 	function ctor()
 	{
@@ -58,7 +58,7 @@ struct MainMenu
 	{
 		for (int i = 0; i < MenuItems.Count; i++)
 		{
-			var mi : MenuItem = MenuItems.Ptr[i];
+			var mi : MenuItem = MenuItems.Get(i);
 			var ret = mi.FindMenuItem(id);
 			if (ret != null) return ret;
 		}
@@ -69,8 +69,8 @@ struct MainMenu
 struct MenuItem : MENUITEMINFO
 {
 	var hMenu = null;
-	ArrayList MenuItems;
-	Event Click;
+	var MenuItems = new VarList;
+	var Click = new Event;
 	
 	function ctor()
 	{
@@ -151,7 +151,7 @@ struct MenuItem : MENUITEMINFO
 		if (id == wID) return this;
 		for (int i = 0; i < MenuItems.Count; i++)
 		{
-			var mi : MenuItem = MenuItems.Ptr[i];
+			var mi : MenuItem = MenuItems.Get(i);
 			var ret : MenuItem = mi.FindMenuItem(id);
 			if (ret != null) return ret;
 		}

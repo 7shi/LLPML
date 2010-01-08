@@ -10,6 +10,7 @@ namespace Girl.LLPML
     {
         public const string Equal = "__string_equal";
         public const string Add = "__string_add";
+        public const string Mul = "__string_mul";
 
         // singleton
         private static TypeString instance = new TypeString();
@@ -36,6 +37,8 @@ namespace Girl.LLPML
             funcs["add"] = (codes, dest) => AddFunc(codes, dest, Add);
             funcs["add-char"] = (codes, dest) => AddFunc(codes, dest, Add + "_char");
             funcs["add-int"] = (codes, dest) => AddFunc(codes, dest, Add + "_int");
+            funcs["mul"] = (codes, dest) => AddFunc(codes, dest, Add);
+            funcs["mul-int"] = (codes, dest) => AddFunc(codes, dest, Mul + "_int");
         }
 
         private void AddFunc(OpModule codes, Addr32 dest, string func)
