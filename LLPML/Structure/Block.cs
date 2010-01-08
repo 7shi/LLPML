@@ -51,10 +51,8 @@ namespace Girl.LLPML
                             nb = new Block(target, xr);
                             break;
                         case "call":
-                            nb = new Call(target, xr);
-                            break;
                         case "invoke":
-                            nb = new Struct.Invoke(target, xr);
+                            nb = new Call(target, xr);
                             break;
                         case "if":
                             nb = new If(target, xr);

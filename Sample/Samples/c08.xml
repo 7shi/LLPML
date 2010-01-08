@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.10.20080211">
 
 <!-- callback -->
 
 <include src="finish.xml" />
 
 <?llp
-wrapper(addrof(test));
+wrapper(test);
 
 function wrapper(ptr)
 {

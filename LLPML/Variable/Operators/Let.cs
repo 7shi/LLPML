@@ -36,7 +36,8 @@ namespace Girl.LLPML
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {
-            values[0].AddCodes(codes, m, op, dest);
+            AddCodes(codes, m);
+            IntValue.AddCodes(codes, op, dest);
         }
     }
 }

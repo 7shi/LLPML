@@ -350,8 +350,16 @@ namespace Girl.LLPML.Parsing
                         if (type != null) Rewind();
                         throw Abort("{0}: {1}: {2}: à¯êîÇÃå^Ç™ïsìKêÿÇ≈Ç∑ÅB", tp, f.Name, arg);
                     }
+                    var ar = Read();
+                    if (ar == "[")
+                    {
+                        Check(tp, "]");
+                        type += "[]";
+                    }
+                    else if (ar != null)
+                        Rewind();
                 }
-                else
+                else if (colon != null)
                     Rewind();
 
                 f.Args.Add(new Arg(f, arg, type));

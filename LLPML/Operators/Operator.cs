@@ -34,15 +34,13 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                IIntValue[] vs = IntValue.Read(parent, xr);
-                if (vs != null)
+                var vs = IntValue.Read(parent, xr);
+                if (vs == null) return;
+                foreach (IIntValue v in vs)
                 {
-                    foreach (IIntValue v in vs)
-                    {
-                        if (values.Count == Max)
-                            throw Abort(xr, "too many operands");
-                        values.Add(v);
-                    }
+                    if (values.Count == Max)
+                        throw Abort(xr, "too many operands");
+                    values.Add(v);
                 }
             });
             if (Min > 0 && values.Count == 0)

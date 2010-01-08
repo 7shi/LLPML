@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080203" subsystem="WINDOWS_GUI">
+<llpml version="0.10.20080211" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
@@ -14,7 +14,7 @@ WNDCLASSEX wcex =
 {
   /* cbSize        */ sizeof(WNDCLASSEX),
   /* style         */ CS_VREDRAW | CS_HREDRAW,
-  /* lpfnWndProc   */ addrof(WndProc),
+  /* lpfnWndProc   */ WndProc,
   /* cbClsExtra    */ 0,
   /* cbWndExtra    */ 0,
   /* hInstance     */ hInstance,
@@ -27,15 +27,18 @@ WNDCLASSEX wcex =
 };
 RegisterClassEx(wcex);
 
+var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+RECT r = { 0, 0, 256, 256 };
+AdjustWindowRectEx(r, dwStyle, false, 0);
 var hWnd = CreateWindowEx(
   /* dwExStyle    */ 0,
   /* lpClassName  */ className,
   /* lpWindowName */ "テスト",
-  /* dwStyle      */ WS_OVERLAPPEDWINDOW,
+  /* dwStyle      */ dwStyle,
   /* X            */ CW_USEDEFAULT,
   /* Y            */ 0,
-  /* nWidth       */ 256,
-  /* nHeight      */ 256,
+  /* nWidth       */ r.right - r.left,
+  /* nHeight      */ r.bottom - r.top,
   /* hWndParent   */ null,
   /* hMenu        */ null,
   /* hInstance    */ hInstance,

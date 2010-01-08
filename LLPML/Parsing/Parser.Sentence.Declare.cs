@@ -159,14 +159,42 @@ namespace Girl.LLPML.Parsing
                         if (type != null) Rewind();
                         throw Abort("var: å^Ç™ïKóvÇ≈Ç∑ÅB");
                     }
+                    var ar = Read();
+                    if (ar == "[")
+                    {
+                        Check("var", "]");
+                        type += "[]";
+                    }
+                    else if (ar != null)
+                        Rewind();
                 },
                 (name, eq, ln, lp, array) =>
                 {
                     Pointer.Declare p;
                     if (array == null)
                     {
-                        p = new Var.Declare(parent, name, type);
-                        if (eq) (p as Var.Declare).Value = Expression();
+                        var vd = new Var.Declare(parent, name, type);
+                        if (eq)
+                        {
+                            var ex = Expression();
+                            vd.Value = ex;
+                            if (type == null)
+                            {
+                                // å^êÑò_
+                                if (ex is VarBase)
+                                {
+                                    var vb = ex as VarBase;
+                                    if (vb.Type != null)
+                                    {
+                                        if (vb.IsArray)
+                                            vd.Type = vb.Type + "[]";
+                                        else
+                                            vd.Type = vb.Type;
+                                    }
+                                }
+                            }
+                        }
+                        p = vd;
                     }
                     else
                     {

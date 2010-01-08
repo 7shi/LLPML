@@ -12,12 +12,12 @@ namespace Girl.LLPML
     {
         public class Declare : DeclareBase
         {
+            public virtual string Type { get; set; }
             public int TypeSize { get; private set; }
+            public int Count { get; private set; }
 
             private int length = 0;
             public virtual int Length { get { return length; } }
-
-            protected string type;
 
             public Declare() { }
 
@@ -27,16 +27,17 @@ namespace Girl.LLPML
                 AddToParent();
             }
 
-            public Declare(BlockBase parent, string name, string type, int length)
+            public Declare(BlockBase parent, string name, string type, int count)
                 : this(parent, name)
             {
-                this.type = type;
-                TypeSize = Size.GetTypeSize(parent, type);
-                this.length = TypeSize * length;
+                this.Type = type;
+                TypeSize = SizeOf.GetTypeSize(parent, type);
+                Count = count;
+                this.length = TypeSize * count;
             }
 
-            public Declare(BlockBase parent, string name, int length)
-                : this(parent, name, "byte", length)
+            public Declare(BlockBase parent, string name, int count)
+                : this(parent, name, "byte", count)
             {
             }
 
@@ -50,15 +51,17 @@ namespace Girl.LLPML
                 NoChild(xr);
                 RequiresName(xr);
 
-                type = xr["type"];
-                if (type == null) type = "byte";
+                Type = xr["type"];
+                if (Type == null) Type = "byte";
+
                 string slen = xr["length"];
                 if (slen == null) throw Abort(xr, "length required");
-                int len = IntValue.Parse(slen);
-                TypeSize = Size.GetTypeSize(parent, type);
-                if (TypeSize == 0) throw Abort(xr, "unknown type: " + type);
-                length = TypeSize * len;
+                Count = IntValue.Parse(slen);
 
+                TypeSize = SizeOf.GetTypeSize(parent, Type);
+                if (TypeSize == 0) throw Abort(xr, "unknown type: " + Type);
+
+                length = TypeSize * Count;
                 AddToParent();
             }
 

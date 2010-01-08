@@ -64,15 +64,13 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue[] vs = IntValue.Read(parent, xr);
-                    if (vs != null)
+                    var vs = IntValue.Read(parent, xr);
+                    if (vs == null) return;
+                    foreach (IIntValue v in vs)
                     {
-                        foreach (IIntValue v in vs)
-                        {
-                            if (!(v is IntValue))
-                                throw Abort(xr, "constant required");
-                            values.Add(v);
-                        }
+                        if (!(v is IntValue))
+                            throw Abort(xr, "constant required");
+                        values.Add(v);
                     }
                 });
                 if (values.Count == 0)

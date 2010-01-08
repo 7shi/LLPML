@@ -27,7 +27,6 @@ struct Test
 printfln("sizeof(Test) = %d", sizeof(Test));
 println();
 
-// use initializers
 Test t1;
 printfln("t1 = %p", t1);
 show(t1);

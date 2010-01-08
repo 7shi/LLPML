@@ -12,9 +12,6 @@ namespace Girl.LLPML
     {
         public Declare Reference { get; private set; }
 
-        private int length = 0;
-        public int Length { get { return length; } }
-
         public Pointer() { }
 
         public Pointer(BlockBase parent, Declare ptr)
@@ -46,18 +43,25 @@ namespace Girl.LLPML
                 throw Abort(xr, "undefined pointer: " + name);
         }
 
-        public virtual string Type
+        public override bool IsArray { get { return Reference.Count > 0; } }
+        public override string Type { get { return Reference.Type; } }
+        public override int TypeSize { get { return Reference.TypeSize; } }
+
+        public override Struct.Define GetStruct()
         {
-            get
-            {
-                Struct.Declare st = Reference as Struct.Declare;
-                return st == null ? null : st.Type;
-            }
+            var st = Reference as Struct.Declare;
+            if (st != null) return st.GetStruct();
+            return parent.GetStruct(Type);
+        }
+
+        public override Addr32 GetAddress(List<OpCode> codes, Module m)
+        {
+            return Reference.GetAddress(codes, m, parent);
         }
 
         public virtual void GetValue(List<OpCode> codes, Module m)
         {
-            codes.Add(I386.Lea(Reg32.EAX, Reference.GetAddress(codes, m, parent)));
+            codes.Add(I386.Lea(Reg32.EAX, GetAddress(codes, m)));
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

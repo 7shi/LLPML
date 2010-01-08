@@ -14,6 +14,8 @@ namespace Girl.LLPML.Struct
         private string type;
         public override string Type { get { return type; } }
 
+        public override bool IsArray { get { return false; } }
+
         public Cast(BlockBase parent, string type, IIntValue source)
         {
             this.parent = parent;

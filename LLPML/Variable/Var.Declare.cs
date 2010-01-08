@@ -12,8 +12,25 @@ namespace Girl.LLPML
         public class Declare : Pointer.Declare
         {
             public IIntValue Value { get; set; }
+            public bool IsArray { get; set; }
 
-            public string Type { get { return type; } }
+            public override string Type
+            {
+                set
+                {
+                    if (value != null && value.EndsWith("[]"))
+                    {
+                        base.Type = value.Substring(0, value.Length - 2).TrimEnd();
+                        IsArray = true;
+                    }
+                    else
+                    {
+                        base.Type = value;
+                        IsArray = false;
+                    }
+                }
+            }
+
             public override int Length { get { return Var.Size; } }
 
             public Declare() { }
@@ -37,7 +54,7 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name, string type)
                 : this(parent, name)
             {
-                this.type = type;
+                this.Type = type;
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)
@@ -48,7 +65,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 RequiresName(xr);
-                type = xr["type"];
+                Type = xr["type"];
 
                 Parse(xr, delegate
                 {
@@ -72,11 +89,11 @@ namespace Girl.LLPML
 
             public Struct.Define GetStruct()
             {
-                if (type == null) return null;
+                if (Type == null) return null;
 
-                Struct.Define st = parent.GetStruct(type);
+                Struct.Define st = parent.GetStruct(Type);
                 if (st != null) return st;
-                throw Abort("undefined struct: " + type);
+                throw Abort("undefined struct: " + Type);
             }
 
             public override void AddCodes(List<OpCode> codes, Module m)

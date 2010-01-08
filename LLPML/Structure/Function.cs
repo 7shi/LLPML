@@ -17,6 +17,7 @@ namespace Girl.LLPML
         public List<DeclareBase> Args { get { return args; } }
 
         private Var thisptr;
+        public bool HasThis { get { return thisptr != null; } }
 
         public Function()
         {

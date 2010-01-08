@@ -8,11 +8,10 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Size : NodeBase, IIntValue
+    public class SizeOf : NodeBase, IIntValue
     {
-        public Size() { }
-        public Size(BlockBase parent, string name) : base(parent, name) { }
-        public Size(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public SizeOf(BlockBase parent, string name) : base(parent, name) { }
+        public SizeOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {

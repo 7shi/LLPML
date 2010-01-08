@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Function
     {
-        public class Ptr : VarBase, IIntValue
+        public class Ptr : NodeBase, IIntValue
         {
             public Ptr() { }
             public Ptr(BlockBase parent, string name) : base(parent, name) { }

@@ -15,14 +15,14 @@ struct Name
   function ctor()
   {
     printf("%p [%s] -> ", this, __FUNCTION__);
-    this.Show();
+    Show();
   }
 
   // destructor
   function dtor()
   {
     printf("%p [%s] -> ", this, __FUNCTION__);
-    this.Show();
+    Show();
   }
 
   function Show()

@@ -10,22 +10,17 @@ namespace Girl.LLPML.Struct
 {
     public class Member : Var
     {
-        private Struct.Declare ptr;
-        public Struct.Declare Ptr
+        private VarBase target;
+        public VarBase Target
         {
-            set
+            get
             {
-                ptr = value;
-                isRoot = true;
+                return target;
             }
-        }
 
-        private Var var;
-        public Var Var
-        {
             set
             {
-                var = value;
+                target = value;
                 isRoot = true;
             }
         }
@@ -57,67 +52,43 @@ namespace Girl.LLPML.Struct
         {
             RequiresName(xr);
 
-            if (isRoot)
-            {
-                string ptr = xr["ptr"];
-                string var = xr["var"];
-                if (ptr == null)
-                {
-                    if (var == null) var = "this";
-                    this.var = new Var(parent, var);
-                }
-                else if (var == null)
-                {
-                    this.ptr = parent.GetPointer(ptr) as Struct.Declare;
-                    if (this.ptr == null)
-                        throw Abort(xr, "undefined struct: " + ptr);
-                }
-                else
-                    throw Abort(xr, "either src or var required");
-            }
-
             Parse(xr, delegate
             {
-                switch (xr.NodeType)
+                if ((!isRoot || target != null) &&
+                    xr.NodeType == XmlNodeType.Element && xr.Name == "struct-member")
                 {
-                    case XmlNodeType.Element:
-                        switch (xr.Name)
-                        {
-                            case "struct-member":
-                                if (Child != null)
-                                    throw Abort(xr, "multiple members");
-                                Child = new Member(this, xr);
-                                break;
-                            default:
-                                throw Abort(xr);
-                        }
-                        break;
+                    if (Child != null)
+                        throw Abort(xr, "multiple members");
+                    Child = new Member(this, xr);
+                    return;
+                }
 
-                    case XmlNodeType.Whitespace:
-                    case XmlNodeType.Comment:
-                        break;
-
-                    default:
-                        throw Abort(xr, "element required");
+                var vs = IntValue.Read(parent, xr);
+                if (vs == null) return;
+                foreach (var v in vs)
+                {
+                    if (v is VarBase)
+                    {
+                        if (!isRoot)
+                            throw Abort(xr, "needless instance");
+                        else if (target != null)
+                            throw Abort(xr, "too many operands");
+                        target = v as VarBase;
+                    }
+                    else
+                        throw Abort(xr, "invalid element");
                 }
             });
+            if (isRoot && target == null)
+                target = new Var(parent, "this");
         }
 
         private Addr32 GetStructAddress(List<OpCode> codes, Module m)
         {
-            if (ptr != null)
-            {
-                return ptr.GetAddress(codes, m, parent);
-            }
-            else if (var != null)
-            {
-                codes.Add(I386.Mov(Reg32.EDX, var.GetAddress(codes, m)));
-                return new Addr32(Reg32.EDX);
-            }
-            else
-            {
-                throw Abort("can not get address");
-            }
+            var ad = target.GetAddress(codes, m);
+            if (target is Pointer || target is Index) return ad;
+            codes.Add(I386.Mov(Reg32.EDX, ad));
+            return new Addr32(Reg32.EDX);
         }
 
         public int GetOffset(Define st)
@@ -130,28 +101,49 @@ namespace Girl.LLPML.Struct
 
         public override Addr32 GetAddress(List<OpCode> codes, Module m)
         {
-            Addr32 ret = new Addr32(GetStructAddress(codes, m));
-            Define st;
-            if (ptr != null)
-                st = ptr.GetStruct();
-            else if (var != null)
-                st = var.GetStruct();
-            else
-                throw Abort("can not get address");
+            var ret = new Addr32(GetStructAddress(codes, m));
+            var st = target.GetStruct();
             ret.Add(GetOffset(st));
             return ret;
+        }
+
+        public Pointer.Declare GetPointer()
+        {
+            var st = target.GetStruct();
+            if (st == null) return null;
+            return st.GetMember(name);
+        }
+
+        public override Define GetStruct()
+        {
+            var st = target.GetStruct();
+            if (st == null) return null;
+            return st.GetStruct(st.GetMember(name));
+        }
+
+        public override bool IsArray
+        {
+            get
+            {
+                return GetPointer().Count > 0;
+            }
         }
 
         public override string Type
         {
             get
             {
-                Define st;
-                if (ptr != null)
-                    st = ptr.GetStruct();
-                else
-                    st = var.GetStruct();
-                return st.GetStruct(st.GetMember(name)).Name;
+                var st = GetStruct();
+                if (st == null) return null;
+                return st.Name;
+            }
+        }
+
+        public override int TypeSize
+        {
+            get
+            {
+                return GetPointer().TypeSize;
             }
         }
 

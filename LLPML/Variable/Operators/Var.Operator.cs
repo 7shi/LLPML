@@ -41,22 +41,20 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue[] vs = IntValue.Read(parent, xr);
-                    if (vs != null)
+                    var vs = IntValue.Read(parent, xr);
+                    if (vs == null) return;
+                    foreach (IIntValue v in vs)
                     {
-                        foreach (IIntValue v in vs)
+                        if (dest == null)
                         {
-                            if (dest == null)
-                            {
-                                if (!(v is Var)) throw Abort(xr, "no variable specified");
-                                dest = v as Var;
-                            }
-                            else
-                            {
-                                if (values.Count == Max)
-                                    throw Abort(xr, "too many operands");
-                                values.Add(v);
-                            }
+                            if (!(v is Var)) throw Abort(xr, "no variable specified");
+                            dest = v as Var;
+                        }
+                        else
+                        {
+                            if (values.Count == Max)
+                                throw Abort(xr, "too many operands");
+                            values.Add(v);
                         }
                     }
                 });

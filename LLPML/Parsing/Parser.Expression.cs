@@ -15,7 +15,7 @@ namespace Girl.LLPML.Parsing
         private IIntValue Expression(int order)
         {
             if (!CanRead) throw Abort("式がありません。");
-            if (order >= operators.Length) return Member();
+            if (order >= operators.Length) return Index();
 
             var ret = Expression(order + 1);
 
@@ -28,7 +28,37 @@ namespace Girl.LLPML.Parsing
                     Rewind();
                     break;
                 }
-                ret = op.Handler(ret, Expression(order + 1));
+                ret = op.Handler(ret, Expression(order + op.Associativity));
+            }
+            return ret;
+        }
+
+        private IIntValue Index()
+        {
+            IIntValue ret = null;
+            for (; ; )
+            {
+                var ln = tokenizer.LineNumber;
+                var lp = tokenizer.LinePosition;
+                if (ret == null)
+                    ret = Member();
+                else
+                {
+                    var m = Member(ret);
+                    if (m == null) return ret;
+                    ret = m;
+                }
+                var br = Read();
+                if (br != "[")
+                {
+                    if (br != null) Rewind();
+                    break;
+                }
+                var ar = ret as VarBase;
+                if (ar == null)
+                    throw parent.Abort(ln, lp, "配列が必要です。");
+                ret = new Index(parent, ar, Expression());
+                Check("配列", "]");
             }
             return ret;
         }
@@ -60,22 +90,19 @@ namespace Girl.LLPML.Parsing
                     var args = Arguments(",", ")", false);
                     if (args == null)
                         throw Abort("引数が不完全です。");
-                    var inv = new Struct.Invoke(parent, t2, args);
-                    if (mem != null) return new Struct.Invoke(inv, mem);
-                    return new Struct.Invoke(inv, f);
+                    if (mem != null) return new Call(parent, t2, mem, args);
+                    return new Call(parent, t2, f, args);
                 }
                 Rewind();
                 var t2m = new Struct.Member(parent, t2);
+                t2m.SetLine(tokenizer.LineNumber, tokenizer.LinePosition);
                 if (mem == null)
                 {
-                    if (f is Var)
-                        t2m.Var = f as Var;
-                    else if (f is Pointer && (f as Pointer).Reference is Struct.Declare)
-                        t2m.Ptr = (f as Pointer).Reference as Struct.Declare;
+                    if (f is VarBase)
+                        t2m.Target = f as VarBase;
                     else
                         throw Abort("構造体ではありません。");
                     mem = t2m;
-                    mem.SetLine(tokenizer.LineNumber, tokenizer.LinePosition);
                 }
                 else
                     mem.Append(t2m);
@@ -204,6 +231,8 @@ namespace Girl.LLPML.Parsing
             var sv = String();
             if (sv != null) return sv;
 
+            var ln = tokenizer.LineNumber;
+            var lp = tokenizer.LinePosition;
             var t = Read();
             switch (t)
             {
@@ -224,10 +253,17 @@ namespace Girl.LLPML.Parsing
                         if (arg == null)
                             throw Abort("sizeof: 引数が必要です。");
                         Check("sizeof", ")");
-                        return new Size(parent, arg);
+                        return new SizeOf(parent, arg);
                     }
                 case "addrof":
-                    return AddrOf();
+                    {
+                        Check("addrof", "(");
+                        var ex = Expression() as Var;
+                        if (ex == null)
+                            throw parent.Abort(ln, lp, "addrof: 引数が不適切です。");
+                        Check("addrof", ")");
+                        return new AddrOf(parent, ex);
+                    }
             }
 
             var vd = parent.GetVar(t);
@@ -246,8 +282,8 @@ namespace Girl.LLPML.Parsing
                         if (args == null)
                             throw Abort("{0}: 引数が不完全です。", t);
                         if (v != null)
-                            return new Call(parent, v, args);
-                        return new Call(parent, t, args);
+                            return new Call(parent, v, null, args);
+                        return new Call(parent, t, null, args);
                     }
                 default:
                     Rewind();
@@ -262,6 +298,10 @@ namespace Girl.LLPML.Parsing
 
             var s = parent.GetString(t);
             if (s != null) return new StringValue(s);
+
+            // 未定義語を関数ポインタとして解釈
+            if (Tokenizer.IsWord(t))
+                return new Function.Ptr(parent, t);
 
             Rewind();
             throw Abort("評価できません: {0}", t);
@@ -294,37 +334,6 @@ namespace Girl.LLPML.Parsing
                 return null;
             }
             return new StringValue(GetString(t.Substring(1, t.Length - 2)));
-        }
-
-        private IIntValue AddrOf()
-        {
-            Check("addrof", "(");
-
-            IIntValue ret = null;
-            var ln = tokenizer.LineNumber;
-            var lp = tokenizer.LinePosition;
-            var t = Read();
-            if (!Tokenizer.IsWord(t))
-            {
-                if (t != null) Rewind();
-                throw Abort("addrof: 引数が不適切です: {0}", t);
-            }
-            var p = parent.GetPointer(t);
-            if (p != null)
-            {
-                ret = new Pointer(parent, p);
-                if (Peek() == ".")
-                {
-                    ret = Member(ret) as Struct.Member;
-                    if (ret == null)
-                        throw parent.Abort(ln, lp, "addrof: 引数が不適切です。");
-                }
-            }
-            else
-                ret = new Function.Ptr(parent, t);
-
-            Check("addrof", ")");
-            return ret;
         }
 
         private Struct.Cast Cast()

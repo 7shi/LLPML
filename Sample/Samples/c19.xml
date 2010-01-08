@@ -12,7 +12,7 @@ struct Point
 
   function Show()
   {
-    printfln("[%s] %d, %d", __FUNCTION__, x, y);
+    printfln("%p [%s] %d, %d", this, __FUNCTION__, x, y);
   }
 }
 
@@ -22,9 +22,9 @@ struct DoublePoint
 
   function Show()
   {
-    printfln("[%s] %p -> a: %p", __FUNCTION__, this, a);
+    printfln("%p [%s] a: %p", this, __FUNCTION__, a);
     a.Show();
-    printfln("[%s] %p -> b: %p", __FUNCTION__, this, b);
+    printfln("%p [%s] b: %p", this, __FUNCTION__, b);
     b.Show();
   }
 }

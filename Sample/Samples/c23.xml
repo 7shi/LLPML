@@ -39,8 +39,12 @@ printfln("sub(%d, %d) = %d", t.a, t.b, t.sub());
 <!-- complex -->
 <call name="printfln">
   <string>sub(%d, %d) = %d</string>
-  <struct-member ptr="t" name="a" />
-  <struct-member ptr="t" name="b" />
+  <struct-member name="a">
+    <ptr name="t" />
+  </struct-member>
+  <struct-member name="b">
+    <ptr name="t" />
+  </struct-member>
   <invoke name="sub">
     <ptr name="t" />
   </invoke>
@@ -53,14 +57,18 @@ printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
 <!-- complex -->
 <call name="printfln">
   <string>sub(%d, %d) = %d</string>
-  <struct-member ptr="t2" name="t">
+  <struct-member name="t">
+    <ptr name="t2" />
     <struct-member name="a" />
   </struct-member>
-  <struct-member ptr="t2" name="t">
+  <struct-member name="t">
+    <ptr name="t2" />
     <struct-member name="b" />
   </struct-member>
   <invoke name="sub">
-    <struct-member ptr="t2" name="t" />
+    <struct-member name="t">
+      <ptr name="t2" />
+    </struct-member>
   </invoke>
 </call>
 

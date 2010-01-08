@@ -12,8 +12,6 @@ namespace Girl.LLPML.Struct
     {
         public override int Length { get { return GetStruct().GetSize(); } }
 
-        public string Type { get { return type; } }
-
         private List<object> values = new List<object>();
         public List<object> Values { get { return values; } }
 
@@ -28,7 +26,7 @@ namespace Girl.LLPML.Struct
         public Declare(BlockBase parent, string name, string type)
             : base(parent, name)
         {
-            this.type = type;
+            this.Type = type;
         }
 
         public Declare(BlockBase parent, XmlTextReader xr)
@@ -48,8 +46,8 @@ namespace Girl.LLPML.Struct
             if (isRoot)
             {
                 RequiresName(xr);
-                type = xr["type"];
-                if (type == null) throw Abort(xr, "type required");
+                Type = xr["type"];
+                if (Type == null) throw Abort(xr, "type required");
             }
 
             Parse(xr, delegate
@@ -71,9 +69,9 @@ namespace Girl.LLPML.Struct
 
         public Define GetStruct()
         {
-            Define st = parent.GetStruct(type);
+            Define st = parent.GetStruct(Type);
             if (st != null) return st;
-            throw Abort("undefined struct: " + type);
+            throw Abort("undefined struct: " + Type);
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)

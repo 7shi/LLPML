@@ -45,17 +45,18 @@ namespace Girl.LLPML
                 case "cast":
                     return new Struct.Cast(parent, xr);
                 case "call":
-                    return new Call(parent, xr);
                 case "invoke":
-                    return new Struct.Invoke(parent, xr);
+                    return new Call(parent, xr);
                 case "function-ptr":
                     return new Function.Ptr(parent, xr);
                 case "struct-member":
                     return new Struct.Member(parent, xr);
-                case "struct-member-ptr":
-                    return new Struct.MemberPtr(parent, xr);
-                case "struct-size":
-                    return new Size(parent, xr);
+                case "size-of":
+                    return new SizeOf(parent, xr);
+                case "addr-of":
+                    return new AddrOf(parent, xr);
+                case "index":
+                    return new Index(parent, xr);
                 case "get-function":
                     return new StringValue(parent.GetName());
                 case "get-file":

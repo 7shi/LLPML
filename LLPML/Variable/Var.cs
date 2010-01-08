@@ -37,20 +37,25 @@ namespace Girl.LLPML
             Reference = parent.GetVar(name);
         }
 
-        public virtual Struct.Define GetStruct()
+        public override Struct.Define GetStruct()
         {
             return Reference.GetStruct();
         }
 
-        public virtual string Type
+        public override bool IsArray { get { return Reference.IsArray; } }
+        public override string Type { get { return Reference.Type; } }
+
+        public override int TypeSize
         {
             get
             {
-                return Reference.Type;
+                var st = GetStruct();
+                if (st == null) return 0;
+                return st.GetSize();
             }
         }
 
-        public virtual Addr32 GetAddress(List<OpCode> codes, Module m)
+        public override Addr32 GetAddress(List<OpCode> codes, Module m)
         {
             return reference.GetAddress(codes, m, parent);
         }

@@ -20,6 +20,7 @@ extern "user32.dll" __stdcall
   GetSysColorBrush(nIndex);
   InvalidateRect(hWnd, lpRect, bErase);
   FillRect(hDC, lprc, hbr);
+  AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle);
 }
 extern "user32.dll" __stdcall __widecharset
 {
@@ -31,8 +32,11 @@ extern "user32.dll" __stdcall __widecharset
   GetMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
   DispatchMessage(lpmsg);
 }
-extern "gdi32.dll" __stdcall __widecharset
-  TextOut(hdc, nXStart, nYStart, lpString, cbString);
+extern "gdi32.dll" __stdcall
+{
+  __widecharset TextOut(hdc, nXStart, nYStart, lpString, cbString);
+  SetDIBitsToDevice(hdc, XDest, YDest, dwWidth, dwHeight, XSrc, YSrc, uStartScan, cScanLines, lpvBits, lpbmi, fuColorUse);
+}
 
 const int CS_VREDRAW     = 1;
 const int CS_HREDRAW     = 2;
@@ -41,13 +45,14 @@ const int IDC_ARROW      = 32512;
 const int CW_USEDEFAULT  = 0x80000000;
 const int WS_OVERLAPPED  = 0;
 const int WS_CAPTION     = 0xc00000;
-const int WS_SYSMENU     = 0x80000;
-const int WS_THICKFRAME  = 0x40000;
-const int WS_MINIMIZEBOX = 0x20000;
-const int WS_MAXIMIZEBOX = 0x10000;
-var WS_OVERLAPPEDWINDOW =
-  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
-  WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+const int WS_SYSMENU     = 0x080000;
+const int WS_THICKFRAME  = 0x040000;
+const int WS_MINIMIZEBOX = 0x020000;
+const int WS_MAXIMIZEBOX = 0x010000;
+const int WS_OVERLAPPEDWINDOW
+// WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
+// WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX
+                         = 0xcf0000;
 const int SW_SHOWNORMAL = 1;
 const int COLOR_WINDOWTEXT = 8;
 
@@ -122,6 +127,35 @@ struct PAINTSTRUCT
   var fRestore;
   var fIncUpdate;
   byte rgbReserved[32];
+}
+
+struct BITMAPINFOHEADER
+{
+  var biSize;
+  var biWidth;
+  var biHeight;
+  short biPlanes[1];
+  short biBitCount[1];
+  var biCompression;
+  var biSizeImage;
+  var biXPelsPerMeter;
+  var biYPelsPerMeter;
+  var biClrUsed;
+  var biClrImportant;
+}
+
+struct RGBQUAD
+{
+  byte rgbBlue[1];
+  byte rgbGreen[1];
+  byte rgbRed[1];
+  byte rgbReserved[1];
+}
+
+struct BITMAPINFO
+{
+  BITMAPINFOHEADER bmiHeader;
+  RGBQUAD bmiColors[1];
 }
 
 function LOWORD(l)

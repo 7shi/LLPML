@@ -10,10 +10,11 @@ namespace Girl.LLPML
 {
     public class Call : NodeBase, IIntValue
     {
+        private IIntValue target;
         protected List<IIntValue> args = new List<IIntValue>();
 
-        protected Var var;
-        protected CallType type = CallType.CDecl;
+        private Var var;
+        private CallType type = CallType.CDecl;
 
         public Call()
         {
@@ -24,9 +25,10 @@ namespace Girl.LLPML
         {
         }
 
-        public Call(BlockBase parent, string name, params IIntValue[] args)
+        public Call(BlockBase parent, string name, IIntValue target, params IIntValue[] args)
             : this(parent, name)
         {
+            this.target = target;
             this.args.AddRange(args);
         }
 
@@ -36,9 +38,10 @@ namespace Girl.LLPML
             this.var = var;
         }
 
-        public Call(BlockBase parent, Var var, params IIntValue[] args)
+        public Call(BlockBase parent, Var var, IIntValue target, params IIntValue[] args)
             : this(parent, var)
         {
+            this.target = target;
             this.args.AddRange(args);
         }
 
@@ -49,6 +52,7 @@ namespace Girl.LLPML
 
         public override void Read(XmlTextReader xr)
         {
+            bool invoke = xr.Name == "invoke";
             string name = xr["name"];
             string var = xr["var"];
             if (name != null && var == null)
@@ -67,21 +71,68 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                IIntValue[] v = IntValue.Read(parent, xr);
-                if (v != null) args.AddRange(v);
+                var vs = IntValue.Read(parent, xr);
+                if (vs == null) return;
+                foreach (var v in vs)
+                {
+                    if (invoke && target == null)
+                        target = v;
+                    else
+                        args.Add(v);
+                }
             });
         }
 
-        public virtual Function GetFunction()
+        public Function GetFunction(IIntValue target, out List<IIntValue> args)
         {
-            return parent.GetFunction(name);
+            Function ret;
+            if (target == null)
+            {
+                ret = parent.GetFunction(name);
+                if (ret.HasThis)
+                    return GetFunction(new Struct.This(parent), out args);
+                args = this.args;
+                return ret;
+            }
+
+            args = new List<IIntValue>();
+            string type = null;
+            Struct.Define st = null;
+            if (target is Struct.Member)
+            {
+                var ad = new AddrOf(parent, (target as Struct.Member));
+                st = ad.Target.GetStruct();
+                args.Add(ad);
+            }
+            else if (target is Index)
+            {
+                var ad = new AddrOf(parent, target as Index);
+                st = ad.Target.GetStruct();
+                args.Add(ad);
+            }
+            else if (target is VarBase)
+            {
+                type = (target as VarBase).Type;
+                st = (target as VarBase).GetStruct();
+                args.Add(target);
+            }
+            else
+                throw Abort("struct instance or pointer required: " + name);
+            if (st == null)
+                throw Abort("undefined struct: " + type);
+            args.AddRange(this.args);
+            ret = st.GetFunction(name);
+            if (ret == null)
+                throw Abort("undefined method: " + st.GetMemberName(name));
+            return ret;
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             if (name != null)
             {
-                Function f = GetFunction();
+                List<IIntValue> args;
+                Function f = GetFunction(target, out args);
                 if (f == null)
                     throw Abort("undefined function: " + name);
                 DeclareBase[] fargs = f.Args.ToArray();
