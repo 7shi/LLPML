@@ -14,15 +14,15 @@ namespace Girl.LLPML
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
-        public Set(BlockBase parent, Var dest) : base(parent, dest) { }
+        public Set(BlockBase parent, IIntValue dest) : base(parent, dest) { }
 
-        public Set(BlockBase parent, Var dest, IIntValue value)
+        public Set(BlockBase parent, IIntValue dest, IIntValue value)
             : base(parent, dest)
         {
             this.values.Add(value);
         }
 
-        public Set(BlockBase parent, Var dest, int value)
+        public Set(BlockBase parent, IIntValue dest, int value)
             : this(parent, dest, new IntValue(value))
         {
         }
@@ -31,6 +31,21 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
+            var dest = Var.Get(this.dest);
+            if (dest == null)
+            {
+                if (this.dest is Variant)
+                {
+                    var setter = (this.dest as Variant).GetSetter();
+                    if (setter != null)
+                    {
+                        new Call(Parent, setter, new Struct.This(Parent), values[0])
+                            .AddCodes(codes);
+                        return;
+                    }
+                }
+                throw Abort("set: destination is not variable");
+            }
             var dt = dest.Type;
             if (dt is TypeConstChar)
                 throw Abort("set: can not change constants");

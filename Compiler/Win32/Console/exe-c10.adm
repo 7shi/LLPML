@@ -1,0 +1,31 @@
+﻿/// 計算
+
+_Finish _finish;
+
+var a = 4;
+
+printfln("a = %d", a);
+printfln("1 + 2 + a - 5: %d", 1 + 2 + a - 5);
+
+printfln("++a: %d", ++a);
+printfln("a = %d", a);
+
+printfln("a++: %d", a++);
+printfln("a = %d", a);
+
+printfln("--a: %d", --a);
+printfln("a = %d", a);
+
+printfln("a--: %d", a--);
+printfln("a = %d", a);
+
+printfln("a += 2: %d", a += 2);
+printfln("a -= 2: %d", a -= 2);
+printfln("a *= 2: %d", a *= 2);
+printfln("a /= 2: %d", a /= 2);
+printfln("a |= 8: %d", a |= 8);
+printfln("a &= 7: %d", a &= 7);
+printfln("a <<= 5: %d", a <<= 5);
+printfln("a >>= 5: %d", a >>= 5);
+printfln("a <<= a: %d", a <<= a);
+printfln("a = %d", a);

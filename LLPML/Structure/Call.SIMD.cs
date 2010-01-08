@@ -162,7 +162,7 @@ namespace Girl.LLPML
                 return;
             }
 
-            var v = m1 as Var;
+            var v = Var.Get(m1);
             if (v == null)
                 throw Abort("__movd: invalid argument 1");
             if (m2m != null)

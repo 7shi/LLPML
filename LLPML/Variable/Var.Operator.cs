@@ -13,7 +13,7 @@ namespace Girl.LLPML
         {
             public abstract string Tag { get; }
 
-            protected Var dest;
+            protected IIntValue dest;
             protected List<IIntValue> values = new List<IIntValue>();
             public IIntValue[] GetValues() { return values.ToArray(); }
 
@@ -21,13 +21,13 @@ namespace Girl.LLPML
             public virtual int Max { get { return int.MaxValue; } }
 
             public Operator() { }
-            public Operator(BlockBase parent, Var dest)
+            public Operator(BlockBase parent, IIntValue dest)
                 : base(parent)
             {
                 this.dest = dest;
             }
 
-            public Operator(BlockBase parent, Var dest, params IIntValue[] values)
+            public Operator(BlockBase parent, IIntValue dest, params IIntValue[] values)
                 : this(parent, dest)
             {
                 if (values.Length < Min)
@@ -48,10 +48,7 @@ namespace Girl.LLPML
                     foreach (IIntValue v in vs)
                     {
                         if (dest == null)
-                        {
-                            if (!(v is Var)) throw Abort(xr, "no variable specified");
-                            dest = v as Var;
-                        }
+                            dest = v;
                         else
                         {
                             if (values.Count == Max)

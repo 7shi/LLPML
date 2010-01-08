@@ -1,0 +1,26 @@
+﻿/// 関数の型
+
+_Finish _finish;
+
+var f = \(a, b) => a + b;
+function add(a, b) { return a + b; }
+
+printfln("typeof f = %s", typeof(f).Name);
+printfln("typeof add = %s", typeof(add).Name);
+printfln("f(2, 3) = %d", f(2, 3));
+println();
+
+var f2 = delegate(2, f);
+printfln("typeof f2 = %s", typeof(f2).Name);
+printfln("f2 = %p", f2);
+printfln("f2(3) = %d", f2(3));
+println();
+
+var f3 = delegate((stdcall))(3, f);
+printfln("typeof f3 = %s", typeof(f3).Name);
+printfln("f3 = %p", f3);
+printfln("f3(2) = %d", f3(2));
+println();
+
+printfln("delegate(2, f) = %p", delegate(2, f));
+printfln("delegate(2, f)(3) = %d", delegate(2, f)(3));

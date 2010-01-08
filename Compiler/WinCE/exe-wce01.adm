@@ -1,0 +1,8 @@
+﻿/// Windows CE
+
+#pragma subsystem(WINCE_GUI)
+
+extern "coredll.dll" __widecharset
+  MessageBox(hWnd, lpText, lpCation, uType);
+
+MessageBox(null, "こんにちは、世界！", "だいあろぐ", 0);

@@ -25,9 +25,7 @@ namespace Girl.LLPML
                 {
                     if (Target != null)
                         throw Abort(xr, "too many operands");
-                    Target = v as Var;
-                    if (Target == null)
-                        throw Abort(xr, "variable required");
+                    Target = v;
                 }
             });
             if (Target == null)

@@ -1,0 +1,21 @@
+﻿/// 継続渡し
+
+_Finish _finish;
+
+function cont(a)
+{
+  printfln("a: %d", a);
+  return function
+  {
+    printfln("a += 2: %d", a += 2);
+    return function
+    {
+      printfln("a += 3: %d", a += 3);
+      return null;
+    };
+  };
+};
+
+var delg = cont(5);
+while (delg != null)
+  delg = delg();

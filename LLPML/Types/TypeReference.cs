@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Girl.Binary;
 using Girl.X86;
@@ -156,7 +155,7 @@ namespace Girl.LLPML
                 I386.Dec(new Addr32(Reg32.EAX, -12)),
                 I386.Jcc(Cc.NZ, label.Address),
                 I386.Push(Reg32.EAX),
-                GetCall("var", Delete),
+                codes.GetCall("var", Delete),
                 I386.Add(Reg32.ESP, 4),
                 label,
             });

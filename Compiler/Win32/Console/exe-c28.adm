@@ -1,0 +1,21 @@
+﻿/// 符号
+
+_Finish _finish;
+
+int a = -333, b = 100, c = 5;
+uint aa = a, bb = b, cc = c;
+printfln("(a, b, c) = (%d [%08x], %d, %d)", a, aa, b, c);
+printfln("signed : unsigned");
+printfln("a > b = %d : %d", a > b, aa > bb);
+printfln("a < b = %d : %d", a < b, aa < bb);
+printfln("a * b = %08x : %08x", a * b, aa * bb);
+printfln("a / b = %08x : %08x", a / b, aa / bb);
+printfln("a %% b = %08x : %08x", a % b, aa % bb);
+printfln("a << 5 = %08x : %08x", a << 5, aa << 5);
+printfln("a >> 5 = %08x : %08x", a >> 5, aa >> 5);
+printfln("a << c = %08x : %08x", a << c, aa << cc);
+printfln("a >> c = %08x : %08x", a >> c, aa >> cc);
+
+short s = -1;
+ushort us = 0xffff;
+printfln("s = %d(%x), us = %u(%x)", s, s, us, us);

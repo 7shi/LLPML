@@ -1,0 +1,26 @@
+﻿/// 論理演算 2
+
+_Finish _finish;
+
+var a = -1, b = 0, c = 1;
+printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
+
+// greater
+
+printfln("%d: a > b", a > b);
+printfln("%d: b > a", b > a);
+
+// greater equal
+
+printfln("%d: a >= b", a >= b);
+printfln("%d: b >= a", b >= a);
+
+// less
+
+printfln("%d: a < b", a lt b);
+printfln("%d: b < a", b lt a);
+
+// less equal
+
+printfln("%d: a <= b", a le b);
+printfln("%d: b <= a", b le a);

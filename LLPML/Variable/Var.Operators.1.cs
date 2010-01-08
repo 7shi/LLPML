@@ -13,11 +13,14 @@ namespace Girl.LLPML
         {
             public override string Tag { get { return "add"; } }
 
-            public Add(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Add(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             private Addr32 Calculate(OpModule codes)
             {
+                var dest = Var.Get(this.dest);
+                if (dest == null)
+                    throw Abort("{0}: destination is not variable", Tag);
                 var ad = dest.GetAddress(codes);
                 var ad2 = ad;
                 var f = GetFunc();
@@ -62,63 +65,63 @@ namespace Girl.LLPML
         public class Sub : Add
         {
             public override string Tag { get { return "sub"; } }
-            public Sub(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Sub(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Sub(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class And : Add
         {
             public override string Tag { get { return "and"; } }
-            public And(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public And(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public And(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Or : Add
         {
             public override string Tag { get { return "or"; } }
-            public Or(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Or(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Or(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Xor : Add
         {
             public override string Tag { get { return "xor"; } }
-            public Xor(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Xor(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Xor(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class ShiftLeft : Add
         {
             public override string Tag { get { return "shift-left"; } }
-            public ShiftLeft(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public ShiftLeft(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public ShiftLeft(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class ShiftRight : ShiftLeft
         {
             public override string Tag { get { return "shift-right"; } }
-            public ShiftRight(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public ShiftRight(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public ShiftRight(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Mul : Add
         {
             public override string Tag { get { return "mul"; } }
-            public Mul(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Mul(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Mul(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Div : Add
         {
             public override string Tag { get { return "div"; } }
-            public Div(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Div(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Div(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Mod : Add
         {
             public override string Tag { get { return "mod"; } }
-            public Mod(BlockBase parent, Var dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Mod(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
             public Mod(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
     }

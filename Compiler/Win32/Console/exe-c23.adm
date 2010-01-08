@@ -1,0 +1,42 @@
+﻿/// 構造体型引数
+
+_Finish _finish;
+
+struct Test
+{
+  var a = 1, b = 2;
+
+  function Show()
+  {
+    printfln("this, a, b = %p, %d, %d", this, a, b);
+  }
+
+  function Add()
+  {
+    return a + b;
+  }
+}
+
+printfln("sizeof(Test) = %d", sizeof(Test));
+println();
+
+Test t1;
+printfln("t1 = %p", t1);
+show(t1);
+println();
+
+// overwrite initializers
+Test t2 = { 3, 4 };
+printfln("t2 = %p", t2);
+show(t2);
+t2.a = 5;
+t2.b = 6;
+show(t2);
+
+function show(p : Test)
+{
+  println();
+  printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
+  printfln("p.Add() = %d", p.Add());
+  p.Show();
+}

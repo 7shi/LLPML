@@ -1,0 +1,33 @@
+﻿/// 表記
+
+_Finish _finish;
+
+var a = 2;
+const int b = 3;
+const string fmt = "a = %d, b = %d";
+
+printfln(fmt, a, b);
+printfln("add(a * b, 4) = %d", add(a * b, 4));
+
+test t = { 9, 6 };
+printfln("sub(%d, %d) = %d", t.a, t.b, t.sub());
+
+test2 t2 = { { 11, 3 } };
+printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
+
+function add(a, b)
+{
+  return a + b;
+}
+
+struct test
+{
+  var a, b;
+
+  function sub()
+  {
+    return a - b;
+  }
+}
+
+struct test2 { test t; }

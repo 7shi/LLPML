@@ -1,0 +1,31 @@
+﻿/// スコープ 2
+
+_Finish _finish;
+
+var i = 1;
+const string format = "i=%d";
+printfln(format, i);
+
+{
+  printfln(format, i);
+
+  {
+    printfln(format, i);
+  }
+
+  var i = 2;
+  const string format = "\ti=%d";
+  printfln(format, i);
+
+  {
+    printfln(format, i);
+
+    var i = 3;
+    const string format = "\t\ti=%d";
+    printfln(format, i);
+  }
+
+  printfln(format, i);
+}
+
+printfln(format, i);

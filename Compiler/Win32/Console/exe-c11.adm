@@ -1,0 +1,54 @@
+﻿/// 論理演算 1
+
+_Finish _finish;
+
+var a = 1, b = 2, c = 1;
+printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
+
+// equal
+
+printfln("%d: a == 1", a == 1);
+printfln("%d: a == 2", a == 2);
+printfln("%d: a == b", a == b);
+
+// not equal
+
+printfln("%d: a != 1", a != 1);
+printfln("%d: a != 2", a != 2);
+printfln("%d: a != b", a != b);
+
+// or else
+
+printfln(
+  "%d: a == 1 || b == 1",
+  a == 1 || b == 1);
+printfln(
+  "%d: a == 1 || b == 2",
+  a == 1 || b == 2);
+printfln(
+  "%d: a == 2 || b == 2",
+  a == 2 || b == 2);
+printfln(
+  "%d: a == 3 || b == 3",
+  a == 3 || b == 3);
+
+// and also
+
+printfln(
+  "%d: a == 1 && b == 1",
+  a == 1 && b == 1);
+printfln(
+  "%d: a == 1 && b == 2",
+  a == 1 && b == 2);
+printfln(
+  "%d: a == 2 && b == 2",
+  a == 2 && b == 2);
+printfln(
+  "%d: a == 3 && b == 3",
+  a == 3 && b == 3);
+
+// not
+
+printfln(
+  "%d: !(a == 2) && b == 2",
+  !(a == 2) && b == 2);

@@ -1,0 +1,235 @@
+﻿extern "kernel32.dll" __stdcall
+{
+  Sleep(dwMilliseconds);
+  __widecharset GetModuleHandle(lpModuleName);
+  GetTickCount();
+}
+extern "user32.dll" __stdcall
+{
+  ShowWindow(hWnd, nCmdShow);
+  CloseWindow(hWnd);
+  UpdateWindow(hWnd);
+  DestroyWindow(hWnd);
+  TranslateMessage(lpMsg);
+  PostQuitMessage(nExitCode);
+  BeginPaint(hWnd, lpPaint);
+  EndPaint(hWnd, lpPaint);
+  GetDC(hWnd);
+  GetSysColorBrush(nIndex);
+  InvalidateRect(hWnd, lpRect, bErase);
+  FillRect(hDC, lprc, hbr);
+  AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle);
+  CreateMenu();
+  CreatePopupMenu();
+  DestroyMenu(hMenu);
+  SetMenu(hWnd, hMenu);
+}
+extern "user32.dll" __stdcall __widecharset
+{
+  MessageBox(hWnd, lpText, lpCation, uType);
+  DefWindowProc(hWnd, Msg, wParam, lParam);
+  LoadCursor(hInstance, lpCursorName);
+  RegisterClassEx(lpwcx);
+  CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+  GetMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
+  PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
+  DispatchMessage(lpmsg);
+  InsertMenuItem(hMenu, uItem, fByPosition, lpmii);
+  SetMenuItemInfo(hMenu, uItem, fByPosition, lpmii);
+}
+extern "gdi32.dll" __stdcall
+{
+  __widecharset TextOut(hdc, nXStart, nYStart, lpString, cbString);
+  SetDIBitsToDevice(hdc, XDest, YDest, dwWidth, dwHeight, XSrc, YSrc, uStartScan, cScanLines, lpvBits, lpbmi, fuColorUse);
+}
+
+const int CS_VREDRAW     = 1;
+const int CS_HREDRAW     = 2;
+const int COLOR_WINDOW   = 5;
+const int IDC_ARROW      = 32512;
+const int CW_USEDEFAULT  = 0x80000000;
+const int WS_OVERLAPPED  = 0;
+const int WS_CAPTION     = 0xc00000;
+const int WS_SYSMENU     = 0x080000;
+const int WS_THICKFRAME  = 0x040000;
+const int WS_MINIMIZEBOX = 0x020000;
+const int WS_MAXIMIZEBOX = 0x010000;
+const int WS_OVERLAPPEDWINDOW =
+  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
+  WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+
+const int SW_HIDE       = 0;
+const int SW_SHOWNORMAL = 1;
+const int SW_SHOW       = 5;
+const int COLOR_WINDOWTEXT = 8;
+
+const int MK_LBUTTON  = 0x01;
+const int MK_RBUTTON  = 0x02;
+const int MK_SHIFT    = 0x04;
+const int MK_CONTROL  = 0x08;
+const int MK_MBUTTON  = 0x10;
+const int MK_XBUTTON1 = 0x20;
+const int MK_XBUTTON2 = 0x40;
+
+const int WM_DESTROY       = 0x002;
+const int WM_PAINT         = 0x00f;
+const int WM_COMMAND       = 0x111;
+const int WM_MOUSEFIRST    = 0x200;
+const int WM_MOUSEMOVE     = 0x200;
+const int WM_LBUTTONDOWN   = 0x201;
+const int WM_LBUTTONUP     = 0x202;
+const int WM_LBUTTONDBLCLK = 0x203;
+const int WM_RBUTTONDOWN   = 0x204;
+const int WM_RBUTTONUP     = 0x205;
+const int WM_RBUTTONDBLCLK = 0x206;
+const int WM_MBUTTONDOWN   = 0x207;
+const int WM_MBUTTONUP     = 0x208;
+const int WM_MBUTTONDBLCLK = 0x209;
+const int WM_MOUSEWHEEL    = 0x20a;
+const int WM_XBUTTONDOWN   = 0x20b;
+const int WM_XBUTTONUP     = 0x20c;
+const int WM_XBUTTONDBLCLK = 0x20e;
+const int WM_MOUSELAST     = 0x20e;
+
+const int PM_NOREMOVE = 0;
+const int PM_REMOVE   = 1;
+
+const int BI_RGB = 0;
+const int DIB_RGB_COLORS = 0;
+
+const int MIIM_BITMAP     = 0x0080;
+const int MIIM_CHECKMARKS = 0x0008;
+const int MIIM_DATA       = 0x0020;
+const int MIIM_FTYPE      = 0x0100;
+const int MIIM_ID         = 0x0002;
+const int MIIM_STATE      = 0x0001;
+const int MIIM_STRING     = 0x0040;
+const int MIIM_SUBMENU    = 0x0004;
+
+const int MFT_MENUBARBREAK = 0x0020;
+const int MFT_MENUBREAK    = 0x0040;
+const int MFT_OWNERDRAW    = 0x0100;
+const int MFT_RADIOCHECK   = 0x0200;
+const int MFT_RIGHTJUSTIFY = 0x4000;
+const int MFT_RIGHTORDER   = 0x2000;
+const int MFT_SEPARATOR    = 0x0800;
+
+const int MFS_DEFAULT   = 0x1000;
+const int MFS_ENABLED   = 0x0000;
+const int MFS_DISABLED  = 0x0003;
+const int MFS_GRAYED    = 0x0003;
+const int MFS_CHECKED   = 0x0008;
+const int MFS_UNCHECKED = 0x0000;
+const int MFS_HILITE    = 0x0080;
+const int MFS_UNHILITE  = 0x0000;
+
+struct WNDCLASSEX
+{
+  var cbSize;
+  var style;
+  var lpfnWndProc;
+  var cbClsExtra;
+  var cbWndExtra;
+  var hInstance;
+  var hIcon;
+  var hCursor;
+  var hbrBackground;
+  var lpszMenuName;
+  var lpszClassName;
+  var hIconSm;
+}
+
+struct POINT
+{
+  var x, y;
+}
+
+struct RECT
+{
+  var left, top, right, bottom;
+}
+
+struct MSG
+{
+  var hwnd;
+  var message;
+  var wParam;
+  var lParam;
+  var time;
+  POINT pt;
+}
+
+struct PAINTSTRUCT
+{
+  var hdc;
+  var fErase;
+  RECT rcPaint;
+  var fRestore;
+  var fIncUpdate;
+  byte rgbReserved[32];
+}
+
+struct BITMAPINFOHEADER
+{
+  var biSize;
+  var biWidth;
+  var biHeight;
+  short biPlanes;
+  short biBitCount;
+  var biCompression;
+  var biSizeImage;
+  var biXPelsPerMeter;
+  var biYPelsPerMeter;
+  var biClrUsed;
+  var biClrImportant;
+}
+
+struct RGBQUAD
+{
+  byte rgbBlue;
+  byte rgbGreen;
+  byte rgbRed;
+  byte rgbReserved;
+}
+
+struct BITMAPINFO
+{
+  BITMAPINFOHEADER bmiHeader;
+  RGBQUAD bmiColors[1];
+}
+
+struct MENUITEMINFO
+{
+  var cbSize;
+  var fMask;
+  var fType;
+  var fState;
+  var wID;
+  var hSubMenu;
+  var hbmpChecked;
+  var hbmpUnchecked;
+  var dwItemData;
+  var dwTypeData;
+  var cch;
+  var hbmpItem;
+}
+
+function LOWORD(l)
+{
+  return l & 0xffff;
+}
+
+function HIWORD(l)
+{
+  return (l >> 16) & 0xffff;
+}
+
+function GET_X_LPARAM(l)
+{
+  return l & 0xffff;
+}
+
+function GET_Y_LPARAM(l)
+{
+  return (l >> 16) & 0xffff;
+}

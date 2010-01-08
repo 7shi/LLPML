@@ -1,0 +1,30 @@
+﻿/// 構造体
+
+_Finish _finish;
+
+struct Point { var x, y; }
+
+// global
+Point p1 = { 1, 2 };
+vprintfln("p1(x, y) = (%d, %d)", p1);
+
+{
+  // stack
+  Point p2 = { 3, 4 };
+  vprintfln("p2(x, y) = (%d, %d)", p2);
+
+  {
+    // lexical scope
+    p2.x = 5;
+    p2.y = 6;
+  }
+
+  printfln("p1 = %p, p2 = %p", p1, p2);
+  printfln("p2(x, y) = (%d, %d)", p2.x, p2.y);
+
+  // lexical scope
+  p1.x++;
+  p1.y--;
+}
+
+printfln("p1(x, y) = (%d, %d)", p1.x, p1.y);

@@ -1,0 +1,52 @@
+﻿/// SSE2
+
+_Finish _finish;
+
+if (!__check_sse2())
+{
+  printfln("SSE2をサポートしていません。");
+  return 0;
+}
+
+int x0 = 0x04030201;
+printfln("x0 = %08x", x0);
+
+printfln("unpack: x0 => x1");
+__movd(__xmm0, x0);
+__movd(__xmm1, 0);
+__punpcklbw(__xmm0, __xmm1);
+__m128iw x1;
+x1.__movdqu(__xmm0);
+x1.Show("x1");
+
+__m128iw x2 = { 2, 2, 2, 2, 0, 0, 0, 0 };
+x2.Show("x2");
+
+printfln("x3 = x1 * x2");
+__movdqu(__xmm1, x2);
+__pmullw(__xmm0, __xmm1);
+__m128iw x3;
+x3.__movdqu(__xmm0);
+x3.Show("x3");
+
+__m128iw x4 = { 0xfe, 0x1fc, 0x2fa, 0x3f8, 0, 0, 0, 0 };
+x4.Show("x4");
+
+printfln("x5 = x3 + x4");
+__movdqu(__xmm1, x4);
+__paddw(__xmm0, __xmm1);
+__m128iw x5;
+x5.__movdqu(__xmm0);
+x5.Show("x5");
+
+printfln("x6 = x5 >> 4");
+__psrlw(__xmm0, 4);
+__m128iw x6;
+x6.__movdqu(__xmm0);
+x6.Show("x6");
+
+printfln("pack: x6 => x7");
+__packuswb(__xmm0, __xmm1);
+int x7;
+x7.__movd(__xmm0);
+printfln("x7 = %08x", x7);

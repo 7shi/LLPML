@@ -1,0 +1,24 @@
+﻿/// JIT
+
+_Finish _finish;
+
+var f : byte* = VirtualAlloc(null, 16, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+
+// mov eax, [esp+4]
+f[0] = 0x8b;
+f[1] = 0x44;
+f[2] = 0x24;
+f[3] = 4;
+
+// sub eax, [esp+8]
+f[4] = 0x2b;
+f[5] = 0x44;
+f[6] = 0x24;
+f[7] = 8;
+
+// ret
+f[8] = 0xc3;
+
+printfln("f(5, 3) = %d", f(5, 3));
+
+VirtualFree(f, 0, MEM_RELEASE);

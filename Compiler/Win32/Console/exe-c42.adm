@@ -1,0 +1,36 @@
+﻿/// ラムダ式
+
+_Finish _finish;
+
+// 間接呼び出し 1
+var f1 = \(a, b) => a - b;
+printfln("f1(5, 3) = %d", f1(5, 3));
+
+// 直接呼び出し 1
+printfln(
+  "(\\(a, b) => a - b)(5, 3) = %d",
+   ( \(a, b) => a - b)(5, 3));
+println();
+
+// 間接呼び出し 2
+var f2 = \a => \b => a - b;
+printfln("f2(5)(3) = %d", f2(5)(3));
+
+// 直接呼び出し 2
+printfln(
+  "(\\a => \\b => a - b)(5)(3) = %d",
+   ( \a =>  \b => a - b)(5)(3));
+println();
+
+// 引数1個
+var inc = \a => a + 1;
+printfln("inc(3) = %d", inc(3));
+println();
+
+// 引数なし
+wrapper(\ => printfln("anonymous!"));
+
+function wrapper(ptr)
+{
+  ptr();
+}

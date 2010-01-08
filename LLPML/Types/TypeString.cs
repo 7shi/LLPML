@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Girl.Binary;
 using Girl.X86;
@@ -26,7 +25,7 @@ namespace Girl.LLPML
                     I386.Push(dest),
                     I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
                     I386.Push(Reg32.EAX),
-                    GetCall("string", Equal),
+                    codes.GetCall("string", Equal),
                     I386.Add(Reg32.ESP, 8),
                     I386.Test(Reg32.EAX, Reg32.EAX),
                 });
@@ -41,7 +40,7 @@ namespace Girl.LLPML
                     I386.Push(dest),
                     I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
                     I386.Push(Reg32.EAX),
-                    GetCall("string", Add),
+                    codes.GetCall("string", Add),
                     I386.Add(Reg32.ESP, 8),
                     I386.Xchg(Reg32.EAX, dest),
                     I386.Push(Reg32.EAX),

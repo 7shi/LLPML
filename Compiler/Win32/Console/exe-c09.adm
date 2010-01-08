@@ -1,0 +1,12 @@
+﻿/// ポインタ
+
+_Finish _finish;
+
+var a;
+
+{
+  var b;
+
+  printfln("addrof(a) = %p [global]", addrof(a));
+  printfln("addrof(b) = %p [stack]", addrof(b));
+}

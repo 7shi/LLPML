@@ -14,11 +14,14 @@ namespace Girl.LLPML
         public override int Min { get { return 0; } }
         public override int Max { get { return 0; } }
 
-        public Inc(BlockBase parent, Var dest) : base(parent, dest) { }
+        public Inc(BlockBase parent, IIntValue dest) : base(parent, dest) { }
         public Inc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         private Addr32 Calculate(OpModule codes)
         {
+            var dest = Var.Get(this.dest);
+            if (dest == null)
+                throw Abort("{0}: destination is not variable", Tag);
             var ad1 = dest.GetAddress(codes);
             var ad2 = ad1;
             if (dest.Type.Size < Var.DefaultSize)
@@ -53,7 +56,7 @@ namespace Girl.LLPML
     public class Dec : Inc
     {
         public override string Tag { get { return "dec"; } }
-        public Dec(BlockBase parent, Var dest) : base(parent, dest) { }
+        public Dec(BlockBase parent, IIntValue dest) : base(parent, dest) { }
         public Dec(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
@@ -61,24 +64,27 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "post-inc"; } }
 
-        public PostInc(BlockBase parent, Var dest) : base(parent, dest) { }
+        public PostInc(BlockBase parent, IIntValue dest) : base(parent, dest) { }
         public PostInc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            var ad1 = this.dest.GetAddress(codes);
+            var thisdest = Var.Get(this.dest);
+            if (thisdest == null)
+                throw Abort("{0}: destination is not variable", Tag);
+            var ad1 = thisdest.GetAddress(codes);
             var ad2 = ad1;
-            this.dest.Type.AddGetCodes(codes, "push", null, ad1);
-            if (this.dest.Type.Size < Var.DefaultSize)
+            thisdest.Type.AddGetCodes(codes, "push", null, ad1);
+            if (thisdest.Type.Size < Var.DefaultSize)
             {
                 ad2 = new Addr32(Reg32.ESP);
                 codes.Add(I386.Push(ad2));
             }
             GetFunc()(codes, ad2);
-            if (this.dest.Type.Size < Var.DefaultSize)
+            if (thisdest.Type.Size < Var.DefaultSize)
             {
                 codes.Add(I386.Pop(Reg32.EAX));
-                this.dest.Type.AddSetCodes(codes, ad1);
+                thisdest.Type.AddSetCodes(codes, ad1);
             }
             codes.Add(I386.Pop(Reg32.EAX));
             codes.AddCodes(op, dest);
@@ -88,7 +94,7 @@ namespace Girl.LLPML
     public class PostDec : PostInc
     {
         public override string Tag { get { return "post-dec"; } }
-        public PostDec(BlockBase parent, Var dest) : base(parent, dest) { }
+        public PostDec(BlockBase parent, IIntValue dest) : base(parent, dest) { }
         public PostDec(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

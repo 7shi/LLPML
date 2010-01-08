@@ -1,0 +1,22 @@
+﻿/// 無名関数
+
+_Finish _finish;
+
+// 間接呼び出し
+var f = function(a, b) { return a - b; };
+printfln("f(5, 3) = %d", f(5, 3));
+
+// 直接呼び出し
+printfln(
+  "function(a, b) { return a - b; }(5, 3) = %d",
+   function(a, b) { return a - b; }(5, 3));
+
+wrapper(function
+{
+  printfln("anonymous!");
+});
+
+function wrapper(ptr)
+{
+  ptr();
+}

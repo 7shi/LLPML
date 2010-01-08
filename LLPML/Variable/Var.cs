@@ -62,5 +62,13 @@ namespace Girl.LLPML
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }
+
+        public static Var Get(IIntValue v)
+        {
+            if (v is Variant)
+                return (v as Variant).GetVar();
+            else
+                return v as Var;
+        }
     }
 }

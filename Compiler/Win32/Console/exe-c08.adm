@@ -1,0 +1,15 @@
+﻿/// 関数ポインタ
+
+_Finish _finish;
+
+wrapper(test);
+
+function wrapper(ptr)
+{
+  ptr();
+}
+
+function test()
+{
+  printfln("Hello, World!");
+}

@@ -1,0 +1,32 @@
+﻿/// 仮想関数
+
+_Finish _finish;
+
+struct Test1
+{
+  function ctor()
+  {
+    Virt();
+  }
+  
+  virtual Virt()
+  {
+    printfln("[%p] %s", this, __FUNCTION__);
+  }
+}
+
+struct Test2 : Test1
+{
+  override Virt()
+  {
+    printfln("[%p] %s", this, __FUNCTION__);
+    base.Virt();
+  };
+}
+
+Test1 t1;
+Test2 t2;
+
+// 自動生成された関数
+printfln("%p: Test1.override_Virt", Test1.override_Virt);
+printfln("%p: Test2.override_Virt", Test2.override_Virt);

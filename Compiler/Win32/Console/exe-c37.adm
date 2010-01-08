@@ -1,0 +1,31 @@
+﻿/// 委譲
+
+_Finish _finish;
+
+struct Test
+{
+  var Text;
+  
+  function Show()
+  {
+    printfln(Text);
+  }
+}
+
+Test a, b;
+a.Text = "a";
+b.Text = "b";
+
+a.Show();
+b.Show();
+
+var delg_a = a.Show;
+var delg_b = b.Show;
+
+printfln("typeof Test.Show = %s", typeof(Test.Show).Name);
+printfln("typeof a.Show = %s", typeof(a.Show).Name);
+printfln("typeof delg_a = %s", typeof(delg_a).Name);
+printfln("typeof delg_b = %s", typeof(delg_b).Name);
+
+delg_a();
+delg_b();

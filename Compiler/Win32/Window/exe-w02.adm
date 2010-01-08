@@ -1,0 +1,87 @@
+﻿/// ウィンドウ
+
+#pragma subsystem(WINDOWS_GUI)
+
+const string className = "LLPML Test Window";
+var hInstance = GetModuleHandle(null);
+
+WNDCLASSEX wcex;
+__stosb(wcex, 0, sizeof WNDCLASSEX);
+wcex.cbSize        = sizeof WNDCLASSEX;
+wcex.style         = CS_VREDRAW | CS_HREDRAW;
+wcex.lpfnWndProc   = WndProc;
+wcex.hInstance     = hInstance;
+wcex.hCursor       = LoadCursor(null, IDC_ARROW);
+wcex.hbrBackground = COLOR_WINDOW + 1;
+wcex.lpszClassName = className;
+wcex.RegisterClassEx();
+
+var dwStyle = WS_OVERLAPPEDWINDOW;
+RECT r = { 0, 0, 256, 256 };
+r.AdjustWindowRectEx(dwStyle, false, 0);
+var hWnd = CreateWindowEx(
+  /* dwExStyle    */ 0,
+  /* lpClassName  */ className,
+  /* lpWindowName */ "テスト",
+  /* dwStyle      */ dwStyle,
+  /* X            */ CW_USEDEFAULT,
+  /* Y            */ 0,
+  /* nWidth       */ r.right - r.left,
+  /* nHeight      */ r.bottom - r.top,
+  /* hWndParent   */ null,
+  /* hMenu        */ null,
+  /* hInstance    */ hInstance,
+  /* lpParam      */ null
+);
+hWnd.ShowWindow(SW_SHOWNORMAL);
+hWnd.UpdateWindow();
+
+MSG uMsg;
+while (uMsg.GetMessage(null, 0, 0))
+{
+  uMsg.TranslateMessage();
+  uMsg.DispatchMessage();
+}
+
+hWnd.DestroyWindow();
+
+function __stdcall WndProc(hWnd, uMsg, wParam, lParam)
+{
+  switch (uMsg)
+  {
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      var hdc = hWnd.BeginPaint(ps);
+      hdc.TextOut(8, 8, className, className.Length);
+      hWnd.EndPaint(ps);
+      break;
+    }
+    case WM_LBUTTONDOWN:
+      MyFillRect();
+      break;
+    case WM_RBUTTONDOWN:
+      hWnd.InvalidateRect(null, true);
+      break;
+    case WM_MOUSEMOVE:
+      if (wParam & MK_LBUTTON) MyFillRect();
+      break;
+    case WM_DESTROY:
+      PostQuitMessage(0);
+      break;
+    default:
+      return hWnd.DefWindowProc(uMsg, wParam, lParam);
+  }
+  return 0;
+  
+  // 関数内関数
+  function MyFillRect()
+  {
+    var hdc = hWnd.GetDC();
+    var brush = GetSysColorBrush(COLOR_WINDOWTEXT);
+    var x = lParam.GET_X_LPARAM();
+    var y = lParam.GET_Y_LPARAM();
+    RECT rect = { x - 2, y - 2, x + 2, y + 2 };
+    hdc.FillRect(rect, brush);
+  }
+}

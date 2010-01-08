@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,7 +14,7 @@ namespace Girl.LLPML.Parsing
 
         private IIntValue Expression(int order)
         {
-            if (!CanRead) throw Abort("®‚ª‚ ‚è‚Ü‚¹‚ñB");
+            if (!CanRead) throw Abort("å¼ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
             if (order >= operators.Length) return Factor();
 
             var ret = Expression(order + 1);
@@ -69,9 +69,9 @@ namespace Girl.LLPML.Parsing
 
         private IIntValue Unary()
         {
-            if (!CanRead) throw Abort("®‚ª‚ ‚è‚Ü‚¹‚ñB");
+            if (!CanRead) throw Abort("å¼ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
 
-            // ‘O’u‰‰Zq
+            // å‰ç½®æ¼”ç®—å­
             var si = SrcInfo;
             var t = Read();
             int order = operators.Length - 1;
@@ -95,19 +95,9 @@ namespace Girl.LLPML.Parsing
                 case "~":
                     return new Rev(parent, Expression(order)) { SrcInfo = si };
                 case "++":
-                    {
-                        var target = Expression(order) as Var;
-                        if (target == null)
-                            throw parent.Abort(si, "++: ‘ÎÛ‚ª•Ï”‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
-                        return new Inc(parent, target) { SrcInfo = si };
-                    }
+                    return new Inc(parent, Expression(order)) { SrcInfo = si };
                 case "--":
-                    {
-                        var target = Expression(order) as Var;
-                        if (target == null)
-                            throw parent.Abort(si, "++: ‘ÎÛ‚ª•Ï”‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
-                        return new Dec(parent, target) { SrcInfo = si };
-                    }
+                    return new Dec(parent, Expression(order)) { SrcInfo = si };
             }
             Rewind();
             return Value();
@@ -115,7 +105,7 @@ namespace Girl.LLPML.Parsing
 
         private IIntValue Value()
         {
-            if (!CanRead) throw Abort("®‚ª‚ ‚è‚Ü‚¹‚ñB");
+            if (!CanRead) throw Abort("å¼ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
 
             var iv = Integer();
             if (iv != null) return iv;
@@ -141,7 +131,8 @@ namespace Girl.LLPML.Parsing
             }
 
             var v = parent.GetVar(t);
-            if (v != null) return new Var(parent, v) { SrcInfo = si };
+            if (v != null && !(v.Parent is Struct.Define))
+                return new Var(parent, v) { SrcInfo = si };
 
             var i = parent.GetInt(t);
             if (i != null) return i;
@@ -149,12 +140,12 @@ namespace Girl.LLPML.Parsing
             var s = parent.GetString(t);
             if (s != null) return s;
 
-            // –¢’è‹`Œê‚ğŠÖ”ƒ|ƒCƒ“ƒ^‚Æ‚µ‚Ä‰ğß
+            // æœªå®šç¾©èªã‚’é–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã¨ã—ã¦è§£é‡ˆ
             if (Tokenizer.IsWord(t))
                 return new Variant(parent, t) { SrcInfo = si };
 
             Rewind();
-            throw Abort("•]‰¿‚Å‚«‚Ü‚¹‚ñ: {0}", t);
+            throw Abort("è©•ä¾¡ã§ãã¾ã›ã‚“: {0}", t);
         }
 
         private IntValue Integer()

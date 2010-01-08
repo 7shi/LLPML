@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
 using Girl.X86;
@@ -7,7 +7,7 @@ namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
-        // —\–ñŒê
+        // äºˆç´„èª
         private IIntValue Reserved()
         {
             var si = SrcInfo;
@@ -44,7 +44,7 @@ namespace Girl.LLPML.Parsing
                             if (cts == "stdcall")
                                 ct = CallType.Std;
                             else
-                                throw Abort("delegate: •s–¾‚È‘®«‚Å‚·: {0}", cts);
+                                throw Abort("delegate: ä¸æ˜ãªå±æ€§ã§ã™: {0}", cts);
                             Check("delegate", ")");
                             Check("delegate", ")");
                             Check("delegate", "(");
@@ -53,7 +53,7 @@ namespace Girl.LLPML.Parsing
                             Rewind();
                         var args = Arguments(",", ")", false);
                         if (args == null)
-                            throw Abort("delegate: ˆø”‚ª•sŠ®‘S‚Å‚·B");
+                            throw Abort("delegate: å¼•æ•°ãŒä¸å®Œå…¨ã§ã™ã€‚");
                         return new Delegate(parent, ct, args) { SrcInfo = si };
                     }
                 case "\\":
@@ -70,17 +70,12 @@ namespace Girl.LLPML.Parsing
                             if (br != null) Rewind();
                         var arg = Read();
                         if (arg == null)
-                            throw parent.Abort(si, "sizeof: ˆø”‚ª•K—v‚Å‚·B");
+                            throw parent.Abort(si, "sizeof: å¼•æ•°ãŒå¿…è¦ã§ã™ã€‚");
                         if (br == "(") Check("sizeof", ")");
                         return new SizeOf(parent, arg) { SrcInfo = si };
                     }
                 case "addrof":
-                    {
-                        var ex = Expression() as Var;
-                        if (ex == null)
-                            throw parent.Abort(si, "addrof: ˆø”‚ª•s“KØ‚Å‚·B");
-                        return new AddrOf(parent, ex) { SrcInfo = si };
-                    }
+                    return new AddrOf(parent, Expression()) { SrcInfo = si };
                 case "typeof":
                     {
                         var br = Read();
@@ -88,7 +83,7 @@ namespace Girl.LLPML.Parsing
                             if (br != null) Rewind();
                         var arg = Expression();
                         if (arg == null)
-                            throw parent.Abort(si, "typeof: ˆø”‚ª•K—v‚Å‚·B");
+                            throw parent.Abort(si, "typeof: å¼•æ•°ãŒå¿…è¦ã§ã™ã€‚");
                         if (br == "(") Check("typeof", ")");
                         return new TypeOf(parent, arg) { SrcInfo = si };
                     }
@@ -98,8 +93,8 @@ namespace Girl.LLPML.Parsing
                     return new StringValue(si.Source);
                 case "__LINE__":
                     return new IntValue(si.Number);
-                case "__LLPML__":
-                    return new StringValue("LLPML ver." + Root.LLPMLVersion);
+                case "__VERSION__":
+                    return new StringValue("LLPML ver." + Root.VERSION);
             }
             if (t != null) Rewind();
             return null;
@@ -110,7 +105,7 @@ namespace Girl.LLPML.Parsing
             var t = Peek();
             if (t == null) return null;
 
-            var type = "ƒ‰ƒ€ƒ_®";
+            var type = "ãƒ©ãƒ ãƒ€å¼";
             var ret = new Function(this.parent);
             if (t == "(")
                 ReadArgs(type, ret);
@@ -133,7 +128,7 @@ namespace Girl.LLPML.Parsing
             }
 
             if (!ret.Parent.AddFunction(ret))
-                throw Abort("{0}: {1}: ’è‹`‚ªd•¡‚µ‚Ä‚¢‚Ü‚·B", type, ret.Name);
+                throw Abort("{0}: {1}: å®šç¾©ãŒé‡è¤‡ã—ã¦ã„ã¾ã™ã€‚", type, ret.Name);
             return ret;
         }
 
@@ -141,17 +136,17 @@ namespace Girl.LLPML.Parsing
         {
             var type = Read();
             if (type == null)
-                throw Abort("new: Œ^‚ª•K—v‚Å‚·B");
+                throw Abort("new: å‹ãŒå¿…è¦ã§ã™ã€‚");
             else if (!Tokenizer.IsWord(type))
-                throw Abort("new: Œ^‚ª•s“KØ‚Å‚·: {0}", type);
+                throw Abort("new: å‹ãŒä¸é©åˆ‡ã§ã™: {0}", type);
             var br = Read();
             if (br == ":")
             {
                 var vt = Read();
                 if (vt == null)
-                    throw Abort("new: Œ^‚ª•K—v‚Å‚·B");
+                    throw Abort("new: å‹ãŒå¿…è¦ã§ã™ã€‚");
                 else if (!Tokenizer.IsWord(vt))
-                    throw Abort("new: Œ^‚ª•s“KØ‚Å‚·: {0}", vt);
+                    throw Abort("new: å‹ãŒä¸é©åˆ‡ã§ã™: {0}", vt);
                 type += ":" + vt;
                 br = Read();
             }

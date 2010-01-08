@@ -1,0 +1,17 @@
+﻿/// コード変換
+
+_Finish _finish;
+
+extern "kernel32.dll" __stdcall
+{
+  WriteConsoleA(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
+}
+
+var text = cstr("あいうえお");
+var length;
+WriteConsoleA(stdout, text, text.Length, addrof(length), null);
+println();
+
+var text2 = wstr(text);
+WriteConsole(stdout, text2, text2.Length, addrof(length), null);
+println();

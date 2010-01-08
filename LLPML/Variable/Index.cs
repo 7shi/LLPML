@@ -10,10 +10,10 @@ namespace Girl.LLPML
 {
     public class Index : Var
     {
-        private Var target;
+        private IIntValue target;
         private IIntValue order;
 
-        public Index(BlockBase parent, Var target, IIntValue order)
+        public Index(BlockBase parent, IIntValue target, IIntValue order)
             : base(parent)
         {
             this.target = target;
@@ -34,11 +34,7 @@ namespace Girl.LLPML
                 foreach (var v in vs)
                 {
                     if (target == null)
-                    {
-                        target = v as Var;
-                        if (target == null)
-                            throw Abort("array required");
-                    }
+                        target = v;
                     else if (order == null)
                         order = v;
                     else
@@ -53,6 +49,9 @@ namespace Girl.LLPML
 
         public override Addr32 GetAddress(OpModule codes)
         {
+            var target = Var.Get(this.target);
+            if (target == null)
+                throw Abort("index: source is not array");
             var t = target.Type;
             int ts;
             if (t is TypeString)

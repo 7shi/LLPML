@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
 using Girl.PE;
@@ -15,7 +15,7 @@ namespace Girl.LLPML.Parsing
 
         private NodeBase[] Sentence(string separator)
         {
-            if (!CanRead) throw Abort("•¶‚ª‚ ‚è‚Ü‚¹‚ñB");
+            if (!CanRead) throw Abort("æ–‡ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
 
             var si = SrcInfo;
             var t = Read();
@@ -96,7 +96,7 @@ namespace Girl.LLPML.Parsing
             else if (sep != separator)
             {
                 if (sep != null) Rewind();
-                throw Abort("{0} ‚ª•K—v‚Å‚·B", separator);
+                throw Abort("{0} ãŒå¿…è¦ã§ã™ã€‚", separator);
             }
             if (list.Count == 0) return null;
             return list.ToArray();
@@ -104,7 +104,7 @@ namespace Girl.LLPML.Parsing
 
         private NodeBase[] SentenceBody()
         {
-            if (!CanRead) throw Abort("•¶‚ª•K—v‚Å‚·B");
+            if (!CanRead) throw Abort("æ–‡ãŒå¿…è¦ã§ã™ã€‚");
 
             var t = Read();
             if (t == "const")
@@ -154,14 +154,14 @@ namespace Girl.LLPML.Parsing
                     {
                         var brk = new Break(parent);
                         if (!brk.CanBreak())
-                            throw Abort("break: ‚±‚±‚Å‚Íg—p‚Å‚«‚Ü‚¹‚ñB");
+                            throw Abort("break: ã“ã“ã§ã¯ä½¿ç”¨ã§ãã¾ã›ã‚“ã€‚");
                         return brk;
                     }
                 case "continue":
                     {
                         var con = new Continue(parent);
                         if (!con.CanContinue())
-                            throw Abort("continue: ‚±‚±‚Å‚Íg—p‚Å‚«‚Ü‚¹‚ñB");
+                            throw Abort("continue: ã“ã“ã§ã¯ä½¿ç”¨ã§ãã¾ã›ã‚“ã€‚");
                         return con;
                     }
             }
@@ -170,13 +170,13 @@ namespace Girl.LLPML.Parsing
 
         private Struct.Define StructDefine(string type)
         {
-            if (!CanRead) throw Abort("{0}: –¼‘O‚ª•K—v‚Å‚·B", type);
+            if (!CanRead) throw Abort("{0}: åå‰ãŒå¿…è¦ã§ã™ã€‚", type);
 
             var name = Read();
             if (!Tokenizer.IsWord(name))
             {
                 Rewind();
-                throw Abort("{0}: –¼‘O‚ª•s“KØ‚Å‚·: {1}", type, name);
+                throw Abort("{0}: åå‰ãŒä¸é©åˆ‡ã§ã™: {1}", type, name);
             }
 
             string baseType = null;
@@ -184,15 +184,15 @@ namespace Girl.LLPML.Parsing
             if (t == ":")
             {
                 if (!CanRead)
-                    throw Abort("{0}: {1}: Œ^‚ª•K—v‚Å‚·B", type, name);
+                    throw Abort("{0}: {1}: å‹ãŒå¿…è¦ã§ã™ã€‚", type, name);
                 baseType = Read();
                 if (!Tokenizer.IsWord(baseType))
                 {
                     Rewind();
-                    throw Abort("{0}: {1}: Œ^‚ª•K—v‚Å‚·B", type, name);
+                    throw Abort("{0}: {1}: å‹ãŒå¿…è¦ã§ã™ã€‚", type, name);
                 }
                 if (name == baseType)
-                    throw Abort("{0}: {1}: Œp³‚Å‚«‚Ü‚¹‚ñ: {2}", type, name, baseType);
+                    throw Abort("{0}: {1}: ç¶™æ‰¿ã§ãã¾ã›ã‚“: {2}", type, name, baseType);
             }
             else
                 Rewind();
@@ -201,7 +201,7 @@ namespace Girl.LLPML.Parsing
             if (type == "class") ret.IsClass = true;
             ReadBlock(type, ret);
             if (!parent.AddStruct(ret))
-                throw Abort("{0}: {1}: ’è‹`‚ªd•¡‚µ‚Ä‚¢‚Ü‚·B", type, name);
+                throw Abort("{0}: {1}: å®šç¾©ãŒé‡è¤‡ã—ã¦ã„ã¾ã™ã€‚", type, name);
             return ret;
         }
 
@@ -213,7 +213,7 @@ namespace Girl.LLPML.Parsing
             if (t != text)
             {
                 if (t != null) Rewind();
-                throw Abort("{0}: {1} ‚ª•K—v‚Å‚·B", type, text);
+                throw Abort("{0}: {1} ãŒå¿…è¦ã§ã™ã€‚", type, text);
             }
         }
 
@@ -228,7 +228,7 @@ namespace Girl.LLPML.Parsing
             {
                 var t = Read();
                 if (t == null)
-                    throw Abort("{0}: {1}: }}}} ‚ª•K—v‚Å‚·B", type, block.Name);
+                    throw Abort("{0}: {1}: }}}} ãŒå¿…è¦ã§ã™ã€‚", type, block.Name);
                 if (t == "}") break;
 
                 Rewind();
@@ -258,7 +258,7 @@ namespace Girl.LLPML.Parsing
 
         private Function Function(string type, bool isStatic)
         {
-            if (!CanRead) throw Abort("{0}: ’è‹`‚ª•K—v‚Å‚·B", type);
+            if (!CanRead) throw Abort("{0}: å®šç¾©ãŒå¿…è¦ã§ã™ã€‚", type);
 
             var name = Read();
             CallType ct = CheckCallType(CallType.CDecl, ref name);
@@ -270,7 +270,7 @@ namespace Girl.LLPML.Parsing
             else if (!Tokenizer.IsWord(name))
             {
                 Rewind();
-                throw Abort("{0}: –¼‘O‚ª•s“KØ‚Å‚·: {1}", type, name);
+                throw Abort("{0}: åå‰ãŒä¸é©åˆ‡ã§ã™: {1}", type, name);
             }
 
             var ret = new Function(this.parent, name, isStatic);
@@ -284,7 +284,7 @@ namespace Girl.LLPML.Parsing
                 if (!Tokenizer.IsWord(ftype))
                 {
                     Rewind();
-                    throw Abort("{0}: Œ^‚ª•s“KØ‚Å‚·: {1}", type, ftype);
+                    throw Abort("{0}: å‹ãŒä¸é©åˆ‡ã§ã™: {1}", type, ftype);
                 }
                 ret.SetReturnType(Types.GetVarType(this.parent, ftype));
             }
@@ -294,7 +294,7 @@ namespace Girl.LLPML.Parsing
             ReadBlock(type, ret);
 
             if (!ret.Parent.AddFunction(ret))
-                throw Abort("{0}: {1}: ’è‹`‚ªd•¡‚µ‚Ä‚¢‚Ü‚·B", type, ret.Name);
+                throw Abort("{0}: {1}: å®šç¾©ãŒé‡è¤‡ã—ã¦ã„ã¾ã™ã€‚", type, ret.Name);
             if (type == "virtual")
                 ret.IsVirtual = true;
             else if (type == "override")
@@ -304,10 +304,10 @@ namespace Girl.LLPML.Parsing
 
         private Extern[] Extern()
         {
-            if (!CanRead) throw Abort("extern: –¼‘O‚ª•K—v‚Å‚·B");
+            if (!CanRead) throw Abort("extern: åå‰ãŒå¿…è¦ã§ã™ã€‚");
 
             var module = String();
-            if (module == null) throw Abort("extern: ƒ‚ƒWƒ…[ƒ‹–¼‚ª•K—v‚Å‚·B");
+            if (module == null) throw Abort("extern: ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«åãŒå¿…è¦ã§ã™ã€‚");
 
             var t = Peek();
             CallType ct1 = CheckCallType(CallType.CDecl, ref t);
@@ -327,7 +327,7 @@ namespace Girl.LLPML.Parsing
                 if (!Tokenizer.IsWord(name))
                 {
                     Rewind();
-                    throw Abort("extern: –¼‘O‚ª•s“KØ‚Å‚·: {0}", name);
+                    throw Abort("extern: åå‰ãŒä¸é©åˆ‡ã§ã™: {0}", name);
                 }
                 string alias = null;
                 if (sfx2 != null) alias = name + sfx2;
@@ -344,7 +344,7 @@ namespace Girl.LLPML.Parsing
                     if (!Tokenizer.IsWord(ftype))
                     {
                         Rewind();
-                        throw Abort("extern: Œ^‚ª•s“KØ‚Å‚·: {0}", ftype);
+                        throw Abort("extern: å‹ãŒä¸é©åˆ‡ã§ã™: {0}", ftype);
                     }
                     ex.SetReturnType(Types.GetVarType(this.parent, ftype));
                 }
@@ -352,7 +352,7 @@ namespace Girl.LLPML.Parsing
                     Rewind();
 
                 if (!parent.AddFunction(ex))
-                    throw Abort("extern: {0}: ’è‹`‚ªd•¡‚µ‚Ä‚¢‚Ü‚·B", name);
+                    throw Abort("extern: {0}: å®šç¾©ãŒé‡è¤‡ã—ã¦ã„ã¾ã™ã€‚", name);
                 list.Add(ex);
 
                 if (!loop) break;
@@ -407,19 +407,19 @@ namespace Girl.LLPML.Parsing
             {
                 var t = Read();
                 if (t == null)
-                    throw Abort("{0}: {1}: ) ‚ª•K—v‚Å‚·B", tp, f.Name);
+                    throw Abort("{0}: {1}: ) ãŒå¿…è¦ã§ã™ã€‚", tp, f.Name);
                 if (t == ")") break;
                 if (first)
                     Rewind();
                 else if (t != ",")
-                    throw Abort("{0}: {1}: ) ‚ª•K—v‚Å‚·B", tp, f.Name);
+                    throw Abort("{0}: {1}: ) ãŒå¿…è¦ã§ã™ã€‚", tp, f.Name);
                 first = false;
 
                 var arg = Read();
                 if (!Tokenizer.IsWord(arg))
                 {
                     if (arg != null) Rewind();
-                    throw Abort("{0}: {1}: ˆø”‚Ì–¼‘O‚ª•s“KØ‚Å‚·: {1}", tp, f.Name, arg);
+                    throw Abort("{0}: {1}: å¼•æ•°ã®åå‰ãŒä¸é©åˆ‡ã§ã™: {1}", tp, f.Name, arg);
                 }
 
                 string type = null;
@@ -427,7 +427,7 @@ namespace Girl.LLPML.Parsing
                 if (colon == ":")
                 {
                     if (!CanRead)
-                        throw Abort("{0}: {1}: {2}: ˆø”‚ÉŒ^‚ª•K—v‚Å‚·B", tp, f.Name, arg);
+                        throw Abort("{0}: {1}: {2}: å¼•æ•°ã«å‹ãŒå¿…è¦ã§ã™ã€‚", tp, f.Name, arg);
                     type = Read();
                     if (type == "params")
                     {
@@ -437,7 +437,7 @@ namespace Girl.LLPML.Parsing
                     else if (!Tokenizer.IsWord(type))
                     {
                         if (type != null) Rewind();
-                        throw Abort("{0}: {1}: {2}: ˆø”‚ÌŒ^‚ª•s“KØ‚Å‚·B", tp, f.Name, arg);
+                        throw Abort("{0}: {1}: {2}: å¼•æ•°ã®å‹ãŒä¸é©åˆ‡ã§ã™ã€‚", tp, f.Name, arg);
                     }
                     var ar = Read();
                     if (ar == "*")
@@ -510,7 +510,7 @@ namespace Girl.LLPML.Parsing
                 if (s != null) ret.AddSentences(s);
             }
             if (ret == null)
-                throw p.Abort(si, "{0}: ƒuƒƒbƒN‚ª•K—v‚Å‚·B", type);
+                throw p.Abort(si, "{0}: ãƒ–ãƒ­ãƒƒã‚¯ãŒå¿…è¦ã§ã™ã€‚", type);
             this.parent = p;
             return ret;
         }
@@ -531,7 +531,7 @@ namespace Girl.LLPML.Parsing
             if (t != "while")
             {
                 if (t != null) Rewind();
-                throw Abort("do: while ‚ª‚ ‚è‚Ü‚¹‚ñB");
+                throw Abort("do: while ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
             }
             ret.Cond = ReadCond(ret, "do");
             return ret;
@@ -594,7 +594,7 @@ namespace Girl.LLPML.Parsing
             var si = SrcInfo;
             var expr = Expression() as IIntValue;
             if (expr == null)
-                throw parent.Abort(si, "switch: ’l‚ª•K—v‚Å‚·B");
+                throw parent.Abort(si, "switch: å€¤ãŒå¿…è¦ã§ã™ã€‚");
 
             Check("switch", ")");
             Check("switch", "{");
@@ -613,7 +613,7 @@ namespace Girl.LLPML.Parsing
                 switch (t)
                 {
                     case null:
-                        throw Abort("switch: }}}} ‚ª•K—v‚Å‚·B");
+                        throw Abort("switch: }}}} ãŒå¿…è¦ã§ã™ã€‚");
                     case "case":
                     case "default":
                         if (scb.Block != null)
@@ -627,7 +627,7 @@ namespace Girl.LLPML.Parsing
                         {
                             var v = Expression() as IIntValue;
                             if (v == null)
-                                throw Abort("case: ’l‚ª•K—v‚Å‚·B");
+                                throw Abort("case: å€¤ãŒå¿…è¦ã§ã™ã€‚");
                             Check("case", ":");
                             scb.Case.Values.Add(v);
                         }
@@ -641,7 +641,7 @@ namespace Girl.LLPML.Parsing
                         {
                             Rewind();
                             if (scb.Case == null)
-                                throw Abort("switch: ğŒ‚ª•K—v‚Å‚·B");
+                                throw Abort("switch: æ¡ä»¶ãŒå¿…è¦ã§ã™ã€‚");
                             if (scb.Block == null)
                                 scb.Block = new Block(target);
                             var p = parent;
@@ -658,7 +658,7 @@ namespace Girl.LLPML.Parsing
         private void Directive()
         {
             var t = Read();
-            if (t == null) throw Abort("ƒfƒBƒŒƒNƒeƒBƒu‚ª•K—v‚Å‚·B");
+            if (t == null) throw Abort("ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–ãŒå¿…è¦ã§ã™ã€‚");
 
             switch (t)
             {
@@ -666,14 +666,14 @@ namespace Girl.LLPML.Parsing
                     Pragma();
                     break;
                 default:
-                    throw Abort("•s–¾‚ÈƒfƒBƒŒƒNƒeƒBƒu‚Å‚·: {0}", t);
+                    throw Abort("ä¸æ˜ãªãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–ã§ã™: {0}", t);
             }
         }
 
         private void Pragma()
         {
             var t = Read();
-            if (t == null) throw Abort("pragma: w¦‚ª•K—v‚Å‚·B");
+            if (t == null) throw Abort("pragma: æŒ‡ç¤ºãŒå¿…è¦ã§ã™ã€‚");
 
             switch (t)
             {
@@ -684,7 +684,7 @@ namespace Girl.LLPML.Parsing
                     PragmaOutput();
                     break;
                 default:
-                    throw Abort("pragma: •s–¾‚Èw¦‚Å‚·: {0}", t);
+                    throw Abort("pragma: ä¸æ˜ãªæŒ‡ç¤ºã§ã™: {0}", t);
             }
         }
 
@@ -694,9 +694,9 @@ namespace Girl.LLPML.Parsing
 
             var t = Read();
             if (t == null)
-                throw Abort("pragma: subsystem: ƒTƒuƒVƒXƒeƒ€–¼‚ª•K—v‚Å‚·B");
+                throw Abort("pragma: subsystem: ã‚µãƒ–ã‚·ã‚¹ãƒ†ãƒ åãŒå¿…è¦ã§ã™ã€‚");
             else if (!parent.Root.SetSubsystem(t))
-                throw Abort("pragma: subsystem: •s–¾‚ÈƒTƒuƒVƒXƒeƒ€–¼‚Å‚·: {0}", t);
+                throw Abort("pragma: subsystem: ä¸æ˜ãªã‚µãƒ–ã‚·ã‚¹ãƒ†ãƒ åã§ã™: {0}", t);
 
             Check("pragma: subsystem", ")");
         }
@@ -707,7 +707,7 @@ namespace Girl.LLPML.Parsing
 
             var output = String();
             if (output == null)
-                throw Abort("pragma: output: o—Í–¼‚ğ•¶š—ñ‚Åw’è‚µ‚Ä‚­‚¾‚³‚¢B");
+                throw Abort("pragma: output: å‡ºåŠ›åã‚’æ–‡å­—åˆ—ã§æŒ‡å®šã—ã¦ãã ã•ã„ã€‚");
 
             parent.Root.Output = output.Value;
             Check("pragma: output", ")");

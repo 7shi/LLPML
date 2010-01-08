@@ -1,0 +1,43 @@
+﻿/// CPUID
+
+_Finish _finish;
+
+CPUID_Result r0;
+r0.__cpuid(0);
+char vendor[16];
+r0.GetVendorString(vendor);
+printfln("Vendor: %s", vendor);
+
+CPUID_Result r1;
+r1.__cpuid(1);
+printfln("Family: %x",
+  (((r1.eax >> 20) & 0xff) << 4)
+  + ((r1.eax >> 8) & 0xf));
+printfln("Model: %x",
+  (((r1.eax >> 16) & 0xf) << 4)
+  + ((r1.eax >> 4) & 0xf));
+printfln("Stepping: %x", r1.eax & 0xf);
+printf("Instruction:");
+if (r1.edx & 0x00000001) printf(" FPU");
+if (r1.edx & 0x00008000) printf(" CMOV");
+if (r1.edx & 0x00800000) printf(" MMX");
+if (r1.edx & 0x01000000) printf(" FXSR");
+if (r1.edx & 0x02000000) printf(" SSE");
+if (r1.edx & 0x04000000) printf(" SSE2");
+if (r1.ecx & 0x00000001) printf(" SSE3");
+println();
+
+CPUID_Result rx0;
+rx0.__cpuid(0x80000000);
+if (rx0.eax >= 0x80000004)
+{
+  CPUID_Result rx2, rx3, rx4;
+  rx2.__cpuid(0x80000002);
+  rx3.__cpuid(0x80000003);
+  rx4.__cpuid(0x80000004);
+  char brand[64];
+  rx2.GetBrandString(addrof brand[ 0]);
+  rx3.GetBrandString(addrof brand[16]);
+  rx4.GetBrandString(addrof brand[32]);
+  printfln("Brand: %s", brand);
+}

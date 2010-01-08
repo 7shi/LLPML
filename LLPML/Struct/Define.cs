@@ -77,7 +77,7 @@ namespace Girl.LLPML.Struct
         {
             if (BaseType == null) return null;
             Define st = Parent.GetStruct(BaseType);
-            if (st != null) return st;
+            if (!root.IsCompiling || st != null) return st;
             throw Abort("undefined struct: " + BaseType);
         }
 
@@ -221,18 +221,10 @@ namespace Girl.LLPML.Struct
 
         protected override void BeforeAddCodes(OpModule codes)
         {
-            Define st = GetBaseStruct();
-            int offset = 0;
-            if (st != null) offset = st.GetSizeInternal();
             thisptr.Address = new Addr32(Reg32.EBP, 8);
-            ForEachMembers((p, pos) =>
-            {
-                if (!p.IsStatic)
-                    p.Address = new Addr32(Var.DestRegister, offset + pos);
-                return false;
-            }, null);
             int lv = Level + 1;
             codes.Add(I386.Enter((ushort)(lv * 4), (byte)lv));
+            var st = GetBaseStruct();
             if (st != null) st.AddInit(codes, thisptr.Address);
         }
 
@@ -342,6 +334,16 @@ namespace Girl.LLPML.Struct
                 var st = (t as TypeStruct).GetStruct();
                 field.CheckField(this, st);
             }
+
+            var bst = GetBaseStruct();
+            int offset = 0;
+            if (bst != null) offset = bst.GetSizeInternal();
+            ForEachMembers((p, pos) =>
+            {
+                if (!p.IsStatic)
+                    p.Address = new Addr32(Var.DestRegister, offset + pos);
+                return false;
+            }, null);
         }
 
         protected override void MakeUpInternal()

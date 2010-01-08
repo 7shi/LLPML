@@ -182,5 +182,13 @@ namespace Girl.LLPML
                 if (pushf) Add(I386.Popf());
             }
         }
+
+        public OpCode GetCall(string tag, string name)
+        {
+            var f = Root.GetFunction(name);
+            if (f == null)
+                throw root.Abort("{0}: can not find: {1}", tag, name);
+            return I386.Call(f.First);
+        }
     }
 }

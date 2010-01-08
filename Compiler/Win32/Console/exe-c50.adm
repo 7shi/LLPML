@@ -1,0 +1,24 @@
+﻿/// スコープ解決演算子
+
+_Finish _finish;
+
+function test()
+{
+  printfln(__FUNCTION__);
+}
+
+struct A
+{
+  function ctor()
+  {
+    test();
+    ::test();
+  }
+  
+  function test()
+  {
+    printfln(__FUNCTION__);
+  }
+}
+
+A a;

@@ -123,7 +123,7 @@ namespace Girl.LLPML.Struct
             }
             else if (target is Var)
             {
-                var tv = target as Var;
+                var tv = Var.Get(target);
                 ret = tv.GetAddress(codes);
                 if (!(tv is Index)) t = tv.Type;
             }

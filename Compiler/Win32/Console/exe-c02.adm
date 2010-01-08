@@ -1,0 +1,14 @@
+﻿/// スコープ 1
+
+_Finish _finish;
+
+const string hello = "こんにちは、世界！";
+printfln(hello);
+
+{
+  printfln(hello);
+  const string hello = "スコープのテスト";
+  printfln(hello);
+}
+
+printfln(hello);

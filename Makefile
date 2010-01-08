@@ -1,26 +1,18 @@
 # Makefile for Mono (requires 2.0)
 
-all: bin/Compiler.exe bin/Sample.exe
+CSC = gmcs
 
-RSRC = obj/Compiler.Properties.Resources.resources
+all: bin/Compiler.exe
 
-bin/Compiler.exe: bin/LLPML.dll $(RSRC)
-	gmcs /out:$@ /resource:$(RSRC) `find Compiler -name "*.cs"` /r:bin/CompilerLib.dll /r:bin/LLPML.dll /r:System.Windows.Forms
-
-$(RSRC): Compiler/Properties/Resources.resx
-	mkdir -p obj
-	resgen2 /useSourcePath /compile Compiler/Properties/Resources.resx,$@
-
-bin/Sample.exe: bin/LLPML.dll
-	gmcs /out:$@ /t:winexe `find Sample -name "*.cs"` /r:bin/CompilerLib.dll /r:bin/LLPML.dll /r:System.Data /r:System.Drawing /r:System.Windows.Forms
-	cp -r Sample/Samples bin
+bin/Compiler.exe: bin/LLPML.dll
+	$(CSC) /out:$@ `find Compiler -name "*.cs"` /r:bin/CompilerLib.dll /r:bin/LLPML.dll
 
 bin/LLPML.dll: bin/CompilerLib.dll
-	gmcs /out:$@ /t:library `find LLPML -name "*.cs"` /r:bin/CompilerLib.dll
+	$(CSC) /out:$@ /t:library `find LLPML -name "*.cs"` /r:bin/CompilerLib.dll
 
 bin/CompilerLib.dll:
 	mkdir -p bin
-	gmcs /out:$@ /t:library `find CompilerLib -name "*.cs"`
+	$(CSC) /out:$@ /t:library `find CompilerLib -name "*.cs"`
 
 clean:
 	rm -rf bin obj
@@ -31,7 +23,11 @@ compiler: bin/COMPILER.exe
 
 LIBSRC = `find CompilerLib LLPML -name "*.cs" | grep -v /Properties/`
 
-bin/COMPILER.exe: $(RSRC)
+bin/COMPILER.exe:
 	mkdir -p bin
-	gmcs /out:$@ /resource:$(RSRC) $(LIBSRC) `find Compiler -name "*.cs"` /r:System.Windows.Forms
+	$(CSC) /out:$@ $(LIBSRC) `find Compiler -name "*.cs"`
 
+####
+
+build.bat:
+	echo %WINDIR%/Microsoft.NET/Framework/v3.5/csc -o+ -out:COMPILER.exe $(LIBSRC) `find Compiler -name "*.cs"` | sed 's/\//\\/g' > $@

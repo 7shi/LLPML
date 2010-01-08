@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Girl.Binary;
 using Girl.X86;
@@ -100,9 +99,9 @@ namespace Girl.LLPML
             {
                 I386.Push(Reg32.EAX),
                 I386.Push(ad),
-                GetCall("delegate", Delegate.Free),
+                codes.GetCall("delegate", Delegate.Free),
                 I386.Add(Reg32.ESP, 4),
-                GetCall("delegate", Delegate.Duplicate),
+                codes.GetCall("delegate", Delegate.Duplicate),
                 I386.Add(Reg32.ESP, 4),
             });
 
@@ -129,7 +128,7 @@ namespace Girl.LLPML
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(new Addr32(Reg32.EAX)),
-                GetCall("delegate", Delegate.Free),
+                codes.GetCall("delegate", Delegate.Free),
                 I386.Add(Reg32.ESP, 4),
             });
         }

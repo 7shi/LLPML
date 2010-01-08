@@ -28,14 +28,20 @@ namespace Girl.LLPML
         {
             get
             {
-                var v = GetConst();
+                var v = GetVar();
                 if (v != null) return v.Type;
+
+                var c = GetConst();
+                if (c != null) return c.Type;
 
                 var f = GetFunction();
                 if (f != null) return f.Type;
 
                 var g = GetGetter();
                 if (g != null) return g.ReturnType;
+
+                var s = GetSetter();
+                if (s != null) return s.Args[1].Type;
 
                 throw Abort("can not find: {0}", name);
             }
@@ -51,10 +57,16 @@ namespace Girl.LLPML
                 v = func.GetAddress(m);
             else
             {
-                var vv = GetConst();
+                var vv = GetVar();
                 if (vv != null)
                 {
                     vv.AddCodes(codes, op, dest);
+                    return;
+                }
+                var c = GetConst();
+                if (c != null)
+                {
+                    c.AddCodes(codes, op, dest);
                     return;
                 }
                 var f = GetFunction();
@@ -91,6 +103,15 @@ namespace Girl.LLPML
             return Parent.GetFunction("set_" + name);
         }
 
+        public Var GetVar()
+        {
+            if (GetFunction() != null) return null;
+            var v = Parent.GetVar(name);
+            if (v != null && v.Parent is Struct.Define)
+                return new Var(Parent, v) { SrcInfo = SrcInfo };
+            return null;
+        }
+
         public bool IsGetter
         {
             get { return GetGetter() != null; }
@@ -122,7 +143,8 @@ namespace Girl.LLPML
             if (parent.Parent == null) return null;
 
             var v = parent.GetVar(name);
-            if (v != null && v.Parent.Parent == null) return new Var(parent, v);
+            if (v != null && (v.Parent is Struct.Define || v.Parent.Parent == null))
+                return new Var(parent, v);
 
             return null;
         }

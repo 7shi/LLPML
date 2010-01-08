@@ -1,0 +1,41 @@
+﻿/// クイックソート
+
+_Finish _finish;
+
+ArrayList a;
+a.Add(53);
+a.Add(12);
+a.Add(90);
+a.Add(34);
+a.Add(15);
+a.Add(3);
+a.Add(25);
+
+ArrayList b;
+b |< a.QuickSort;
+
+a |> Show;
+b |> Show;
+
+function QuickSort(src : ArrayList, dest : ArrayList)
+{
+  if (src.Count == 0) return;
+  
+  var x = src.Ptr[0];
+  ArrayList lt, ge;
+  lt |< src.FindPartial(1, \n => n <  x);
+  ge |< src.FindPartial(1, \n => n >= x);
+  dest |< lt.QuickSort;
+  dest |< Add(x);
+  dest |< ge.QuickSort;
+}
+
+function Show(list : ArrayList)
+{
+  list.ForEachWithOrder(\(n, i) =>
+  {
+    if (i > 0) printf(", ");
+    printf("%d", n);
+  });
+  println();
+}

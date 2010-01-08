@@ -129,15 +129,5 @@ namespace Girl.LLPML
             // -X => operator_neg
             return null;
         }
-
-        // others
-        protected static OpCode GetCall(string tag, string name)
-        {
-            var root = OpModule.Root;
-            var f = root.GetFunction(name);
-            if (f == null)
-                throw root.Abort("{0}: can not find: {1}", tag, name);
-            return I386.Call(f.First);
-        }
     }
 }

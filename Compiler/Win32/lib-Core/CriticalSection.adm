@@ -1,0 +1,61 @@
+﻿extern "kernel32.dll" __stdcall
+{
+  InitializeCriticalSection(lpCriticalSection : CRITICAL_SECTION);
+  DeleteCriticalSection(lpCriticalSection : CRITICAL_SECTION);
+  EnterCriticalSection(lpCriticalSection : CRITICAL_SECTION);
+  LeaveCriticalSection(lpCriticalSection : CRITICAL_SECTION);
+  TryEnterCriticalSection(lpCriticalSection : CRITICAL_SECTION) : bool;
+}
+
+struct CRITICAL_SECTION
+{
+  var DebugInfo;
+  var LockCount;
+  var RecursionCount;
+  var OwningThread;
+  var LockSemaphore;
+  int SpinCount;
+}
+
+struct CriticalSection : CRITICAL_SECTION
+{
+  function ctor()
+  {
+    InitializeCriticalSection(this);
+  }
+  
+  function dtor()
+  {
+    DeleteCriticalSection(this);
+  }
+  
+  function Enter()
+  {
+    EnterCriticalSection(this);
+  }
+  
+  function Leave()
+  {
+    LeaveCriticalSection(this);
+  }
+  
+  function TryEnter()
+  {
+    return TryEnterCriticalSection(this);
+  }
+}
+
+struct _lock
+{
+  var cs : CriticalSection = null;
+  
+  function ctor()
+  {
+    if (cs != null) cs.Enter();
+  }
+  
+  function dtor()
+  {
+    if (cs != null) cs.Leave();
+  }
+}

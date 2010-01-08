@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -89,8 +89,8 @@ namespace Girl.LLPML.Parsing
                     new WrapOperator("(", Call),
                     new WrapOperator(".", Member),
                     new WrapOperator("[", Index),
-                    new WrapOperator("++", PostInc),
-                    new WrapOperator("--", PostDec),
+                    new WrapOperator("++", (target, order) => new PostInc(parent, target)),
+                    new WrapOperator("--", (target, order) => new PostDec(parent, target)),
                 },
             };
 
@@ -110,7 +110,7 @@ namespace Girl.LLPML.Parsing
         }
 
         private delegate IIntValue NodeDelegate(IIntValue arg1, IIntValue arg2);
-        private delegate IIntValue VarDelegate(Var dest, IIntValue value);
+        private delegate IIntValue VarDelegate(IIntValue dest, IIntValue value);
         private delegate IIntValue WrapDelegate(IIntValue arg, int order);
 
         private abstract class OperatorBase
@@ -157,20 +157,7 @@ namespace Girl.LLPML.Parsing
             public override IIntValue Read(IIntValue arg, int order)
             {
                 Parser parser = handler.Target as Parser;
-                var dest = arg as Var;
-                if (arg is Variant)
-                {
-                    var fp = arg as Variant;
-                    if (fp.GetSetter() != null)
-                    {
-                        var m = new Struct.Member(fp.Parent, fp.Name);
-                        m.Target = new Struct.This(fp.Parent);
-                        dest = m;
-                    }
-                }
-                if (dest == null)
-                    throw parser.Abort("ç∂ï”Ç…ë„ì¸Ç≈Ç´Ç‹ÇπÇÒ: {0}", Name);
-                return handler(dest, parser.Expression(order + assoc));
+                return handler(arg, parser.Expression(order + assoc));
             }
         }
 

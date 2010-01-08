@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,7 +16,7 @@ namespace Girl.LLPML.Parsing
             }
             var args = Arguments(",", ")", false);
             if (args == null)
-                throw Abort("{0}: ˆø”‚ª•sŠ®‘S‚Å‚·B", fn);
+                throw Abort("{0}: å¼•æ•°ãŒä¸å®Œå…¨ã§ã™ã€‚", fn);
             if (target is Variant)
                 return new Call(parent, fn, null, args);
             if (target is Struct.Member)
@@ -34,7 +34,7 @@ namespace Girl.LLPML.Parsing
             if (!Tokenizer.IsWord(t2))
             {
                 Rewind();
-                throw Abort("–¼‘O‚ª•s“KØ‚Å‚·: {0}", t2);
+                throw Abort("åå‰ãŒä¸é©åˆ‡ã§ã™: {0}", t2);
             }
             var t2m = new Struct.Member(parent, t2);
             if (mem != null)
@@ -51,37 +51,9 @@ namespace Girl.LLPML.Parsing
 
         private IIntValue Index(IIntValue target, int order)
         {
-            var ar = target as Var;
-            if (ar == null)
-            {
-                Rewind();
-                throw Abort("”z—ñ‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
-            }
-            var ret = new Index(parent, ar, Expression());
-            Check("”z—ñ", "]");
+            var ret = new Index(parent, target, Expression());
+            Check("é…åˆ—", "]");
             return ret;
-        }
-
-        private IIntValue PostInc(IIntValue target, int order)
-        {
-            var t = target as Var;
-            if (t == null)
-            {
-                Rewind();
-                throw Abort("++: ‘ÎÛ‚ª•Ï”‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
-            }
-            return new PostInc(parent, t);
-        }
-
-        private IIntValue PostDec(IIntValue target, int order)
-        {
-            var t = target as Var;
-            if (t == null)
-            {
-                Rewind();
-                throw Abort("--: ‘ÎÛ‚ª•Ï”‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
-            }
-            return new PostDec(parent, t);
         }
 
         private Call ConvertToCall(IIntValue v)

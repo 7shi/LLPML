@@ -1,0 +1,17 @@
+﻿/// 関数
+
+_Finish _finish;
+
+var i = 1;
+
+test();
+test();
+test();
+test();
+test();
+
+function test()
+{
+  printfln("i = %d", i);
+  i++;
+}

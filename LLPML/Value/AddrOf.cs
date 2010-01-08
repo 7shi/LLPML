@@ -10,9 +10,9 @@ namespace Girl.LLPML
 {
     public class AddrOf : NodeBase, IIntValue
     {
-        public Var Target { get; private set; }
+        public IIntValue Target { get; private set; }
 
-        public AddrOf(BlockBase parent, Var target) : base(parent) { Target = target; }
+        public AddrOf(BlockBase parent, IIntValue target) : base(parent) { Target = target; }
         public AddrOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -25,9 +25,7 @@ namespace Girl.LLPML
                 {
                     if (Target != null)
                         throw Abort(xr, "too many operands");
-                    Target = v as Var;
-                    if (Target == null)
-                        throw Abort(xr, "variable required");
+                    Target = v;
                 }
             });
             if (Target == null)
@@ -38,7 +36,10 @@ namespace Girl.LLPML
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            var ad = Target.GetAddress(codes);
+            var t = Var.Get(Target);
+            if (t == null)
+                throw Abort("addrof: variable required");
+            var ad = t.GetAddress(codes);
             codes.Add(I386.Lea(Reg32.EAX, ad));
             codes.AddCodes(op, dest);
         }

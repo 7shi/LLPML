@@ -1,0 +1,5 @@
+﻿/// Hello
+
+#pragma subsystem(WINDOWS_GUI)
+
+MessageBox(null, "こんにちは、世界！", "だいあろぐ", 0);

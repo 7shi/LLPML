@@ -1,0 +1,22 @@
+﻿/// メンバ関数 1
+
+_Finish _finish;
+
+struct Point
+{
+  var x, y;
+
+  function Show()
+  {
+    printfln("[%s] %d, %d", __FUNCTION__, x, y);
+  }
+}
+
+// instance
+Point p = { 2, 3 };
+p.Show();
+
+// pointer
+//var pp : Point = p;
+var pp = p; // 型推論
+pp.Show();

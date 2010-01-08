@@ -1,0 +1,11 @@
+﻿/// 戻り値
+
+_Finish _finish;
+
+var a = 3, b = 4;
+printfln("%d + %d = %d", a, b, add(a, b));
+
+function add(a, b)
+{
+  return a + b;
+}
