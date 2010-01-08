@@ -12,11 +12,11 @@ namespace Girl.X86
             // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
             // Push
-            Push((ushort)0x1234)
+            PushW((ushort)0x1234)
                 .Test("push word 0x1234", "66-68-34-12");
-            Push(Reg16.AX)
+            PushW(Reg16.AX)
                 .Test("push ax", "66-50");
-            Push(Reg16.SP)
+            PushW(Reg16.SP)
                 .Test("push sp", "66-54");
             PushW(new Addr32(Reg32.EAX))
                 .Test("push word [eax]", "66-FF-30");
@@ -28,9 +28,9 @@ namespace Girl.X86
                 .Test("push word [esi+0x1000]", "66-FF-B6-00-10-00-00");
 
             // Pop
-            Pop(Reg16.AX)
+            PopW(Reg16.AX)
                 .Test("pop ax", "66-58");
-            Pop(Reg16.SP)
+            PopW(Reg16.SP)
                 .Test("pop sp", "66-5C");
             PopW(new Addr32(Reg32.EAX))
                 .Test("pop word [eax]", "66-8F-00");
@@ -42,9 +42,9 @@ namespace Girl.X86
                 .Test("pop word [esi+0x1000]", "66-8F-86-00-10-00-00");
 
             // Inc
-            Inc(Reg16.AX)
+            IncW(Reg16.AX)
                 .Test("inc ax", "66-40");
-            Inc(Reg16.SP)
+            IncW(Reg16.SP)
                 .Test("inc sp", "66-44");
             IncW(new Addr32(Reg32.EAX))
                 .Test("inc word [eax]", "66-FF-00");
@@ -56,9 +56,9 @@ namespace Girl.X86
                 .Test("inc word [esi+0x1000]", "66-FF-86-00-10-00-00");
 
             // Dec
-            Dec(Reg16.AX)
+            DecW(Reg16.AX)
                 .Test("dec ax", "66-48");
-            Dec(Reg16.SP)
+            DecW(Reg16.SP)
                 .Test("dec sp", "66-4C");
             DecW(new Addr32(Reg32.EAX))
                 .Test("dec word [eax]", "66-FF-08");
@@ -70,9 +70,9 @@ namespace Girl.X86
                 .Test("dec word [esi+0x1000]", "66-FF-8E-00-10-00-00");
 
             // Not
-            Not(Reg16.AX)
+            NotW(Reg16.AX)
                 .Test("not ax", "66-F7-D0");
-            Not(Reg16.SP)
+            NotW(Reg16.SP)
                 .Test("not sp", "66-F7-D4");
             NotW(new Addr32(Reg32.EAX))
                 .Test("not word [eax]", "66-F7-10");
@@ -84,9 +84,9 @@ namespace Girl.X86
                 .Test("not word [esi+0x1000]", "66-F7-96-00-10-00-00");
 
             // Neg
-            Neg(Reg16.AX)
+            NegW(Reg16.AX)
                 .Test("neg ax", "66-F7-D8");
-            Neg(Reg16.SP)
+            NegW(Reg16.SP)
                 .Test("neg sp", "66-F7-DC");
             NegW(new Addr32(Reg32.EAX))
                 .Test("neg word [eax]", "66-F7-18");
@@ -98,9 +98,9 @@ namespace Girl.X86
                 .Test("neg word [esi+0x1000]", "66-F7-9E-00-10-00-00");
 
             // Mul
-            Mul(Reg16.AX)
+            MulW(Reg16.AX)
                 .Test("mul ax", "66-F7-E0");
-            Mul(Reg16.SP)
+            MulW(Reg16.SP)
                 .Test("mul sp", "66-F7-E4");
             MulW(new Addr32(Reg32.EAX))
                 .Test("mul word [eax]", "66-F7-20");
@@ -112,9 +112,9 @@ namespace Girl.X86
                 .Test("mul word [esi+0x1000]", "66-F7-A6-00-10-00-00");
 
             // Imul
-            Imul(Reg16.AX)
+            ImulW(Reg16.AX)
                 .Test("imul ax", "66-F7-E8");
-            Imul(Reg16.SP)
+            ImulW(Reg16.SP)
                 .Test("imul sp", "66-F7-EC");
             ImulW(new Addr32(Reg32.EAX))
                 .Test("imul word [eax]", "66-F7-28");
@@ -126,9 +126,9 @@ namespace Girl.X86
                 .Test("imul word [esi+0x1000]", "66-F7-AE-00-10-00-00");
 
             // Div
-            Div(Reg16.AX)
+            DivW(Reg16.AX)
                 .Test("div ax", "66-F7-F0");
-            Div(Reg16.SP)
+            DivW(Reg16.SP)
                 .Test("div sp", "66-F7-F4");
             DivW(new Addr32(Reg32.EAX))
                 .Test("div word [eax]", "66-F7-30");
@@ -140,9 +140,9 @@ namespace Girl.X86
                 .Test("div word [esi+0x1000]", "66-F7-B6-00-10-00-00");
 
             // Idiv
-            Idiv(Reg16.AX)
+            IdivW(Reg16.AX)
                 .Test("idiv ax", "66-F7-F8");
-            Idiv(Reg16.SP)
+            IdivW(Reg16.SP)
                 .Test("idiv sp", "66-F7-FC");
             IdivW(new Addr32(Reg32.EAX))
                 .Test("idiv word [eax]", "66-F7-38");

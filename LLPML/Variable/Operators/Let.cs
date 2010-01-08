@@ -31,7 +31,18 @@ namespace Girl.LLPML
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             values[0].AddCodes(codes, m, "mov", null);
-            codes.Add(I386.Mov(dest.GetAddress(codes, m), Reg32.EAX));
+            switch (dest.Size)
+            {
+                case 2:
+                    codes.Add(I386.MovW(dest.GetAddress(codes, m), Reg16.AX));
+                    break;
+                case 1:
+                    codes.Add(I386.MovB(dest.GetAddress(codes, m), Reg8.AL));
+                    break;
+                default:
+                    codes.Add(I386.Mov(dest.GetAddress(codes, m), Reg32.EAX));
+                    break;
+            }
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

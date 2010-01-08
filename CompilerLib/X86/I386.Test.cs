@@ -18,6 +18,8 @@ namespace Girl.X86
             TestShift_32();
             TestShift_16();
             TestShift_8();
+            TestMovx_16();
+            TestMovx_8();
 
             Call(new Addr32(Reg32.EAX))
                 .Test("call [eax]", "FF-10");

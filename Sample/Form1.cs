@@ -62,6 +62,7 @@ namespace Sample
             });
             treeView1.ExpandAll();
             console.Nodes.Add(CreateItem("stdio.xml"));
+            console.Nodes.Add(CreateItem("string.xml"));
             console.Nodes.Add(CreateItem("malloc.xml"));
             console.Nodes.Add(CreateItem("finish.xml"));
             ReadSamples(console, "c");

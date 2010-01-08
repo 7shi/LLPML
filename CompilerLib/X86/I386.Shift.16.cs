@@ -9,27 +9,27 @@ namespace Girl.X86
     {
         // Shl, Shr, Sal, Sar
 
-        public static OpCode Shl(Reg16 op1, byte op2) { return Shift("shl", op1, op2); }
-        public static OpCode Shl(Reg16 op1, Reg8 op2) { return Shift("shl", op1, op2); }
+        public static OpCode ShlW(Reg16 op1, byte op2) { return ShiftW("shl", op1, op2); }
+        public static OpCode ShlW(Reg16 op1, Reg8 op2) { return ShiftW("shl", op1, op2); }
         public static OpCode ShlW(Addr32 op1, byte op2) { return ShiftW("shl", op1, op2); }
         public static OpCode ShlW(Addr32 op1, Reg8 op2) { return ShiftW("shl", op1, op2); }
 
-        public static OpCode Shr(Reg16 op1, byte op2) { return Shift("shr", op1, op2); }
-        public static OpCode Shr(Reg16 op1, Reg8 op2) { return Shift("shr", op1, op2); }
+        public static OpCode ShrW(Reg16 op1, byte op2) { return ShiftW("shr", op1, op2); }
+        public static OpCode ShrW(Reg16 op1, Reg8 op2) { return ShiftW("shr", op1, op2); }
         public static OpCode ShrW(Addr32 op1, byte op2) { return ShiftW("shr", op1, op2); }
         public static OpCode ShrW(Addr32 op1, Reg8 op2) { return ShiftW("shr", op1, op2); }
 
-        public static OpCode Sal(Reg16 op1, byte op2) { return Shift("sal", op1, op2); }
-        public static OpCode Sal(Reg16 op1, Reg8 op2) { return Shift("sal", op1, op2); }
+        public static OpCode SalW(Reg16 op1, byte op2) { return ShiftW("sal", op1, op2); }
+        public static OpCode SalW(Reg16 op1, Reg8 op2) { return ShiftW("sal", op1, op2); }
         public static OpCode SalW(Addr32 op1, byte op2) { return ShiftW("sal", op1, op2); }
         public static OpCode SalW(Addr32 op1, Reg8 op2) { return ShiftW("sal", op1, op2); }
 
-        public static OpCode Sar(Reg16 op1, byte op2) { return Shift("sar", op1, op2); }
-        public static OpCode Sar(Reg16 op1, Reg8 op2) { return Shift("sar", op1, op2); }
+        public static OpCode SarW(Reg16 op1, byte op2) { return ShiftW("sar", op1, op2); }
+        public static OpCode SarW(Reg16 op1, Reg8 op2) { return ShiftW("sar", op1, op2); }
         public static OpCode SarW(Addr32 op1, byte op2) { return ShiftW("sar", op1, op2); }
         public static OpCode SarW(Addr32 op1, Reg8 op2) { return ShiftW("sar", op1, op2); }
 
-        public static OpCode Shift(string op, Reg16 op1, byte op2)
+        public static OpCode ShiftW(string op, Reg16 op1, byte op2)
         {
             byte b;
             switch (op)
@@ -53,7 +53,7 @@ namespace Girl.X86
                 return new OpCode(new byte[] { 0x66, 0xc1, b }, op2);
         }
 
-        public static OpCode Shift(string op, Reg16 op1, Reg8 op2)
+        public static OpCode ShiftW(string op, Reg16 op1, Reg8 op2)
         {
             byte b;
             switch (op)

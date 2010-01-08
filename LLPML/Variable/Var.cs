@@ -10,7 +10,7 @@ namespace Girl.LLPML
     public partial class Var : VarBase, IIntValue
     {
         public const int DefaultSize = 4;
-        public int Size { get { return reference.Length; } }
+        public virtual int Size { get { return reference.Length; } }
 
         private Declare reference;
         protected Declare Reference
@@ -50,9 +50,13 @@ namespace Girl.LLPML
         {
             get
             {
+                int vsz = SizeOf.GetValueSize(Type);
+                if (vsz > 0) return vsz;
+
                 var st = GetStruct();
-                if (st == null) return 0;
-                return st.GetSize();
+                if (st != null) return st.GetSize();
+
+                return 0;
             }
         }
 
@@ -63,7 +67,18 @@ namespace Girl.LLPML
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {
-            IntValue.AddCodes(codes, op, dest, GetAddress(codes, m));
+            switch (Size)
+            {
+                case 2:
+                    IntValue.AddCodesW(codes, op, dest, GetAddress(codes, m));
+                    break;
+                case 1:
+                    IntValue.AddCodesB(codes, op, dest, GetAddress(codes, m));
+                    break;
+                default:
+                    IntValue.AddCodes(codes, op, dest, GetAddress(codes, m));
+                    break;
+            }
         }
     }
 }

@@ -9,41 +9,41 @@ namespace Girl.X86
     {
         // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
-        public static OpCode Push(ushort op1)
+        public static OpCode PushW(ushort op1)
         {
             return new OpCode(new byte[] { 0x66, 0x68 }, op1);
         }
-        public static OpCode Push(Reg16 op1) { return FromName("push", op1); }
+        public static OpCode PushW(Reg16 op1) { return FromNameW("push", op1); }
         public static OpCode PushW(Addr32 op1) { return FromNameW("push", op1); }
 
-        public static OpCode Pop(Reg16 op1) { return FromName("pop", op1); }
+        public static OpCode PopW(Reg16 op1) { return FromNameW("pop", op1); }
         public static OpCode PopW(Addr32 op1) { return FromNameW("pop", op1); }
 
-        public static OpCode Inc(Reg16 op1) { return FromName("inc", op1); }
+        public static OpCode IncW(Reg16 op1) { return FromNameW("inc", op1); }
         public static OpCode IncW(Addr32 op1) { return FromNameW("inc", op1); }
 
-        public static OpCode Dec(Reg16 op1) { return FromName("dec", op1); }
+        public static OpCode DecW(Reg16 op1) { return FromNameW("dec", op1); }
         public static OpCode DecW(Addr32 op1) { return FromNameW("dec", op1); }
 
-        public static OpCode Not(Reg16 op1) { return FromName("not", op1); }
+        public static OpCode NotW(Reg16 op1) { return FromNameW("not", op1); }
         public static OpCode NotW(Addr32 op1) { return FromNameW("not", op1); }
 
-        public static OpCode Neg(Reg16 op1) { return FromName("neg", op1); }
+        public static OpCode NegW(Reg16 op1) { return FromNameW("neg", op1); }
         public static OpCode NegW(Addr32 op1) { return FromNameW("neg", op1); }
 
-        public static OpCode Mul(Reg16 op1) { return FromName("mul", op1); }
+        public static OpCode MulW(Reg16 op1) { return FromNameW("mul", op1); }
         public static OpCode MulW(Addr32 op1) { return FromNameW("mul", op1); }
 
-        public static OpCode Imul(Reg16 op1) { return FromName("imul", op1); }
+        public static OpCode ImulW(Reg16 op1) { return FromNameW("imul", op1); }
         public static OpCode ImulW(Addr32 op1) { return FromNameW("imul", op1); }
 
-        public static OpCode Div(Reg16 op1) { return FromName("div", op1); }
+        public static OpCode DivW(Reg16 op1) { return FromNameW("div", op1); }
         public static OpCode DivW(Addr32 op1) { return FromNameW("div", op1); }
 
-        public static OpCode Idiv(Reg16 op1) { return FromName("idiv", op1); }
+        public static OpCode IdivW(Reg16 op1) { return FromNameW("idiv", op1); }
         public static OpCode IdivW(Addr32 op1) { return FromNameW("idiv", op1); }
 
-        public static OpCode FromName(string op, Reg16 op1)
+        public static OpCode FromNameW(string op, Reg16 op1)
         {
             switch (op)
             {

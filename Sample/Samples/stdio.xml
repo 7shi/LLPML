@@ -11,6 +11,8 @@ extern "kernel32.dll" __stdcall __widecharset
   ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pInputControl);
   lstrlen(lpString);
 }
+extern "user32.dll" __widecharset
+  wsprintf(lpOutput, lpFmt, args : params);
 extern "user32.dll" __stdcall __widecharset
   wvsprintf(lpOutput, lpFmt, arglist);
 

@@ -9,36 +9,36 @@ namespace Girl.X86
     {
         // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
-        public static OpCode Push(byte op1)
+        public static OpCode PushB(byte op1)
         {
             return new OpCode(new byte[] { 0x6a }, op1);
         }
 
-        public static OpCode Inc(Reg8 op1) { return FromName("inc", op1); }
+        public static OpCode IncB(Reg8 op1) { return FromNameB("inc", op1); }
         public static OpCode IncB(Addr32 op1) { return FromNameB("inc", op1); }
 
-        public static OpCode Dec(Reg8 op1) { return FromName("dec", op1); }
+        public static OpCode DecB(Reg8 op1) { return FromNameB("dec", op1); }
         public static OpCode DecB(Addr32 op1) { return FromNameB("dec", op1); }
 
-        public static OpCode Not(Reg8 op1) { return FromName("not", op1); }
+        public static OpCode NotB(Reg8 op1) { return FromNameB("not", op1); }
         public static OpCode NotB(Addr32 op1) { return FromNameB("not", op1); }
 
-        public static OpCode Neg(Reg8 op1) { return FromName("neg", op1); }
+        public static OpCode NegB(Reg8 op1) { return FromNameB("neg", op1); }
         public static OpCode NegB(Addr32 op1) { return FromNameB("neg", op1); }
 
-        public static OpCode Mul(Reg8 op1) { return FromName("mul", op1); }
+        public static OpCode MulB(Reg8 op1) { return FromNameB("mul", op1); }
         public static OpCode MulB(Addr32 op1) { return FromNameB("mul", op1); }
 
-        public static OpCode Imul(Reg8 op1) { return FromName("imul", op1); }
+        public static OpCode ImulB(Reg8 op1) { return FromNameB("imul", op1); }
         public static OpCode ImulB(Addr32 op1) { return FromNameB("imul", op1); }
 
-        public static OpCode Div(Reg8 op1) { return FromName("div", op1); }
+        public static OpCode DivB(Reg8 op1) { return FromNameB("div", op1); }
         public static OpCode DivB(Addr32 op1) { return FromNameB("div", op1); }
 
-        public static OpCode Idiv(Reg8 op1) { return FromName("idiv", op1); }
+        public static OpCode IdivB(Reg8 op1) { return FromNameB("idiv", op1); }
         public static OpCode IdivB(Addr32 op1) { return FromNameB("idiv", op1); }
 
-        public static OpCode FromName(string op, Reg8 op1)
+        public static OpCode FromNameB(string op, Reg8 op1)
         {
             switch (op)
             {

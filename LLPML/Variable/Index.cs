@@ -111,5 +111,7 @@ namespace Girl.LLPML
         {
             return target.GetStruct();
         }
+
+        public override int Size { get { return target.TypeSize; } }
     }
 }

@@ -246,5 +246,45 @@ namespace Girl.LLPML
                     break;
             }
         }
+
+        public static void AddCodesW(List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
+        {
+            switch (op)
+            {
+                case "push":
+                    codes.AddRange(new OpCode[] {
+                        I386.MovsxW(Reg32.EAX, ad),
+                        I386.Push(Reg32.EAX)
+                    });
+                    break;
+                default:
+                    codes.Add(I386.MovW(Reg16.AX, ad));
+                    if (dest != null)
+                        codes.Add(I386.FromNameW(op, dest, Reg16.AX));
+                    else
+                        codes.Add(I386.MovsxW(Reg32.EAX, Reg16.AX));
+                    break;
+            }
+        }
+
+        public static void AddCodesB(List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
+        {
+            switch (op)
+            {
+                case "push":
+                    codes.AddRange(new OpCode[] {
+                        I386.MovzxB(Reg32.EAX, ad),
+                        I386.Push(Reg32.EAX)
+                    });
+                    break;
+                default:
+                    codes.Add(I386.MovB(Reg8.AL, ad));
+                    if (dest != null)
+                        codes.Add(I386.FromNameB(op, dest, Reg8.AL));
+                    else
+                        codes.Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
+                    break;
+            }
+        }
     }
 }

@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080212">
+<llpml version="0.11.20080306">
 
 <?llp
 extern "kernel32.dll" __stdcall
 {
   Sleep(dwMilliseconds);
   __widecharset GetModuleHandle(lpModuleName);
+  GetTickCount();
 }
 extern "user32.dll" __stdcall
 {
@@ -30,6 +31,7 @@ extern "user32.dll" __stdcall __widecharset
   RegisterClassEx(lpwcx);
   CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
   GetMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
+  PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
   DispatchMessage(lpmsg);
 }
 extern "gdi32.dll" __stdcall
@@ -83,6 +85,12 @@ const int WM_XBUTTONUP     = 0x20c;
 const int WM_XBUTTONDBLCLK = 0x20e;
 const int WM_MOUSELAST     = 0x20e;
 
+const int PM_NOREMOVE = 0;
+const int PM_REMOVE   = 1;
+
+const int BI_RGB = 0;
+const int DIB_RGB_COLORS = 0;
+
 struct WNDCLASSEX
 {
   var cbSize;
@@ -134,8 +142,8 @@ struct BITMAPINFOHEADER
   var biSize;
   var biWidth;
   var biHeight;
-  short biPlanes[1];
-  short biBitCount[1];
+  short biPlanes;
+  short biBitCount;
   var biCompression;
   var biSizeImage;
   var biXPelsPerMeter;
@@ -146,10 +154,10 @@ struct BITMAPINFOHEADER
 
 struct RGBQUAD
 {
-  byte rgbBlue[1];
-  byte rgbGreen[1];
-  byte rgbRed[1];
-  byte rgbReserved[1];
+  byte rgbBlue;
+  byte rgbGreen;
+  byte rgbRed;
+  byte rgbReserved;
 }
 
 struct BITMAPINFO

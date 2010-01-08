@@ -147,6 +147,16 @@ namespace Girl.LLPML.Struct
             }
         }
 
+        public override int Size
+        {
+            get
+            {
+                var p = GetPointer();
+                if (p is Var.Declare) return p.Length;
+                return Var.DefaultSize;
+            }
+        }
+
         public void Append(Struct.Member mem)
         {
             if (Child == null)

@@ -1,20 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080218">
+<llpml version="0.11.20080306">
 
 <!-- 整数型 -->
 
 <include src="finish.xml" />
+<include src="string.xml" />
 
 <?llp
-main();
+test();
 
-function main()
+function test()
 {
+  // スタック使用状況
   var a;
   byte b, c;
   var d;
   byte e, f;
   short g;
+  var h;
   show("a", addrof a, sizeof a, typeof a);
   show("b", addrof b, sizeof b, typeof b);
   show("c", addrof c, sizeof c, typeof c);
@@ -22,6 +25,7 @@ function main()
   show("e", addrof e, sizeof e, typeof e);
   show("f", addrof f, sizeof f, typeof f);
   show("g", addrof g, sizeof g, typeof g);
+  println();
   
   function show(name, p, size, type)
   {
@@ -30,9 +34,71 @@ function main()
       name, p, p - addrof(a), size, type);
   }
   
-  e = 0x12345678;
-  printfln("e = %02x, f = %02x, g = %04x", e, f, g);
+  // 代入
+  h = 0xcafebabe;
+  g = 0x5678;
+  f = 0x34;
+  e = 0x12;
+  printfln("e = %x, f = %x, g = %x, h = %x", e, f, g, h);
+  println();
 }
+
+// 構造体メンバ代入
+struct Bytes
+{
+  byte a, b, c, d;
+  
+  function Show()
+  {
+    printfln("a = %x, b = %x, c = %x, d = %x", a, b, c, d);
+    vprintfln("int: %x", this);
+  }
+}
+Bytes b1 = { 0x12, 0x34, 0x56, 0x78 };
+b1.Show();
+b1.d = 0x12;
+b1.c = 0x34;
+b1.b = 0x56;
+b1.a = 0x78;
+b1.Show();
+println();
+
+// 構造体メンバ配列代入
+struct ByteArray
+{
+  byte b[4];
+  
+  function Show()
+  {
+    printfln("b[0] = %x, b[1] = %x, b[2] = %x, b[3] = %x", b[0], b[1], b[2], b[3]);
+    vprintfln("int: %x", this);
+  }
+}
+ByteArray b2;
+b2.b[3] = 0x12;
+b2.b[2] = 0x34;
+b2.b[1] = 0x56;
+b2.b[0] = 0x78;
+b2.Show();
+println();
+
+// キャスト
+var b3 : byte[] = b1;
+printfln("b3[0] = %x, b3[1] = %x, b3[2] = %x, b3[3] = %x", b3[0], b3[1], b3[2], b3[3]);
+var i : int[] = b1;
+printfln("i[0] = %x", i[0]);
+memset(i, 0xff, 2);
+printfln("i[0] = %x", i[0]);
+memset(i, 0x77, 3);
+printfln("i[0] = %x", i[0]);
+
+// TODO: 構造体キャスト
+struct Int32 { int Value; }
+/*
+((Int32)b1).Value = 0xcafebabe;
+((Int32)b2).Value = 0xdeadbeef;
+*/
+
 ?>
 
 </llpml>

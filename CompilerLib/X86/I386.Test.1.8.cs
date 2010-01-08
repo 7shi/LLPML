@@ -12,13 +12,13 @@ namespace Girl.X86
             // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
             // Push
-            Push((byte)0x12)
+            PushB((byte)0x12)
                 .Test("push byte 0x12", "6A-12");
 
             // Inc
-            Inc(Reg8.AL)
+            IncB(Reg8.AL)
                 .Test("inc al", "FE-C0");
-            Inc(Reg8.AH)
+            IncB(Reg8.AH)
                 .Test("inc ah", "FE-C4");
             IncB(new Addr32(Reg32.EAX))
                 .Test("inc byte [eax]", "FE-00");
@@ -30,9 +30,9 @@ namespace Girl.X86
                 .Test("inc byte [esi+0x1000]", "FE-86-00-10-00-00");
 
             // Dec
-            Dec(Reg8.AL)
+            DecB(Reg8.AL)
                 .Test("dec al", "FE-C8");
-            Dec(Reg8.AH)
+            DecB(Reg8.AH)
                 .Test("dec ah", "FE-CC");
             DecB(new Addr32(Reg32.EAX))
                 .Test("dec byte [eax]", "FE-08");
@@ -44,9 +44,9 @@ namespace Girl.X86
                 .Test("dec byte [esi+0x1000]", "FE-8E-00-10-00-00");
 
             // Not
-            Not(Reg8.AL)
+            NotB(Reg8.AL)
                 .Test("not al", "F6-D0");
-            Not(Reg8.AH)
+            NotB(Reg8.AH)
                 .Test("not ah", "F6-D4");
             NotB(new Addr32(Reg32.EAX))
                 .Test("not byte [eax]", "F6-10");
@@ -58,9 +58,9 @@ namespace Girl.X86
                 .Test("not byte [esi+0x1000]", "F6-96-00-10-00-00");
 
             // Neg
-            Neg(Reg8.AL)
+            NegB(Reg8.AL)
                 .Test("neg al", "F6-D8");
-            Neg(Reg8.AH)
+            NegB(Reg8.AH)
                 .Test("neg ah", "F6-DC");
             NegB(new Addr32(Reg32.EAX))
                 .Test("neg byte [eax]", "F6-18");
@@ -72,9 +72,9 @@ namespace Girl.X86
                 .Test("neg byte [esi+0x1000]", "F6-9E-00-10-00-00");
 
             // Mul
-            Mul(Reg8.AL)
+            MulB(Reg8.AL)
                 .Test("mul al", "F6-E0");
-            Mul(Reg8.AH)
+            MulB(Reg8.AH)
                 .Test("mul ah", "F6-E4");
             MulB(new Addr32(Reg32.EAX))
                 .Test("mul byte [eax]", "F6-20");
@@ -86,9 +86,9 @@ namespace Girl.X86
                 .Test("mul byte [esi+0x1000]", "F6-A6-00-10-00-00");
 
             // Imul
-            Imul(Reg8.AL)
+            ImulB(Reg8.AL)
                 .Test("imul al", "F6-E8");
-            Imul(Reg8.AH)
+            ImulB(Reg8.AH)
                 .Test("imul ah", "F6-EC");
             ImulB(new Addr32(Reg32.EAX))
                 .Test("imul byte [eax]", "F6-28");
@@ -100,9 +100,9 @@ namespace Girl.X86
                 .Test("imul byte [esi+0x1000]", "F6-AE-00-10-00-00");
 
             // Div
-            Div(Reg8.AL)
+            DivB(Reg8.AL)
                 .Test("div al", "F6-F0");
-            Div(Reg8.AH)
+            DivB(Reg8.AH)
                 .Test("div ah", "F6-F4");
             DivB(new Addr32(Reg32.EAX))
                 .Test("div byte [eax]", "F6-30");
@@ -114,9 +114,9 @@ namespace Girl.X86
                 .Test("div byte [esi+0x1000]", "F6-B6-00-10-00-00");
 
             // Idiv
-            Idiv(Reg8.AL)
+            IdivB(Reg8.AL)
                 .Test("idiv al", "F6-F8");
-            Idiv(Reg8.AH)
+            IdivB(Reg8.AH)
                 .Test("idiv ah", "F6-FC");
             IdivB(new Addr32(Reg32.EAX))
                 .Test("idiv byte [eax]", "F6-38");

@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.11.20080306" subsystem="WINDOWS_GUI">
+
+<!-- window -->
+
+<include src="stdio.xml" />
+<include src="string.xml" />
+<include src="malloc.xml" />
+<include src="win32.xml" />
+
+<?llp
+const string className = "LLPML Test Window";
+const int width = 256, height = 256;
+var hInstance = GetModuleHandle(null);
+var alive = true;
+char fpsBuf[1025];
+var fpsBufLen = 0;
+
+WNDCLASSEX wcex =
+{
+  /* cbSize        */ sizeof(WNDCLASSEX),
+  /* style         */ CS_VREDRAW | CS_HREDRAW,
+  /* lpfnWndProc   */ WndProc,
+  /* cbClsExtra    */ 0,
+  /* cbWndExtra    */ 0,
+  /* hInstance     */ hInstance,
+  /* hIcon         */ null,
+  /* hCursor       */ LoadCursor(null, IDC_ARROW),
+  /* hbrBackground */ COLOR_WINDOW + 1,
+  /* lpszMenuName  */ null,
+  /* lpszClassName */ className,
+  /* hIconSm       */ null
+};
+wcex.RegisterClassEx();
+
+BITMAPINFO bmpInfo;
+memset(bmpInfo, 0, sizeof(bmpInfo));
+bmpInfo.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
+bmpInfo.bmiHeader.biWidth       = width;
+bmpInfo.bmiHeader.biHeight      = -height;
+bmpInfo.bmiHeader.biPlanes      = 1;
+bmpInfo.bmiHeader.biCompression = BI_RGB;
+bmpInfo.bmiHeader.biBitCount    = 32;
+
+struct Color { byte B, G, R, A; }
+var pixelCount = width * height;
+var buffer : Color[] = malloc(sizeof(Color) * pixelCount);
+ClearBuffer(0xffffffff);
+
+var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+RECT r = { 0, 0, width, height };
+r.AdjustWindowRectEx(dwStyle, false, 0);
+var hWnd = CreateWindowEx(
+  /* dwExStyle    */ 0,
+  /* lpClassName  */ className,
+  /* lpWindowName */ "テスト",
+  /* dwStyle      */ dwStyle,
+  /* X            */ CW_USEDEFAULT,
+  /* Y            */ 0,
+  /* nWidth       */ r.right - r.left,
+  /* nHeight      */ r.bottom - r.top,
+  /* hWndParent   */ null,
+  /* hMenu        */ null,
+  /* hInstance    */ hInstance,
+  /* lpParam      */ null
+);
+hWnd.ShowWindow(SW_SHOWNORMAL);
+hWnd.UpdateWindow();
+
+// ループ
+var count = 0;
+var fps = 0;
+var tick = GetTickCount();
+while (DoEvents())
+{
+  // 描画
+  ClearBuffer(0xffffffff);
+  var bx = (count & 63) - 64;
+  for (var i = 0; i < 4; i++)
+  {
+    for (var j = 0; j < 5; j++)
+    {
+      FillRectangle(bx + j * 64,  8 + i * 64, 48, 48, 0xa00000ff);
+      FillRectangle( 8 + i * 64, bx + j * 64, 48, 48, 0xa0ff0000);
+    }
+  }
+  count++;
+  InvalidateRect(hWnd, null, false);
+  
+  // fps
+  fps++;
+  var t = GetTickCount();
+  if (tick > t)
+  {
+    fps = 0;
+    tick = t;
+  }
+  else if (t - tick > 1000)
+  {
+    fpsBufLen = wsprintf(fpsBuf, "%d fps", fps);
+    fps = 0;
+    tick = t;
+  }
+}
+
+hWnd.DestroyWindow();
+free(buffer);
+
+function __stdcall WndProc(hWnd, msg, wParam, lParam)
+{
+  switch (msg)
+  {
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      var hdc = hWnd.BeginPaint(ps);
+	    SetDIBitsToDevice(hdc, 0, 0, width, height, 0, 0, 0, height,
+		    buffer, bmpInfo, DIB_RGB_COLORS);
+		  if (fpsBufLen > 0) hdc.TextOut(8, 8, fpsBuf, fpsBufLen);
+      hWnd.EndPaint(ps);
+      break;
+    }
+    case WM_DESTROY:
+      alive = false;
+      PostQuitMessage(0);
+      break;
+    default:
+      return hWnd.DefWindowProc(msg, wParam, lParam);
+  }
+  return 0;
+}
+
+function ClearBuffer(color)
+{
+  for (var i = 0; i < pixelCount; i++) buffer[i] = color;
+}
+
+function FillRectangle(x, y, w, h, color)
+{
+  var c : Color = addrof(color);
+  var x1 = x;
+  if (x1 < 0) x1 = 0;
+  var y1 = y;
+  if (y1 < 0) y1 = 0;
+  var x2 = x + w;
+  if (x2 > width) x2 = width;
+  var y2 = y + h;
+  if (y2 > height) y2 = height;
+  for (var yy = y1; yy < y2; yy++)
+  {
+    var p : Color = addrof(buffer[x1 + yy * width]);
+    for (var xx = x1; xx < x2; xx++)
+    {
+      p.B = (c.B * c.A + p.B * (255 - c.A)) >> 8;
+      p.G = (c.G * c.A + p.G * (255 - c.A)) >> 8;
+      p.R = (c.R * c.A + p.R * (255 - c.A)) >> 8;
+      p += sizeof(Color);
+    }
+    /*
+    var p = x1 + yy * width;
+    for (var xx = x1; xx < x2; xx++)
+    {
+      buffer[p].B = (c.B * c.A + buffer[p].B * (255 - c.A)) >> 8;
+      buffer[p].G = (c.G * c.A + buffer[p].G * (255 - c.A)) >> 8;
+      buffer[p].R = (c.R * c.A + buffer[p].R * (255 - c.A)) >> 8;
+      p++;
+    }
+    */
+  }
+}
+
+function DoEvents()
+{
+  MSG msg;
+  while (alive && msg.PeekMessage(null, 0, 0, PM_REMOVE))
+  {
+    msg.TranslateMessage();
+    msg.DispatchMessage();
+  }
+  return alive;
+}
+?>
+
+</llpml>

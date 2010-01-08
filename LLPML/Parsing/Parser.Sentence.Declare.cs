@@ -238,7 +238,7 @@ namespace Girl.LLPML.Parsing
                     else
                     {
                         if (eq)
-                            throw parent.Abort(ln, lp, "var: 配列を初期化できません。");
+                            throw parent.Abort(ln, lp, "{0}: 配列を初期化できません。", type);
                         p = new Pointer.Declare(parent, name, type, (int)array);
                     }
                     p.SetLine(ln, lp);

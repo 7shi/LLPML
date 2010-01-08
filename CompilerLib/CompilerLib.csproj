@@ -83,6 +83,10 @@
     <Compile Include="X86\I386.1.8.cs" />
     <Compile Include="X86\I386.Test.Shift.8.cs" />
     <Compile Include="X86\I386.Shift.8.cs" />
+    <Compile Include="X86\I386.Test.Movx.16.cs" />
+    <Compile Include="X86\I386.Test.Movx.8.cs" />
+    <Compile Include="X86\I386.Movx.16.cs" />
+    <Compile Include="X86\I386.Movx.8.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
