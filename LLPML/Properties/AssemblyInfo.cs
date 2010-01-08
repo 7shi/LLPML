@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("LLPML")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Global Interactive Revolution Laboratory")]
 [assembly: AssemblyProduct("LLPML")]
 [assembly: AssemblyCopyright("Public Domain")]
 [assembly: AssemblyTrademark("")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.2.*")]
+[assembly: AssemblyVersion("0.5.*")]
 //[assembly: AssemblyFileVersion("1.0.0.0")]

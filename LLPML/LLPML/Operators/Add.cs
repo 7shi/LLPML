@@ -7,12 +7,17 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Add : Operands, IIntValue
+    public class Add : Operator, IIntValue
     {
         public Add() { }
-        public Add(Block parent, string name) : base(parent, name) { }
-        public Add(Block parent, string name, IntValue[] values) : base(parent, name, values) { }
+        public Add(Block parent) : base(parent) { }
+        public Add(Block parent, IntValue[] values) : base(parent, values) { }
         public Add(Block parent, XmlTextReader xr) : base(parent, xr) { }
+
+        protected virtual void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
+        {
+            v.AddCodes(codes, m, "add", ad);
+        }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {
@@ -27,7 +32,7 @@ namespace Girl.LLPML
                 }
                 else
                 {
-                    v.AddCodes(codes, m, "add", ad);
+                    Calculate(codes, m, ad, v);
                 }
             }
             if (op != "push")

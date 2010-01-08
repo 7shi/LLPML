@@ -3,26 +3,59 @@
 
 <include src="stdio.xml" />
 
-<string-declare name="hello">こんにちは、世界！</string-declare>
+<var-int-declare name="i">1</var-int-declare>
+<string-declare name="format">i=%d</string-declare>
 
 <call name="printfln">
-	<string name="hello" />
+	<string name="format" />
+	<var-int name="i" />
 </call>
 
 <block>
 	<call name="printfln">
-		<string name="hello" />
+		<string name="format" />
+		<var-int name="i" />
 	</call>
 
-	<string-declare name="hello">スコープのテスト</string-declare>
-	
+	<block>
+		<call name="printfln">
+			<string name="format" />
+			<var-int name="i" />
+		</call>
+	</block>
+
+	<var-int-declare name="i">2</var-int-declare>
+	<string-declare name="format">	i=%d</string-declare>
+
 	<call name="printfln">
-		<string name="hello" />
+		<string name="format" />
+		<var-int name="i" />
+	</call>
+
+	<block>
+		<call name="printfln">
+			<string name="format" />
+			<var-int name="i" />
+		</call>
+
+		<var-int-declare name="i">3</var-int-declare>
+		<string-declare name="format">		i=%d</string-declare>
+
+		<call name="printfln">
+			<string name="format" />
+			<var-int name="i" />
+		</call>
+	</block>
+
+	<call name="printfln">
+		<string name="format" />
+		<var-int name="i" />
 	</call>
 </block>
 
 <call name="printfln">
-	<string name="hello" />
+	<string name="format" />
+	<var-int name="i" />
 </call>
 
 <call name="finish" />

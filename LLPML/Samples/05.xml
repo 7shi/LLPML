@@ -1,61 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.5.20070819">
 
 <include src="stdio.xml" />
 
-<var-int-declare name="i">1</var-int-declare>
-<string-declare name="format">i=%d</string-declare>
+<var-int-declare name="result">0</var-int-declare>
+
+<for>
+	<init>
+		<var-int-declare name="i">1</var-int-declare>
+	</init>
+	<cond>
+		<less-equal>
+			<var-int name="i" />
+			<int>10000</int>
+		</less-equal>
+	</cond>
+	<loop>
+		<inc>
+			<var-int name="i" />
+		</inc>
+	</loop>
+	<block>
+		<var-int-add>
+			<var-int name="result" />
+			<var-int name="i" />
+		</var-int-add>
+	</block>
+</for>
 
 <call name="printfln">
-	<string name="format" />
-	<var-int name="i" />
-</call>
-
-<block>
-	<call name="printfln">
-		<string name="format" />
-		<var-int name="i" />
-	</call>
-
-	<block>
-		<call name="printfln">
-			<string name="format" />
-			<var-int name="i" />
-		</call>
-	</block>
-
-	<var-int-declare name="i">2</var-int-declare>
-	<string-declare name="format">	i=%d</string-declare>
-
-	<call name="printfln">
-		<string name="format" />
-		<var-int name="i" />
-	</call>
-
-	<block>
-		<call name="printfln">
-			<string name="format" />
-			<var-int name="i" />
-		</call>
-
-		<var-int-declare name="i">3</var-int-declare>
-		<string-declare name="format">		i=%d</string-declare>
-
-		<call name="printfln">
-			<string name="format" />
-			<var-int name="i" />
-		</call>
-	</block>
-
-	<call name="printfln">
-		<string name="format" />
-		<var-int name="i" />
-	</call>
-</block>
-
-<call name="printfln">
-	<string name="format" />
-	<var-int name="i" />
+	<string>1 + 2 + ... + 10000 = %d</string>
+	<var-int name="result" />
 </call>
 
 <call name="finish" />

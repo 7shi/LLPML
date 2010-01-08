@@ -45,7 +45,7 @@ namespace Girl.LLPML
                 if (type == null) type = "byte";
                 string slen = xr["length"];
                 if (slen == null) throw Abort(xr, "length required");
-                int len = int.Parse(slen);
+                int len = IntValue.Parse(slen);
 
                 switch (type)
                 {

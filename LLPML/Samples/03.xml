@@ -3,7 +3,27 @@
 
 <include src="stdio.xml" />
 
-<call name="printfln">こんにちは、世界！</call>
+<string-declare name="hello">こんにちは、世界！</string-declare>
+
+<call name="printfln">
+	<string name="hello" />
+</call>
+
+<block>
+	<call name="printfln">
+		<string name="hello" />
+	</call>
+
+	<string-declare name="hello">スコープのテスト</string-declare>
+	
+	<call name="printfln">
+		<string name="hello" />
+	</call>
+</block>
+
+<call name="printfln">
+	<string name="hello" />
+</call>
 
 <call name="finish" />
 

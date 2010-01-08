@@ -1,23 +1,77 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070815">
+<llpml version="0.4.20070816">
 
-<!-- callback -->
+<!-- struct -->
 
 <include src="stdio.xml" />
 
-<call name="wrapper">
-	<function-ptr name="test" />
+<struct-define name="Point">
+	<member name="x" />
+	<member name="y" />
+</struct-define>
+
+<!-- global -->
+<struct-declare name="p1" type="Point">
+	<int>1</int>
+	<int>2</int>
+</struct-declare>
+
+<call name="vprintfln">
+	<string>p1(x, y) = (%d, %d)</string>
+	<ptr name="p1" />
+</call>
+
+<block>
+	<!-- stack -->
+	<struct-declare name="p2" type="Point">
+		<int>3</int>
+		<int>4</int>
+	</struct-declare>
+
+	<call name="vprintfln">
+		<string>p2(x, y) = (%d, %d)</string>
+		<ptr name="p2" />
+	</call>
+	
+	<block>
+		<!-- lexical scope -->
+		<let>
+			<struct-member name="p2" member="x" />
+			<int>5</int>
+		</let>
+		<let>
+			<struct-member name="p2" member="y" />
+			<int>6</int>
+		</let>
+	</block>
+	
+	<call name="printfln">
+		<string>&amp;p1 = %p, &amp;p2 = %p</string>
+		<ptr name="p1" />
+		<ptr name="p2" />
+	</call>
+
+	<call name="printfln">
+		<string>p2(x, y) = (%d, %d)</string>
+		<struct-member name="p2" member="x" />
+		<struct-member name="p2" member="y" />
+	</call>
+	
+	<!-- lexical scope -->
+	<inc>
+		<struct-member name="p1" member="x" />
+	</inc>
+	<dec>
+		<struct-member name="p1" member="y" />
+	</dec>
+</block>
+
+<call name="printfln">
+	<string>p1(x, y) = (%d, %d)</string>
+	<struct-member name="p1" member="x" />
+	<struct-member name="p1" member="y" />
 </call>
 
 <call name="finish" />
-
-<function name="wrapper">
-	<arg-int name="ptr" />
-	<call ptr="ptr" />
-</function>
-
-<function name="test">
-	<call name="printfln">Hello, World!</call>
-</function>
 
 </llpml>

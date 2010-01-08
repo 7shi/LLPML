@@ -48,8 +48,8 @@ namespace Girl.LLPML
             {
                 throw new Exception("Invalid variable scope: " + name);
             }
-            codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
-            return new Addr32(Reg32.EAX, ad.Disp);
+            codes.Add(I386.Mov(Reg32.EDX, new Addr32(Reg32.EBP, -lv * 4)));
+            return new Addr32(Reg32.EDX, ad.Disp);
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

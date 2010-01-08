@@ -25,4 +25,24 @@ namespace Girl.X86
     {
         SS, CS, DS, ES
     }
+
+    public enum Cc
+    {
+        O,
+        NO,
+        C, B = C, NAE = C,
+        NC, AE = NC, NB = NC,
+        Z, E = Z,
+        NZ, NE = NZ,
+        BE, NA = BE,
+        NBE, A = NBE,
+        S,
+        NS,
+        P, PE = P,
+        NP, PO = NP,
+        L, NGE = L,
+        NL, GE = NL,
+        LE, NG = LE,
+        NLE, G = NLE
+    }
 }

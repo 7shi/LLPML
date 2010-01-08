@@ -1,75 +1,259 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.5.20070819">
 
-<!-- struct -->
+<!-- boolean operation 1 -->
 
 <include src="stdio.xml" />
 
-<struct-define name="Point">
-	<member name="x" />
-	<member name="y" />
-</struct-define>
-
-<!-- global -->
-<struct-declare name="p1" type="Point">
-	<int>1</int>
-	<int>2</int>
-</struct-declare>
-
-<call name="vprintfln">
-	<string>p1(x, y) = (%d, %d)</string>
-	<ptr name="p1" />
-</call>
-
-<block>
-	<!-- stack -->
-	<struct-declare name="p2" type="Point">
-		<int>3</int>
-		<int>4</int>
-	</struct-declare>
-
-	<call name="vprintfln">
-		<string>p2(x, y) = (%d, %d)</string>
-		<ptr name="p2" />
-	</call>
-	
-	<block>
-		<!-- lexical scope -->
-		<let>
-			<struct-member name="p2" member="x" />
-			<int>5</int>
-		</let>
-		<let>
-			<struct-member name="p2" member="y" />
-			<int>6</int>
-		</let>
-	</block>
-	
-	<call name="printfln">
-		<string>&amp;p1 = %p, &amp;p2 = %p</string>
-		<ptr name="p1" />
-		<ptr name="p2" />
-	</call>
-
-	<call name="printfln">
-		<string>p2(x, y) = (%d, %d)</string>
-		<struct-member name="p2" member="x" />
-		<struct-member name="p2" member="y" />
-	</call>
-	
-	<!-- lexical scope -->
-	<inc>
-		<struct-member name="p1" member="x" />
-	</inc>
-	<dec>
-		<struct-member name="p1" member="y" />
-	</dec>
-</block>
+<var-int-declare name="a">1</var-int-declare>
+<var-int-declare name="b">2</var-int-declare>
+<var-int-declare name="c">1</var-int-declare>
 
 <call name="printfln">
-	<string>p1(x, y) = (%d, %d)</string>
-	<struct-member name="p1" member="x" />
-	<struct-member name="p1" member="y" />
+	<string>(a, b, c) = (%d, %d, %d)</string>
+	<var-int name="a" />
+	<var-int name="b" />
+	<var-int name="c" />
+</call>
+
+<!-- equal -->
+
+<call name="printfln">
+	<string>%d: a == 1</string>
+	<equal>
+		<var-int name="a" />
+		<int>1</int>
+	</equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 2</string>
+	<equal>
+		<var-int name="a" />
+		<int>2</int>
+	</equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a == b</string>
+	<equal>
+		<var-int name="a" />
+		<var-int name="b" />
+	</equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a == b == 1</string>
+	<equal>
+		<var-int name="a" />
+		<var-int name="b" />
+		<int>1</int>
+	</equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a == c == 1</string>
+	<equal>
+		<var-int name="a" />
+		<var-int name="c" />
+		<int>1</int>
+	</equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a == c == 2</string>
+	<equal>
+		<var-int name="a" />
+		<var-int name="c" />
+		<int>2</int>
+	</equal>
+</call>
+
+<!-- not equal -->
+
+<call name="printfln">
+	<string>%d: a != 1</string>
+	<not-equal>
+		<var-int name="a" />
+		<int>1</int>
+	</not-equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a != 2</string>
+	<not-equal>
+		<var-int name="a" />
+		<int>2</int>
+	</not-equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a != b</string>
+	<not-equal>
+		<var-int name="a" />
+		<var-int name="b" />
+	</not-equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a != b != 1</string>
+	<not-equal>
+		<var-int name="a" />
+		<var-int name="b" />
+		<int>1</int>
+	</not-equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a != b != 3</string>
+	<not-equal>
+		<var-int name="a" />
+		<var-int name="b" />
+		<int>3</int>
+	</not-equal>
+</call>
+
+<call name="printfln">
+	<string>%d: a != c != 1</string>
+	<not-equal>
+		<var-int name="a" />
+		<var-int name="c" />
+		<int>1</int>
+	</not-equal>
+</call>
+
+<!-- and also -->
+
+<call name="printfln">
+	<string>%d: a == 1 &amp;&amp; b == 1</string>
+	<and-also>
+		<equal>
+			<var-int name="a" />
+			<int>1</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>1</int>
+		</equal>
+	</and-also>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 1 &amp;&amp; b == 2</string>
+	<and-also>
+		<equal>
+			<var-int name="a" />
+			<int>1</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>2</int>
+		</equal>
+	</and-also>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 2 &amp;&amp; b == 2</string>
+	<and-also>
+		<equal>
+			<var-int name="a" />
+			<int>2</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>2</int>
+		</equal>
+	</and-also>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 3 &amp;&amp; b == 3</string>
+	<and-also>
+		<equal>
+			<var-int name="a" />
+			<int>3</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>3</int>
+		</equal>
+	</and-also>
+</call>
+
+<!-- or else -->
+
+<call name="printfln">
+	<string>%d: a == 1 || b == 1</string>
+	<or-else>
+		<equal>
+			<var-int name="a" />
+			<int>1</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>1</int>
+		</equal>
+	</or-else>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 1 || b == 2</string>
+	<or-else>
+		<equal>
+			<var-int name="a" />
+			<int>1</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>2</int>
+		</equal>
+	</or-else>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 2 || b == 2</string>
+	<or-else>
+		<equal>
+			<var-int name="a" />
+			<int>2</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>2</int>
+		</equal>
+	</or-else>
+</call>
+
+<call name="printfln">
+	<string>%d: a == 3 || b == 3</string>
+	<or-else>
+		<equal>
+			<var-int name="a" />
+			<int>3</int>
+		</equal>
+		<equal>
+			<var-int name="b" />
+			<int>3</int>
+		</equal>
+	</or-else>
+</call>
+
+<!-- not -->
+
+<call name="printfln">
+	<string>%d: !(a == 2) &amp;&amp; b == 2</string>
+	<and-also>
+		<not>
+			<equal>
+				<var-int name="a" />
+				<int>2</int>
+			</equal>
+		</not>
+		<equal>
+			<var-int name="b" />
+			<int>2</int>
+		</equal>
+	</and-also>
 </call>
 
 <call name="finish" />

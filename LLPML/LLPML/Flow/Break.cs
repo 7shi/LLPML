@@ -20,7 +20,7 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            codes.Add(I386.Jmp(parent.Last));
+            codes.Add(I386.Jmp(parent.Destruct));
         }
     }
 }

@@ -87,16 +87,16 @@ namespace Girl.LLPML
             }
         }
 
-        protected void RequireName(XmlTextReader xr)
-        {
-            name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
-        }
-
         protected void NoChild(XmlTextReader xr)
         {
             if (!xr.IsEmptyElement)
                 throw Abort(xr, "<" + xr.Name + "> can not have any children");
+        }
+
+        protected void RequireName(XmlTextReader xr)
+        {
+            name = xr["name"];
+            if (name == null) throw Abort(xr, "name required");
         }
     }
 }

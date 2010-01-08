@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.5.20070819">
+
+<!-- flow -->
+
+<include src="stdio.xml" />
+
+<for>
+	<init>
+		<var-int-declare name="i">0</var-int-declare>
+	</init>
+	<cond>
+		<less>
+			<var-int name="i" />
+			<int>5</int>
+		</less>
+	</cond>
+	<loop>
+		<inc>
+			<var-int name="i" />
+		</inc>
+	</loop>
+	<block>
+		<call name="printfln">
+			<string>[for] i = %d</string>
+			<var-int name="i" />
+		</call>
+	</block>
+</for>
+
+<var-int-declare name="i">0</var-int-declare>
+<do>
+	<block>
+		<call name="printf">
+			<string>[do] i = %d </string>
+			<var-int name="i" />
+		</call>
+		<if>
+			<cond><equal><var-int name="i" /><int>0</int></equal></cond>
+			<block>
+				<call name="printfln">(zero)</call>
+			</block>
+			<cond><equal><var-int name="i" /><int>1</int></equal></cond>
+			<block>
+				<call name="printfln">(one)</call>
+			</block>
+			<cond><equal><var-int name="i" /><int>2</int></equal></cond>
+			<block>
+				<call name="printfln">(two)</call>
+			</block>
+			<!-- else -->
+			<block>
+				<call name="printfln">(...)</call>
+			</block>
+		</if>
+		<inc>
+			<var-int name="i" />
+		</inc>
+	</block>
+	<cond>
+		<less>
+			<var-int name="i" />
+			<int>5</int>
+		</less>
+	</cond>
+</do>
+
+<while>
+	<cond>
+		<greater>
+			<var-int name="i" />
+			<int>0</int>
+		</greater>
+	</cond>
+	<block>
+		<call name="printf">
+			<string>[while] i = %d </string>
+			<var-int name="i" />
+		</call>
+		<switch>
+			<expr>
+				<var-int name="i" />
+			</expr>
+			<case>
+				<int>5</int>
+				<int>4</int>
+			</case>
+			<block>
+				<call name="printfln">(4 or 5)</call>
+			</block>
+			<case>
+				<int>3</int>
+			</case>
+			<block>
+				<call name="printfln">(3)</call>
+			</block>
+			<!-- default -->
+			<block>
+				<call name="printfln">(etc)</call>
+			</block>
+		</switch>
+		<dec>
+			<var-int name="i" />
+		</dec>
+	</block>
+</while>
+
+<call name="finish" />
+
+</llpml>

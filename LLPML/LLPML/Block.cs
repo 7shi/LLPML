@@ -11,7 +11,14 @@ namespace Girl.LLPML
     public class Block : NodeBase
     {
         protected List<NodeBase> sentences = new List<NodeBase>();
-        protected OpCode last = new OpCode(), next = new OpCode();
+
+        protected OpCode first = new OpCode();
+        public Val32 First { get { return first.Address; } }
+
+        protected OpCode destruct = new OpCode();
+        public Val32 Destruct { get { return destruct.Address; } }
+
+        protected OpCode last = new OpCode();
         public Val32 Last { get { return last.Address; } }
 
         #region int
@@ -32,52 +39,46 @@ namespace Girl.LLPML
             ints.Add(name, value);
         }
 
+        public int ParseInt(XmlTextReader xr)
+        {
+            string value = null;
+            Parse(xr, delegate
+            {
+                switch (xr.NodeType)
+                {
+                    case XmlNodeType.Text:
+                        value = xr.Value;
+                        break;
+                    case XmlNodeType.Whitespace:
+                        break;
+                    default:
+                        throw Abort(xr, "value required");
+                }
+            });
+            if (value == null) throw Abort(xr, "value required");
+            return IntValue.Parse(value);
+        }
+
         public int ReadInt(XmlTextReader xr)
         {
-            int? ret = null;
             string name = xr["name"];
             if (name != null)
             {
                 if (!xr.IsEmptyElement)
                     throw Abort(xr, "do not specify value with name");
-                ret = GetInt(name);
+                int? ret = GetInt(name);
                 if (ret == null)
                     throw Abort(xr, "undefined values: " + name);
                 return (int)ret;
             }
-            Parse(xr, delegate
-            {
-                if (xr.NodeType == XmlNodeType.Text)
-                {
-                    ret = (int)int.Parse(xr.Value);
-                }
-                else
-                {
-                    throw Abort(xr, "value required");
-                }
-            });
-            if (ret == null) throw Abort(xr, "value required");
-            return (int)ret;
+            return ParseInt(xr);
         }
 
         public void ReadIntDefine(XmlTextReader xr)
         {
             string name = xr["name"];
             if (name == null) throw Abort(xr, "name required");
-            int? ret = null;
-            Parse(xr, delegate
-            {
-                if (xr.NodeType == XmlNodeType.Text)
-                {
-                    ret = int.Parse(xr.Value);
-                }
-                else
-                {
-                    throw Abort(xr, "value required");
-                }
-            });
-            if (ret == null) throw Abort(xr, "value required");
-            AddInt(name, (int)ret);
+            AddInt(name, ParseInt(xr));
         }
 
         #endregion
@@ -100,19 +101,9 @@ namespace Girl.LLPML
             strings.Add(name, value);
         }
 
-        public string ReadString(XmlTextReader xr)
+        private string ParseString(XmlTextReader xr)
         {
             string ret = null;
-            string name = xr["name"];
-            if (name != null)
-            {
-                if (!xr.IsEmptyElement)
-                    throw Abort(xr, "do not specify string with name");
-                ret = GetString(name);
-                if (ret == null)
-                    throw Abort(xr, "undefined string: " + name);
-                return ret;
-            }
             Parse(xr, delegate
             {
                 switch (xr.NodeType)
@@ -129,25 +120,26 @@ namespace Girl.LLPML
             return ret;
         }
 
+        public string ReadString(XmlTextReader xr)
+        {
+            string name = xr["name"];
+            if (name != null)
+            {
+                if (!xr.IsEmptyElement)
+                    throw Abort(xr, "do not specify string with name");
+                string ret = GetString(name);
+                if (ret == null)
+                    throw Abort(xr, "undefined string: " + name);
+                return ret;
+            }
+            return ParseString(xr);
+        }
+
         public void ReadStringDefine(XmlTextReader xr)
         {
             string name = xr["name"];
             if (name == null) throw Abort(xr, "name required");
-            string ret = null;
-            Parse(xr, delegate
-            {
-                switch (xr.NodeType)
-                {
-                    case XmlNodeType.Text:
-                    case XmlNodeType.Whitespace:
-                        ret = xr.Value;
-                        break;
-                    default:
-                        throw Abort(xr, "string required");
-                }
-            });
-            if (ret == null) throw Abort(xr, "string required");
-            AddString(name, ret);
+            AddString(name, ParseString(xr));
         }
 
         public int ReadStringLength(XmlTextReader xr)
@@ -270,11 +262,20 @@ namespace Girl.LLPML
                         case "call":
                             sentences.Add(new Call(this, xr));
                             break;
-                        case "loop":
-                            sentences.Add(new Loop(this, xr));
+                        case "if":
+                            sentences.Add(new If(this, xr));
+                            break;
+                        case "switch":
+                            sentences.Add(new Switch(this, xr));
                             break;
                         case "for":
                             sentences.Add(new For(this, xr));
+                            break;
+                        case "do":
+                            sentences.Add(new Do(this, xr));
+                            break;
+                        case "while":
+                            sentences.Add(new While(this, xr));
                             break;
                         case "break":
                             sentences.Add(new Break(this, xr));
@@ -291,11 +292,47 @@ namespace Girl.LLPML
                         case "dec":
                             sentences.Add(new Dec(this, xr));
                             break;
+                        case "post-inc":
+                            sentences.Add(new PostInc(this, xr));
+                            break;
+                        case "post-dec":
+                            sentences.Add(new PostDec(this, xr));
+                            break;
                         case "var-int-add":
                             sentences.Add(new VarInt.Add(this, xr));
                             break;
                         case "var-int-sub":
                             sentences.Add(new VarInt.Sub(this, xr));
+                            break;
+                        case "var-int-mul":
+                            sentences.Add(new VarInt.Mul(this, xr));
+                            break;
+                        case "var-int-unsigned-mul":
+                            sentences.Add(new VarInt.UnsignedMul(this, xr));
+                            break;
+                        case "var-int-div":
+                            sentences.Add(new VarInt.Div(this, xr));
+                            break;
+                        case "var-int-unsigned-div":
+                            sentences.Add(new VarInt.UnsignedDiv(this, xr));
+                            break;
+                        case "var-int-and":
+                            sentences.Add(new VarInt.And(this, xr));
+                            break;
+                        case "var-int-or":
+                            sentences.Add(new VarInt.Or(this, xr));
+                            break;
+                        case "var-int-shift-left":
+                            sentences.Add(new VarInt.ShiftLeft(this, xr));
+                            break;
+                        case "var-int-shift-right":
+                            sentences.Add(new VarInt.ShiftRight(this, xr));
+                            break;
+                        case "var-int-unsigned-shift-left":
+                            sentences.Add(new VarInt.UnsignedShiftLeft(this, xr));
+                            break;
+                        case "var-int-unsigned-shift-right":
+                            sentences.Add(new VarInt.UnsignedShiftRight(this, xr));
                             break;
                         case "ptr-declare":
                             sentences.Add(new Pointer.Declare(this, xr));
@@ -353,24 +390,25 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
+            codes.Add(first);
             BeforeAddCodes(codes, m);
             foreach (NodeBase child in sentences)
             {
                 child.AddCodes(codes, m);
             }
-            codes.Add(last);
+            codes.Add(destruct);
             AfterAddCodes(codes, m);
             foreach (Function func in functions.Values)
             {
                 func.AddCodes(codes, m);
             }
-            codes.Add(next);
+            codes.Add(last);
         }
 
         protected virtual void AfterAddCodes(List<OpCode> codes, Module m)
         {
             codes.Add(I386.Leave());
-            if (functions.Count > 0) codes.Add(I386.Jmp(next.Address));
+            if (functions.Count > 0) codes.Add(I386.Jmp(last.Address));
         }
     }
 }

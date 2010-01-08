@@ -43,26 +43,64 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="LLPML\Extern.cs" />
+    <Compile Include="LLPML\Flow\Cond.cs" />
+    <Compile Include="LLPML\Flow\While.cs" />
+    <Compile Include="LLPML\Flow\For.Init.cs" />
+    <Compile Include="LLPML\Flow\Do.cs" />
+    <Compile Include="LLPML\Flow\If.cs" />
+    <Compile Include="LLPML\Flow\Switch.cs" />
     <Compile Include="LLPML\Function.cs" />
     <Compile Include="LLPML\NodeBase.cs" />
-    <Compile Include="LLPML\Operators\VarInt.Sub.cs" />
+    <Compile Include="LLPML\Operators\Comparers\UnsignedGreaterEqual.cs" />
+    <Compile Include="LLPML\Operators\Comparers\UnsignedLess.cs" />
+    <Compile Include="LLPML\Operators\Comparers\UnsignedLessEqual.cs" />
+    <Compile Include="LLPML\Operators\ShiftLeft.cs" />
+    <Compile Include="LLPML\Operators\ShiftRight.cs" />
+    <Compile Include="LLPML\Operators\UnsignedShiftLeft.cs" />
+    <Compile Include="LLPML\Operators\UnsignedShiftRight.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.Sub.cs" />
     <Compile Include="LLPML\Operators\Add.cs" />
-    <Compile Include="LLPML\Operators\Dec.cs" />
+    <Compile Include="LLPML\Variable\Operators\Dec.cs" />
     <Compile Include="LLPML\Operators\Sub.cs" />
+    <Compile Include="LLPML\Operators\And.cs" />
+    <Compile Include="LLPML\Operators\Or.cs" />
+    <Compile Include="LLPML\Operators\Xor.cs" />
+    <Compile Include="LLPML\Operators\AndAlso.cs" />
+    <Compile Include="LLPML\Operators\OrElse.cs" />
+    <Compile Include="LLPML\Operators\Not.cs" />
+    <Compile Include="LLPML\Operators\Comparers\Equal.cs" />
+    <Compile Include="LLPML\Operators\Comparers\NotEqual.cs" />
+    <Compile Include="LLPML\Operators\Comparers\Greater.cs" />
+    <Compile Include="LLPML\Operators\Comparers\GreaterEqual.cs" />
+    <Compile Include="LLPML\Operators\Comparers\LessEqual.cs" />
+    <Compile Include="LLPML\Operators\Comparers\Less.cs" />
+    <Compile Include="LLPML\Operators\Comparers\UnsignedGreater.cs" />
+    <Compile Include="LLPML\Operators\Mul.cs" />
+    <Compile Include="LLPML\Operators\UnsignedMul.cs" />
+    <Compile Include="LLPML\Operators\Div.cs" />
+    <Compile Include="LLPML\Operators\UnsignedDiv.cs" />
+    <Compile Include="LLPML\Operators\Mod.cs" />
+    <Compile Include="LLPML\Operators\UnsignedMod.cs" />
     <Compile Include="LLPML\Root.cs" />
     <Compile Include="LLPML\Call.cs" />
     <Compile Include="LLPML\Block.cs" />
     <Compile Include="LLPML\IIntValue.cs" />
+    <Compile Include="LLPML\Struct\Size.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.And.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.Or.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.ShiftLeft.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.ShiftRight.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.UnsignedShiftRight.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.UnsignedShiftLeft.cs" />
     <Compile Include="LLPML\Variable\VarInt.cs" />
     <Compile Include="LLPML\Variable\Pointer.Declare.cs" />
-    <Compile Include="LLPML\Loop.cs" />
-    <Compile Include="LLPML\For.cs" />
-    <Compile Include="LLPML\Break.cs" />
+    <Compile Include="LLPML\Flow\For.cs" />
+    <Compile Include="LLPML\Flow\Break.cs" />
     <Compile Include="LLPML\Variable\ArgInt.cs" />
-    <Compile Include="LLPML\Operators\Inc.cs" />
+    <Compile Include="LLPML\Variable\Operators\Inc.cs" />
     <Compile Include="LLPML\Variable\ArgPtr.cs" />
     <Compile Include="LLPML\Variable\VarBase.cs" />
-    <Compile Include="LLPML\Return.cs" />
+    <Compile Include="LLPML\Flow\Return.cs" />
     <Compile Include="LLPML\Variable\VarInt.Ptr.cs" />
     <Compile Include="LLPML\Variable\Pointer.cs" />
     <Compile Include="LLPML\Function.Ptr.cs" />
@@ -72,13 +110,18 @@
     <Compile Include="LLPML\Struct\Define.cs" />
     <Compile Include="LLPML\Struct\Define.Member.cs" />
     <Compile Include="LLPML\Struct\Declare.cs" />
-    <Compile Include="LLPML\Operators\Let.cs" />
-    <Compile Include="LLPML\Variable\VarInt.Operand1.cs" />
-    <Compile Include="LLPML\Variable\VarInt.Operand2.cs" />
+    <Compile Include="LLPML\Variable\Operators\Let.cs" />
     <Compile Include="LLPML\Variable\DeclareBase.cs" />
-    <Compile Include="LLPML\Operators\VarInt.Add.cs" />
-    <Compile Include="LLPML\Operators\Operands.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.Add.cs" />
+    <Compile Include="LLPML\Operators\Operator.cs" />
     <Compile Include="LLPML\StringValue.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.Operator.cs" />
+    <Compile Include="LLPML\Variable\Operators\PostDec.cs" />
+    <Compile Include="LLPML\Variable\Operators\PostInc.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.Mul.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarIntUnsignedMul.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.Div.cs" />
+    <Compile Include="LLPML\Variable\Operators\VarInt.UnsignedDiv.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -115,16 +158,19 @@
     <Content Include="Samples\01.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Samples\02.xml">
+    <Content Include="Samples\template.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Samples\template.xml">
+    <Content Include="Samples\02.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\03.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\04.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\16.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\05.xml">
@@ -136,13 +182,13 @@
     <Content Include="Samples\07.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Samples\stdio.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\08.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\09.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\stdio.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\10.xml">
@@ -160,6 +206,13 @@
     <Content Include="Samples\14.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Samples\15.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\17.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ToDo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

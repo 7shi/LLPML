@@ -120,6 +120,7 @@ namespace Test
             tb.ScrollBars = ScrollBars.Both;
             tb.Dock = DockStyle.Fill;
             tb.Tag = output;
+            tb.Font = textBox1.Font;
             ReadSample(tb, xml);
             page.Controls.Add(tb);
             tabControl1.TabPages.Add(page);

@@ -40,7 +40,7 @@ namespace Girl.LLPML
             {
                 value.AddCodes(codes, m, "mov", retval.Address);
             }
-            if (!IsLast) codes.Add(I386.Jmp(parent.Last));
+            if (!IsLast) codes.Add(I386.Jmp(parent.Destruct));
         }
     }
 }

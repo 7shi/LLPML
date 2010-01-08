@@ -1,22 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.4.20070817">
 
+<!-- function -->
+
 <include src="stdio.xml" />
 
-<var-int-declare name="result">0</var-int-declare>
-
-<for name="i" from="1" to="10000">
-	<var-int-add>
-		<var-int name="result" />
-		<var-int name="i" />
-	</var-int-add>
-</for>
-
-<call name="printfln">
-	<string>1 + 2 + ... + 10000 = %d</string>
-	<var-int name="result" />
+<call name="test">
+	<int>2</int>
+	<int>4</int>
 </call>
 
 <call name="finish" />
+
+<function name="test">
+	<arg-int name="a" />
+	<arg-int name="b" />
+	<var-int-declare name="c"><var-int name="a" /></var-int-declare>
+	<var-int-add>
+		<var-int name="c" />
+		<var-int name="b" />
+	</var-int-add>
+	<call name="printfln">
+		<string>%d + %d = %d</string>
+		<var-int name="a" />
+		<var-int name="b" />
+		<var-int name="c" />
+	</call>
+</function>
 
 </llpml>

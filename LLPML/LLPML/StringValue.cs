@@ -11,9 +11,12 @@ namespace Girl.LLPML
     public class StringValue : IIntValue
     {
         private string value;
-        public string Value{get{return value;}}
+        public string Value { get { return value; } }
 
-        public StringValue(string value){ this.value = value; }
+        public StringValue(string value)
+        {
+            this.value = value;
+        }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {

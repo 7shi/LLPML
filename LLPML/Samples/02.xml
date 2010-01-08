@@ -1,22 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816" subsystem="WINDOWS_GUI">
+<llpml version="0.4.20070816">
 
-<extern name="MessageBox" alias="MessageBoxW" module="user32.dll" type="std" />
-<extern name="wsprintf" alias="wsprintfW" module="user32.dll" />
+<include src="stdio.xml" />
 
-<loop name="i" count="3">
-	<ptr-declare name="dest" type="char" length="32" />
-	<call name="wsprintf">
-		<ptr name="dest" />
-		<string>こんにちは、世界！(%d)</string>
-		<var-int name="i" />
-	</call>
-	<call name="MessageBox">
-		<int>0</int>
-		<ptr name="dest" />
-		<string>だいあろぐ</string>
-		<int>0</int>
-	</call>
-</loop>
+<call name="printfln">こんにちは、世界！</call>
+
+<call name="finish" />
 
 </llpml>
