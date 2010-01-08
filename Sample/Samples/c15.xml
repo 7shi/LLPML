@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080402">
+<llpml version="0.17.20080421">
 
 <title>メンバの構造体</title>
 
@@ -24,6 +24,9 @@ t1.a.b.printfln();
 struct Test3 { var a : Test2; }
 Test3 t3 = { t1.a };
 t3.a.b.printfln();
+
+function get_t1() { return t1; }
+get_t1().a.b.printfln();
 ?>
 
 </llpml>

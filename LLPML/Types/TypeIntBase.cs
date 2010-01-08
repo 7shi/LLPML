@@ -7,7 +7,22 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public abstract class TypeIntBase : TypeBase
+    public abstract class TypeVarBase : TypeBase
+    {
+        // get value
+        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        {
+            codes.AddCodes(op, dest, src);
+        }
+
+        // set value
+        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        {
+            codes.Add(I386.Mov(ad, Reg32.EAX));
+        }
+    }
+
+    public abstract class TypeIntBase : TypeVarBase
     {
         public static void AddOperators(Dictionary<string, Func> funcs)
         {
@@ -88,18 +103,6 @@ namespace Girl.LLPML
                     last
                 });
             }
-        }
-
-        // get value
-        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
-        {
-            codes.AddCodes(op, dest, src);
-        }
-
-        // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 ad)
-        {
-            codes.Add(I386.Mov(ad, Reg32.EAX));
         }
     }
 }

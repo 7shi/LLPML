@@ -12,6 +12,7 @@ namespace Girl.X86
         private byte[] data;
         private object op1, op2;
         private bool relative = false;
+        public bool ByteRelative { get; set; }
 
         public OpCode() { }
         public OpCode(byte[] d) { data = d; }
@@ -66,8 +67,16 @@ namespace Girl.X86
             else if (op1 is Val32)
             {
                 uint val = ((Val32)op1).Value;
-                if (relative) val -= Address.Value + (uint)data.Length + 4;
-                data = Util.GetBytes(data, val);
+                if (ByteRelative)
+                {
+                    val -= Address.Value + (uint)data.Length + 1;
+                    data = Util.GetBytes(data, (byte)val);
+                }
+                else
+                {
+                    if (relative) val -= Address.Value + (uint)data.Length + 4;
+                    data = Util.GetBytes(data, val);
+                }
             }
             else
             {

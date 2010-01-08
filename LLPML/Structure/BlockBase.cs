@@ -229,7 +229,7 @@ namespace Girl.LLPML
             }
         }
 
-        public int Level
+        public virtual int Level
         {
             get
             {
@@ -332,17 +332,9 @@ namespace Girl.LLPML
             Stack<Var.Declare> ptrs2 = new Stack<Var.Declare>(ptrs);
             while (ptrs2.Count > 0)
             {
-                Struct.Declare st = ptrs2.Pop() as Struct.Declare;
-                if (st == null) continue;
-
-                var st2 = st.GetStruct();
-                if (st2.NeedsDtor)
-                {
-                    var p = GetVar(st.Name);
-                    var ad = p.GetAddress(codes, this);
-                    codes.Add(I386.Lea(Reg32.EAX, ad));
-                    st2.AddDestructor(codes, null);
-                }
+                var p = ptrs2.Pop();
+                if (p.NeedsDtor)
+                    p.Type.AddDestructor(codes, p.GetAddress(codes, this));
             }
         }
 
@@ -421,16 +413,16 @@ namespace Girl.LLPML
         }
 
         protected TypeBase returnType;
-        protected bool doneInferType = false;
+        protected bool doneInferReturnType = false;
 
         public virtual TypeBase ReturnType
         {
             get
             {
-                if (doneInferType || !root.IsCompiling)
+                if (doneInferReturnType || !root.IsCompiling)
                     return returnType;
 
-                doneInferType = true;
+                doneInferReturnType = true;
                 foreach (var v in typeInfos)
                 {
                     var t = returnType;

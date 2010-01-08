@@ -56,6 +56,28 @@ namespace Girl.LLPML
                 return null;
         }
 
+        // type constructor
+        public override bool NeedsCtor { get { return GetStruct().NeedsCtor; } }
+        public override void AddConstructor(OpCodes codes, Addr32 ad)
+        {
+            if (ad != null)
+                codes.Add(I386.Lea(Reg32.EAX, ad));
+            var st = GetStruct();
+            codes.Add(I386.Push(Reg32.EAX));
+            st.AddInit(codes, null);
+            codes.Add(I386.Pop(Reg32.EAX));
+            st.AddConstructor(codes, null);
+        }
+
+        // type destructor
+        public override bool NeedsDtor { get { return GetStruct().NeedsDtor; } }
+        public override void AddDestructor(OpCodes codes, Addr32 ad)
+        {
+            if (ad != null)
+                codes.Add(I386.Lea(Reg32.EAX, ad));
+            GetStruct().AddDestructor(codes, null);
+        }
+
         public BlockBase Parent { get; protected set; }
 
         public Struct.Define GetStruct()
@@ -66,7 +88,7 @@ namespace Girl.LLPML
         public TypeStruct(BlockBase parent, string name)
         {
             if (name.EndsWith("]"))
-                throw new Exception("???");
+                throw new Exception("TypeStruct: invalid type: " + name);
             Parent = parent;
             this.name = name;
             //TypeIntBase.AddComparers(funcs, conds);

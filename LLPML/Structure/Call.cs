@@ -16,10 +16,6 @@ namespace Girl.LLPML
         private IIntValue val;
         private CallType callType = CallType.CDecl;
 
-        public Call()
-        {
-        }
-
         public Call(BlockBase parent, string name)
             : base(parent, name)
         {
@@ -148,25 +144,96 @@ namespace Girl.LLPML
                 if (AddSIMDCodes(codes)) return;
             }
 
-            var val = this.val;
-            var args = this.args;
+            List<IIntValue> args;
             var f = GetFunction(codes, target, out args);
+            var args_array = args.ToArray();
             if (f is Function)
             {
-                AddCodes(codes, f as Function, args);
+                (f.Type as TypeFunction).CheckArgs(this, args_array);
+                AddCodes(codes, f as Function, args_array);
                 return;
             }
+
+            var val = this.val;
             if (f != null) val = f;
-            AddCodes(codes, args, callType, delegate
+            var t = val.Type;
+            if (t is TypeFunction)
+                (t as TypeFunction).CheckArgs(this, args_array);
+            bool cleanup = NeedsDtor(val);
+            if (cleanup)
+                codes.Add(I386.Sub(Reg32.ESP, 4));
+            AddCodes(codes, args_array, callType, delegate
             {
-                if (val is Var)
-                    codes.Add(I386.Call((val as Var).GetAddress(codes)));
-                else
+                if (!cleanup)
                 {
                     val.AddCodes(codes, "mov", null);
                     codes.Add(I386.Call(Reg32.EAX));
                 }
+                else
+                {
+                    var ad = new Addr32(Reg32.ESP, args_array.Length * 4);
+                    val.AddCodes(codes, "mov", ad);
+                    codes.AddRange(new[]
+                    {
+                        I386.Call(ad),
+                        I386.Push(Reg32.EAX),
+                    });
+                    var ad2 = new Addr32(Reg32.ESP, 4);
+                    if (callType == CallType.CDecl)
+                        ad2.Add(args_array.Length * 4);
+                    val.Type.AddDestructor(codes, ad2);
+                    codes.Add(I386.Pop(Reg32.EAX));
+                }
             });
+            if (cleanup)
+                codes.Add(I386.Add(Reg32.ESP, 4));
+        }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        {
+            AddCodes(codes);
+            codes.AddCodes(op, dest);
+        }
+
+        public static void AddCodes(OpCodes codes, Function f, IIntValue[] args)
+        {
+            AddCodes(codes, args, f.CallType, delegate
+            {
+                codes.Add(I386.Call(f.First));
+            });
+        }
+
+        public static bool NeedsDtor(IIntValue arg)
+        {
+            if (arg is Call || arg is Delegate)
+            {
+                var t = arg.Type;
+                if (t != null) return t.NeedsDtor;
+            }
+            return false;
+        }
+
+        public static void AddCodes(
+            OpCodes codes, IIntValue[] args, CallType type, Action delg)
+        {
+            var args2 = args.Clone() as IIntValue[];
+            Array.Reverse(args2);
+            foreach (IIntValue arg in args2)
+            {
+                arg.AddCodes(codes, "push", null);
+            }
+            delg();
+            if (type == CallType.CDecl && args2.Length > 0)
+            {
+                int p = 0;
+                foreach (var arg in args)
+                {
+                    if (NeedsDtor(arg))
+                        arg.Type.AddDestructor(codes, new Addr32(Reg32.ESP, p));
+                    p += 4;
+                }
+                codes.Add(I386.Add(Reg32.ESP, (byte)(args2.Length * 4)));
+            }
         }
 
         protected TypeBase type;
@@ -182,8 +249,9 @@ namespace Girl.LLPML
                 doneInferType = true;
                 if (name == null)
                 {
-                    if (val is Function)
-                        type = (val as Function).ReturnType;
+                    var t = val.Type;
+                    if (t is TypeFunction)
+                        type = (t as TypeFunction).RetType;
                     else
                         type = TypeVar.Instance;
                 }
@@ -200,51 +268,6 @@ namespace Girl.LLPML
             }
         }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
-        {
-            AddCodes(codes);
-            codes.AddCodes(op, dest);
-        }
-
-        public void AddCodes(OpCodes codes, Function f, List<IIntValue> args)
-        {
-            var fargs = f.Args.ToArray();
-            var len = fargs.Length;
-            if (len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1)
-                len--;
-            else if (args.Count != len)
-                throw Abort("argument mismatched: " + name);
-            for (int i = 0; i < len; i++)
-            {
-                var t1 = args[i].Type;
-                var t2 = fargs[i].Type;
-                if (t1 != null && t1.Cast(t2) == null)
-                    throw Abort(
-                        "can not cast arg {0}: {1}: {2} => {3}",
-                        i + 1, fargs[i].Name, t1.Name, t2.Name);
-            }
-            AddCodes(codes, args, f.CallType, delegate
-            {
-                codes.Add(I386.Call(f.First));
-            });
-        }
-
-        public static void AddCodes(
-            OpCodes codes, List<IIntValue> args, CallType type, Action delg)
-        {
-            object[] args2 = args.ToArray();
-            Array.Reverse(args2);
-            foreach (IIntValue arg in args2)
-            {
-                arg.AddCodes(codes, "push", null);
-            }
-            delg();
-            if (type == CallType.CDecl && args2.Length > 0)
-            {
-                codes.Add(I386.Add(Reg32.ESP, (byte)(args2.Length * 4)));
-            }
-        }
-
         public void PipeForward(IIntValue arg)
         {
             args.Add(arg);
@@ -252,8 +275,12 @@ namespace Girl.LLPML
 
         public void PipeBack(IIntValue arg)
         {
-            if (target != null) args.Insert(0, target);
-            target = arg;
+            //if (target != null) args.Insert(0, target);
+            //target = arg;
+            if (target == null)
+                target = arg;
+            else
+                args.Insert(0, arg);
         }
     }
 }

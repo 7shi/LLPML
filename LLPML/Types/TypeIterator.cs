@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class TypeIterator : TypeBase
+    public class TypeIterator : TypeVarBase
     {
         // type name
         public override string Name { get { return Type.Name + "[]"; } }
@@ -87,18 +87,6 @@ namespace Girl.LLPML
             // partial inheritance
             TypeIntBase.AddComparers(funcs, conds);
             TypeInt.AddComparers(conds);
-        }
-
-        // get value
-        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
-        {
-            codes.AddCodes(op, dest, src);
-        }
-
-        // set value
-        public override void AddSetCodes(OpCodes codes, Addr32 dest)
-        {
-            codes.Add(I386.Mov(dest, Reg32.EAX));
         }
     }
 }

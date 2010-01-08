@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.16.20080410">
+<llpml version="0.17.20080421">
 
 <include src="malloc.xml" />
 
@@ -83,6 +83,15 @@ struct ArrayList
   function FindAll(dest : ArrayList, cond)
   {
     for (int i = 0; i < Count; i++)
+    {
+      var n = Ptr[i];
+      if (cond(n)) dest.Add(n);
+    }
+  }
+  
+  function FindPartial(dest : ArrayList, start, cond)
+  {
+    for (int i = start; i < Count; i++)
     {
       var n = Ptr[i];
       if (cond(n)) dest.Add(n);

@@ -103,23 +103,23 @@ namespace Girl.LLPML.Struct
                 if (!(tv is Index)) t = tv.Type;
             }
             else
+            {
                 target.AddCodes(codes, "mov", null);
+                codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
+                ret = new Addr32(Var.DestRegister);
+            }
             if (t != null && t.IsValue)
             {
                 codes.Add(I386.Mov(Var.DestRegister, ret));
                 ret = new Addr32(Var.DestRegister);
             }
             var st = GetTargetStruct();
+            if (st == null)
+                throw Abort("can not find member: {0}", name);
             var offset = st.GetOffset(name);
             if (offset >= 0)
             {
-                if (ret == null)
-                {
-                    if (offset > 0)
-                        codes.Add(I386.Add(Reg32.EAX, (uint)offset));
-                }
-                else
-                    ret.Add(offset);
+                ret.Add(offset);
                 return ret;
             }
 
@@ -170,8 +170,11 @@ namespace Girl.LLPML.Struct
                 var m = st.GetMember(name);
                 if (m != null) return m.Type;
 
-                var p = st.GetFunction("get_" + name);
-                if (p != null) return p.ReturnType;
+                var f = st.GetFunction(name);
+                if (f != null) return f.Type;
+
+                var g = st.GetFunction("get_" + name);
+                if (g != null) return g.ReturnType;
 
                 return null;
             }

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.17.20080421">
+
+<title>構造体の配列</title>
+
+<include src="finish.xml" />
+
+<?llp
+struct Test1
+{
+  Test2 t2;
+
+  function ctor()
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+
+  function dtor()
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+}
+
+struct Test2
+{
+  function ctor()
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+
+  function dtor()
+  {
+    printfln("%p: %s", this, __FUNCTION__);
+  }
+}
+
+Test1 t1[3];
+?>
+
+</llpml>

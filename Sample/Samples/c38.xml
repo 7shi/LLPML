@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.16.20080410">
+<llpml version="0.17.20080421">
 
 <title>クロージャ</title>
 
 <include src="finish.xml" />
-<include src="delegate.xml" />
+<include src="jit.xml" />
 
 <?llp
-Delegate next, prev;
+delegate next, prev;
 
 // クロージャ定義時に値を束縛
 function counter()
 {
   var a = 10;
-  next.Delegate = new_Delegate(a, \a => ++a);
-  prev.Delegate = new_Delegate(a, \a => --a);
+  next = delegate(a, \a => ++a);
+  prev = delegate(a, \a => --a);
   a = 5;
   printfln("a = %d", a);
   printfln("next() = %d", next()); // 反映されない

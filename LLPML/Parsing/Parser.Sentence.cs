@@ -288,6 +288,21 @@ namespace Girl.LLPML.Parsing
                 ex.SrcInfo = si;
                 ex.CallType = ct2;
                 if (Peek() == "(") ReadArgs("extern", ex);
+
+                var comma = Read();
+                if (comma == ":")
+                {
+                    var ftype = Read();
+                    if (!Tokenizer.IsWord(ftype))
+                    {
+                        Rewind();
+                        throw Abort("extern: 型が不適切です: {0}", ftype);
+                    }
+                    ex.SetReturnType(Types.GetVarType(this.parent, ftype));
+                }
+                else
+                    Rewind();
+
                 if (!parent.AddFunction(ex))
                     throw Abort("extern: {0}: 定義が重複しています。", name);
                 list.Add(ex);

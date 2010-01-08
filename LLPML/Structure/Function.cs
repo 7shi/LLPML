@@ -19,8 +19,6 @@ namespace Girl.LLPML
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
 
-        public TypeBase Type { get { return TypeVar.Instance; } }
-
         protected Function virtfunc;
 
         protected Var.Declare virtptr;
@@ -105,7 +103,8 @@ namespace Girl.LLPML
         {
             if (string.IsNullOrEmpty(name))
             {
-                this.parent = root;
+                //this.parent = root;
+                isAnonymous = true;
                 name = this.parent.GetAnonymousFunctionName();
             }
             this.name = name;
@@ -145,7 +144,8 @@ namespace Girl.LLPML
             name = xr["name"];
             if (string.IsNullOrEmpty(name))
             {
-                parent = root;
+                //parent = root;
+                isAnonymous = true;
                 name = parent.GetAnonymousFunctionName();
             }
 
@@ -167,6 +167,17 @@ namespace Girl.LLPML
                 throw Abort(xr, "multiple definitions: " + name);
 
             base.Read(xr);
+        }
+
+        protected bool isAnonymous = false;
+
+        public override int Level
+        {
+            get
+            {
+                if (isAnonymous) return 0;
+                return base.Level;
+            }
         }
 
         private ushort argStack;
@@ -258,8 +269,24 @@ namespace Girl.LLPML
 
         public void SetReturnType(TypeBase type)
         {
-            doneInferType = true;
+            doneInferReturnType = true;
             this.returnType = type;
+        }
+
+        protected TypeBase type;
+        protected bool doneInferType = false;
+
+        public TypeBase Type
+        {
+            get
+            {
+                if (doneInferType || !root.IsCompiling)
+                    return type;
+
+                doneInferType = true;
+                type = new TypeFunction(this);
+                return type;
+            }
         }
     }
 }

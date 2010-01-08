@@ -10,9 +10,9 @@ namespace Girl.LLPML
 {
     public class TypeOf : NodeBase, IIntValue
     {
-        public Var Target { get; private set; }
+        public IIntValue Target { get; private set; }
 
-        public TypeOf(BlockBase parent, Var target) : base(parent) { Target = target; }
+        public TypeOf(BlockBase parent, IIntValue target) : base(parent) { Target = target; }
         public TypeOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)

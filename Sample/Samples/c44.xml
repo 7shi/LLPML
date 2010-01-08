@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.16.20080410">
+<llpml version="0.17.20080421">
 
 <title>クイックソート</title>
 
 <include src="finish.xml" />
 <include src="ArrayList.xml" />
+<include src="jit.xml" />
 
 <?llp
 ArrayList a;
@@ -22,23 +23,17 @@ b |< a.QuickSort;
 a |> Show;
 b |> Show;
 
-function QuickSort(dest : ArrayList, src : ArrayList)
+function QuickSort(src : ArrayList, dest : ArrayList)
 {
   if (src.Count == 0) return;
   
   var x = src.Ptr[0];
-  ArrayList less, greater;
-  for (int i = 1; i < src.Count; i++)
-  {
-    var n = src.Ptr[i];
-    if (n < x)
-      less.Add(n);
-    else
-      greater.Add(n);
-  }
-  dest |< less.QuickSort;
+  ArrayList lt, ge;
+  lt |< src.FindPartial(1, delegate(x, \(x, n) => n < x));
+  ge |< src.FindPartial(1, delegate(x, \(x, n) => n >= x));
+  dest |< lt.QuickSort;
   dest |< Add(x);
-  dest |< greater.QuickSort;
+  dest |< ge.QuickSort;
 }
 
 function Show(list : ArrayList)

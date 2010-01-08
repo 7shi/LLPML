@@ -81,7 +81,7 @@ struct Form1 : Form
     
     miFile.Text = "ファイル(&F)";
     miFileExit.Text = "終了(&X)";
-    miFileExit.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    miFileExit.Click.Add(delegate(this, function(this : Form1, sender, e)
     {
       this.hWnd.DestroyWindow();
     }));
@@ -89,21 +89,21 @@ struct Form1 : Form
     miOpt.Text = "オプション(&M)";
     miOptNormal.Text = "通常演算(&N)";
     miOptNormal.UseRadio();
-    miOptNormal.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    miOptNormal.Click.Add(delegate(this, function(this : Form1, sender, e)
     {
       this.SetMode(0);
     }));
     miOptMMX.Text = "&MMX";
     miOptMMX.Enabled = mode_max >= 1;
     miOptMMX.UseRadio();
-    miOptMMX.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    miOptMMX.Click.Add(delegate(this, function(this : Form1, sender, e)
     {
       this.SetMode(1);
     }));
     miOptSSE2.Text = "&SSE2";
     miOptSSE2.Enabled = mode_max == 2;
     miOptSSE2.UseRadio();
-    miOptSSE2.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    miOptSSE2.Click.Add(delegate(this, function(this : Form1, sender, e)
     {
       this.SetMode(2);
     }));
@@ -112,7 +112,7 @@ struct Form1 : Form
     miOpt.Append(miOptSSE2);
     miHelp.Text = "ヘルプ(&H)";
     miHelpAbout.Text = "バージョン情報(&A)";
-    miHelpAbout.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    miHelpAbout.Click.Add(delegate(this, function(this : Form1, sender, e)
     {
       MessageBox(this.hWnd, __LLPML__, "バージョン情報", 0);
     }));

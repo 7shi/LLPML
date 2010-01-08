@@ -193,27 +193,20 @@ namespace Girl.LLPML.Struct
             var st = GetBaseStruct();
             if (st != null) offset = st.GetSize();
             ForEachMembers((p, pos) =>
+            {
+                if (p.NeedsDtor)
                 {
-                    if (!(p is Var.Declare))
-                    {
-                        list.Add(p);
-                        poslist[p] = offset + pos;
-                    }
-                    return false;
-                }, null);
+                    list.Add(p);
+                    poslist[p] = offset + pos;
+                }
+                return false;
+            }, null);
             list.Reverse();
             var ad = new Addr32(Reg32.EBP, 8);
             foreach (var p in list)
             {
-                Define memst = Types.GetStruct(p.Type);
-                if (memst == null || !memst.NeedsDtor) continue;
-
-                codes.AddRange(new[]
-                {
-                    I386.Mov(Reg32.EAX, ad),
-                    I386.Add(Reg32.EAX, (uint)poslist[p])
-                });
-                memst.AddDestructor(codes, null);
+                codes.Add(I386.Mov(Var.DestRegister, ad));
+                p.Type.AddDestructor(codes, new Addr32(Var.DestRegister, poslist[p]));
             }
             if (st != null)
                 st.AddDestructor(codes, ad);
@@ -294,10 +287,9 @@ namespace Girl.LLPML.Struct
                     return true;
                 foreach (object obj in members.Values)
                 {
-                    var sd = obj as Struct.Declare;
-                    if (sd == null || !sd.NeedsDtor)
-                        continue;
-                    return true;
+                    var vd = obj as Var.Declare;
+                    if (vd != null && vd.NeedsDtor)
+                        return true;
                 }
                 return false;
             }

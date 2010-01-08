@@ -16,6 +16,15 @@ namespace Sample
 {
     public partial class Form1 : Form
     {
+        private static string[] Libraries =
+        {
+            "stdio", "string", "malloc", "finish",
+            "cpuid", "mmx", "sse",
+            "jit", "binary",
+            "win32", "WinWrap", "Drawing", "ArrayList",
+            "CriticalSection"
+        };
+
         private class TextData
         {
             public string Name, Text, Output;
@@ -59,14 +68,7 @@ namespace Sample
                 console = new TreeNode("ÉRÉìÉ\Å[Éã"),
             });
             treeView1.ExpandAll();
-            string[] libs =
-            {
-                "stdio", "string", "malloc", "finish",
-                "cpuid", "mmx", "sse",
-                "jit", "binary", "delegate",
-                "win32", "WinWrap", "Drawing", "ArrayList"
-            };
-            foreach (var lib in libs)
+            foreach (var lib in Libraries)
                 library.Nodes.Add(CreateItem(lib + ".xml"));
             ReadSamples(console, "c");
             ReadSamples(window, "w");

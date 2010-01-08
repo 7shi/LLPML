@@ -17,8 +17,8 @@ namespace Girl.LLPML
             public IIntValue Value { get; set; }
 
             public virtual bool NeedsInit { get { return Value != null; } }
-            public virtual bool NeedsCtor { get { return false; } }
-            public virtual bool NeedsDtor { get { return false; } }
+            public virtual bool NeedsCtor { get { return type.NeedsCtor; } }
+            public virtual bool NeedsDtor { get { return type.NeedsDtor; } }
 
             public Declare() { }
 
@@ -127,19 +127,20 @@ namespace Girl.LLPML
 
             public override void AddCodes(OpCodes codes)
             {
-                if (Value == null) return;
+                if (type.NeedsCtor)
+                    type.AddConstructor(codes, GetAddress(codes, parent));
 
-                Value.AddCodes(codes, "mov", null);
-                var ad = Address;
-                if (IsMember)
-                    ad = GetAddress(codes, parent);
-                Type.AddSetCodes(codes, ad);
+                if (Value != null)
+                {
+                    var s = new Set(parent, new Var(parent, this), Value);
+                    s.AddCodes(codes);
+                }
             }
 
             protected TypeBase type;
             protected bool doneInferType = false;
 
-            public virtual TypeBase Type
+            public TypeBase Type
             {
                 get
                 {

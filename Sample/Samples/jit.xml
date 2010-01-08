@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.17.20080421">
 
 <!-- JIT -->
 
+<include src="stdio.xml" />
 <include src="ArrayList.xml" />
+<include src="CriticalSection.xml" />
 
 <?llp
 const int _JIT_Page_Size    = 65536; // 64KB
@@ -11,19 +13,30 @@ const int _JIT_Alloc_Size   = 64;    // 64バイト固定
 const int _JIT_Alloc_DWords = 16;
 const int _JIT_Alloc_Shift  = 6;
 
+CriticalSection _jit_critical_section;
 _JIT_Manager _jit_manager;
 
-function __jit_alloc()
+function __jit_alloc(size)
 {
-  return _jit_manager.Alloc();
+  var ret = _jit_manager.Alloc(size);
+  //printfln("%s(%d) => %p", __FUNCTION__, size, ret);
+  return ret;
 }
 
 function __jit_free(ptr)
 {
+  //printfln("%s(%p)", __FUNCTION__, ptr);
   return _jit_manager.Free(ptr);
 }
 
-// ----
+function __jit_dup(ptr)
+{
+  var ret = _jit_manager.Duplicate(ptr);
+  //printfln("%s(%p) => %p", __FUNCTION__, ptr, ret);
+  return ret;
+}
+
+// Win32API
 
 extern "kernel32.dll" __stdcall
 {
@@ -53,17 +66,18 @@ const int PAGE_EXECUTE_WRITECOPY = 0x0080;
 const int PAGE_GUARD             = 0x0100;
 const int PAGE_NOCACHE           = 0x0200;
 
+// 実装
+
 struct _JIT_Allocator
 {
-  var buffer, current, end, count;
-  ArrayList freed;
+  var buffer, current, end;
+  ArrayList allocated, freed;
 
   function ctor()
   {
     buffer = VirtualAlloc(null, _JIT_Page_Size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     current = buffer;
     end = buffer + _JIT_Page_Size;
-    count = 0;
   }
 
   function dtor()
@@ -73,7 +87,7 @@ struct _JIT_Allocator
   
   function get_IsEmpty()
   {
-    return count == 0;
+    return allocated.Count == 0;
   }
   
   function get_IsFull()
@@ -96,7 +110,7 @@ struct _JIT_Allocator
       ret = freed.RemoveAt(c - 1);
     }
     __stosd(ret, 0, _JIT_Alloc_DWords);
-    count++;
+    allocated.Add(ret);
     return ret;
   }
   
@@ -106,7 +120,12 @@ struct _JIT_Allocator
       || (ptr >> _JIT_Alloc_Shift << _JIT_Alloc_Shift) != ptr)
       return false;
     
-    count--;
+    if (allocated.Remove(ptr) < 0)
+    {
+      printfln("%s: not allocated: %p", __FUNCTION__, ptr);
+      return false;
+    }
+    
     if (ptr + _JIT_Alloc_Size == current)
       current -= _JIT_Alloc_Size;
     else
@@ -124,14 +143,18 @@ struct _JIT_Manager
     for (int i = allocators.Count - 1; i >= 0; i--)
     {
       var allocator = (_JIT_Allocator)allocators.Ptr[i];
+      for (int j = 0; j < allocator.allocated.Count; j++)
+        printfln("%s: leaked: %p", __FUNCTION__, allocator.allocated.Ptr[j]);
       allocators.RemoveAt(i);
       allocator.dtor();
       free(allocator);
     }
   }
   
-  function Alloc()
+  function Alloc(size)
   {
+    _lock lock = { _jit_critical_section };
+    if (size > _JIT_Alloc_Size) return null;
     var ret;
     for (int i = allocators.Count - 1; i >= 0; i--)
     {
@@ -149,6 +172,7 @@ struct _JIT_Manager
   
   function Free(ptr)
   {
+    _lock lock = { _jit_critical_section };
     if (ptr == null) return false;
     
     var c = allocators.Count;
@@ -168,20 +192,15 @@ struct _JIT_Manager
     }
     return false;
   }
-}
-
-struct _JIT_Buffer
-{
-  var Ptr;
   
-  function ctor()
+  function Duplicate(ptr)
   {
-    Ptr = __jit_alloc();
-  }
-  
-  function dtor()
-  {
-    __jit_free(Ptr);
+    _lock lock = { _jit_critical_section };
+    if (ptr == null) return null;
+    
+    var ret = __jit_alloc(_JIT_Alloc_Size);
+    __memcpy(ret, ptr, _JIT_Alloc_Size);
+    return ret;
   }
 }
 ?>

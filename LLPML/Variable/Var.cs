@@ -11,7 +11,7 @@ namespace Girl.LLPML
     public partial class Var : NodeBase, IIntValue
     {
         public const int DefaultSize = 4;
-        public const Reg32 DestRegister = Reg32.EDX;
+        public const Reg32 DestRegister = Reg32.ECX;
 
         public virtual TypeBase Type { get { return Reference.Type; } }
         public Var.Declare Reference { get; protected set; }

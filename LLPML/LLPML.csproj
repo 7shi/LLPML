@@ -58,6 +58,7 @@
     <Compile Include="Parsing\Parser.Operator.Impl.cs" />
     <Compile Include="Structure\Call.Intrinsics.cs" />
     <Compile Include="Structure\Call.SIMD.cs" />
+    <Compile Include="Structure\Delegate.cs" />
     <Compile Include="Struct\Declare.cs" />
     <Compile Include="Struct\Define.cs" />
     <Compile Include="Struct\Member.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Types\TypeIterator.cs" />
     <Compile Include="Types\TypeReference.cs" />
     <Compile Include="Types\TypeArray.cs" />
+    <Compile Include="Types\TypeFunction.cs" />
     <Compile Include="Value\SizeOf.cs" />
     <Compile Include="Struct\This.cs" />
     <Compile Include="Structure\Extern.cs" />

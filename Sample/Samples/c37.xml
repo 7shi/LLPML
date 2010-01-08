@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.17.20080421">
 
 <title>委譲</title>
 
 <include src="finish.xml" />
-<include src="delegate.xml" />
+<include src="jit.xml" />
 
 <?llp
 struct Test
@@ -24,9 +24,12 @@ b.Text = "b";
 a.Show();
 b.Show();
 
-Delegate delg_a, delg_b;
-delg_a.Bind1(a, Test.Show);
-delg_b.Bind1(b, Test.Show);
+var delg_a = delegate(a, Test.Show);
+var delg_b = delegate(b, Test.Show);
+
+printfln("typeof Test.Show = %s", typeof Test.Show);
+printfln("typeof delg_a = %s", typeof delg_a);
+printfln("typeof delg_b = %s", typeof delg_b);
 
 delg_a();
 delg_b();

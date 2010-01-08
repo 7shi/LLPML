@@ -27,6 +27,11 @@ namespace Girl.X86
             return new OpCode(new byte[] { 0xc2 }, op1);
         }
 
+        public static OpCode Loop(Val32 op1)
+        {
+            return new OpCode(new byte[] { 0xe2 }, op1, true) { ByteRelative = true };
+        }
+
         public static OpCode Lea(Reg32 op1, Addr32 op2)
         {
             return new OpCode(new byte[] { 0x8d }, null, new Addr32(op2, (byte)op1));

@@ -41,9 +41,18 @@ namespace Girl.LLPML
                 }
             }
             values[0].AddCodes(codes, "push", null);
+            bool cleanup = Call.NeedsDtor(values[0]);
             var ad = dest.GetAddress(codes);
-            codes.Add(I386.Pop(Reg32.EAX));
+            if (!cleanup)
+                codes.Add(I386.Pop(Reg32.EAX));
+            else
+                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)));
             dest.Type.AddSetCodes(codes, ad);
+            if (cleanup)
+            {
+                codes.Add(I386.Pop(Reg32.EAX));
+                values[0].Type.AddDestructor(codes, null);
+            }
         }
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)

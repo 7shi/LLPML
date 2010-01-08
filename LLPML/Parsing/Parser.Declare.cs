@@ -11,7 +11,10 @@ namespace Girl.LLPML.Parsing
             if (!CanRead) return null;
 
             var t = Read();
-            if (t == "var") return VarDeclare();
+            if (t == "var")
+                return VarDeclare();
+            else if (t == "delegate" && Peek() != "(")
+                return DelegateDeclare();
 
             if (Tokenizer.IsWord(t) && CanRead)
             {
@@ -258,6 +261,32 @@ namespace Girl.LLPML.Parsing
                     throw Abort("{0}: }}}} が必要です。", type);
                 }
             }
+        }
+
+        private Var.Declare[] DelegateDeclare()
+        {
+            var list = new List<Var.Declare>();
+            var type = Delegate.GetDefaultType(parent);
+            ReadDeclare("delegate", null,
+                (name, eq, si, array) =>
+                {
+                    Var.Declare p;
+                    if (array == null)
+                    {
+                        var vd = new Var.Declare(parent, name, type);
+                        if (eq) vd.Value = Expression();
+                        p = vd;
+                    }
+                    else
+                    {
+                        if (eq)
+                            throw parent.Abort(si, "var: 配列を初期化できません。");
+                        p = new Var.Declare(parent, name, type, (int)array);
+                    }
+                    p.SrcInfo = si;
+                    list.Add(p);
+                });
+            return list.ToArray();
         }
     }
 }

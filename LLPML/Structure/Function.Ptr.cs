@@ -34,7 +34,7 @@ namespace Girl.LLPML
                 return f.GetAddress(m);
             }
 
-            public TypeBase Type { get { return null; } }
+            public TypeBase Type { get { return GetFunction().Type; } }
 
             public void AddCodes(OpCodes codes, string op, Addr32 dest)
             {
@@ -51,6 +51,7 @@ namespace Girl.LLPML
 
             public Function GetFunction()
             {
+                if (func != null) return func;
                 return parent.GetFunction(name);
             }
 

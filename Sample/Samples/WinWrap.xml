@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.17.20080421">
 
 <include src="win32.xml" />
 <include src="stdio.xml" />
-<include src="delegate.xml" />
+<include src="jit.xml" />
 <include src="ArrayList.xml" />
 
 <?llp
@@ -13,6 +13,26 @@ var g_nAutoID = 0x2000;
 function winforms_get_auto_id()
 {
   return g_nAutoID++;
+}
+
+struct Event : ArrayList
+{
+  function dtor()
+  {
+    for (int i = 0; i < Count; i++)
+      __jit_free(Ptr[i]);
+  }
+  
+  function Add(delg)
+  {
+    ((ArrayList)this).Add(__jit_dup(delg));
+  }
+  
+  function Invoke(sender, e)
+  {
+    for (int i = 0; i < Count; i++)
+      Ptr[i](sender, e);
+  }
 }
 
 struct MainMenu
@@ -53,7 +73,7 @@ struct MenuItem : MENUITEMINFO
 {
   var hMenu = null;
   ArrayList MenuItems;
-  ArrayList Click;
+  Event Click;
   
   function ctor()
   {
@@ -68,8 +88,6 @@ struct MenuItem : MENUITEMINFO
   {
     if (hSubMenu != null)
       hSubMenu.DestroyMenu();
-    for (int i = 0; i < Click.Count; i++)
-      delete_Delegate(Click.Ptr[i]);
   }
   
   function set_Text(text)
@@ -128,11 +146,7 @@ struct MenuItem : MENUITEMINFO
   
   virtual OnClick(e)
   {
-    for (int i = 0; i < Click.Count; i++)
-    {
-      var delg : Delegate = Click.Ptr[i];
-      delg.Ptr(this, e);
-    }
+    Click.Invoke(this, e);
   }
   
   function FindMenuItem(id)
@@ -255,13 +269,13 @@ struct Control
 struct Form : Control
 {
   WNDCLASSEX wcex;
-  Delegate wndProc;
+  delegate wndProc;
   char className[1025];
   var mainMenu : MainMenu = null;
   
   function ctor()
   {
-    wndProc.Bind1Std(this, WndProc, 4);
+    wndProc = delegate((stdcall))(this, WndProc);
     className.wsprintf("WinWrap_%x", winforms_get_auto_id());
     lpClassName = className;
     dwStyle     = WS_OVERLAPPEDWINDOW;
@@ -269,7 +283,7 @@ struct Form : Control
     __stosb(wcex, 0, sizeof WNDCLASSEX);
     wcex.cbSize        = sizeof WNDCLASSEX;
     wcex.style         = CS_VREDRAW | CS_HREDRAW;
-    wcex.lpfnWndProc   = wndProc.Ptr;
+    wcex.lpfnWndProc   = wndProc;
     wcex.hInstance     = g_hInstance;
     wcex.hCursor       = LoadCursor(null, IDC_ARROW);
     wcex.hbrBackground = COLOR_WINDOW + 1;

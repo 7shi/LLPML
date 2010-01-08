@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.X86;
 
 namespace Girl.LLPML.Parsing
 {
@@ -25,6 +26,28 @@ namespace Girl.LLPML.Parsing
                         if (f == null) break;
                         f.SrcInfo = si;
                         return f;
+                    }
+                case "delegate":
+                    {
+                        Check("delegate", "(");
+                        CallType ct = CallType.CDecl;
+                        if (Read() == "(")
+                        {
+                            var cts = Read();
+                            if (cts == "stdcall")
+                                ct = CallType.Std;
+                            else
+                                throw Abort("delegate: 不明な属性です: {0}", cts);
+                            Check("delegate", ")");
+                            Check("delegate", ")");
+                            Check("delegate", "(");
+                        }
+                        else
+                            Rewind();
+                        var args = Arguments(",", ")", false);
+                        if (args == null)
+                            throw Abort("delegate: 引数が不完全です。");
+                        return new Delegate(parent, ct, args) { SrcInfo = si };
                     }
                 case "\\":
                     {
@@ -52,12 +75,7 @@ namespace Girl.LLPML.Parsing
                         return new AddrOf(parent, ex) { SrcInfo = si };
                     }
                 case "typeof":
-                    {
-                        var ex = Expression() as Var;
-                        if (ex == null)
-                            throw parent.Abort(si, "typeof: 引数が不適切です。");
-                        return new TypeOf(parent, ex) { SrcInfo = si };
-                    }
+                    return new TypeOf(parent, Expression()) { SrcInfo = si };
                 case "__FUNCTION__":
                     return new StringValue(parent.GetName());
                 case "__FILE__":
