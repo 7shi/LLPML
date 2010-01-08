@@ -43,6 +43,18 @@ namespace Test
                 StringReader sr = new StringReader(tb.Text);
                 XmlTextReader xr = new XmlTextReader(sr);
                 Root root = new Root();
+                root.StreamDelegate = delegate(string name)
+                {
+                    foreach (TabPage page in tabControl1.TabPages)
+                    {
+                        if (page.Text == name)
+                        {
+                            TextBox textBox = page.Controls[0] as TextBox;
+                            return new StringReader(textBox.Text);
+                        }
+                    }
+                    return null;
+                };
                 if (tb.Tag is string)
                 {
                     root.Output = Path.GetFileNameWithoutExtension(tb.Tag as string) + ".exe";

@@ -63,6 +63,10 @@ namespace Girl.X86
                 .Test("call [eax]", "FF-10");
             I386.Call(new Addr32(0x12345678))
                 .Test("call [0x12345678]", "FF-15-78-56-34-12");
+            I386.Jmp(new Addr32(Reg32.EAX))
+                .Test("jmp [eax]", "FF-20");
+            I386.Jmp(new Addr32(0x12345678))
+                .Test("jmp [0x12345678]", "FF-25-78-56-34-12");
             I386.Mov(Reg32.EAX, new Addr32(0x12345678))
                 .Test("mov eax, [0x12345678]", "A1-78-56-34-12");
             I386.Mov(Reg32.EBX, new Addr32(0x12345678))
@@ -129,6 +133,10 @@ namespace Girl.X86
                 .Test("add eax, 4", "05-04-00-00-00");
             I386.Sub(Reg32.EAX, 4)
                 .Test("sub eax, 4", "2D-04-00-00-00");
+            I386.Ret()
+                .Test("ret", "C3");
+            I386.Ret(8)
+                .Test("ret 8", "C2-08-00");
         }
     }
 }

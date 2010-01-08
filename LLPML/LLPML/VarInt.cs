@@ -7,28 +7,43 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class VarInt : NodeBase
+    public partial class VarInt : VarBase
     {
-        string name;
-        public string Name { get { return name; } }
+        public override Addr32 Address
+        {
+            get { return parent.GetVarInt(name).address; }
+            set { parent.GetVarInt(name).address = value; }
+        }
 
-        Call call;
-        int? value = null;
+        private Call call;
+        private int? value;
+        private VarInt src;
 
         public VarInt() { }
-        public VarInt(Block parent, string name, int value) : base(parent)
+
+        public VarInt(Block parent, string name)
+            : base(parent, name)
         {
-            this.name = name;
-            this.value = value;
-            parent.AddVarInt(name);
+            parent.AddVarInt(this);
         }
-        public VarInt(Block parent, XmlTextReader xr) : base(parent, xr) { }
+
+        public VarInt(Block parent, string name, int value)
+            : this(parent, name)
+        {
+            this.value = value;
+        }
+
+        public VarInt(Block parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
             name = xr["name"];
             value = null;
             call = null;
+            src = null;
             Parse(xr, delegate
             {
                 if (xr.NodeType == XmlNodeType.Text)
@@ -42,12 +57,15 @@ namespace Girl.LLPML
                         case "call":
                             call = new Call(parent, xr);
                             break;
+                        case "var-int":
+                            src = parent.ReadVarInt(xr);
+                            break;
                         default:
                             throw Abort(xr);
                     }
                 }
             });
-            if (value != null || call != null) parent.AddVarInt(name);
+            if (value != null || call != null || src != null) parent.AddVarInt(this);
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
@@ -61,113 +79,28 @@ namespace Girl.LLPML
                 call.AddCodes(codes, m);
                 codes.Add(I386.Mov(Address, Reg32.EAX));
             }
-        }
-
-        public Addr32 Address { get { return parent.GetVarInt(name).addr; } }
-
-        public class NoOperand : NodeBase
-        {
-            protected string target;
-
-            public NoOperand() { }
-            public NoOperand(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void Read(XmlTextReader xr)
+            else if (src != null)
             {
-                target = xr["target"];
-                Parse(xr, null);
+                codes.Add(I386.Mov(Reg32.EAX, src.Address));
+                codes.Add(I386.Mov(Address, Reg32.EAX));
             }
         }
 
-        public class Inc : NoOperand
+        public void WriteArg(List<OpCode> codes, int blv)
         {
-            public Inc(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void AddCodes(List<OpCode> codes, Module m)
+            int lv = parent.Level;
+            if (lv == blv || address.IsAddress)
             {
-                codes.Add(I386.Inc(parent.GetVarInt(target).addr));
+                codes.Add(I386.Push(address));
             }
-        }
-
-        public class Dec : NoOperand
-        {
-            public Dec(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void AddCodes(List<OpCode> codes, Module m)
+            else if (0 < lv && lv < blv)
             {
-                codes.Add(I386.Dec(parent.GetVarInt(target).addr));
+                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
+                codes.Add(I386.Push(new Addr32(Reg32.EAX, address.Disp)));
             }
-        }
-
-        public class IntOperand : NodeBase
-        {
-            protected string target;
-            protected object operand;
-
-            public IntOperand() { }
-            public IntOperand(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void Read(XmlTextReader xr)
+            else
             {
-                target = xr["target"];
-                Parse(xr, delegate
-                {
-                    if (xr.NodeType == XmlNodeType.Element)
-                    {
-                        switch (xr.Name)
-                        {
-                            case "int":
-                                if (operand != null) throw Abort(xr);
-                                operand = parent.ReadInt(xr);
-                                break;
-                            case "var-int":
-                                if (operand != null) throw Abort(xr);
-                                operand = parent.ReadVarInt(xr);
-                                break;
-                            default:
-                                throw Abort(xr);
-                        }
-                    }
-                });
-                if (operand == null) throw Abort(xr);
-            }
-        }
-
-        public class Add : IntOperand
-        {
-            public Add(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void AddCodes(List<OpCode> codes, Module m)
-            {
-                Addr32 v = parent.GetVarInt(target).addr;
-                if (operand is int)
-                {
-                    codes.Add(I386.Add(v, (uint)(int)operand));
-                }
-                else if (operand is Block.LocalVarInt)
-                {
-                    codes.Add(I386.Mov(Reg32.EAX, (operand as Block.LocalVarInt).addr));
-                    codes.Add(I386.Add(v, Reg32.EAX));
-                }
-            }
-        }
-
-        public class Sub : IntOperand
-        {
-            public Sub(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void AddCodes(List<OpCode> codes, Module m)
-            {
-                Addr32 v = parent.GetVarInt(target).addr;
-                if (operand is int)
-                {
-                    codes.Add(I386.Sub(v, (uint)(int)operand));
-                }
-                else if (operand is Block.LocalVarInt)
-                {
-                    codes.Add(I386.Mov(Reg32.EAX, (operand as Block.LocalVarInt).addr));
-                    codes.Add(I386.Sub(v, Reg32.EAX));
-                }
+                throw new Exception("Invalid variable scope.");
             }
         }
     }

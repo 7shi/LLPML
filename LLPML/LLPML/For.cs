@@ -12,7 +12,7 @@ namespace Girl.LLPML
         private string name;
         private VarInt count;
         private int to, step;
-        private OpCode start, end;
+        private OpCode start, cmp;
 
         public For() { }
         public For(Block parent, XmlTextReader xr) : base(parent, xr) { }
@@ -35,22 +35,13 @@ namespace Girl.LLPML
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             base.BeforeAddCodes(codes, m);
-            start = new OpCode();
-            end = new OpCode();
-            if (count != null) count.AddCodes(codes, m);
-            codes.Add(start);
             if (count != null)
             {
-                codes.Add(I386.Cmp(count.Address, (uint)to));
-                if (step > 0)
-                {
-                    codes.Add(I386.Jcc(Cond.G, end.Address));
-                }
-                else if (step < 0)
-                {
-                    codes.Add(I386.Jcc(Cond.L, end.Address));
-                }
+                cmp = new OpCode();
+                count.AddCodes(codes, m);
+                codes.Add(I386.Jmp(cmp.Address));
             }
+            codes.Add(start = new OpCode());
         }
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)
@@ -65,9 +56,21 @@ namespace Girl.LLPML
                     codes.Add(I386.Add(count.Address, (uint)step));
                 else if (step < -1)
                     codes.Add(I386.Sub(count.Address, (uint)-step));
+                codes.Add(cmp);
+                codes.Add(I386.Cmp(count.Address, (uint)to));
+                if (step > 0)
+                {
+                    codes.Add(I386.Jcc(Cond.LE, start.Address));
+                }
+                else if (step < 0)
+                {
+                    codes.Add(I386.Jcc(Cond.GE, start.Address));
+                }
             }
-            codes.Add(I386.Jmp(start.Address));
-            codes.Add(end);
+            else
+            {
+                codes.Add(I386.Jmp(start.Address));
+            }
             base.AfterAddCodes(codes, m);
         }
     }

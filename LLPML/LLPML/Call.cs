@@ -15,38 +15,43 @@ namespace Girl.LLPML
         private string target;
         public string Target { get { return target; } }
 
-        private Extern function;
-        public Extern Function { get { return function; } }
-
         public Call() { }
         public Call(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
             target = xr["target"];
-            function = root.GetFunction(target);
             args = new List<object>();
             Parse(xr, delegate
             {
                 if (xr.NodeType == XmlNodeType.Element)
                 {
+                    object arg = null;
+                    string name = xr["name"];
                     switch (xr.Name)
                     {
                         case "int":
-                            args.Add(parent.ReadInt(xr));
+                            arg = parent.ReadInt(xr);
                             break;
                         case "string":
-                            args.Add(parent.ReadString(xr));
+                            arg = parent.ReadString(xr);
                             break;
                         case "var-int":
-                            args.Add(parent.ReadVarInt(xr));
+                            arg = parent.ReadVarInt(xr);
                             break;
                         case "ptr":
-                            args.Add(parent.ReadPointer(xr));
+                            arg = parent.ReadPointer(xr);
                             break;
                         default:
                             throw Abort(xr);
                     }
+                    if (arg == null)
+                    {
+                        string msg = "invalid argument";
+                        if (name != null) msg += ": " + name;
+                        throw Abort(xr, msg);
+                    }
+                    args.Add(arg);
                 }
             });
         }
@@ -61,65 +66,32 @@ namespace Girl.LLPML
                 {
                     codes.Add(I386.Push((uint)(int)arg));
                 }
-                else if (arg is uint)
-                {
-                    codes.Add(I386.Push((uint)arg));
-                }
-                else if (arg is Ptr<uint>)
-                {
-                    codes.Add(I386.Push((Ptr<uint>)arg));
-                }
-                else if (arg is Addr32)
-                {
-                    codes.Add(I386.Push((Addr32)arg));
-                }
                 else if (arg is string)
                 {
                     codes.Add(I386.Push(m.GetString(arg as string)));
                 }
-                else if (arg is Block.LocalVarInt)
+                else if (arg is VarInt)
                 {
-                    Block.LocalVarInt v = arg as Block.LocalVarInt;
-                    int lv = v.scope.Level;
-                    if (v.scope == parent || v.addr.IsAddress)
+                    (arg as VarInt).WriteArg(codes, parent.Level);
+                }
+                else if (arg is Pointer)
+                {
+                    Pointer p = arg as Pointer;
+                    int lv = p.Parent.Level;
+                    if (p.Parent == parent || p.Address.IsAddress)
                     {
-                        codes.Add(I386.Push(v.addr));
+                        codes.Add(I386.Lea(Reg32.EAX, p.Address));
+                        codes.Add(I386.Push(Reg32.EAX));
                     }
                     else if (0 < lv && lv < parent.Level)
                     {
-                        codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, - lv * 4)));
-                        codes.Add(I386.Push(new Addr32(Reg32.EAX, v.addr.Disp)));
+                        codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
+                        codes.Add(I386.Sub(Reg32.EAX, (uint)-p.Address.Disp));
+                        codes.Add(I386.Push(Reg32.EAX));
                     }
                     else
                     {
                         throw new Exception("Invalid variable scope.");
-                    }
-                }
-                else if (arg is Block.LocalPointer)
-                {
-                    Block.LocalPointer p = arg as Block.LocalPointer;
-                    int lv = p.scope.Level;
-                    if (p.ptr != null)
-                    {
-                        codes.Add(I386.Push(p.ptr));
-                    }
-                    else
-                    {
-                        if (p.scope == parent || p.addr.IsAddress)
-                        {
-                            codes.Add(I386.Lea(Reg32.EAX, p.addr));
-                            codes.Add(I386.Push(Reg32.EAX));
-                        }
-                        else if (0 < lv && lv < parent.Level)
-                        {
-                            codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, - lv * 4)));
-                            codes.Add(I386.Sub(Reg32.EAX, (uint)-p.addr.Disp));
-                            codes.Add(I386.Push(Reg32.EAX));
-                        }
-                        else
-                        {
-                            throw new Exception("Invalid variable scope.");
-                        }
                     }
                 }
                 else
@@ -127,9 +99,10 @@ namespace Girl.LLPML
                     throw new Exception("Unknown argument.");
                 }
             }
-            Function f = function.GetFunction(m);
+            Function f = parent.GetFunction(target);
+            if (f == null) throw new Exception("undefined function: " + target);
             codes.Add(I386.Call(f.Address));
-            if (f.CallType == CallType.CDecl)
+            if (f.Type == CallType.CDecl && args.Length > 0)
             {
                 codes.Add(I386.Add(Reg32.ESP, (byte)(args.Length * 4)));
             }

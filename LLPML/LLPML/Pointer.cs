@@ -8,10 +8,13 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Pointer : NodeBase
+    public class Pointer : VarBase
     {
-        private string name;
-        public string Name { get { return name; } }
+        public override Addr32 Address
+        {
+            get { return parent.GetPointer(name).address; }
+            set { parent.GetPointer(name).address = value; }
+        }
 
         private int length = 0;
         public int Length { get { return length; } }
@@ -42,7 +45,7 @@ namespace Girl.LLPML
                     }
                 }
             });
-            if (length > 0) parent.AddPointer(name, length);
+            if (length > 0) parent.AddPointer(this);
         }
     }
 }

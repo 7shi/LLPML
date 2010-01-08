@@ -11,6 +11,8 @@ namespace Girl.LLPML
     public class Block : NodeBase
     {
         private List<NodeBase> sentences = new List<NodeBase>();
+        protected OpCode last = new OpCode(), next = new OpCode();
+        public Ptr<uint> Last { get { return last.Address; } }
 
         #region int
 
@@ -90,29 +92,21 @@ namespace Girl.LLPML
 
         #region var-int
 
-        public class LocalVarInt
-        {
-            public Block scope;
-            public Addr32 addr;
+        protected Dictionary<string, VarInt> var_ints = new Dictionary<string, VarInt>();
 
-            public LocalVarInt(Block scope) { this.scope = scope; }
-        }
-
-        protected Dictionary<string, LocalVarInt> var_ints = new Dictionary<string, LocalVarInt>();
-
-        public LocalVarInt GetVarInt(string name)
+        public VarInt GetVarInt(string name)
         {
             if (var_ints.ContainsKey(name)) return var_ints[name];
             return parent == null ? null : parent.GetVarInt(name);
         }
 
-        public void AddVarInt(string name)
+        public void AddVarInt(VarInt src)
         {
-            if (var_ints.ContainsKey(name)) return;
-            var_ints.Add(name, new LocalVarInt(this));
+            if (var_ints.ContainsKey(src.Name)) return;
+            var_ints.Add(src.Name, src);
         }
 
-        public LocalVarInt ReadVarInt(XmlTextReader xr)
+        public VarInt ReadVarInt(XmlTextReader xr)
         {
             return GetVarInt(new VarInt(this, xr).Name);
         }
@@ -121,37 +115,47 @@ namespace Girl.LLPML
 
         #region pointer
 
-        public class LocalPointer
-        {
-            public Block scope;
-            public Ptr<uint> ptr;
-            public Addr32 addr;
-            public int len;
+        protected Dictionary<string, Pointer> ptrs = new Dictionary<string, Pointer>();
 
-            public LocalPointer(Block scope, int len)
-            {
-                this.scope = scope;
-                this.len = len;
-            }
-        };
-
-        protected Dictionary<string, LocalPointer> ptrs = new Dictionary<string, LocalPointer>();
-
-        public LocalPointer GetPointer(string name)
+        public Pointer GetPointer(string name)
         {
             if (ptrs.ContainsKey(name)) return ptrs[name];
             return parent == null ? null : parent.GetPointer(name);
         }
 
-        public void AddPointer(string name, int len)
+        public void AddPointer(Pointer src)
         {
-            if (ptrs.ContainsKey(name)) return;
-            ptrs.Add(name, new LocalPointer(this, len));
+            if (ptrs.ContainsKey(src.Name)) return;
+            ptrs.Add(src.Name, src);
         }
 
-        public LocalPointer ReadPointer(XmlTextReader xr)
+        public Pointer ReadPointer(XmlTextReader xr)
         {
             return GetPointer(new Pointer(this, xr).Name);
+        }
+
+        #endregion
+
+        #region function
+
+        private Dictionary<string, Function> functions = new Dictionary<string, Function>();
+
+        public Function GetFunction(string name)
+        {
+            if (functions.ContainsKey(name)) return functions[name];
+            return parent == null ? null : parent.GetFunction(name);
+        }
+
+        public void SetFunction(string name, Function function)
+        {
+            if (functions.ContainsKey(name))
+            {
+                functions[name].Set(function);
+            }
+            else
+            {
+                functions.Add(name, function);
+            }
         }
 
         #endregion
@@ -159,58 +163,69 @@ namespace Girl.LLPML
         public Block() { }
         public Block(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
-        protected void ReadBlock(XmlTextReader xr)
+        protected virtual void ReadBlock(XmlTextReader xr)
         {
-            if (xr.NodeType == XmlNodeType.Element)
+            switch (xr.NodeType)
             {
-                switch (xr.Name)
-                {
-                    case "block":
-                        sentences.Add(new Block(this, xr));
-                        break;
-                    case "extern":
-                        new Extern(this, xr);
-                        break;
-                    case "call":
-                        sentences.Add(new Call(this, xr));
-                        break;
-                    case "int":
-                        ReadInt(xr);
-                        break;
-                    case "string":
-                        ReadString(xr);
-                        break;
-                    case "var-int":
-                        sentences.Add(new VarInt(this, xr));
-                        break;
-                    case "var-int-inc":
-                        sentences.Add(new VarInt.Inc(this, xr));
-                        break;
-                    case "var-int-dec":
-                        sentences.Add(new VarInt.Dec(this, xr));
-                        break;
-                    case "var-int-add":
-                        sentences.Add(new VarInt.Add(this, xr));
-                        break;
-                    case "var-int-sub":
-                        sentences.Add(new VarInt.Sub(this, xr));
-                        break;
-                    case "ptr":
-                        sentences.Add(new Pointer(this, xr));
-                        break;
-                    case "loop":
-                        sentences.Add(new Loop(this, xr));
-                        break;
-                    case "for":
-                        sentences.Add(new For(this, xr));
-                        break;
-                    default:
-                        throw Abort(xr);
-                }
-            }
-            else if (xr.NodeType != XmlNodeType.Whitespace)
-            {
-                throw Abort(xr, "element required");
+                case XmlNodeType.Element:
+                    switch (xr.Name)
+                    {
+                        case "int":
+                            ReadInt(xr);
+                            break;
+                        case "string":
+                            ReadString(xr);
+                            break;
+                        case "function":
+                            new Function(this, xr);
+                            break;
+                        case "extern":
+                            new Extern(this, xr);
+                            break;
+                        case "block":
+                            sentences.Add(new Block(this, xr));
+                            break;
+                        case "call":
+                            sentences.Add(new Call(this, xr));
+                            break;
+                        case "var-int":
+                            sentences.Add(new VarInt(this, xr));
+                            break;
+                        case "var-int-inc":
+                            sentences.Add(new VarInt.Inc(this, xr));
+                            break;
+                        case "var-int-dec":
+                            sentences.Add(new VarInt.Dec(this, xr));
+                            break;
+                        case "var-int-add":
+                            sentences.Add(new VarInt.Add(this, xr));
+                            break;
+                        case "var-int-sub":
+                            sentences.Add(new VarInt.Sub(this, xr));
+                            break;
+                        case "ptr":
+                            sentences.Add(new Pointer(this, xr));
+                            break;
+                        case "loop":
+                            sentences.Add(new Loop(this, xr));
+                            break;
+                        case "for":
+                            sentences.Add(new For(this, xr));
+                            break;
+                        case "break":
+                            sentences.Add(new Break(this, xr));
+                            break;
+                        default:
+                            throw Abort(xr);
+                    }
+                    break;
+
+                case XmlNodeType.Whitespace:
+                case XmlNodeType.Comment:
+                    break;
+
+                default:
+                    throw Abort(xr, "element required");
             }
         }
 
@@ -227,14 +242,21 @@ namespace Girl.LLPML
             int size = Level * 4;
             foreach (string name in var_ints.Keys)
             {
-                size += 4;
-                var_ints[name].addr = new Addr32(Reg32.EBP, -size);
+                VarInt v = var_ints[name];
+                if (v.GetType() == typeof(VarInt))
+                {
+                    size += 4;
+                    v.Address = new Addr32(Reg32.EBP, -size);
+                }
             }
             foreach (string name in ptrs.Keys)
             {
-                LocalPointer b = ptrs[name];
-                size += (b.len + 3) / 4 * 4;
-                b.addr = new Addr32(Reg32.EBP, -size);
+                Pointer p = ptrs[name];
+                if (p.GetType() == typeof(Pointer))
+                {
+                    size += (p.Length + 3) / 4 * 4;
+                    p.Address = new Addr32(Reg32.EBP, -size);
+                }
             }
             codes.Add(I386.Enter((ushort)size, (byte)Level));
         }
@@ -246,12 +268,19 @@ namespace Girl.LLPML
             {
                 child.AddCodes(codes, m);
             }
+            codes.Add(last);
             AfterAddCodes(codes, m);
+            foreach (Function func in functions.Values)
+            {
+                func.AddCodes(codes, m);
+            }
+            codes.Add(next);
         }
 
         protected virtual void AfterAddCodes(List<OpCode> codes, Module m)
         {
             codes.Add(I386.Leave());
+            if (functions.Count > 0) codes.Add(I386.Jmp(next.Address));
         }
     }
 }

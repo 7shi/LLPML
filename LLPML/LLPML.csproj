@@ -43,6 +43,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="LLPML\Extern.cs" />
+    <Compile Include="LLPML\Function.cs" />
     <Compile Include="LLPML\NodeBase.cs" />
     <Compile Include="LLPML\Root.cs" />
     <Compile Include="LLPML\Call.cs" />
@@ -51,6 +52,11 @@
     <Compile Include="LLPML\Pointer.cs" />
     <Compile Include="LLPML\Loop.cs" />
     <Compile Include="LLPML\For.cs" />
+    <Compile Include="LLPML\Break.cs" />
+    <Compile Include="LLPML\ArgInt.cs" />
+    <Compile Include="LLPML\VarInt.Methods.cs" />
+    <Compile Include="LLPML\ArgPtr.cs" />
+    <Compile Include="LLPML\VarBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -106,6 +112,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\07.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\08.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\09.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\10.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

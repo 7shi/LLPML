@@ -7,28 +7,22 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Extern : Function
+    public class ArgInt : VarInt
     {
-        private string module, alias;
-
-        public Extern() { }
-        public Extern(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public ArgInt() { }
+        public ArgInt(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
             if (!xr.IsEmptyElement)
                 throw Abort(xr, "<" + xr.Name + "> can not have any children");
 
-            module = xr["module"];
-            alias = xr["alias"];
-            base.Read(xr);
+            name = xr["name"];
+            parent.AddVarInt(this);
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            codes.Add(entry);
-            string n = alias != null ? alias : name;
-            codes.Add(I386.Jmp(m.GetFunction(type, module, n).Address));
         }
     }
 }

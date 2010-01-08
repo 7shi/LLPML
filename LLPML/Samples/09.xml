@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.3.20070814">
+
+<include src="10.xml" />
+
+<call target="test">
+	<int>2</int>
+	<int>5</int>
+</call>
+
+<call target="printf"><string>
+Press [Enter] to exit.
+</string></call>
+
+<call target="pause" />
+
+<function name="test">
+	<arg-int name="a" />
+	<arg-int name="b" />
+	<var-int name="c"><var-int name="a" /></var-int>
+	<var-int-add target="c"><var-int name="b" /></var-int-add>
+	<call target="printf">
+		<string>%d + %d = %d
+</string>
+		<var-int name="a" />
+		<var-int name="b" />
+		<var-int name="c" />
+	</call>
+</function>
+
+</llpml>

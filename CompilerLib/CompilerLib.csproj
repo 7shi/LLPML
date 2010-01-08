@@ -50,7 +50,7 @@
     <Compile Include="PE\Section\Symbol.cs" />
     <Compile Include="PE\Section\TextSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="X86\I386.Test.cs" />
+    <Compile Include="X86\I386.Tests.cs" />
     <Compile Include="X86\Enums.cs" />
     <Compile Include="X86\OpCode.cs" />
     <Compile Include="X86\I8086.cs" />
