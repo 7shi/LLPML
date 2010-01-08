@@ -10,7 +10,7 @@ arr.Add("ghi");
 arr.Add("jkl");
 arr.ForEachWithOrder(function(obj, i)
 {
-  printfln("%d: %s", i, obj);
+	printfln("%d: %s", i, obj);
 });
 println();
 
@@ -18,7 +18,7 @@ printfln("RemoveAt(1);");
 arr.RemoveAt(1);
 arr.ForEachWithOrder(function(obj, i)
 {
-  printfln("%d: %s", i, obj);
+	printfln("%d: %s", i, obj);
 });
 println();
 
@@ -26,5 +26,5 @@ printfln("Remove(\"ghi\");");
 arr.Remove("ghi");
 arr.ForEachWithOrder(function(obj, i)
 {
-  printfln("%d: %s", i, obj);
+	printfln("%d: %s", i, obj);
 });

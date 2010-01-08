@@ -16,29 +16,29 @@ const int SIGN_MAX   = 0x7fffff;
 
 function Float(s, e10)
 {
-  var sign = 0, e2 = 0, ss;
-  if (s == 0) e10 = 0;
-  if (s < 0) sign = 1, s = -s;
-  while (s % 10 == 0) e10++, s /= 10;
-  while (e10 != 0)
-  {
-    if (e10 < 0)
-    {
-      e2--, s *= 2;
-      ss = s % 10;
-      if (ss == 0 || s > INT_MAX / 2)
-      {
-        e10++, s /= 10;
-        if (ss >= 5) s++;
-      }
-    }
-    else if (e10 > 0)
-    {
-      if (s & 1 == 1 && s <= INT_MAX / 10) e10--, s *= 10;
-      e2++, s = s / 2 + (s & 1);
-    }
-  }
-  while (0 < s && s <= SIGN_MAX) e2--, s *= 2;
-  while (s > SIGN_MAX * 2 + 1) e2++, s = s / 2 + (s & 1);
-  printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s & SIGN_MAX);
+	var sign = 0, e2 = 0, ss;
+	if (s == 0) e10 = 0;
+	if (s < 0) sign = 1, s = -s;
+	while (s % 10 == 0) e10++, s /= 10;
+	while (e10 != 0)
+	{
+		if (e10 < 0)
+		{
+			e2--, s *= 2;
+			ss = s % 10;
+			if (ss == 0 || s > INT_MAX / 2)
+			{
+				e10++, s /= 10;
+				if (ss >= 5) s++;
+			}
+		}
+		else if (e10 > 0)
+		{
+			if (s & 1 == 1 && s <= INT_MAX / 10) e10--, s *= 10;
+			e2++, s = s / 2 + (s & 1);
+		}
+	}
+	while (0 < s && s <= SIGN_MAX) e2--, s *= 2;
+	while (s > SIGN_MAX * 2 + 1) e2++, s = s / 2 + (s & 1);
+	printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s & SIGN_MAX);
 }

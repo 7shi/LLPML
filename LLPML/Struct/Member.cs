@@ -337,10 +337,15 @@ namespace Girl.LLPML.Struct
             {
                 if (name != "Length") return false;
 
-                var t = Target.Type;
-                if (t is TypeString) return true;
+                var t = Target;
+                TypeBase tt;
+                if (t is Member)
+                    tt = (t as Member).TypeInternal;
+                else
+                    tt = t.Type;
+                if (tt is TypeString) return true;
 
-                var tr = t as TypeReference;
+                var tr = tt as TypeReference;
                 return tr != null && tr.IsArray;
             }
         }

@@ -4,12 +4,12 @@ _Finish _finish;
 
 struct Test
 {
-  var Text;
-  
-  function Show()
-  {
-    printfln(Text);
-  }
+	var Text;
+	
+	function Show()
+	{
+		printfln(Text);
+	}
 }
 
 Test a, b;

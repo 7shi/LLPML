@@ -189,7 +189,10 @@ namespace Girl.LLPML.Parsing
                 Rewind();
                 return null;
             }
-            return new IntValue(t[1]) { SrcInfo = si };
+            var s = GetString(t.Substring(1, t.Length - 2));
+            if (s.Length != 1)
+                throw Abort("1文字ではありません: {0}", t);
+            return new IntValue(s[0]) { SrcInfo = si };
         }
 
         private Cast Cast()

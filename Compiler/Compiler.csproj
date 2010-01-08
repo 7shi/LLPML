@@ -130,7 +130,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Win32\lib-Core\Win32.adm">
+    <None Include="Win32\Window\Win32.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Win32\Window\WinWrap.adm">

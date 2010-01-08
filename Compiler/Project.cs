@@ -50,10 +50,10 @@ namespace Compiler
             var start = DateTime.Now;
             var root = new Root();
             if (!IsAnonymous) root.Output = Name + ".exe";
-            var exe = Path.Combine(BaseDir, root.Output);
-            if (File.Exists(exe))
+            ret.Exe = Path.Combine(BaseDir, root.Output);
+            if (File.Exists(ret.Exe))
             {
-                var exet = File.GetLastWriteTime(exe);
+                var exet = File.GetLastWriteTime(ret.Exe);
                 var nobuild = true;
                 foreach (var src in Sources)
                 {
@@ -72,7 +72,7 @@ namespace Compiler
                 foreach (var src in Sources)
                 {
                     if (verbose)
-                        Console.WriteLine("パースしています: {0}", src.FullName);
+                        Console.WriteLine("パースしています: {0}", src.FileName);
                     var sr = src.FileInfo.OpenText();
                     var text = sr.ReadToEnd();
                     sr.Close();
@@ -97,10 +97,9 @@ namespace Compiler
                 module.Text.OpCodes = codes.ToArray();
 
                 if (verbose) Console.WriteLine("リンクしています。");
-                exe = Path.Combine(BaseDir, root.Output);
-                module.Link(exe);
+                ret.Exe = Path.Combine(BaseDir, root.Output);
+                module.Link(ret.Exe);
 
-                ret.Exe = exe;
                 ret.Output = root.Output;
                 ret.Time = (DateTime.Now - start).TotalMilliseconds;
             }
@@ -216,9 +215,9 @@ namespace Compiler
             FileInfo = fi;
         }
 
-        public string FullName
+        public string FileName
         {
-            get { return Project.Combine(Path, Name); }
+            get { return Project.Combine(Path, FileInfo.Name); }
         }
     }
 

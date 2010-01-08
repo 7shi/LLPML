@@ -36,13 +36,13 @@ println();
 
 struct Test1
 {
-  var a, b;
-  
-  function Show(n)
-  {
-    printfln("%d: %p [%s] a = %d, b = %d",
-      n, this, __FUNCTION__, a, b);
-  }
+	var a, b;
+	
+	function Show(n)
+	{
+		printfln("%d: %p [%s] a = %d, b = %d",
+			n, this, __FUNCTION__, a, b);
+	}
 }
 printfln("struct Test1 { var a, b; }");
 Test1 t1[16];
@@ -64,9 +64,9 @@ printfln("addrof(t1[15].a) = %p", addrof(t1[15].a));
 printfln("addrof(t1[15].b) = %p", addrof(t1[15].b));
 for (var i = 0; i < 4; i++)
 {
-  t1[i].a = i * 10;
-  t1[i].b = i * 10 + 1;
-  t1[i].Show(i);
+	t1[i].a = i * 10;
+	t1[i].b = i * 10 + 1;
+	t1[i].Show(i);
 }
 vprintfln("t1 = { { %d, %d }, { %d, %d }, ... }", t1);
 println();
@@ -82,13 +82,13 @@ println();
 
 struct Test2
 {
-  var a[2];
-  
-  function Show(n)
-  {
-    printfln("%d: %p [%s] a = { %d, %d }",
-      n, this, __FUNCTION__, a[0], a[1]);
-  }
+	var a[2];
+	
+	function Show(n)
+	{
+		printfln("%d: %p [%s] a = { %d, %d }",
+			n, this, __FUNCTION__, a[0], a[1]);
+	}
 }
 printfln("struct Test2 { var a[2]; }");
 Test2 t2[16];
@@ -114,14 +114,14 @@ printfln("addrof(t2[15].a[0]) = %p", addrof(t2[15].a[0]));
 printfln("addrof(t2[15].a[1]) = %p", addrof(t2[15].a[1]));
 for (var i = 0; i < 16; i++)
 {
-  t2[i].a[0] = i * 100;
-  t2[i].a[1] = i * 100 + 10;
+	t2[i].a[0] = i * 100;
+	t2[i].a[1] = i * 100 + 10;
 }
 test(t2, 16);
 vprintfln("t2 = { { %d, %d }, { %d, %d }, ... }", t2);
 
 function test(array : Test2*, count)
 {
-  for (var i = 0; i < count; i++)
-    array[i].Show(i);
+	for (var i = 0; i < count; i++)
+		array[i].Show(i);
 }

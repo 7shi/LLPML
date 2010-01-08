@@ -4,62 +4,62 @@ _Finish _finish;
 
 struct Test1
 {
-  var a;
+	var a;
 
-  function ctor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
+	function ctor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		Show();
+	}
 
-  function dtor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
+	function dtor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		Show();
+	}
 
-  function Show()
-  {
-    printfln("%p [%s] a = %d", this, __FUNCTION__, a);
-  }
+	function Show()
+	{
+		printfln("%p [%s] a = %d", this, __FUNCTION__, a);
+	}
 }
 
 struct Test2 : Test1
 {
-  var b;
-  Test1 c;
+	var b;
+	Test1 c;
 
-  function ctor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
+	function ctor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		Show();
+	}
 
-  function dtor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
+	function dtor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		Show();
+	}
 
-  function Show()
-  {
-    // base.Show();
-    printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
-    c.Show();
-  }
+	function Show()
+	{
+		// base.Show();
+		printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
+		c.Show();
+	}
 }
 
 Test1 test1 = { 1 };
 {
-  Test2 test2 = { 2, 3, { 4 } };
-  {
-    //var test2a : Test1 = test2;
-    var test2a = (Test1)test2; // 型推論
-    test2a.Show();
-    ((Test1)test2).Show();
-    ((Test2)test2a).Show();
-  }
-  test1.Show();
-  test2.Show();
-  vprintfln("test2: a, b, c = %d, %d, %d", test2);
+	Test2 test2 = { 2, 3, { 4 } };
+	{
+		//var test2a : Test1 = test2;
+		var test2a = (Test1)test2; // 型推論
+		test2a.Show();
+		((Test1)test2).Show();
+		((Test2)test2a).Show();
+	}
+	test1.Show();
+	test2.Show();
+	vprintfln("test2: a, b, c = %d, %d, %d", test2);
 }

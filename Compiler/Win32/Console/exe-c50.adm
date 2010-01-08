@@ -4,21 +4,21 @@ _Finish _finish;
 
 function test()
 {
-  printfln(__FUNCTION__);
+	printfln(__FUNCTION__);
 }
 
 struct A
 {
-  function ctor()
-  {
-    test();
-    ::test();
-  }
-  
-  function test()
-  {
-    printfln(__FUNCTION__);
-  }
+	function ctor()
+	{
+		test();
+		::test();
+	}
+	
+	function test()
+	{
+		printfln(__FUNCTION__);
+	}
 }
 
 A a;

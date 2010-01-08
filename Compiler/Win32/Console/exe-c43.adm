@@ -16,15 +16,15 @@ var sub = \(a, b) => a - b;
 var div = \(a, b) => a / b;
 
 printfln(
-  "div(12, sub(8, 2)) = %d",
-   div(12, sub(8, 2)));
+	"div(12, sub(8, 2)) = %d",
+	 div(12, sub(8, 2)));
 printfln(
-  "2 |> sub(8) |> div(12) = %d",
-   2 |> sub(8) |> div(12));
+	"2 |> sub(8) |> div(12) = %d",
+	 2 |> sub(8) |> div(12));
 
 printfln(
-  "div(sub(9, 3), 2) = %d",
-   div(sub(9, 3), 2));
+	"div(sub(9, 3), 2) = %d",
+	 div(sub(9, 3), 2));
 printfln(
-  "9 |< sub(3) |< div(2) = %d",
-   9 |< sub(3) |< div(2));
+	"9 |< sub(3) |< div(2) = %d",
+	 9 |< sub(3) |< div(2));

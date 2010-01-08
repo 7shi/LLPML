@@ -4,31 +4,31 @@ _Finish _finish;
 
 struct Point
 {
-  int x, y;
+	int x, y;
 
-  function Show()
-  {
-    printfln("x = %d, y = %d", x, y);
-  }
+	function Show()
+	{
+		printfln("x = %d, y = %d", x, y);
+	}
 }
 
 // 関数の戻り値の型を明示的に指定
 function new_Point1(x, y) : Point
 {
-  var ret = malloc(sizeof Point);
-  ((Point)ret).x = x;
-  ((Point)ret).y = y;
-  return ret;
+	var ret = malloc(sizeof Point);
+	((Point)ret).x = x;
+	((Point)ret).y = y;
+	return ret;
 }
 
 // 関数の戻り値の型指定を省略
 // 型推論によりretの型が戻り値の型になる
 function new_Point2(x, y)
 {
-  var ret = (Point)malloc(sizeof Point);
-  ret.x = x;
-  ret.y = y;
-  return ret;
+	var ret = (Point)malloc(sizeof Point);
+	ret.x = x;
+	ret.y = y;
+	return ret;
 }
 
 // 型推論によりp1, p2はPoint型の参照になる

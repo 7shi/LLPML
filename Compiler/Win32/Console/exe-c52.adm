@@ -4,15 +4,15 @@ _Finish _finish;
 
 class A
 {
-  function ctor()
-  {
-    printfln("%p: %s", this, typeof(this).Name);
-  }
+	function ctor()
+	{
+		printfln("%p: %s", this, typeof(this).Name);
+	}
 
-  function dtor()
-  {
-    printfln("%p: ~%s", this, typeof(this).Name);
-  }
+	function dtor()
+	{
+		printfln("%p: ~%s", this, typeof(this).Name);
+	}
 }
 class B : A {}
 class C : A {}

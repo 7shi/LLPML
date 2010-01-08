@@ -1,15 +1,15 @@
 ﻿extern "kernel32.dll" __stdcall
-  GetStdHandle(nStdHandle);
+	GetStdHandle(nStdHandle);
 extern "kernel32.dll" __stdcall __widecharset
 {
-  WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
-  ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pInputControl);
-  lstrlen(lpString);
+	WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
+	ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pInputControl);
+	lstrlen(lpString);
 }
 extern "user32.dll" __widecharset
-  wsprintf(lpOutput, lpFmt, args : params);
+	wsprintf(lpOutput, lpFmt, args : params);
 extern "user32.dll" __stdcall __widecharset
-  wvsprintf(lpOutput, lpFmt, arglist);
+	wvsprintf(lpOutput, lpFmt, arglist);
 
 const int STD_OUTPUT_HANDLE = -11;
 const int STD_INPUT_HANDLE  = -10;
@@ -19,53 +19,53 @@ var stdin  = GetStdHandle(STD_INPUT_HANDLE);
 
 function print(text)
 {
-  var length;
-  WriteConsole(stdout, text, lstrlen(text), addrof(length), null);
+	var length;
+	WriteConsole(stdout, text, lstrlen(text), addrof(length), null);
 }
 
 function vprintf(format, args)
 {
-  char buffer[1025];
-  wvsprintf(buffer, format, args);
-  print(buffer);
+	char buffer[1025];
+	wvsprintf(buffer, format, args);
+	print(buffer);
 }
 
 function vprintfln(format, args)
 {
-  vprintf(format, args);
-  println();
+	vprintf(format, args);
+	println();
 }
 
 function printf(format, args : params)
 {
-  vprintf(format, args);
+	vprintf(format, args);
 }
 
 function println()
 {
-  print("\r\n");
+	print("\r\n");
 }
 
 function printfln(format, args : params)
 {
-  vprintf(format, args);
-  println();
+	vprintf(format, args);
+	println();
 }
 
 function pause()
 {
-  var length;
-  char buffer[16];
-  ReadConsole(stdin, buffer, 2, addrof(length), null);
+	var length;
+	char buffer[16];
+	ReadConsole(stdin, buffer, 2, addrof(length), null);
 }
 
 struct _Finish
 {
-  // destructor
-  function dtor()
-  {
-    println();
-    printfln("Press [Enter] to exit.");
-    pause();
-  }
+	// destructor
+	function dtor()
+	{
+		println();
+		printfln("Press [Enter] to exit.");
+		pause();
+	}
 }

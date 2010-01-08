@@ -6,10 +6,10 @@ wrapper(test);
 
 function wrapper(ptr)
 {
-  ptr();
+	ptr();
 }
 
 function test()
 {
-  printfln("Hello, World!");
+	printfln("Hello, World!");
 }

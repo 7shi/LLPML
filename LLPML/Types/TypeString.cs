@@ -49,6 +49,14 @@ namespace Girl.LLPML
             };
         }
 
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypePointer && type.Type is TypeChar)
+                return type;
+            return base.Cast(type);
+        }
+
         // recursive type
         private static TypeBase type;
         public static void Init() { type = null; }

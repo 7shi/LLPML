@@ -4,36 +4,36 @@ _Finish _finish;
 
 struct Test1
 {
-  // 前方参照
-  var test2 : Test2;
-  
-  function Show()
-  {
-    printfln(__FUNCTION__);
-  }
-  
-  function Show2()
-  {
-    printfln(__FUNCTION__);
-    test2.Show();
-  }
+	// 前方参照
+	var test2 : Test2;
+	
+	function Show()
+	{
+		printfln(__FUNCTION__);
+	}
+	
+	function Show2()
+	{
+		printfln(__FUNCTION__);
+		test2.Show();
+	}
 }
 
 struct Test2
 {
-  // 後方参照
-  var test1 : Test1;
-  
-  function Show()
-  {
-    printfln(__FUNCTION__);
-  }
-  
-  function Show1()
-  {
-    printfln(__FUNCTION__);
-    test1.Show();
-  }
+	// 後方参照
+	var test1 : Test1;
+	
+	function Show()
+	{
+		printfln(__FUNCTION__);
+	}
+	
+	function Show1()
+	{
+		printfln(__FUNCTION__);
+		test1.Show();
+	}
 }
 
 Test1 test1;

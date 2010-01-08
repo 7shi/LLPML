@@ -4,7 +4,7 @@ _Finish _finish;
 
 extern "kernel32.dll" __stdcall
 {
-  WriteConsoleA(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
+	WriteConsoleA(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
 }
 
 var text = cstr("あいうえお");

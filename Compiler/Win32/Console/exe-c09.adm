@@ -5,8 +5,8 @@ _Finish _finish;
 var a;
 
 {
-  var b;
+	var b;
 
-  printfln("addrof(a) = %p [global]", addrof(a));
-  printfln("addrof(b) = %p [stack]", addrof(b));
+	printfln("addrof(a) = %p [global]", addrof(a));
+	printfln("addrof(b) = %p [stack]", addrof(b));
 }

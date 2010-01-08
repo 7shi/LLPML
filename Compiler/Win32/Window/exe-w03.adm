@@ -27,122 +27,122 @@ var fps = 0;
 var tick = GetTickCount();
 while (Application.DoEvents())
 {
-  // 描画
-  bmp.Clear();
-  var bx = (count & 63) - 64;
-  for (var i = 0; i < 4; i++)
-    for (var j = 0; j < 5; j++)
-      bmp.FillRectangle(0xa00000ff, bx + j * 64, 8 + i * 64, 48, 48);
-  for (var i = 0; i < 4; i++)
-    for (var j = 0; j < 5; j++)
-      bmp.FillRectangle(0xa0ff0000, 8 + i * 64, bx + j * 64, 48, 48);
-  count++;
-  form1.Invalidate();
-  
-  // fps
-  fps++;
-  var t = GetTickCount(), d = t - tick;
-  if (d > 1200)
-  {
-    fps = 0;
-    tick = t;
-  }
-  else if (d > 1000)
-  {
-    fpsBufLen = wsprintf(fpsBuf, fpsFormat[mode], fps);
-    fps = 0;
-    tick = t;
-  }
+	// 描画
+	bmp.Clear();
+	var bx = (count & 63) - 64;
+	for (var i = 0; i < 4; i++)
+		for (var j = 0; j < 5; j++)
+			bmp.FillRectangle(0xa00000ff, bx + j * 64, 8 + i * 64, 48, 48);
+	for (var i = 0; i < 4; i++)
+		for (var j = 0; j < 5; j++)
+			bmp.FillRectangle(0xa0ff0000, 8 + i * 64, bx + j * 64, 48, 48);
+	count++;
+	form1.Invalidate();
+	
+	// fps
+	fps++;
+	var t = GetTickCount(), d = t - tick;
+	if (d > 1200)
+	{
+		fps = 0;
+		tick = t;
+	}
+	else if (d > 1000)
+	{
+		fpsBufLen = wsprintf(fpsBuf, fpsFormat[mode], fps);
+		fps = 0;
+		tick = t;
+	}
 }
 
 struct Form1 : Form
 {
-  MainMenu mainMenu1;
-  MenuItem miFile, miFileExit;
-  MenuItem miOpt, miOptNormal, miOptMMX, miOptSSE2;
-  MenuItem miHelp, miHelpAbout;
-  
-  function ctor()
-  {
-    dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
-    Rectangle r = { 0, 0, width, height };
-    r.AdjustWindowRectEx(dwStyle, true, 0);
-    
-    Text    = "テスト";
-    nWidth  = r.Width;
-    nHeight = r.Height;
-    hMenu   = mainMenu1.hMenu;
-    
-    miFile.Text = "ファイル(&F)";
-    miFileExit.Text = "終了(&X)";
-    miFileExit.Click.Add(\(sender, e) =>
-    {
-      hWnd.DestroyWindow();
-    });
-    miFile.Append(miFileExit);
-    miOpt.Text = "オプション(&M)";
-    miOptNormal.Text = "通常演算(&N)";
-    miOptNormal.UseRadio();
-    miOptNormal.Click.Add(\(sender, e) =>
-    {
-      SetMode(0);
-    });
-    miOptMMX.Text = "&MMX";
-    miOptMMX.Enabled = mode_max >= 1;
-    miOptMMX.UseRadio();
-    miOptMMX.Click.Add(\(sender, e) =>
-    {
-      SetMode(1);
-    });
-    miOptSSE2.Text = "&SSE2";
-    miOptSSE2.Enabled = mode_max == 2;
-    miOptSSE2.UseRadio();
-    miOptSSE2.Click.Add(\(sender, e) =>
-    {
-      SetMode(2);
-    });
-    miOpt.Append(miOptNormal);
-    miOpt.Append(miOptMMX);
-    miOpt.Append(miOptSSE2);
-    miHelp.Text = "ヘルプ(&H)";
-    miHelpAbout.Text = "バージョン情報(&A)";
-    miHelpAbout.Click.Add(\(sender, e) =>
-    {
-      MessageBox(hWnd, __VERSION__, "バージョン情報", 0);
-    });
-    miHelp.Append(miHelpAbout);
-    mainMenu1.Append(miFile);
-    mainMenu1.Append(miOpt);
-    mainMenu1.Append(miHelp);
-    mainMenu = mainMenu1;
-    
-    SetMode(mode);
-  }
-  
-  override OnPaint(e : PaintEventArgs)
-  {
-    e.hDC.SetDIBitsToDevice(
-      0, 0, width, height, 0, 0, 0, height,
-      bmp.Buffer, bmp, DIB_RGB_COLORS);
-    if (fpsBufLen > 0)
-      e.hDC.TextOut(8, 8, fpsBuf, fpsBufLen);
-  }
-  
-  override OnMouseDown(e : MouseEventArgs)
-  {
-    var m = mode - 1;
-    if (m < 0) m = mode_max;
-    if (m != mode) SetMode(m);
-  }
+	MainMenu mainMenu1;
+	MenuItem miFile, miFileExit;
+	MenuItem miOpt, miOptNormal, miOptMMX, miOptSSE2;
+	MenuItem miHelp, miHelpAbout;
+	
+	function ctor()
+	{
+		dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+		Rectangle r = { 0, 0, width, height };
+		r.AdjustWindowRectEx(dwStyle, true, 0);
+		
+		Text    = "テスト";
+		nWidth  = r.Width;
+		nHeight = r.Height;
+		hMenu   = mainMenu1.hMenu;
+		
+		miFile.Text = "ファイル(&F)";
+		miFileExit.Text = "終了(&X)";
+		miFileExit.Click.Add(\(sender, e) =>
+		{
+			hWnd.DestroyWindow();
+		});
+		miFile.Append(miFileExit);
+		miOpt.Text = "オプション(&M)";
+		miOptNormal.Text = "通常演算(&N)";
+		miOptNormal.UseRadio();
+		miOptNormal.Click.Add(\(sender, e) =>
+		{
+			SetMode(0);
+		});
+		miOptMMX.Text = "&MMX";
+		miOptMMX.Enabled = mode_max >= 1;
+		miOptMMX.UseRadio();
+		miOptMMX.Click.Add(\(sender, e) =>
+		{
+			SetMode(1);
+		});
+		miOptSSE2.Text = "&SSE2";
+		miOptSSE2.Enabled = mode_max == 2;
+		miOptSSE2.UseRadio();
+		miOptSSE2.Click.Add(\(sender, e) =>
+		{
+			SetMode(2);
+		});
+		miOpt.Append(miOptNormal);
+		miOpt.Append(miOptMMX);
+		miOpt.Append(miOptSSE2);
+		miHelp.Text = "ヘルプ(&H)";
+		miHelpAbout.Text = "バージョン情報(&A)";
+		miHelpAbout.Click.Add(\(sender, e) =>
+		{
+			MessageBox(hWnd, __VERSION__, "バージョン情報", 0);
+		});
+		miHelp.Append(miHelpAbout);
+		mainMenu1.Append(miFile);
+		mainMenu1.Append(miOpt);
+		mainMenu1.Append(miHelp);
+		mainMenu = mainMenu1;
+		
+		SetMode(mode);
+	}
+	
+	override OnPaint(e : PaintEventArgs)
+	{
+		e.hDC.SetDIBitsToDevice(
+			0, 0, width, height, 0, 0, 0, height,
+			bmp.Buffer, bmp, DIB_RGB_COLORS);
+		if (fpsBufLen > 0)
+			e.hDC.TextOut(8, 8, fpsBuf, fpsBufLen);
+	}
+	
+	override OnMouseDown(e : MouseEventArgs)
+	{
+		var m = mode - 1;
+		if (m < 0) m = mode_max;
+		if (m != mode) SetMode(m);
+	}
 
-  function SetMode(m)
-  {
-    mode = m;
-    fpsBufLen = 0;
-    fps = 0;
-    miOptNormal.Checked = m == 0;
-    bmp.EnableMMX  = miOptMMX .Checked = m == 1;
-    bmp.EnableSSE2 = miOptSSE2.Checked = m == 2;
-    tick = GetTickCount();
-  }
+	function SetMode(m)
+	{
+		mode = m;
+		fpsBufLen = 0;
+		fps = 0;
+		miOptNormal.Checked = m == 0;
+		bmp.EnableMMX  = miOptMMX .Checked = m == 1;
+		bmp.EnableSSE2 = miOptSSE2.Checked = m == 2;
+		tick = GetTickCount();
+	}
 }

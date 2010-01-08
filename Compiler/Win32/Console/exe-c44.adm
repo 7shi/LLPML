@@ -19,23 +19,23 @@ b |> Show;
 
 function QuickSort(src : ArrayList, dest : ArrayList)
 {
-  if (src.Count == 0) return;
-  
-  var x = src.Ptr[0];
-  ArrayList lt, ge;
-  lt |< src.FindPartial(1, \n => n <  x);
-  ge |< src.FindPartial(1, \n => n >= x);
-  dest |< lt.QuickSort;
-  dest |< Add(x);
-  dest |< ge.QuickSort;
+	if (src.Count == 0) return;
+	
+	var x = src.Ptr[0];
+	ArrayList lt, ge;
+	lt |< src.FindPartial(1, \n => n <  x);
+	ge |< src.FindPartial(1, \n => n >= x);
+	dest |< lt.QuickSort;
+	dest |< Add(x);
+	dest |< ge.QuickSort;
 }
 
 function Show(list : ArrayList)
 {
-  list.ForEachWithOrder(\(n, i) =>
-  {
-    if (i > 0) printf(", ");
-    printf("%d", n);
-  });
-  println();
+	list.ForEachWithOrder(\(n, i) =>
+	{
+		if (i > 0) printf(", ");
+		printf("%d", n);
+	});
+	println();
 }

@@ -4,8 +4,8 @@ _Finish _finish;
 
 if (!__check_sse2())
 {
-  printfln("SSE2をサポートしていません。");
-  return 0;
+	printfln("SSE2をサポートしていません。");
+	return 0;
 }
 
 int x0 = 0x04030201;

@@ -60,6 +60,11 @@ namespace Girl.LLPML
         // cast
         public virtual TypeBase Cast(TypeBase type)
         {
+            var tr1 = this as TypeReference;
+            var tr2 = type as TypeReference;
+            if (tr1 == null && tr2 != null && tr2.UseGC)
+                return null;
+
             var t1 = Type;
             var t2 = type.Type;
             if (t1 == t2) return type;

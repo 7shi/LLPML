@@ -17,17 +17,17 @@ printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
 
 function add(a, b)
 {
-  return a + b;
+	return a + b;
 }
 
 struct test
 {
-  var a, b;
+	var a, b;
 
-  function sub()
-  {
-    return a - b;
-  }
+	function sub()
+	{
+		return a - b;
+	}
 }
 
 struct test2 { test t; }

@@ -4,12 +4,12 @@ _Finish _finish;
 
 struct Point
 {
-  var x, y;
+	var x, y;
 
-  function Show()
-  {
-    printfln("[%s] %d, %d", __FUNCTION__, x, y);
-  }
+	function Show()
+	{
+		printfln("[%s] %d, %d", __FUNCTION__, x, y);
+	}
 }
 
 // instance

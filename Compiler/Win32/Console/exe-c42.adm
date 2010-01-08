@@ -8,8 +8,8 @@ printfln("f1(5, 3) = %d", f1(5, 3));
 
 // 直接呼び出し 1
 printfln(
-  "(\\(a, b) => a - b)(5, 3) = %d",
-   ( \(a, b) => a - b)(5, 3));
+	"(\\(a, b) => a - b)(5, 3) = %d",
+	 ( \(a, b) => a - b)(5, 3));
 println();
 
 // 間接呼び出し 2
@@ -18,8 +18,8 @@ printfln("f2(5)(3) = %d", f2(5)(3));
 
 // 直接呼び出し 2
 printfln(
-  "(\\a => \\b => a - b)(5)(3) = %d",
-   ( \a =>  \b => a - b)(5)(3));
+	"(\\a => \\b => a - b)(5)(3) = %d",
+	 ( \a =>  \b => a - b)(5)(3));
 println();
 
 // 引数1個
@@ -32,5 +32,5 @@ wrapper(\ => printfln("anonymous!"));
 
 function wrapper(ptr)
 {
-  ptr();
+	ptr();
 }

@@ -4,12 +4,12 @@ _Finish _finish;
 
 struct Test
 {
-  var a = 1;
-  
-  function Show()
-  {
-    printfln("%p [%s] a = %d", this, __FUNCTION__, a);
-  }
+	var a = 1;
+	
+	function Show()
+	{
+		printfln("%p [%s] a = %d", this, __FUNCTION__, a);
+	}
 }
 
 Test test1;

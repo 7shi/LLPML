@@ -1,179 +1,179 @@
 ﻿struct Rectangle : RECT
 {
-  function get_Width()
-  {
-    return right - left;
-  }
-  
-  function get_Height()
-  {
-    return bottom - top;
-  }
+	function get_Width()
+	{
+		return right - left;
+	}
+	
+	function get_Height()
+	{
+		return bottom - top;
+	}
 }
 
 struct Color
 {
-  byte B, G, R, A;
+	byte B, G, R, A;
 }
 
 struct Bitmap : BITMAPINFO
 {
-  var Buffer : Color* = null;
-  var Count = 0;
-  var Width, Height;
-  var enableMMX  = __check_mmx();
-  var enableSSE2 = __check_sse2();
-  
-  function ctor()
-  {
-    __stosb(this, 0, sizeof BITMAPINFO);
-    bmiHeader.biSize        = sizeof BITMAPINFOHEADER;
-    bmiHeader.biPlanes      = 1;
-    bmiHeader.biCompression = BI_RGB;
-    bmiHeader.biBitCount    = 32;
-  }
-  
-  function dtor()
-  {
-    if (Buffer != null) free(Buffer);
-  }
-  
-  function SetSize(width, height)
-  {
-    Width  = width;
-    Height = height;
-    bmiHeader.biWidth  = width;
-    bmiHeader.biHeight = -height;
-    Count = width * height;
-    if (Buffer != null) free(Buffer);
-    Buffer = malloc(sizeof(Color) * Count);
-    Clear();
-  }
-  
-  function Clear()
-  {
-    if (Buffer != null)
-      __stosd(Buffer, 0xffffffff, Count);
-  }
-  
-  function get_EnableMMX()
-  {
-    return enableMMX;
-  }
-  
-  function set_EnableMMX(mmx)
-  {
-    enableMMX = mmx;
-    return mmx;
-  }
-  
-  function get_EnableSSE2()
-  {
-    return enableSSE2;
-  }
-  
-  function set_EnableSSE2(sse2)
-  {
-    enableSSE2 = sse2;
-    return sse2;
-  }
-  
-  function FillRectangle(color, x, y, w, h)
-  {
-    var x1 = x;
-    if (x1 < 0) x1 = 0;
-    var y1 = y;
-    if (y1 < 0) y1 = 0;
-    var x2 = x + w;
-    if (x2 > Width) x2 = Width;
-    var y2 = y + h;
-    if (y2 > Height) y2 = Height;
-    
-    var buffer : Color* = Buffer;
-    var c : Color = addrof color;
-    int a = c.A;
-    if (a > 127) a++;
-    var aa = 256 - a;
-    
-    if (enableSSE2)
-    {
-      var last = x2 & 1;
-      x2 -= last;
-      __m128iw fore  =
-      {
-        c.B * a, c.G * a, c.R * a, 0xff00,
-        c.B * a, c.G * a, c.R * a, 0xff00
-      };
-      __m128iw alpha = { aa, aa, aa, 0, aa, aa, aa, 0 };
-      __movd(__xmm0, 0);
-      __movdqu(__xmm1, fore);
-      __movdqu(__xmm2, alpha);
-      var w = (x2 - x1) / 2;
-      for (var yy = y1; yy < y2; yy++)
-      {
-        var p : __m64w* = addrof Buffer[x1 + yy * Width];
-        for (var i = 0; i < w; i++)
-        {
-          __movq(__xmm3, p);
-          __punpcklbw(__xmm3, __xmm0);
-          __pmullw(__xmm3, __xmm2);
-          __paddw(__xmm3, __xmm1);
-          __psrlw(__xmm3, 8);
-          __packuswb(__xmm3, __xmm0);
-          __movq(p, __xmm3);
-          p++;
-        }
-        if (last)
-        {
-          __movd(__xmm3, p);
-          __punpcklbw(__xmm3, __xmm0);
-          __pmullw(__xmm3, __xmm2);
-          __paddw(__xmm3, __xmm1);
-          __psrlw(__xmm3, 8);
-          __packuswb(__xmm3, __xmm0);
-          __movd(p, __xmm3);
-        }
-      }
-    }
-    else if (enableMMX)
-    {
-      __m64w fore  = { c.B * a, c.G * a, c.R * a, 0xff00 };
-      __m64w alpha = { aa, aa, aa, 0 };
-      __movd(__mm0, 0);
-      __movq(__mm1, fore);
-      __movq(__mm2, alpha);
-      for (var yy = y1; yy < y2; yy++)
-      {
-        var p : Color* = addrof Buffer[x1 + yy * Width];
-        for (var xx = x1; xx < x2; xx++)
-        {
-          __movd(__mm3, p);
-          __punpcklbw(__mm3, __mm0);
-          __pmullw(__mm3, __mm2);
-          __paddw(__mm3, __mm1);
-          __psrlw(__mm3, 8);
-          __packuswb(__mm3, __mm0);
-          __movd(p, __mm3);
-          p++;
-        }
-      }
-      __emms();
-    }
-    else
-    {
-      int r = c.R * a, g = c.G * a, b = c.B * a;
-      for (var yy = y1; yy < y2; yy++)
-      {
-        var p : Color* = addrof Buffer[x1 + yy * Width];
-        for (var xx = x1; xx < x2; xx++)
-        {
-          ((int*)p)[0] =
-            (((r + p[0].R * aa) & 0xff00) << 8)
-            | ((g + p[0].G * aa) & 0xff00)
-            | ((b + p[0].B * aa) >> 8);
-          p++;
-        }
-      }
-    }
-  }
+	var Buffer : Color* = null;
+	var Count = 0;
+	var Width, Height;
+	var enableMMX  = __check_mmx();
+	var enableSSE2 = __check_sse2();
+	
+	function ctor()
+	{
+		__stosb(this, 0, sizeof BITMAPINFO);
+		bmiHeader.biSize        = sizeof BITMAPINFOHEADER;
+		bmiHeader.biPlanes      = 1;
+		bmiHeader.biCompression = BI_RGB;
+		bmiHeader.biBitCount    = 32;
+	}
+	
+	function dtor()
+	{
+		if (Buffer != null) free(Buffer);
+	}
+	
+	function SetSize(width, height)
+	{
+		Width  = width;
+		Height = height;
+		bmiHeader.biWidth  = width;
+		bmiHeader.biHeight = -height;
+		Count = width * height;
+		if (Buffer != null) free(Buffer);
+		Buffer = malloc(sizeof(Color) * Count);
+		Clear();
+	}
+	
+	function Clear()
+	{
+		if (Buffer != null)
+			__stosd(Buffer, 0xffffffff, Count);
+	}
+	
+	function get_EnableMMX()
+	{
+		return enableMMX;
+	}
+	
+	function set_EnableMMX(mmx)
+	{
+		enableMMX = mmx;
+		return mmx;
+	}
+	
+	function get_EnableSSE2()
+	{
+		return enableSSE2;
+	}
+	
+	function set_EnableSSE2(sse2)
+	{
+		enableSSE2 = sse2;
+		return sse2;
+	}
+	
+	function FillRectangle(color, x, y, w, h)
+	{
+		var x1 = x;
+		if (x1 < 0) x1 = 0;
+		var y1 = y;
+		if (y1 < 0) y1 = 0;
+		var x2 = x + w;
+		if (x2 > Width) x2 = Width;
+		var y2 = y + h;
+		if (y2 > Height) y2 = Height;
+		
+		var buffer : Color* = Buffer;
+		var c : Color = addrof color;
+		int a = c.A;
+		if (a > 127) a++;
+		var aa = 256 - a;
+		
+		if (enableSSE2)
+		{
+			var last = x2 & 1;
+			x2 -= last;
+			__m128iw fore =
+			{
+				c.B * a, c.G * a, c.R * a, 0xff00,
+				c.B * a, c.G * a, c.R * a, 0xff00
+			};
+			__m128iw alpha = { aa, aa, aa, 0, aa, aa, aa, 0 };
+			__movd(__xmm0, 0);
+			__movdqu(__xmm1, fore);
+			__movdqu(__xmm2, alpha);
+			var w = (x2 - x1) / 2;
+			for (var yy = y1; yy < y2; yy++)
+			{
+				var p : __m64w* = addrof Buffer[x1 + yy * Width];
+				for (var i = 0; i < w; i++)
+				{
+					__movq(__xmm3, p);
+					__punpcklbw(__xmm3, __xmm0);
+					__pmullw(__xmm3, __xmm2);
+					__paddw(__xmm3, __xmm1);
+					__psrlw(__xmm3, 8);
+					__packuswb(__xmm3, __xmm0);
+					__movq(p, __xmm3);
+					p++;
+				}
+				if (last)
+				{
+					__movd(__xmm3, p);
+					__punpcklbw(__xmm3, __xmm0);
+					__pmullw(__xmm3, __xmm2);
+					__paddw(__xmm3, __xmm1);
+					__psrlw(__xmm3, 8);
+					__packuswb(__xmm3, __xmm0);
+					__movd(p, __xmm3);
+				}
+			}
+		}
+		else if (enableMMX)
+		{
+			__m64w fore  = { c.B * a, c.G * a, c.R * a, 0xff00 };
+			__m64w alpha = { aa, aa, aa, 0 };
+			__movd(__mm0, 0);
+			__movq(__mm1, fore);
+			__movq(__mm2, alpha);
+			for (var yy = y1; yy < y2; yy++)
+			{
+				var p : Color* = addrof Buffer[x1 + yy * Width];
+				for (var xx = x1; xx < x2; xx++)
+				{
+					__movd(__mm3, p);
+					__punpcklbw(__mm3, __mm0);
+					__pmullw(__mm3, __mm2);
+					__paddw(__mm3, __mm1);
+					__psrlw(__mm3, 8);
+					__packuswb(__mm3, __mm0);
+					__movd(p, __mm3);
+					p++;
+				}
+			}
+			__emms();
+		}
+		else
+		{
+			int r = c.R * a, g = c.G * a, b = c.B * a;
+			for (var yy = y1; yy < y2; yy++)
+			{
+				var p : Color* = addrof Buffer[x1 + yy * Width];
+				for (var xx = x1; xx < x2; xx++)
+				{
+					((int*)p)[0] =
+						(((r + p[0].R * aa) & 0xff00) << 8)
+						| ((g + p[0].G * aa) & 0xff00)
+						| ((b + p[0].B * aa) >> 8);
+					p++;
+				}
+			}
+		}
+	}
 }

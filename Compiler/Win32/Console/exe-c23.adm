@@ -4,17 +4,17 @@ _Finish _finish;
 
 struct Test
 {
-  var a = 1, b = 2;
+	var a = 1, b = 2;
 
-  function Show()
-  {
-    printfln("this, a, b = %p, %d, %d", this, a, b);
-  }
+	function Show()
+	{
+		printfln("this, a, b = %p, %d, %d", this, a, b);
+	}
 
-  function Add()
-  {
-    return a + b;
-  }
+	function Add()
+	{
+		return a + b;
+	}
 }
 
 printfln("sizeof(Test) = %d", sizeof(Test));
@@ -35,8 +35,8 @@ show(t2);
 
 function show(p : Test)
 {
-  println();
-  printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
-  printfln("p.Add() = %d", p.Add());
-  p.Show();
+	println();
+	printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
+	printfln("p.Add() = %d", p.Add());
+	p.Show();
 }

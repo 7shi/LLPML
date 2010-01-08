@@ -1,122 +1,122 @@
 ﻿extern "kernel32.dll" __stdcall
 {
-  WideCharToMultiByte(
-    CodePage, dwFlags, lpWideCharStr, cchWideChar,
-    lpMultiByteStr, cchMultiByte, lpDefaultChar, lpUsedDefaultChar);
-  MultiByteToWideChar(
-    CodePage, dwFlags, lpMultiByteStr, cchMultiByte,
-    lpWideCharStr, cchWideChar);
+	WideCharToMultiByte(
+		CodePage, dwFlags, lpWideCharStr, cchWideChar,
+		lpMultiByteStr, cchMultiByte, lpDefaultChar, lpUsedDefaultChar);
+	MultiByteToWideChar(
+		CodePage, dwFlags, lpMultiByteStr, cchMultiByte,
+		lpWideCharStr, cchWideChar);
 }
 
 function memcpy(dest, src, count)
 {
-  if (dest <= src || dest >= src + count)
-    __memcpy(dest, src, count);
-  else
-    __memcpy_rev(dest + count - 1, src + count - 1, count);
-  return dest;
+	if (dest <= src || dest >= src + count)
+		__memcpy(dest, src, count);
+	else
+		__memcpy_rev(dest + count - 1, src + count - 1, count);
+	return dest;
 }
 
 function memset(dest, c, count)
 {
-  __stosb(dest, c, count);
-  return dest;
+	__stosb(dest, c, count);
+	return dest;
 }
 
 function __string_equal(a : string, b : string)
 {
-  //printfln("%s([%d]\"%s\", [%d]\"%s\")", __FUNCTION__, a.Length, a, b.Length, b);
-  var pa : char* = a;
-  var pb : char* = b;
-  if (pa == pb) return true;
-  if (pa == null || pb == null || a.Length != b.Length) return false;
-  
-  for (int i = 0; i < a.Length; i++)
-  {
-    //printfln("%d: [%p]'%c', [%p]'%c'", i, pa, pa[0], pb, pb[0]);
-    if (pa[0] != pb[0]) return false;
-    pa++;
-    pb++;
-  }
-  return true;
+	//printfln("%s([%d]\"%s\", [%d]\"%s\")", __FUNCTION__, a.Length, a, b.Length, b);
+	var pa : char* = a;
+	var pb : char* = b;
+	if (pa == pb) return true;
+	if (pa == null || pb == null || a.Length != b.Length) return false;
+	
+	for (int i = 0; i < a.Length; i++)
+	{
+		//printfln("%d: [%p]'%c', [%p]'%c'", i, pa, pa[0], pb, pb[0]);
+		if (pa[0] != pb[0]) return false;
+		pa++;
+		pb++;
+	}
+	return true;
 }
 
 function __string_add(a : string, b : string) : string
 {
-  var ret = string.Alloc(a.Length + b.Length);
-  if (a.Length > 0) __movsw(ret, a, a.Length);
-  if (b.Length > 0) __movsw(addrof ret[a.Length], b, b.Length);
-  //printfln("%s(%p:%s, %p:%s): %p:%s", __FUNCTION__, a, a, b, b, ret, ret);
-  return ret;
+	var ret = string.Alloc(a.Length + b.Length);
+	if (a.Length > 0) __movsw(ret, a, a.Length);
+	if (b.Length > 0) __movsw(addrof ret[a.Length], b, b.Length);
+	//printfln("%s(%p:%s, %p:%s): %p:%s", __FUNCTION__, a, a, b, b, ret, ret);
+	return ret;
 }
 
 class string
 {
-  function Substring(start, length) : string
-  {
-    if (start < 0) return null;
-    int maxlen = this.Length - start;
-    if (length > maxlen) length = maxlen;
-    if (length < 0) length = 0;
-    var ret = Alloc(length);
-    //printfln("%s(%d, %d): %p, %p", __FUNCTION__, start, length, this, addrof this[start]);
-    if (length > 0)
-      __movsw(ret, addrof this[start], length);
-    return ret;
-  }
-  
-  function SubstringFrom(start) : string
-  {
-    if (start < 0) return null;
-    return Substring(start, this.Length);
-  }
-  
-  function StartsWith(s : string)
-  {
-    if (s == null) return false;
-    return Substring(0, s.Length) == s;
-  }
-  
-  function EndsWith(s : string)
-  {
-    if (s == null) return false;
-    if (this.Length < s.Length) return false;
-    return SubstringFrom(this.Length - s.Length) == s;
-  }
-  
-  static function Format(format : string, args : params)
-  {
-    return VFormat(format, args);
-  }
-  
-  static function VFormat(format : string, args)
-  {
-    char buffer[1025];
-    int len = wvsprintf(buffer, format, args);
-    var ret = Alloc(len);
-    if (len > 0) __movsw(ret, buffer, len);
-    return ret;
-  }
-  
-  static function Alloc(length) : string
-  {
-    return __operator_new(typeof(string), sizeof(char), length, 0, 0);
-  }
+	function Substring(start, length) : string
+	{
+		if (start < 0) return null;
+		int maxlen = this.Length - start;
+		if (length > maxlen) length = maxlen;
+		if (length < 0) length = 0;
+		var ret = Alloc(length);
+		//printfln("%s(%d, %d): %p, %p", __FUNCTION__, start, length, this, addrof this[start]);
+		if (length > 0)
+			__movsw(ret, addrof this[start], length);
+		return ret;
+	}
+	
+	function SubstringFrom(start) : string
+	{
+		if (start < 0) return null;
+		return Substring(start, this.Length);
+	}
+	
+	function StartsWith(s : string)
+	{
+		if (s == null) return false;
+		return Substring(0, s.Length) == s;
+	}
+	
+	function EndsWith(s : string)
+	{
+		if (s == null) return false;
+		if (this.Length < s.Length) return false;
+		return SubstringFrom(this.Length - s.Length) == s;
+	}
+	
+	static function Format(format : string, args : params)
+	{
+		return VFormat(format, args);
+	}
+	
+	static function VFormat(format : string, args)
+	{
+		char buffer[1025];
+		int len = wvsprintf(buffer, format, args);
+		var ret = Alloc(len);
+		if (len > 0) __movsw(ret, buffer, len);
+		return ret;
+	}
+	
+	static function Alloc(length) : string
+	{
+		return __operator_new(typeof(string), sizeof(char), length, 0, 0);
+	}
 }
 
 function cstr(s)
 {
-  var slen = lstrlen(s);
-  var len = WideCharToMultiByte(0, 0, s, slen, null, null, null, null);
-  var ret = new byte[len];
-  WideCharToMultiByte(0, 0, s, slen, ret, ret.Length, null, null);
-  return ret;
+	var slen = lstrlen(s);
+	var len = WideCharToMultiByte(0, 0, s, slen, null, null, null, null);
+	var ret = new byte[len];
+	WideCharToMultiByte(0, 0, s, slen, ret, ret.Length, null, null);
+	return ret;
 }
 
 function wstr(s : byte[])
 {
-  var len = MultiByteToWideChar(0, 0, s, s.Length, null, null);
-  var ret = string.Alloc(len);
-  MultiByteToWideChar(0, 0, s, s.Length, ret, ret.Length);
-  return ret;
+	var len = MultiByteToWideChar(0, 0, s, s.Length, null, null);
+	var ret = string.Alloc(len);
+	MultiByteToWideChar(0, 0, s, s.Length, ret, ret.Length);
+	return ret;
 }

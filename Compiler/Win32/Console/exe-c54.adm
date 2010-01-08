@@ -19,6 +19,6 @@ const int B = 3;
 // 遅延評価
 const int D = function
 {
-  printfln(__FUNCTION__);
-  return A + B;
+	printfln(__FUNCTION__);
+	return A + B;
 }();

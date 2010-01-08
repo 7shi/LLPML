@@ -4,25 +4,25 @@ _Finish _finish;
 
 struct Point
 {
-  var x, y;
+	var x, y;
 
-  function Show()
-  {
-    printfln("%p [%s] %d, %d", this, __FUNCTION__, x, y);
-  }
+	function Show()
+	{
+		printfln("%p [%s] %d, %d", this, __FUNCTION__, x, y);
+	}
 }
 
 struct Points
 {
-  Point a, b;
+	Point a, b;
 
-  function Show()
-  {
-    printfln("%p [%s] a: %p", this, __FUNCTION__, a);
-    a.Show();
-    printfln("%p [%s] b: %p", this, __FUNCTION__, b);
-    b.Show();
-  }
+	function Show()
+	{
+		printfln("%p [%s] a: %p", this, __FUNCTION__, a);
+		a.Show();
+		printfln("%p [%s] b: %p", this, __FUNCTION__, b);
+		b.Show();
+	}
 }
 
 Points p = { { 1, 2 }, { 3, 4 } };

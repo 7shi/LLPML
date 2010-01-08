@@ -21,7 +21,7 @@ clean:
 
 compiler: bin/COMPILER.exe
 
-LIBSRC = `find CompilerLib LLPML -name "*.cs" | grep -v /Properties/`
+LIBSRC = LLPML/Properties/AssemblyInfo.cs `find CompilerLib LLPML -name "*.cs" | grep -v /Properties/`
 
 bin/COMPILER.exe:
 	mkdir -p bin
@@ -29,5 +29,9 @@ bin/COMPILER.exe:
 
 ####
 
-build.bat:
-	echo %WINDIR%/Microsoft.NET/Framework/v3.5/csc -o+ -out:COMPILER.exe $(LIBSRC) `find Compiler -name "*.cs"` | sed 's/\//\\/g' > $@
+BATCH = utils/build.bat
+
+batch:
+	echo cd .."\r" > $(BATCH)
+	echo %WINDIR%/Microsoft.NET/Framework/v3.5/csc -o+ -out:utils/COMPILER.exe $(LIBSRC) `find Compiler -name "*.cs"`"\r" | sed 's/\//\\/g' >> $(BATCH)
+	chmod 755 $(BATCH)

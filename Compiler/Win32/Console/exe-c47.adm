@@ -4,22 +4,22 @@ _Finish _finish;
 
 struct Test
 {
-  int a = 100;
-  static int b = 200;
-  
-  function Func1()
-  {
-    static int c = 300;
-    printfln("%s: a: [%p] %d", __FUNCTION__, addrof a, a++);
-    printfln("%s: b: [%p] %d", __FUNCTION__, addrof b, b++);
-    printfln("%s: c: [%p] %d", __FUNCTION__, addrof c, c++);
-    Func2();
-  }
-  
-  static function Func2()
-  {
-    printfln("%s: b: [%p] %d", __FUNCTION__, addrof b, b++);
-  }
+	int a = 100;
+	static int b = 200;
+	
+	function Func1()
+	{
+		static int c = 300;
+		printfln("%s: a: [%p] %d", __FUNCTION__, addrof a, a++);
+		printfln("%s: b: [%p] %d", __FUNCTION__, addrof b, b++);
+		printfln("%s: c: [%p] %d", __FUNCTION__, addrof c, c++);
+		Func2();
+	}
+	
+	static function Func2()
+	{
+		printfln("%s: b: [%p] %d", __FUNCTION__, addrof b, b++);
+	}
 }
 
 printfln("sizeof(Test) = %d", sizeof(Test));

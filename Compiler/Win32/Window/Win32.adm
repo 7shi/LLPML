@@ -1,46 +1,46 @@
 ﻿extern "kernel32.dll" __stdcall
 {
-  Sleep(dwMilliseconds);
-  __widecharset GetModuleHandle(lpModuleName);
-  GetTickCount();
+	Sleep(dwMilliseconds);
+	__widecharset GetModuleHandle(lpModuleName);
+	GetTickCount();
 }
 extern "user32.dll" __stdcall
 {
-  ShowWindow(hWnd, nCmdShow);
-  CloseWindow(hWnd);
-  UpdateWindow(hWnd);
-  DestroyWindow(hWnd);
-  TranslateMessage(lpMsg);
-  PostQuitMessage(nExitCode);
-  BeginPaint(hWnd, lpPaint);
-  EndPaint(hWnd, lpPaint);
-  GetDC(hWnd);
-  GetSysColorBrush(nIndex);
-  InvalidateRect(hWnd, lpRect, bErase);
-  FillRect(hDC, lprc, hbr);
-  AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle);
-  CreateMenu();
-  CreatePopupMenu();
-  DestroyMenu(hMenu);
-  SetMenu(hWnd, hMenu);
+	ShowWindow(hWnd, nCmdShow);
+	CloseWindow(hWnd);
+	UpdateWindow(hWnd);
+	DestroyWindow(hWnd);
+	TranslateMessage(lpMsg);
+	PostQuitMessage(nExitCode);
+	BeginPaint(hWnd, lpPaint);
+	EndPaint(hWnd, lpPaint);
+	GetDC(hWnd);
+	GetSysColorBrush(nIndex);
+	InvalidateRect(hWnd, lpRect, bErase);
+	FillRect(hDC, lprc, hbr);
+	AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle);
+	CreateMenu();
+	CreatePopupMenu();
+	DestroyMenu(hMenu);
+	SetMenu(hWnd, hMenu);
 }
 extern "user32.dll" __stdcall __widecharset
 {
-  MessageBox(hWnd, lpText, lpCation, uType);
-  DefWindowProc(hWnd, Msg, wParam, lParam);
-  LoadCursor(hInstance, lpCursorName);
-  RegisterClassEx(lpwcx);
-  CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
-  GetMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
-  PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
-  DispatchMessage(lpmsg);
-  InsertMenuItem(hMenu, uItem, fByPosition, lpmii);
-  SetMenuItemInfo(hMenu, uItem, fByPosition, lpmii);
+	MessageBox(hWnd, lpText, lpCation, uType);
+	DefWindowProc(hWnd, Msg, wParam, lParam);
+	LoadCursor(hInstance, lpCursorName);
+	RegisterClassEx(lpwcx);
+	CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+	GetMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
+	PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
+	DispatchMessage(lpmsg);
+	InsertMenuItem(hMenu, uItem, fByPosition, lpmii);
+	SetMenuItemInfo(hMenu, uItem, fByPosition, lpmii);
 }
 extern "gdi32.dll" __stdcall
 {
-  __widecharset TextOut(hdc, nXStart, nYStart, lpString, cbString);
-  SetDIBitsToDevice(hdc, XDest, YDest, dwWidth, dwHeight, XSrc, YSrc, uStartScan, cScanLines, lpvBits, lpbmi, fuColorUse);
+	__widecharset TextOut(hdc, nXStart, nYStart, lpString, cbString);
+	SetDIBitsToDevice(hdc, XDest, YDest, dwWidth, dwHeight, XSrc, YSrc, uStartScan, cScanLines, lpvBits, lpbmi, fuColorUse);
 }
 
 const int CS_VREDRAW     = 1;
@@ -55,8 +55,8 @@ const int WS_THICKFRAME  = 0x040000;
 const int WS_MINIMIZEBOX = 0x020000;
 const int WS_MAXIMIZEBOX = 0x010000;
 const int WS_OVERLAPPEDWINDOW =
-  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
-  WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+	WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
+	WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 const int SW_HIDE       = 0;
 const int SW_SHOWNORMAL = 1;
@@ -125,111 +125,111 @@ const int MFS_UNHILITE  = 0x0000;
 
 struct WNDCLASSEX
 {
-  var cbSize;
-  var style;
-  var lpfnWndProc;
-  var cbClsExtra;
-  var cbWndExtra;
-  var hInstance;
-  var hIcon;
-  var hCursor;
-  var hbrBackground;
-  var lpszMenuName;
-  var lpszClassName;
-  var hIconSm;
+	var cbSize;
+	var style;
+	var lpfnWndProc;
+	var cbClsExtra;
+	var cbWndExtra;
+	var hInstance;
+	var hIcon;
+	var hCursor;
+	var hbrBackground;
+	var lpszMenuName;
+	var lpszClassName;
+	var hIconSm;
 }
 
 struct POINT
 {
-  var x, y;
+	var x, y;
 }
 
 struct RECT
 {
-  var left, top, right, bottom;
+	var left, top, right, bottom;
 }
 
 struct MSG
 {
-  var hwnd;
-  var message;
-  var wParam;
-  var lParam;
-  var time;
-  POINT pt;
+	var hwnd;
+	var message;
+	var wParam;
+	var lParam;
+	var time;
+	POINT pt;
 }
 
 struct PAINTSTRUCT
 {
-  var hdc;
-  var fErase;
-  RECT rcPaint;
-  var fRestore;
-  var fIncUpdate;
-  byte rgbReserved[32];
+	var hdc;
+	var fErase;
+	RECT rcPaint;
+	var fRestore;
+	var fIncUpdate;
+	byte rgbReserved[32];
 }
 
 struct BITMAPINFOHEADER
 {
-  var biSize;
-  var biWidth;
-  var biHeight;
-  short biPlanes;
-  short biBitCount;
-  var biCompression;
-  var biSizeImage;
-  var biXPelsPerMeter;
-  var biYPelsPerMeter;
-  var biClrUsed;
-  var biClrImportant;
+	var biSize;
+	var biWidth;
+	var biHeight;
+	short biPlanes;
+	short biBitCount;
+	var biCompression;
+	var biSizeImage;
+	var biXPelsPerMeter;
+	var biYPelsPerMeter;
+	var biClrUsed;
+	var biClrImportant;
 }
 
 struct RGBQUAD
 {
-  byte rgbBlue;
-  byte rgbGreen;
-  byte rgbRed;
-  byte rgbReserved;
+	byte rgbBlue;
+	byte rgbGreen;
+	byte rgbRed;
+	byte rgbReserved;
 }
 
 struct BITMAPINFO
 {
-  BITMAPINFOHEADER bmiHeader;
-  RGBQUAD bmiColors[1];
+	BITMAPINFOHEADER bmiHeader;
+	RGBQUAD bmiColors[1];
 }
 
 struct MENUITEMINFO
 {
-  var cbSize;
-  var fMask;
-  var fType;
-  var fState;
-  var wID;
-  var hSubMenu;
-  var hbmpChecked;
-  var hbmpUnchecked;
-  var dwItemData;
-  var dwTypeData;
-  var cch;
-  var hbmpItem;
+	var cbSize;
+	var fMask;
+	var fType;
+	var fState;
+	var wID;
+	var hSubMenu;
+	var hbmpChecked;
+	var hbmpUnchecked;
+	var dwItemData;
+	var dwTypeData;
+	var cch;
+	var hbmpItem;
 }
 
 function LOWORD(l)
 {
-  return l & 0xffff;
+	return l & 0xffff;
 }
 
 function HIWORD(l)
 {
-  return (l >> 16) & 0xffff;
+	return (l >> 16) & 0xffff;
 }
 
 function GET_X_LPARAM(l)
 {
-  return l & 0xffff;
+	return l & 0xffff;
 }
 
 function GET_Y_LPARAM(l)
 {
-  return (l >> 16) & 0xffff;
+	return (l >> 16) & 0xffff;
 }

@@ -4,23 +4,23 @@ _Finish _finish;
 
 struct Test1
 {
-  var value = 3;
-  
-  function get_Value()
-  {
-    return value;
-  }
-  
-  function set_Value(value)
-  {
-    this.value = value;
-  }
-  
-  function test(v)
-  {
-    Value = v;
-    printfln("%s(%d): Value = %d", __FUNCTION__, v, Value);
-  }
+	var value = 3;
+	
+	function get_Value()
+	{
+		return value;
+	}
+	
+	function set_Value(value)
+	{
+		this.value = value;
+	}
+	
+	function test(v)
+	{
+		Value = v;
+		printfln("%s(%d): Value = %d", __FUNCTION__, v, Value);
+	}
 }
 
 Test1 t1;
@@ -39,7 +39,7 @@ t1.test(9);
 
 struct Test2
 {
-  function get_Test1 { return t1; }
+	function get_Test1 { return t1; }
 }
 
 Test2 t2;

@@ -4,52 +4,52 @@ _Finish _finish;
 
 struct Name
 {
-  printfln("%p [%s]", this, __FUNCTION__);
-  var name = "";
+	printfln("%p [%s]", this, __FUNCTION__);
+	var name = "";
 
-  // constructor
-  function ctor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
+	// constructor
+	function ctor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		Show();
+	}
 
-  // destructor
-  function dtor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
+	// destructor
+	function dtor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		Show();
+	}
 
-  function Show()
-  {
-    printfln("%p [%s] \"%s\"", this, __FUNCTION__, name);
-  }
+	function Show()
+	{
+		printfln("%p [%s] \"%s\"", this, __FUNCTION__, name);
+	}
 }
 
 struct Test
 {
-  printfln("%p [%s]", this, __FUNCTION__);
-  Name name;
+	printfln("%p [%s]", this, __FUNCTION__);
+	Name name;
 
-  // constructor
-  function ctor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    name.Show();
-  }
+	// constructor
+	function ctor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		name.Show();
+	}
 
-  // destructor
-  function dtor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    name.Show();
-  }
+	// destructor
+	function dtor()
+	{
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		name.Show();
+	}
 }
 
 {
-  Name a = { "a" };
-  Test b = { { "b" } };
+	Name a = { "a" };
+	Test b = { { "b" } };
 }
 
 Name a = { "a" }, b = { "b" };
@@ -58,12 +58,12 @@ println();
 
 for (var i = 0; ; i++)
 {
-  printfln("i = %d", i);
-  Name c = { "c" };
-  if (i == 0) continue;
-  Name d = { "d" };
-  if (i == 2) break;
-  Test e = { { "e" } };
+	printfln("i = %d", i);
+	Name c = { "c" };
+	if (i == 0) continue;
+	Name d = { "d" };
+	if (i == 2) break;
+	Test e = { { "e" } };
 }
 
 println();
@@ -74,12 +74,12 @@ printfln("test(1) = \"%s\"", test(1));
 
 function test(a)
 {
-  Name f = { "f" };
-  if (a == 0)
-  {
-    Test g = { { "g" } };
-    return "stop";
-  }
-  Name h = { "h" };
-  return "normal";
+	Name f = { "f" };
+	if (a == 0)
+	{
+		Test g = { { "g" } };
+		return "stop";
+	}
+	Name h = { "h" };
+	return "normal";
 }

@@ -6,6 +6,6 @@ test(2, 4);
 
 function test(a, b)
 {
-  var c = a + b;
-  printfln("%d + %d = %d", a, b, c);
+	var c = a + b;
+	printfln("%d + %d = %d", a, b, c);
 }

@@ -12,6 +12,6 @@ test();
 
 function test()
 {
-  printfln("i = %d", i);
-  i++;
+	printfln("i = %d", i);
+	i++;
 }

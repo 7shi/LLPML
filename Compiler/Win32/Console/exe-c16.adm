@@ -28,6 +28,6 @@ vprintfln("p = (%d, %d)", p);
 
 function offset(p : Point, x, y)
 {
-  p.x += x;
-  p.y += y;
+	p.x += x;
+	p.y += y;
 }
