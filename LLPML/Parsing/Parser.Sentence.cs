@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML.Parsing
@@ -21,6 +22,9 @@ namespace Girl.LLPML.Parsing
             NodeBase nb = null;
             switch (t)
             {
+                case "#":
+                    Directive();
+                    return null;
                 case "{":
                     Rewind();
                     nb = new Block(parent);
@@ -649,6 +653,58 @@ namespace Girl.LLPML.Parsing
                         }
                 }
             }
+        }
+
+        private void Directive()
+        {
+            var t = Read();
+            if (t == null) throw Abort("ディレクティブが必要です。");
+
+            switch (t)
+            {
+                case "pragma":
+                    Pragma();
+                    break;
+                default:
+                    throw Abort("不明なディレクティブです: {0}", t);
+            }
+        }
+
+        private void Pragma()
+        {
+            var t = Read();
+            if (t == null) throw Abort("pragma: 指示が必要です。");
+
+            switch (t)
+            {
+                case "subsystem":
+                    PragmaSubsystem();
+                    break;
+                default:
+                    throw Abort("pragma: 不明な指示です: {0}", t);
+            }
+        }
+
+        private void PragmaSubsystem()
+        {
+            Check("pragma: subsystem", "(");
+
+            var t = Read();
+            if (t == null) throw Abort("pragma: subsystem: サブシステム名が必要です。");
+
+            switch (t)
+            {
+                case "WINDOWS_CUI":
+                    parent.Root.Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
+                    break;
+                case "WINDOWS_GUI":
+                    parent.Root.Subsystem = IMAGE_SUBSYSTEM.WINDOWS_GUI;
+                    break;
+                default:
+                    throw Abort("pragma: subsystem: 不明なサブシステム名です: {0}", t);
+            }
+
+            Check("pragma: subsystem", ")");
         }
     }
 }

@@ -30,11 +30,6 @@ namespace Girl.LLPML.Parsing
                     break;
                 }
                 ret = op.Read(ret, order);
-                if (ret is LLPML.Operator)
-                {
-                    var v = (ret as LLPML.Operator).GetConst();
-                    if (v != null) ret = v;
-                }
                 if (ret is NodeBase)
                     (ret as NodeBase).SrcInfo = si;
                 si = SrcInfo;
@@ -147,9 +142,6 @@ namespace Girl.LLPML.Parsing
 
             var v = parent.GetVar(t);
             if (v != null) return new Var(parent, v) { SrcInfo = si };
-
-            var i = parent.GetInt(t);
-            if (i != null) return new IntValue((int)i) { SrcInfo = si };
 
             var s = parent.GetString(t);
             if (s != null) return new StringValue(s);

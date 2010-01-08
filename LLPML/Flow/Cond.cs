@@ -42,7 +42,7 @@ namespace Girl.LLPML
 
         public override IntValue GetConst()
         {
-            return GetValue(values[0]);
+            return IntValue.GetValue(values[0]);
         }
     }
 }

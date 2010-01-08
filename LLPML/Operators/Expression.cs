@@ -20,6 +20,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
+            if (AddConstCodes(codes, "mov", null)) return;
+
             var v = values[0];
             var nb = v as NodeBase;
             if (nb != null && !OpModule.NeedsDtor(v))
@@ -30,6 +32,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
+            if (AddConstCodes(codes, op, dest)) return;
+
             var v = values[0];
             if (!OpModule.NeedsDtor(v))
                 v.AddCodes(codes, op, dest);
@@ -44,7 +48,7 @@ namespace Girl.LLPML
 
         public override IntValue GetConst()
         {
-            return GetValue(values[0]);
+            return IntValue.GetValue(values[0]);
         }
     }
 }

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.99.20080913">
+
+<title>定数の前方参照</title>
+
+<include src="finish.xml" />
+
+<?llp
+int array1[1 + 1], array2[A * B];
+const int C = A * B;
+
+const int A = 2;
+const int B = 3;
+
+printfln("sizeof(array1) = %d", sizeof(array1));
+printfln("sizeof(array2) = %d", sizeof(array2));
+printfln("C = %d", C);
+printfln("D = %d", D);
+
+// 遅延評価
+const int D = function
+{
+  printfln(__FUNCTION__);
+  return A + B;
+}();
+?>
+
+</llpml>

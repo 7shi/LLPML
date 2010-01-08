@@ -31,7 +31,7 @@ namespace Girl.LLPML
             switch (xr.Name)
             {
                 case "int":
-                    return new IntValue(parent.ReadInt(xr));
+                    return parent.ReadInt(xr);
                 case "string":
                     return new StringValue(parent.ReadString(xr));
                 case "string-length":
@@ -189,6 +189,18 @@ namespace Girl.LLPML
             if (value.Length > 1 && value.StartsWith("0"))
                 return Convert.ToInt32(value.Substring(1), 8);
             return int.Parse(value);
+        }
+
+        public static IntValue GetValue(IIntValue v)
+        {
+            if (v is IntValue)
+                return v as IntValue;
+            else if (v is Operator)
+                return (v as Operator).GetConst();
+            else if (v is Function.Ptr)
+                return GetValue((v as Function.Ptr).GetConst());
+            else
+                return null;
         }
     }
 }

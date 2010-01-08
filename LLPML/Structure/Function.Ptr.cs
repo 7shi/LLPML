@@ -30,6 +30,9 @@ namespace Girl.LLPML
             {
                 get
                 {
+                    var v = GetConst();
+                    if (v != null) return v.Type;
+
                     var f = GetFunction();
                     if (f != null) return f.Type;
 
@@ -50,6 +53,12 @@ namespace Girl.LLPML
                     v = func.GetAddress(m);
                 else
                 {
+                    var vv = GetConst();
+                    if (vv != null)
+                    {
+                        vv.AddCodes(codes, op, dest);
+                        return;
+                    }
                     var f = GetFunction();
                     if (f == null)
                     {
@@ -92,6 +101,12 @@ namespace Girl.LLPML
             public bool IsSetter
             {
                 get { return GetSetter() != null; }
+            }
+
+            public IIntValue GetConst()
+            {
+                if (name == null) return null;
+                return Parent.GetInt(name);
             }
         }
     }

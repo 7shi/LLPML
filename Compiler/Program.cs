@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Girl.LLPML;
@@ -40,7 +41,6 @@ namespace Compiler
             try
             {
                 var root = new Root();
-                //root.Subsystem = IMAGE_SUBSYSTEM.WINDOWS_GUI;
 
                 Console.WriteLine("パースしています: 標準ライブラリ");
                 ReadLibraries(root);
@@ -81,6 +81,7 @@ namespace Compiler
                 var time = (DateTime.Now - start).TotalMilliseconds;
                 Console.WriteLine("出力しました: {0}", root.Output);
                 Console.WriteLine("所要時間: {0}ms", time);
+                Process.Start(exe);
             }
             catch (Exception ex)
             {

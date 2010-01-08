@@ -46,11 +46,12 @@ namespace Girl.LLPML
                 Value = value;
             }
 
-            public Declare(BlockBase parent, string name, TypeBase type, int count)
-                : this(parent, name)
+            public static Declare Array(BlockBase parent, string name, TypeBase type, IIntValue count)
             {
-                doneInferType = true;
-                this.type = new TypeArray(type, count);
+                var ret = new Declare(parent, name);
+                ret.doneInferType = true;
+                ret.type = new TypeArray(type, count);
+                return ret;
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)

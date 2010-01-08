@@ -20,13 +20,15 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
+            if (AddConstCodes(codes, op, dest)) return;
+
             codes.AddOperatorCodes(GetFunc(), dest, values[0], false);
             codes.AddCodes(op, dest);
         }
 
         public override IntValue GetConst()
         {
-            var v = GetValue(values[0]);
+            var v = IntValue.GetValue(values[0]);
             if (v == null) return null;
             return new IntValue(Calculate(v.Value));
         }

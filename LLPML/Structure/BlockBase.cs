@@ -78,16 +78,21 @@ namespace Girl.LLPML
 
         #region int
 
-        public int? GetInt(string name)
+        public IIntValue GetInt(string name)
         {
             object obj = GetMember<object>(name);
-            if (obj is int) return (int?)(int)obj;
+            if (obj is IIntValue) return obj as IIntValue;
             return Parent == null ? null : Parent.GetInt(name);
+        }
+
+        public bool AddInt(string name, IIntValue value)
+        {
+            return AddMember(name, value);
         }
 
         public bool AddInt(string name, int value)
         {
-            return AddMember(name, value);
+            return AddMember(name, new IntValue(value));
         }
 
         public int ParseInt(XmlTextReader xr)
@@ -110,19 +115,19 @@ namespace Girl.LLPML
             return IntValue.Parse(value);
         }
 
-        public int ReadInt(XmlTextReader xr)
+        public IIntValue ReadInt(XmlTextReader xr)
         {
             string name = xr["name"];
             if (name != null)
             {
                 if (!xr.IsEmptyElement)
                     throw Abort(xr, "do not specify value with name");
-                int? ret = GetInt(name);
+                var ret = GetInt(name);
                 if (ret == null)
                     throw Abort(xr, "undefined values: " + name);
-                return (int)ret;
+                return ret;
             }
-            return ParseInt(xr);
+            return new IntValue(ParseInt(xr));
         }
 
         public void ReadIntDefine(XmlTextReader xr)

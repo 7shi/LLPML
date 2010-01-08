@@ -57,7 +57,7 @@ namespace Girl.LLPML.Parsing
             throw Abort("const: 型が指定されていません。");
         }
 
-        private delegate void DeclareHandler(string name, bool eq, SrcInfo si, int? array);
+        private delegate void DeclareHandler(string name, bool eq, SrcInfo si, IIntValue array);
 
         private void ReadDeclare(string category, Action delg1, DeclareHandler delg2)
         {
@@ -71,14 +71,11 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0}: 名前が不適切です: {1}", category, name);
             }
 
-            int? array = null;
+            IIntValue array = null;
             var br1 = Read();
             if (br1 == "[")
             {
-                var len = Expression() as IntValue;
-                if (len == null)
-                    throw Abort("{0}: 配列のサイズが必要です。", category);
-                array = len.Value;
+                array = Expression();
                 Check(category, "]");
             }
             else
@@ -111,10 +108,7 @@ namespace Girl.LLPML.Parsing
                         throw parent.Abort(si, "const int: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const int: 等号がありません。");
-                    var v = Expression() as IntValue;
-                    if (v == null)
-                        throw parent.Abort(si, "const int: 定数値が必要です。");
-                    parent.AddInt(name, v.Value);
+                    parent.AddInt(name, Expression());
                 });
         }
 
@@ -191,8 +185,7 @@ namespace Girl.LLPML.Parsing
                         /// TODO: 配列を初期化できるようにする
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
-                        v = new Var.Declare(
-                            parent, name, Types.ToVarType(tb), (int)array);
+                        v = Var.Declare.Array(parent, name, Types.ToVarType(tb), array);
                     }
                     v.SrcInfo = si;
                     v.IsStatic = isStatic;
@@ -234,7 +227,7 @@ namespace Girl.LLPML.Parsing
                         if (eq)
                             throw parent.Abort(si, "{0}: 配列を初期化できません。", type);
                         if (tb == null) tb = TypeInt.Instance;
-                        v = new Var.Declare(parent, name, tb, (int)array);
+                        v = Var.Declare.Array(parent, name, tb, array);
                     }
                     v.SrcInfo = si;
                     v.IsStatic = isStatic;
@@ -288,7 +281,7 @@ namespace Girl.LLPML.Parsing
                     {
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
-                        v = new Var.Declare(parent, name, type, (int)array);
+                        v = Var.Declare.Array(parent, name, type, array);
                     }
                     v.SrcInfo = si;
                     v.IsStatic = isStatic;

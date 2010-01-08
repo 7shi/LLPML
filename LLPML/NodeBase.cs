@@ -61,9 +61,18 @@ namespace Girl.LLPML
             Parse(xr, null);
         }
 
+        private Parsing.SrcInfo GetSrcInfo()
+        {
+            var ret = SrcInfo;
+            if (ret != null) return ret;
+
+            if (Parent == null) return null;
+            return Parent.GetSrcInfo();
+        }
+
         public Exception Abort(string format, params object[] args)
         {
-            return Abort(SrcInfo, format, args);
+            return Abort(GetSrcInfo(), format, args);
         }
 
         public Exception Abort(Parsing.SrcInfo si, string format, params object[] args)

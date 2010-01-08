@@ -195,18 +195,33 @@ namespace Girl.LLPML
         {
             sentences.Clear();
             AddSentence(expr);
-            int len = blocks.Count;
+
+            CaseBlock def = null;
+            var list = new List<CaseBlock>();
+            foreach (var cb in blocks)
+            {
+                if (cb.Case.Values.Count == 0)
+                {
+                    if (def != null)
+                        throw cb.Case.Abort("switch: multiple defaults");
+                    else
+                        def = cb;
+                }
+                else
+                    list.Add(cb);
+            }
+            if (def != null) list.Add(def);
+
+            int len = list.Count;
             for (int i = 0; i < len; i++)
             {
-                CaseBlock cb = blocks[i];
+                var cb = list[i];
                 cb.Case.Block = cb.Block;
                 cb.Case.IsLast = i == len - 1;
                 AddSentence(cb.Case);
             }
-            foreach (CaseBlock cb in blocks)
-            {
+            foreach (var cb in list)
                 AddSentence(cb.Block);
-            }
             base.AddCodes(codes);
         }
     }

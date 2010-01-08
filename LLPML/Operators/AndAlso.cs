@@ -17,6 +17,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
+            if (AddConstCodes(codes, op, dest)) return;
+
             OpCode last = new OpCode();
             foreach (IIntValue v in values)
             {
@@ -31,13 +33,13 @@ namespace Girl.LLPML
 
         public override IntValue GetConst()
         {
-            var v = GetValue(values[0]);
+            var v = IntValue.GetValue(values[0]);
             if (v == null) return null;
 
             var ret = v.Value == 0 ? false : true;
             for (int i = 1; i < values.Count; i++)
             {
-                var iv = GetValue(values[i]);
+                var iv = IntValue.GetValue(values[i]);
                 if (iv == null) return null;
                 ret = Calculate(ret, iv.Value == 0 ? false : true);
             }

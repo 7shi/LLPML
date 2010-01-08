@@ -33,12 +33,13 @@ namespace Girl.LLPML
         public override bool NeedsCtor { get { return Type.NeedsCtor; } }
         public override void AddConstructor(OpModule codes)
         {
-            if (Count == 0) return;
+            var count = Count;
+            if (count == 0) return;
 
             var loop = new OpCode();
             codes.AddRange(new[]
             {
-                I386.Push((uint)Count),
+                I386.Push((uint)count),
                 I386.Push(new Addr32(Reg32.ESP, 4)),
                 loop,
             });
@@ -56,12 +57,13 @@ namespace Girl.LLPML
         public override bool NeedsDtor { get { return Type.NeedsDtor; } }
         public override void AddDestructor(OpModule codes)
         {
-            if (Count == 0) return;
+            var count = Count;
+            if (count == 0) return;
 
             var loop = new OpCode();
             codes.AddRange(new[]
             {
-                I386.Push((uint)Count),
+                I386.Push((uint)count),
                 I386.Push(new Addr32(Reg32.ESP, 4)),
                 I386.Add(new Addr32(Reg32.ESP), (uint)Size),
                 loop,
@@ -76,12 +78,33 @@ namespace Girl.LLPML
             });
         }
 
-        public int Count { get; protected set; }
+        private IIntValue count;
+        public int Count
+        {
+            get
+            {
+                var v = IntValue.GetValue(count);
+                if (v == null)
+                {
+                    var nb = count as NodeBase;
+                    if (nb != null)
+                        throw nb.Abort("配列のサイズが定数ではありません。");
+                    else
+                        throw new Exception("配列のサイズが定数ではありません。");
+                }
+                return v.Value;
+            }
+        }
 
-        public TypeArray(TypeBase type, int count)
+        public TypeArray(TypeBase type, IIntValue count)
         {
             Type = type;
-            Count = count;
+            this.count = count;
+        }
+
+        public TypeArray(TypeBase type, int count)
+            : this(type, new IntValue(count))
+        {
         }
     }
 }

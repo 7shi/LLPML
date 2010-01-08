@@ -20,6 +20,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
+            if (AddConstCodes(codes, op, dest)) return;
+
             OpCode last = new OpCode();
             Addr32 ad = new Addr32(Reg32.ESP);
             var f = GetFunc();
@@ -61,8 +63,8 @@ namespace Girl.LLPML
         {
             for (int i = 0; i < values.Count - 1; i++)
             {
-                var a = GetValue(values[i]);
-                var b = GetValue(values[i + 1]);
+                var a = IntValue.GetValue(values[i]);
+                var b = IntValue.GetValue(values[i + 1]);
                 if (a == null || b == null) return null;
                 if (!Calculate(a.Value, b.Value)) return new IntValue(0);
             }

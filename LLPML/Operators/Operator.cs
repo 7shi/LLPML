@@ -50,19 +50,19 @@ namespace Girl.LLPML
 
         protected TypeBase.Func GetFunc()
         {
-            var t = values[0].Type;
+            var t = values[0].Type ?? TypeVar.Instance;
             var f = t.GetFunc(Tag);
             if (f == null)
-                throw new Exception(Tag + ": " + t.Name + ": not supported");
+                throw Abort("{0}: {1}: not supported", Tag, t.Name);
             return f;
         }
 
         protected CondPair GetCond()
         {
-            var t = values[0].Type;
+            var t = values[0].Type ?? TypeVar.Instance;
             var c = t.GetCond(Tag);
             if (c == null)
-                throw new Exception(Tag + ": " + t.Name + ": no conditions");
+                throw Abort("{0}: {1}: no conditions", Tag, t.Name);
             return c;
         }
 
@@ -79,11 +79,13 @@ namespace Girl.LLPML
 
         public abstract IntValue GetConst();
 
-        protected static IntValue GetValue(IIntValue v)
+        protected bool AddConstCodes(OpModule codes, string op, Addr32 dest)
         {
-            if (v is IntValue) return v as IntValue;
-            if (v is Operator) return (v as Operator).GetConst();
-            return null;
+            var v = GetConst();
+            if (v == null) return false;
+
+            v.AddCodes(codes, op, dest);
+            return true;
         }
     }
 }
