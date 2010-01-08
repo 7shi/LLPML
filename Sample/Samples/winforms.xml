@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.11.20080324">
+
+<include src="win32.xml" />
+<include src="malloc.xml" />
+
+<?llp
+var g_nAutoID = 0x2000;
+
+function winforms_get_auto_id()
+{
+  return g_nAutoID++;
+}
+
+struct Color
+{
+  byte B, G, R, A;
+}
+
+struct Bitmap : BITMAPINFO
+{
+  var Buffer : Color[] = null;
+  var Count = 0;
+  
+  function ctor()
+  {
+    __stosb(this, 0, sizeof BITMAPINFO);
+    bmiHeader.biSize        = sizeof BITMAPINFOHEADER;
+    bmiHeader.biPlanes      = 1;
+    bmiHeader.biCompression = BI_RGB;
+    bmiHeader.biBitCount    = 32;
+  }
+  
+  function dtor()
+  {
+    if (Buffer != null) free(Buffer);
+  }
+  
+  function SetSize(width, height)
+  {
+    bmiHeader.biWidth  = width;
+    bmiHeader.biHeight = -height;
+    Count = width * height;
+    Buffer = malloc(sizeof(Color) * Count);
+    Clear();
+  }
+  
+  function Clear()
+  {
+    if (Buffer != null)
+      __stosd(Buffer, 0xffffffff, Count);
+  }
+}
+
+struct MainMenu
+{
+  var hMenu;
+  
+  function ctor()
+  {
+    hMenu = CreateMenu();
+  }
+  
+  function dtor()
+  {
+    hMenu.DestroyMenu();
+  }
+  
+  function Append(menuItem : MenuItem)
+  {
+    menuItem.hMenu = hMenu;
+    hMenu.InsertMenuItem(-1, true, menuItem);
+  }
+}
+
+struct MenuItem : MENUITEMINFO
+{
+  var hMenu = null;
+  
+  function ctor()
+  {
+    __stosb(this, 0, sizeof MENUITEMINFO);
+    cbSize = sizeof MENUITEMINFO;
+    fMask  = MIIM_STATE | MIIM_ID;
+    fState = MFS_ENABLED;
+    wID    = winforms_get_auto_id();
+  }
+  
+  function dtor()
+  {
+    if (hSubMenu != null)
+      hSubMenu.DestroyMenu();
+  }
+  
+  function set_Text(text)
+  {
+    fMask |= MIIM_STRING;
+    dwTypeData = text;
+    Refresh();
+  }
+  
+  function set_Enabled(enabled)
+  {
+    if (enabled)
+      fState &= ~MFS_DISABLED;
+    else
+      fState |= MFS_DISABLED;
+    Refresh();
+  }
+  
+  function set_Checked(checked)
+  {
+    if (checked)
+      fState |= MFS_CHECKED;
+    else
+      fState &= ~MFS_CHECKED;
+    Refresh();
+  }
+  
+  function UseRadio()
+  {
+    fMask |= MIIM_FTYPE;
+    fType |= MFT_RADIOCHECK;
+    Refresh();
+  }
+  
+  function Append(menuItem : MenuItem)
+  {
+    if (hSubMenu == null)
+    {
+      fMask |= MIIM_SUBMENU;
+      hSubMenu = CreatePopupMenu();
+    }
+    menuItem.hMenu = hSubMenu;
+    hSubMenu.InsertMenuItem(-1, true, menuItem);
+    Refresh();
+  }
+  
+  function Refresh()
+  {
+    if (hMenu != null)
+      hMenu.SetMenuItemInfo(wID, false, this);
+  }
+}
+?>
+
+</llpml>

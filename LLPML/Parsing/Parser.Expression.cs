@@ -267,6 +267,8 @@ namespace Girl.LLPML.Parsing
                             throw parent.Abort(si, "typeof: ˆø”‚ª•s“KØ‚Å‚·B");
                         return new TypeOf(parent, ex);
                     }
+                case "__LLPML__":
+                    return new StringValue("LLPML ver." + Root.LLPMLVersion);
             }
 
             var vd = parent.GetVar(t);

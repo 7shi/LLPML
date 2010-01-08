@@ -62,7 +62,7 @@ namespace Sample
             string[] libs =
             {
                 "stdio", "string", "malloc", "finish",
-                "cpuid", "mmx", "sse", "win32"
+                "cpuid", "mmx", "sse", "win32", "winforms"
             };
             foreach (var lib in libs)
                 library.Nodes.Add(CreateItem(lib + ".xml"));
@@ -229,8 +229,7 @@ namespace Sample
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Root r = new Root();
-            MessageBox.Show(this, "LLPML ver." + r.Version, "About...");
+            MessageBox.Show(this, "LLPML ver." + Root.LLPMLVersion, "About...");
         }
 
         private void nextToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,21 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080323" subsystem="WINDOWS_GUI">
+<llpml version="0.11.20080324" subsystem="WINDOWS_GUI">
 
 <title>αブレンド</title>
 
 <include src="stdio.xml" />
-<include src="malloc.xml" />
 <include src="mmx.xml" />
 <include src="sse.xml" />
-<include src="win32.xml" />
+<include src="winforms.xml" />
 
 <?llp
 const string className = "LLPML Test Window";
 const int width = 256, height = 256;
 var hInstance = GetModuleHandle(null);
 var alive = true;
-char fpsBuf[1025];
-var fpsBufLen = 0;
 var fMMX = __check_mmx();
 var fSSE2 = __check_sse2();
 var mode = 0;
@@ -23,45 +20,56 @@ if (fSSE2)
   mode = 2;
 else if (fMMX)
   mode = 1;
+char fpsBuf[1025];
+var fpsBufLen = 0;
 var fpsFormat[3];
 fpsFormat[0] = "%d fps";
 fpsFormat[1] = "%d fps(MMX)";
 fpsFormat[2] = "%d fps(SSE2)";
 
-WNDCLASSEX wcex =
-{
-  /* cbSize        */ sizeof(WNDCLASSEX),
-  /* style         */ CS_VREDRAW | CS_HREDRAW,
-  /* lpfnWndProc   */ WndProc,
-  /* cbClsExtra    */ 0,
-  /* cbWndExtra    */ 0,
-  /* hInstance     */ hInstance,
-  /* hIcon         */ null,
-  /* hCursor       */ LoadCursor(null, IDC_ARROW),
-  /* hbrBackground */ COLOR_WINDOW + 1,
-  /* lpszMenuName  */ null,
-  /* lpszClassName */ className,
-  /* hIconSm       */ null
-};
+WNDCLASSEX wcex;
+wcex.style         = CS_VREDRAW | CS_HREDRAW;
+wcex.lpfnWndProc   = WndProc;
+wcex.hInstance     = hInstance;
+wcex.hCursor       = LoadCursor(null, IDC_ARROW);
+wcex.hbrBackground = COLOR_WINDOW + 1;
+wcex.lpszClassName = className;
 wcex.RegisterClassEx();
 
-BITMAPINFO bmpInfo;
-__stosb(bmpInfo, 0, sizeof(bmpInfo));
-bmpInfo.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-bmpInfo.bmiHeader.biWidth       = width;
-bmpInfo.bmiHeader.biHeight      = -height;
-bmpInfo.bmiHeader.biPlanes      = 1;
-bmpInfo.bmiHeader.biCompression = BI_RGB;
-bmpInfo.bmiHeader.biBitCount    = 32;
-
-struct Color { byte B, G, R, A; }
+Bitmap bmp;
+bmp.SetSize(width, height);
 var pixelCount = width * height;
-var buffer : Color[] = malloc(sizeof(Color) * pixelCount);
-__stosd(buffer, 0xffffffff, pixelCount);
+
+MainMenu mainMenu;
+MenuItem miFile, miFileExit;
+miFile.set_Text("ファイル(&F)");
+miFileExit.set_Text("終了(&X)");
+miFile.Append(miFileExit);
+MenuItem miOpt, miOptNormal, miOptMMX, miOptSSE2;
+miOpt.set_Text("オプション(&M)");
+miOptNormal.set_Text("通常演算(&N)");
+miOptNormal.UseRadio();
+miOptMMX.set_Text("&MMX");
+miOptMMX.UseRadio();
+miOptMMX.set_Enabled(fMMX);
+miOptSSE2.set_Text("&SSE2");
+miOptSSE2.UseRadio();
+miOptSSE2.set_Enabled(fSSE2);
+miOpt.Append(miOptNormal);
+miOpt.Append(miOptMMX);
+miOpt.Append(miOptSSE2);
+MenuItem miHelp, miHelpAbout;
+miHelp.set_Text("ヘルプ(&H)");
+miHelpAbout.set_Text("バージョン情報(&A)");
+miHelp.Append(miHelpAbout);
+mainMenu.Append(miFile);
+mainMenu.Append(miOpt);
+mainMenu.Append(miHelp);
+SetMode(mode);
 
 var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 RECT r = { 0, 0, width, height };
-r.AdjustWindowRectEx(dwStyle, false, 0);
+r.AdjustWindowRectEx(dwStyle, true, 0);
 var hWnd = CreateWindowEx(
   /* dwExStyle    */ 0,
   /* lpClassName  */ className,
@@ -72,7 +80,7 @@ var hWnd = CreateWindowEx(
   /* nWidth       */ r.right - r.left,
   /* nHeight      */ r.bottom - r.top,
   /* hWndParent   */ null,
-  /* hMenu        */ null,
+  /* hMenu        */ mainMenu.hMenu,
   /* hInstance    */ hInstance,
   /* lpParam      */ null
 );
@@ -86,7 +94,7 @@ var tick = GetTickCount();
 while (DoEvents())
 {
   // 描画
-  __stosd(buffer, 0xffffffff, pixelCount);
+  bmp.Clear();
   var bx = (count & 63) - 64;
   for (var i = 0; i < 4; i++)
     for (var j = 0; j < 5; j++)
@@ -113,9 +121,6 @@ while (DoEvents())
   }
 }
 
-hWnd.DestroyWindow();
-free(buffer);
-
 function __stdcall WndProc(hWnd, msg, wParam, lParam)
 {
   switch (msg)
@@ -125,7 +130,7 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
       PAINTSTRUCT ps;
       var hdc = hWnd.BeginPaint(ps);
       hdc.SetDIBitsToDevice(0, 0, width, height, 0, 0, 0, height,
-        buffer, bmpInfo, DIB_RGB_COLORS);
+        bmp.Buffer, bmp, DIB_RGB_COLORS);
       if (fpsBufLen > 0) hdc.TextOut(8, 8, fpsBuf, fpsBufLen);
       hWnd.EndPaint(ps);
       break;
@@ -135,9 +140,27 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
       {
         if (mode == 0) mode = 2; else mode--;
         if (mode == 2 && !fSSE2) mode--;
-        fpsBufLen = 0;
-        fps = 0;
-        tick = GetTickCount();
+        SetMode(mode);
+      }
+      break;
+    case WM_COMMAND:
+      switch (LOWORD(wParam))
+      {
+        case miFileExit.wID:
+          hWnd.DestroyWindow();
+          break;
+        case miOptNormal.wID:
+          SetMode(0);
+          break;
+        case miOptMMX.wID:
+          SetMode(1);
+          break;
+        case miOptSSE2.wID:
+          SetMode(2);
+          break;
+        case miHelpAbout.wID:
+          MessageBox(hWnd, __LLPML__, "バージョン情報", 0);
+          break;
       }
       break;
     case WM_DESTROY:
@@ -161,6 +184,7 @@ function FillRectangle(x, y, w, h, color)
   var y2 = y + h;
   if (y2 > height) y2 = height;
   
+  var buffer : Color[] = bmp.Buffer;
   var c : Color = addrof color;
   int a = c.A;
   if (a > 127) a++;
@@ -168,8 +192,8 @@ function FillRectangle(x, y, w, h, color)
   
   if (mode == 2) // SSE2
   {
-    var 余り = x2 & 1;
-    x2 -= 余り;
+    var 端数 = x2 & 1;
+    x2 -= 端数;
     __m128iw fore  =
     {
       c.B * a, c.G * a, c.R * a, 0xff00,
@@ -181,7 +205,7 @@ function FillRectangle(x, y, w, h, color)
     __movdqu(__xmm2, alpha);
     for (var yy = y1; yy < y2; yy++)
     {
-      var p : int[] = addrof buffer[x1 + yy * width];
+      var p : Color[] = addrof buffer[x1 + yy * width];
       for (var xx = x1; xx < x2; xx += 2)
       {
         __movq(__xmm3, p);
@@ -193,7 +217,7 @@ function FillRectangle(x, y, w, h, color)
         __movq(p, __xmm3);
         p += 2;
       }
-      if (余り)
+      if (端数)
       {
         __movd(__xmm3, p);
         __punpcklbw(__xmm3, __xmm0);
@@ -214,7 +238,7 @@ function FillRectangle(x, y, w, h, color)
     __movq(__mm2, alpha);
     for (var yy = y1; yy < y2; yy++)
     {
-      var p : int[] = addrof buffer[x1 + yy * width];
+      var p : Color[] = addrof buffer[x1 + yy * width];
       for (var xx = x1; xx < x2; xx++)
       {
         __movd(__mm3, p);
@@ -259,6 +283,17 @@ function DoEvents()
     msg.DispatchMessage();
   }
   return alive;
+}
+
+function SetMode(m)
+{
+  mode = m;
+  fpsBufLen = 0;
+  fps = 0;
+  miOptNormal.set_Checked(m == 0);
+  miOptMMX.set_Checked(m == 1);
+  miOptSSE2.set_Checked(m == 2);
+  tick = GetTickCount();
 }
 ?>
 

@@ -5,20 +5,6 @@
 - 整数型の符号
 -- 演算子の処理をクラス化
 - title
-- キャストしてメンバアクセス ex. ((Foo)a).Bar
-- 型推論で整数型(byteがエラー)
-- 初期化キャストでバグる
-- 構造体のパディング
-- 配列へのアクセス
-- 配列型
-- 簡略記法
--- メンバ関数のthis省略
--- 宣言時型推論
-- 関数ポインタにaddrof不要
-- 内部クラス構成
--- Struct.Invoke, Struct.MemberPtr廃止
--- Index, AddrOf追加
--- SizeをSizeOfに改名
 
 [未]
 - 代入で符号 ex. ushort => int

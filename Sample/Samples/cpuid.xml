@@ -32,6 +32,13 @@ struct CPUID_Result
     GetString(addrof dest[ 8], ecx);
     GetString(addrof dest[12], edx);
   }
+  
+  function Show()
+  {
+    printfln(
+      "EAX = %08x, EBX = %08x, ECX = %08x, EDX = %08x",
+      eax, ebx, ecx, edx);
+  }
 };
 ?>
 
