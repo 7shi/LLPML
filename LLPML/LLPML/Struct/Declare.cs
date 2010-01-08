@@ -28,13 +28,13 @@ namespace Girl.LLPML.Struct
 
         public Declare() { }
 
-        public Declare(Block parent, string name, string type)
+        public Declare(BlockBase parent, string name, string type)
             : base(parent, name)
         {
             this.type = type;
         }
 
-        public Declare(Block parent, XmlTextReader xr)
+        public Declare(BlockBase parent, XmlTextReader xr)
             : base(parent, xr)
         {
         }
@@ -64,7 +64,7 @@ namespace Girl.LLPML.Struct
                 }
                 else
                 {
-                    IIntValue v = IntValue.Read(parent, xr, true);
+                    IIntValue v = IntValue.Read(parent, xr, false);
                     if (v != null) values.Add(v);
                 }
             });
@@ -86,33 +86,37 @@ namespace Girl.LLPML.Struct
 
         public void AddCodes(List<OpCode> codes, Module m, Struct.Define st, Addr32 ad)
         {
-            if (values.Count == 0) return;
-            if (st.Members.Count != values.Count)
-                throw new Exception("can not initialize: " + st.Name);
-
-            for (int i = 0; i < values.Count; i++)
+            Addr32 ad2 = new Addr32(ad);
+            if (values.Count > 0)
             {
-                Define.Member mem = st.Members[i];
-                Define memst = mem.GetStruct();
-                object obj = values[i];
-                if (obj is Declare)
+                if (st.Members.Count != values.Count)
+                    throw new Exception("can not initialize: " + st.Name);
+
+                for (int i = 0; i < values.Count; i++)
                 {
-                    if (memst == null)
-                        throw new Exception("value required: " + mem.Name);
-                    (obj as Declare).AddCodes(codes, m, memst, ad);
-                }
-                else if (obj is IIntValue)
-                {
-                    if (memst != null)
-                        throw new Exception("struct required: " + mem.Name);
-                    (obj as IIntValue).AddCodes(codes, m, "mov", new Addr32(ad));
-                    ad.Add(mem.GetSize());
-                }
-                else
-                {
-                    throw new Exception("invalid parameter: " + mem.Name);
+                    Define.Member mem = st.Members[i];
+                    Define memst = mem.GetStruct();
+                    object obj = values[i];
+                    if (obj is Declare)
+                    {
+                        if (memst == null)
+                            throw new Exception("value required: " + mem.Name);
+                        (obj as Declare).AddCodes(codes, m, memst, ad);
+                    }
+                    else if (obj is IIntValue)
+                    {
+                        if (memst != null)
+                            throw new Exception("struct required: " + mem.Name);
+                        (obj as IIntValue).AddCodes(codes, m, "mov", new Addr32(ad));
+                        ad.Add(mem.GetSize());
+                    }
+                    else
+                    {
+                        throw new Exception("invalid parameter: " + mem.Name);
+                    }
                 }
             }
+            st.AddConstructor(codes, m, ad2);
         }
     }
 }

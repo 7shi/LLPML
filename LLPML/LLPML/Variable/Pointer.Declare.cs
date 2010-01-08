@@ -19,19 +19,19 @@ namespace Girl.LLPML
 
             public Declare() { }
 
-            public Declare(Block parent, string name)
+            public Declare(BlockBase parent, string name)
                 : base(parent, name)
             {
                 parent.AddPointer(this);
             }
 
-            public Declare(Block parent, string name, int length)
+            public Declare(BlockBase parent, string name, int length)
                 : this(parent, name)
             {
                 this.length = length;
             }
 
-            public Declare(Block parent, XmlTextReader xr)
+            public Declare(BlockBase parent, XmlTextReader xr)
                 : base(parent, xr)
             {
             }

@@ -13,8 +13,8 @@ namespace Girl.LLPML
         public override Cc NotCondition { get { return Cc.NGE; } }
 
         public GreaterEqual() { }
-        public GreaterEqual(Block parent) : base(parent) { }
-        public GreaterEqual(Block parent, IntValue[] values) : base(parent, values) { }
-        public GreaterEqual(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public GreaterEqual(BlockBase parent) : base(parent) { }
+        public GreaterEqual(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public GreaterEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

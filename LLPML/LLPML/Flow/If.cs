@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class If : Block
+    public class If : BlockBase
     {
         private class CondBlock : NodeBase
         {
@@ -48,10 +48,11 @@ namespace Girl.LLPML
 
         private List<CondBlock> blocks = new List<CondBlock>();
 
-        public If(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public If(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
+            base.Read(xr);
             CondBlock cb = null;
             bool stop = false;
             Parse(xr, delegate

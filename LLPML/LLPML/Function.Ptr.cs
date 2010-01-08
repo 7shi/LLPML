@@ -13,8 +13,8 @@ namespace Girl.LLPML
         public class Ptr : VarBase, IIntValue
         {
             public Ptr() { }
-            public Ptr(Block parent, string name) : base(parent, name) { }
-            public Ptr(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Ptr(BlockBase parent, string name) : base(parent, name) { }
+            public Ptr(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {

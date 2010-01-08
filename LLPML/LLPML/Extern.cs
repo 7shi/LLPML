@@ -12,7 +12,7 @@ namespace Girl.LLPML
         private string module, alias;
 
         public Extern() { }
-        public Extern(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Extern(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {

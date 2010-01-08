@@ -13,8 +13,8 @@ namespace Girl.LLPML
         public override int Max { get { return 0; } }
 
         public Inc() { }
-        public Inc(Block parent, Var dest) : base(parent, dest) { }
-        public Inc(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Inc(BlockBase parent, Var dest) : base(parent, dest) { }
+        public Inc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {

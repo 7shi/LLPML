@@ -17,7 +17,7 @@ namespace Girl.LLPML
             = new List<DeclareBase>();
 
         public Function() { }
-        public Function(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Function(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void ReadBlock(XmlTextReader xr)
         {
@@ -77,6 +77,16 @@ namespace Girl.LLPML
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)
         {
+            AddExitCodes(codes, m);
+        }
+
+        public override void AddExitCodes(List<OpCode> codes, Module m)
+        {
+            if (vars.ContainsKey("__retval"))
+            {
+                IIntValue retval = new Var(this, "__retval") as IIntValue;
+                retval.AddCodes(codes, m, "mov", null);
+            }
             codes.Add(I386.Leave());
             if (type == CallType.Std && argStack > 0)
             {

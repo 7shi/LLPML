@@ -12,9 +12,9 @@ namespace Girl.LLPML
         public class Mul : Add
         {
             public Mul() { }
-            public Mul(Block parent, Var dest) : base(parent, dest) { }
-            public Mul(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public Mul(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Mul(BlockBase parent, Var dest) : base(parent, dest) { }
+            public Mul(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public Mul(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
             {

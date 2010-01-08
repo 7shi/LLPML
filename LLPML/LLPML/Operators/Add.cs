@@ -10,9 +10,9 @@ namespace Girl.LLPML
     public class Add : Operator, IIntValue
     {
         public Add() { }
-        public Add(Block parent) : base(parent) { }
-        public Add(Block parent, IntValue[] values) : base(parent, values) { }
-        public Add(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Add(BlockBase parent) : base(parent) { }
+        public Add(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected virtual void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
         {

@@ -7,14 +7,14 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class For : Block
+    public partial class For : BlockBase
     {
         public class Init : NodeBase
         {
             private List<NodeBase> sentences = new List<NodeBase>();
 
-            public Init(Block parent) : base(parent) { }
-            public Init(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Init(BlockBase parent) : base(parent) { }
+            public Init(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {

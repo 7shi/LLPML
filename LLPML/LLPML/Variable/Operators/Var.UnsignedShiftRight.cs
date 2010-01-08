@@ -12,9 +12,9 @@ namespace Girl.LLPML
         public class UnsignedShiftRight : ShiftLeft
         {
             public UnsignedShiftRight() { }
-            public UnsignedShiftRight(Block parent, Var dest) : base(parent, dest) { }
-            public UnsignedShiftRight(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public UnsignedShiftRight(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public UnsignedShiftRight(BlockBase parent, Var dest) : base(parent, dest) { }
+            public UnsignedShiftRight(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public UnsignedShiftRight(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override string Shift { get { return "shr"; } }
         }

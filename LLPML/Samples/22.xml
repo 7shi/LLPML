@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.7.20070917">
+
+<!-- constructor and destructor -->
+
+<include src="stdio.xml" />
+
+<struct-define name="Global">
+	<!-- destructor -->
+	<method name="~this">
+		<call name="finish" />
+	</method>
+</struct-define>
+
+<struct-declare name="global" type="Global" />
+
+<struct-define name="Name">
+	<member name="name" />
+	
+	<!-- constructor -->
+	<method name="this">
+		<call name="printf">{%p}<this /></call>
+		<invoke name="Show"><this /></invoke>
+	</method>
+	
+	<!-- destructor -->
+	<method name="~this">
+		<call name="printf">~{%p}<this /></call>
+		<invoke name="Show"><this /></invoke>
+	</method>
+	
+	<method name="Show">
+		<call name="printfln">
+			<string> "%s"</string>
+			<struct-member name="name" />
+		</call>
+	</method>
+</struct-define>
+
+<struct-define name="Test">
+	<member name="name" type="Name" />
+	
+	<!-- constructor -->
+	<method name="this">
+		<call name="printf">[%p]<this /></call>
+		<invoke name="Show">
+			<struct-member-ptr name="name" />
+		</invoke>
+	</method>
+	
+	<!-- destructor -->
+	<method name="~this">
+		<call name="printf">~[%p]<this /></call>
+		<invoke name="Show">
+			<struct-member-ptr name="name" />
+		</invoke>
+	</method>
+</struct-define>
+
+<struct-declare name="a" type="Name">a</struct-declare>
+<struct-declare name="b" type="Name">b</struct-declare>
+
+<call name="println" />
+
+<for>
+	<init>
+		<var-declare name="i">0</var-declare>
+	</init>
+	<loop>
+		<inc>
+			<var name="i" />
+		</inc>
+	</loop>
+	<block>
+		<call name="printfln">i = %d<var name="i" /></call>
+		<struct-declare name="c" type="Name">c</struct-declare>
+		<if>
+			<cond>
+				<equal><var name="i" /><int>0</int></equal>
+			</cond>
+			<block>
+				<continue />
+			</block>
+		</if>
+		<struct-declare name="d" type="Name">d</struct-declare>
+		<if>
+			<cond>
+				<equal><var name="i" /><int>2</int></equal>
+			</cond>
+			<block>
+				<break />
+			</block>
+		</if>
+		<struct-declare name="e" type="Test">
+			<struct-declare>e</struct-declare>
+		</struct-declare>
+	</block>
+</for>
+
+<function name="test">
+	<arg name="a" />
+	<struct-declare name="f" type="Name">f</struct-declare>
+	<if>
+		<cond>
+			<equal><var name="a" /><int>0</int></equal>
+		</cond>
+		<block>
+			<struct-declare name="g" type="Test">
+				<struct-declare>g</struct-declare>
+			</struct-declare>
+			<return>stop</return>
+		</block>
+	</if>
+	<struct-declare name="h" type="Name">h</struct-declare>
+	<return>normal</return>
+</function>
+
+<call name="println" />
+<call name="printfln">
+	<string>ret = "%s"</string>
+	<call name="test"><int>0</int></call>
+</call>
+
+<call name="println" />
+<call name="printfln">
+	<string>ret = "%s"</string>
+	<call name="test"><int>1</int></call>
+</call>
+
+<call name="println" />
+
+</llpml>

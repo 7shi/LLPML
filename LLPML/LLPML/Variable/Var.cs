@@ -14,7 +14,7 @@ namespace Girl.LLPML
 
         public Var() { }
 
-        public Var(Block parent, string name)
+        public Var(BlockBase parent, string name)
             : base(parent, name)
         {
             reference = parent.GetVar(name);
@@ -22,7 +22,7 @@ namespace Girl.LLPML
                 throw new Exception("undefined variable: " + name);
         }
 
-        public Var(Block parent, XmlTextReader xr)
+        public Var(BlockBase parent, XmlTextReader xr)
             : base(parent, xr)
         {
         }

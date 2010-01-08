@@ -8,13 +8,13 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Switch : Block
+    public class Switch : BlockBase
     {
         private class Expression : NodeBase
         {
             private IIntValue value;
 
-            public Expression(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Expression(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {
@@ -46,8 +46,8 @@ namespace Girl.LLPML
             public Block Block;
             public bool IsLast;
 
-            public Case(Block parent) : base(parent) { }
-            public Case(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Case(BlockBase parent) : base(parent) { }
+            public Case(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {
@@ -105,10 +105,11 @@ namespace Girl.LLPML
 
         public override bool AcceptsBreak { get { return true; } }
 
-        public Switch(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Switch(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
+            base.Read(xr);
             CaseBlock cb = null;
             bool stop = false;
             Parse(xr, delegate

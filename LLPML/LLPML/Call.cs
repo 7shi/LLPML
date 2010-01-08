@@ -16,13 +16,7 @@ namespace Girl.LLPML
         protected CallType type;
 
         public Call() { }
-        public Call(Block parent, XmlTextReader xr) : base(parent, xr) { }
-
-        protected virtual void AddArg(XmlTextReader xr)
-        {
-            IIntValue v = IntValue.Read(parent, xr, false);
-            if (v != null) args.Add(v);
-        }
+        public Call(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
@@ -45,33 +39,26 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                AddArg(xr);
+                IIntValue v = IntValue.Read(parent, xr, false);
+                if (v != null) args.Add(v);
             });
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            object[] args = this.args.ToArray();
-            Array.Reverse(args);
-            foreach (IIntValue arg in args)
-            {
-                arg.AddCodes(codes, m, "push", null);
-            }
             if (name != null)
             {
                 Function f = parent.GetFunction(name);
                 if (f == null)
                     throw new Exception("undefined function: " + name);
-                type = f.Type;
-                codes.Add(I386.Call(f.First));
+                AddCodes(codes, m, f, args);
             }
             else
             {
-                codes.Add(I386.Call(ptr.GetAddress(codes, m)));
-            }
-            if (type == CallType.CDecl && args.Length > 0)
-            {
-                codes.Add(I386.Add(Reg32.ESP, (byte)(args.Length * 4)));
+                AddCodes(codes, m, args, type, delegate
+                {
+                    codes.Add(I386.Call(ptr.GetAddress(codes, m)));
+                });
             }
         }
 
@@ -79,6 +66,30 @@ namespace Girl.LLPML
         {
             AddCodes(codes, m);
             IntValue.AddCodes(codes, op, dest);
+        }
+
+        public static void AddCodes(List<OpCode> codes, Module m, Function f, List<IIntValue> args)
+        {
+            AddCodes(codes, m, args, f.Type, delegate
+            {
+                codes.Add(I386.Call(f.First));
+            });
+        }
+
+        public static void AddCodes(
+            List<OpCode> codes, Module m, List<IIntValue> args, CallType type, VoidDelegate delg)
+        {
+            object[] args2 = args.ToArray();
+            Array.Reverse(args2);
+            foreach (IIntValue arg in args2)
+            {
+                arg.AddCodes(codes, m, "push", null);
+            }
+            delg();
+            if (type == CallType.CDecl && args2.Length > 0)
+            {
+                codes.Add(I386.Add(Reg32.ESP, (byte)(args2.Length * 4)));
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Girl.PE
         public uint Address, Size;
     }
 
-    public class HeaderBase : WriterBase
+    public abstract class HeaderBase : WriterBase
     {
         public FieldInfo[] GetFields()
         {

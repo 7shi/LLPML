@@ -13,7 +13,7 @@ namespace Girl.LLPML.Struct
             public string Type { get { return type; } }
 
             public Member() { }
-            public Member(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Member(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {

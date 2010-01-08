@@ -7,7 +7,7 @@ namespace Girl.LLPML.Struct
 {
     public partial class This : Var
     {
-        public This(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public This(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {

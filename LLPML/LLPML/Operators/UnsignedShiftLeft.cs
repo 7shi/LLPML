@@ -10,9 +10,9 @@ namespace Girl.LLPML
     public class UnsignedShiftLeft : ShiftLeft
     {
         public UnsignedShiftLeft() { }
-        public UnsignedShiftLeft(Block parent) : base(parent) { }
-        public UnsignedShiftLeft(Block parent, IntValue[] values) : base(parent, values) { }
-        public UnsignedShiftLeft(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public UnsignedShiftLeft(BlockBase parent) : base(parent) { }
+        public UnsignedShiftLeft(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public UnsignedShiftLeft(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override string Shift { get { return "shl"; } }
     }

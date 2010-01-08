@@ -9,7 +9,7 @@ namespace Girl.LLPML
     public class VarBase : NodeBase
     {
         public VarBase() { }
-        public VarBase(Block parent, string name) : base(parent, name) { }
-        public VarBase(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public VarBase(BlockBase parent, string name) : base(parent, name) { }
+        public VarBase(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

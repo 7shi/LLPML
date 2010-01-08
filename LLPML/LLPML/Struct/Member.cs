@@ -15,7 +15,7 @@ namespace Girl.LLPML.Struct
         private bool isRoot = true;
         private Member member;
 
-        public Member(Block parent, XmlTextReader xr)
+        public Member(BlockBase parent, XmlTextReader xr)
             : base(parent, xr)
         {
         }
@@ -35,17 +35,16 @@ namespace Girl.LLPML.Struct
             {
                 string src = xr["src"];
                 string var = xr["var"];
-                if (src == null && var == null)
-                    throw Abort(xr, "src or var required");
-                else if (src != null && var == null)
+                if (src == null)
+                {
+                    if (var == null) var = "this";
+                    this.var = new Var(parent, var);
+                }
+                else if (var == null)
                 {
                     this.src = parent.GetPointer(src) as Struct.Declare;
                     if (this.src == null)
                         throw Abort(xr, "undefined struct: " + src);
-                }
-                else if (src == null && var != null)
-                {
-                    this.var = new Var(parent, var);
                 }
                 else
                     throw Abort(xr, "either src or var required");
@@ -109,7 +108,7 @@ namespace Girl.LLPML.Struct
             int ret = st.GetOffset(name);
             if (ret < 0) throw new Exception("undefined member: " + name);
             if (member == null) return ret;
-            return ret + member.GetOffset(st.GetMeber(name).GetStruct());
+            return ret + member.GetOffset(st.GetMember(name).GetStruct());
         }
 
         public override Addr32 GetAddress(List<OpCode> codes, Module m)
@@ -130,7 +129,12 @@ namespace Girl.LLPML.Struct
         {
             get
             {
-                return src.GetStruct().GetMeber(name).Type;
+                Define st;
+                if (src != null)
+                    st = src.GetStruct();
+                else
+                    st = var.Reference.GetStruct();
+                return st.GetMember(name).Type;
             }
         }
     }

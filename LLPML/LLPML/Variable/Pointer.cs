@@ -18,7 +18,7 @@ namespace Girl.LLPML
 
         public Pointer() { }
 
-        public Pointer(Block parent, string name)
+        public Pointer(BlockBase parent, string name)
             : base(parent, name)
         {
             reference = parent.GetPointer(name);
@@ -26,7 +26,7 @@ namespace Girl.LLPML
                 throw new Exception("undefined pointer: " + name);
         }
 
-        public Pointer(Block parent, XmlTextReader xr)
+        public Pointer(BlockBase parent, XmlTextReader xr)
             : base(parent, xr)
         {
         }

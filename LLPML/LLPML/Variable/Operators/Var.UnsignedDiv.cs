@@ -14,9 +14,9 @@ namespace Girl.LLPML
             public override int Max { get { return 2; } }
 
             public UnsignedDiv() { }
-            public UnsignedDiv(Block parent, Var dest) : base(parent, dest) { }
-            public UnsignedDiv(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public UnsignedDiv(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public UnsignedDiv(BlockBase parent, Var dest) : base(parent, dest) { }
+            public UnsignedDiv(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public UnsignedDiv(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
             {

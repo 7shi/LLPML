@@ -10,9 +10,9 @@ namespace Girl.LLPML
     public class Equal : Operator, IIntValue
     {
         public Equal() { }
-        public Equal(Block parent) : base(parent) { }
-        public Equal(Block parent, IntValue[] values) : base(parent, values) { }
-        public Equal(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Equal(BlockBase parent) : base(parent) { }
+        public Equal(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Equal(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {

@@ -50,6 +50,7 @@
     <Compile Include="LLPML\Flow\If.cs" />
     <Compile Include="LLPML\Flow\Switch.cs" />
     <Compile Include="LLPML\Flow\Continue.cs" />
+    <Compile Include="LLPML\Flow\BreakBase.cs" />
     <Compile Include="LLPML\Function.cs" />
     <Compile Include="LLPML\NodeBase.cs" />
     <Compile Include="LLPML\Operators\Comparers\UnsignedGreaterEqual.cs" />
@@ -126,6 +127,8 @@
     <Compile Include="LLPML\Variable\Operators\Var.UnsignedMul.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.Div.cs" />
     <Compile Include="LLPML\Variable\Operators\Var.UnsignedDiv.cs" />
+    <Compile Include="LLPML\Delegates.cs" />
+    <Compile Include="LLPML\BlockBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -229,6 +232,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\21.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\22.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ToDo.txt" />

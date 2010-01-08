@@ -13,8 +13,8 @@ namespace Girl.LLPML
         public override Cc NotCondition { get { return Cc.NA; } }
 
         public UnsignedGreater() { }
-        public UnsignedGreater(Block parent) : base(parent) { }
-        public UnsignedGreater(Block parent, IntValue[] values) : base(parent, values) { }
-        public UnsignedGreater(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public UnsignedGreater(BlockBase parent) : base(parent) { }
+        public UnsignedGreater(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public UnsignedGreater(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

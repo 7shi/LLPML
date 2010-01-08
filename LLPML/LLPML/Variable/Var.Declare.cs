@@ -18,24 +18,24 @@ namespace Girl.LLPML
 
             public Declare() { }
 
-            public Declare(Block parent, string name)
+            public Declare(BlockBase parent, string name)
                 : base(parent, name)
             {
                 parent.AddVar(this);
             }
 
-            public Declare(Block parent, string name, IIntValue value)
+            public Declare(BlockBase parent, string name, IIntValue value)
                 : this(parent, name)
             {
                 this.value = value;
             }
 
-            public Declare(Block parent, string name, int value)
+            public Declare(BlockBase parent, string name, int value)
                 : this(parent, name, new IntValue(value))
             {
             }
 
-            public Declare(Block parent, XmlTextReader xr)
+            public Declare(BlockBase parent, XmlTextReader xr)
                 : base(parent, xr)
             {
             }

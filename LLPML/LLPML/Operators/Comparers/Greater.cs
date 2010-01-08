@@ -13,9 +13,9 @@ namespace Girl.LLPML
         public virtual Cc NotCondition { get { return Cc.NG; } }
 
         public Greater() { }
-        public Greater(Block parent) : base(parent) { }
-        public Greater(Block parent, IntValue[] values) : base(parent, values) { }
-        public Greater(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Greater(BlockBase parent) : base(parent) { }
+        public Greater(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Greater(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {

@@ -9,7 +9,7 @@ namespace Girl.LLPML
 {
     public class While : Do
     {
-        public While(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public While(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {

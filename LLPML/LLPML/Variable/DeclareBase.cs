@@ -16,7 +16,7 @@ namespace Girl.LLPML
         }
 
         public DeclareBase() { }
-        public DeclareBase(Block parent, string name) : base(parent, name) { }
-        public DeclareBase(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public DeclareBase(BlockBase parent, string name) : base(parent, name) { }
+        public DeclareBase(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

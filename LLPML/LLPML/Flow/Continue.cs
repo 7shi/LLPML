@@ -8,19 +8,21 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Continue : NodeBase
+    public class Continue : BreakBase
     {
-        public Continue(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Continue(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
             if (!CanContinue()) throw Abort(xr, "can not break");
             NoChild(xr);
+
+            base.Read(xr);
         }
 
         public bool CanContinue()
         {
-            for (Block p = parent; p != null; p = p.Parent)
+            for (BlockBase p = parent; p != null; p = p.Parent)
             {
                 if (p is Function) return false;
                 if (p.AcceptsContinue) return true;
@@ -30,11 +32,13 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            Block b = parent;
-            for (; ; b = b.Parent)
+            BlockBase b = parent;
+            Pointer.Declare[] ptrs = usingPointers;
+            for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)
                     throw new Exception("invalid continue");
+                b.AddDestructors(codes, m, ptrs);
                 if (b.AcceptsContinue) break;
                 b.AddExitCodes(codes, m);
             }

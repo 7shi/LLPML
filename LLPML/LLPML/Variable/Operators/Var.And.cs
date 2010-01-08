@@ -12,9 +12,9 @@ namespace Girl.LLPML
         public class And : Add
         {
             public And() { }
-            public And(Block parent, Var dest) : base(parent, dest) { }
-            public And(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public And(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public And(BlockBase parent, Var dest) : base(parent, dest) { }
+            public And(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public And(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
             {

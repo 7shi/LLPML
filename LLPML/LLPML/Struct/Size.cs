@@ -11,8 +11,8 @@ namespace Girl.LLPML.Struct
     public class Size : NodeBase, IIntValue
     {
         public Size() { }
-        public Size(Block parent, string name) : base(parent, name) { }
-        public Size(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Size(BlockBase parent, string name) : base(parent, name) { }
+        public Size(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {

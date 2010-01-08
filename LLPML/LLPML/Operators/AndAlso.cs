@@ -10,9 +10,9 @@ namespace Girl.LLPML
     public class AndAlso : Operator, IIntValue
     {
         public AndAlso() { }
-        public AndAlso(Block parent) : base(parent) { }
-        public AndAlso(Block parent, IntValue[] values) : base(parent, values) { }
-        public AndAlso(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public AndAlso(BlockBase parent) : base(parent) { }
+        public AndAlso(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public AndAlso(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {

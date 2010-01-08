@@ -93,7 +93,7 @@
 	<call name="ReadConsole">
 		<var name="stdin" />
 		<ptr name="buffer" />
-		<int>1</int>
+		<int>2</int>
 		<ptr name="dummy" />
 		<int>0</int>
 	</call>

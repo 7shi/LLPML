@@ -7,12 +7,10 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public delegate void VoidDelegate();
-
-    public class NodeBase
+    public abstract class NodeBase
     {
-        protected Block parent;
-        public Block Parent { get { return parent; } }
+        protected BlockBase parent;
+        public BlockBase Parent { get { return parent; } }
 
         protected string name;
         public string Name { get { return name; } }
@@ -24,19 +22,19 @@ namespace Girl.LLPML
         {
         }
 
-        public NodeBase(Block parent)
+        public NodeBase(BlockBase parent)
         {
             this.parent = parent;
             root = parent.root;
         }
 
-        public NodeBase(Block parent, string name)
+        public NodeBase(BlockBase parent, string name)
             : this(parent)
         {
             this.name = name;
         }
 
-        public NodeBase(Block parent, XmlTextReader xr) : this(parent)
+        public NodeBase(BlockBase parent, XmlTextReader xr) : this(parent)
         {
             Read(xr);
         }

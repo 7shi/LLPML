@@ -12,9 +12,9 @@ namespace Girl.LLPML
         public class Sub : Add
         {
             public Sub() { }
-            public Sub(Block parent, Var dest) : base(parent, dest) { }
-            public Sub(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public Sub(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Sub(BlockBase parent, Var dest) : base(parent, dest) { }
+            public Sub(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public Sub(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
             {

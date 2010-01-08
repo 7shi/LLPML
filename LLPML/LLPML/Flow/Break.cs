@@ -8,19 +8,21 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Break : NodeBase
+    public class Break : BreakBase
     {
-        public Break(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Break(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
             if (!CanBreak()) throw Abort(xr, "can not break");
             NoChild(xr);
+
+            base.Read(xr);
         }
 
         public bool CanBreak()
         {
-            for (Block p = parent; p != null; p = p.Parent)
+            for (BlockBase p = parent; p != null; p = p.Parent)
             {
                 if (p is Function) return false;
                 if (p.AcceptsBreak) return true;
@@ -30,11 +32,13 @@ namespace Girl.LLPML
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            Block b = parent;
-            for (; ; b = b.Parent)
+            BlockBase b = parent;
+            Pointer.Declare[] ptrs = usingPointers;
+            for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)
                     throw new Exception("invalid break");
+                b.AddDestructors(codes, m, ptrs);
                 if (b.AcceptsBreak) break;
                 b.AddExitCodes(codes, m);
             }

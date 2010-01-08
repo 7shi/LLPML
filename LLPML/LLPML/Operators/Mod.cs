@@ -13,9 +13,9 @@ namespace Girl.LLPML
         public override int Max { get { return 2; } }
 
         public Mod() { }
-        public Mod(Block parent) : base(parent) { }
-        public Mod(Block parent, IntValue[] values) : base(parent, values) { }
-        public Mod(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Mod(BlockBase parent) : base(parent) { }
+        public Mod(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Mod(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
         {

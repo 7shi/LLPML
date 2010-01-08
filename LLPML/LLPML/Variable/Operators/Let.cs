@@ -13,20 +13,20 @@ namespace Girl.LLPML
         public override int Max { get { return 1; } }
 
         public Let() { }
-        public Let(Block parent, Var dest) : base(parent, dest) { }
+        public Let(BlockBase parent, Var dest) : base(parent, dest) { }
 
-        public Let(Block parent, Var dest, IntValue value)
+        public Let(BlockBase parent, Var dest, IntValue value)
             : base(parent, dest)
         {
             this.values.Add(value);
         }
 
-        public Let(Block parent, Var dest, int value)
+        public Let(BlockBase parent, Var dest, int value)
             : this(parent, dest, new IntValue(value))
         {
         }
 
-        public Let(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Let(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {

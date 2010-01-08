@@ -11,15 +11,15 @@ namespace Girl.LLPML.Struct
     public class Invoke : Call
     {
         public Invoke() { }
-        public Invoke(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Invoke(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        protected override void AddArg(XmlTextReader xr)
+        private bool initialized = false;
+
+        public override void AddCodes(List<OpCode> codes, Module m)
         {
-            IIntValue v = IntValue.Read(parent, xr, false);
-            if (v == null) return;
-
-            if (args.Count == 0)
+            if (!initialized && args.Count > 0)
             {
+                IIntValue v = args[0];
                 string type = null;
                 if (v is Struct.MemberPtr)
                 {
@@ -35,10 +35,11 @@ namespace Girl.LLPML.Struct
                     if (st != null) type = st.Type;
                 }
                 if (type == null)
-                    throw Abort(xr, "struct instance or pointer required");
+                    throw new Exception("struct instance or pointer required: " + name);
                 name = type + "::" + name;
+                initialized = true;
             }
-            args.Add(v);
+            base.AddCodes(codes, m);
         }
     }
 }

@@ -12,9 +12,9 @@ namespace Girl.LLPML
         public class UnsignedMul : Add
         {
             public UnsignedMul() { }
-            public UnsignedMul(Block parent, Var dest) : base(parent, dest) { }
-            public UnsignedMul(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public UnsignedMul(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public UnsignedMul(BlockBase parent, Var dest) : base(parent, dest) { }
+            public UnsignedMul(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public UnsignedMul(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
             {

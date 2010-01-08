@@ -21,7 +21,7 @@ namespace Girl.LLPML
             AddCodes(codes, op, dest, (uint)value);
         }
 
-        public static IIntValue Read(Block parent, XmlTextReader xr, bool isInt)
+        public static IIntValue Read(BlockBase parent, XmlTextReader xr, bool isInt)
         {
             switch (xr.NodeType)
             {

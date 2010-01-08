@@ -14,10 +14,10 @@ namespace Girl.LLPML
         public override int Max { get { return 1; } }
         public Val32 First, Next;
 
-        public Cond(Block parent) : base(parent) { }
-        public Cond(Block parent, IntValue values)
+        public Cond(BlockBase parent) : base(parent) { }
+        public Cond(BlockBase parent, IntValue values)
             : base(parent, new IntValue[] { values }) { }
-        public Cond(Block parent, XmlTextReader xr)
+        public Cond(BlockBase parent, XmlTextReader xr)
             : base(parent, xr) { }
 
         public override void AddCodes(List<OpCode> codes, Module m)

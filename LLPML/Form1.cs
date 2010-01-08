@@ -182,7 +182,9 @@ namespace Test
 
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            closeToolStripMenuItem.Enabled = listBox1.Items.Count > 0;
+            int c = listBox1.Items.Count;
+            closeToolStripMenuItem.Enabled = c > 0;
+            nextToolStripMenuItem.Enabled = listBox1.SelectedIndex < c - 1;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -205,6 +207,13 @@ namespace Test
         {
             Root r = new Root();
             MessageBox.Show(this, "LLPML ver." + r.Version, "About...");
+        }
+
+        private void nextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int id = listBox1.SelectedIndex;
+            if (id < listBox1.Items.Count - 1)
+                listBox1.SelectedIndex = id + 1;
         }
     }
 }

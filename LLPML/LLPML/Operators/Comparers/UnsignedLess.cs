@@ -13,8 +13,8 @@ namespace Girl.LLPML
         public override Cc NotCondition { get { return Cc.NB; } }
 
         public UnsignedLess() { }
-        public UnsignedLess(Block parent) : base(parent) { }
-        public UnsignedLess(Block parent, IntValue[] values) : base(parent, values) { }
-        public UnsignedLess(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public UnsignedLess(BlockBase parent) : base(parent) { }
+        public UnsignedLess(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public UnsignedLess(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

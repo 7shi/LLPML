@@ -19,13 +19,13 @@ namespace Girl.LLPML
             public virtual int Max { get { return int.MaxValue; } }
 
             public Operator() { }
-            public Operator(Block parent, Var dest)
+            public Operator(BlockBase parent, Var dest)
                 : base(parent)
             {
                 this.dest = dest;
             }
 
-            public Operator(Block parent, Var dest, IntValue[] values)
+            public Operator(BlockBase parent, Var dest, IntValue[] values)
                 : this(parent, dest)
             {
                 if (values.Length < Min)
@@ -35,7 +35,7 @@ namespace Girl.LLPML
                 this.values.AddRange(values);
             }
 
-            public Operator(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Operator(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {

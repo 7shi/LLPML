@@ -10,9 +10,9 @@ namespace Girl.LLPML
     public class NotEqual : Operator, IIntValue
     {
         public NotEqual() { }
-        public NotEqual(Block parent) : base(parent) { }
-        public NotEqual(Block parent, IntValue[] values) : base(parent, values) { }
-        public NotEqual(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public NotEqual(BlockBase parent) : base(parent) { }
+        public NotEqual(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {

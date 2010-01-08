@@ -8,12 +8,12 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Return : NodeBase
+    public class Return : BreakBase
     {
         public bool IsLast = false;
         private IIntValue value;
 
-        public Return(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Return(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
@@ -24,8 +24,13 @@ namespace Girl.LLPML
                 {
                     if (value != null) throw Abort(xr, "multiple values");
                     value = v;
+                    BlockBase f = parent.GetFunction();
+                    Var.Declare retval = f.GetVar("__retval");
+                    if (retval == null) new Var.Declare(f, "__retval");
                 }
             });
+
+            base.Read(xr);
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
@@ -33,17 +38,19 @@ namespace Girl.LLPML
             if (value != null)
             {
                 value.AddCodes(codes, m, "mov", null);
+                Var retval = new Var(parent, "__retval");
+                codes.Add(I386.Mov(retval.GetAddress(codes, m), Reg32.EAX));
             }
-            for (Block b = parent; b != root; b = b.Parent)
+            BlockBase f = parent.GetFunction();
+            BlockBase b = parent;
+            Pointer.Declare[] ptrs = usingPointers;
+            for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
-                if (b is Function)
-                {
-                    if (!IsLast) codes.Add(I386.Jmp(b.Destruct));
-                    return;
-                }
+                b.AddDestructors(codes, m, ptrs);
+                if (b == f) break;
                 b.AddExitCodes(codes, m);
             }
-            root.AddExitCodes(codes, m, value != null);
+            if (!IsLast) codes.Add(I386.Jmp(b.Destruct));
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Girl.LLPML
     public class OrElse : Operator, IIntValue
     {
         public OrElse() { }
-        public OrElse(Block parent) : base(parent) { }
-        public OrElse(Block parent, IntValue[] values) : base(parent, values) { }
-        public OrElse(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public OrElse(BlockBase parent) : base(parent) { }
+        public OrElse(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public OrElse(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {

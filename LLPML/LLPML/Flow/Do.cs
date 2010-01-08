@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Do : Block
+    public class Do : BlockBase
     {
         protected Cond cond;
         protected Block block;
@@ -17,10 +17,11 @@ namespace Girl.LLPML
         public override bool AcceptsContinue { get { return true; } }
         public override Val32 Continue { get { return block.Last; } }
 
-        public Do(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Do(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
         {
+            base.Read(xr);
             Parse(xr, delegate
             {
                 switch (xr.NodeType)

@@ -12,9 +12,9 @@ namespace Girl.LLPML
         public class Or : Add
         {
             public Or() { }
-            public Or(Block parent, Var dest) : base(parent, dest) { }
-            public Or(Block parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
-            public Or(Block parent, XmlTextReader xr) : base(parent, xr) { }
+            public Or(BlockBase parent, Var dest) : base(parent, dest) { }
+            public Or(BlockBase parent, Var dest, IntValue[] values) : base(parent, dest, values) { }
+            public Or(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)
             {
