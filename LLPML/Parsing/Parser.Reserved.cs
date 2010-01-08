@@ -145,16 +145,6 @@ namespace Girl.LLPML.Parsing
             else if (!Tokenizer.IsWord(type))
                 throw Abort("new: 型が不適切です: {0}", type);
             var br = Read();
-            if (br == ":")
-            {
-                var vt = Read();
-                if (vt == null)
-                    throw Abort("new: 型が必要です。");
-                else if (!Tokenizer.IsWord(vt))
-                    throw Abort("new: 型が不適切です: {0}", vt);
-                type += ":" + vt;
-                br = Read();
-            }
             if (br == "(")
                 Check("new", ")");
             else if (br == "[")
@@ -165,7 +155,14 @@ namespace Girl.LLPML.Parsing
             }
             else if (br != null)
                 Rewind();
-            return new Struct.New(parent, type);
+            if (Peek() != "{") return new Struct.New(parent, type);
+
+            // 無名クラス
+            var anon = new Struct.Define(parent, "", type);
+            anon.IsClass = true;
+            ReadBlock("anonymous class", anon);
+            parent.AddStruct(anon);
+            return new Struct.New(parent, anon.Name);
         }
     }
 }

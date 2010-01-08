@@ -51,11 +51,11 @@ namespace Girl.LLPML
             return null;
         }
 
-        public T GetMemberRecursive<T>(string name) where T : class
+        public virtual T GetMemberRecursive<T>(string name) where T : class
         {
             T ret = GetMember<T>(name);
-            if (ret != null) return ret;
-            return Parent == null ? null : Parent.GetMemberRecursive<T>(name);
+            if (ret != null || Parent == null) return ret;
+            return Parent.GetMemberRecursive<T>(name);
         }
 
         public T[] GetMembers<T>() where T : class
@@ -421,11 +421,11 @@ namespace Girl.LLPML
             return FullName + Separator + name;
         }
 
-        private int funcNo = 0;
+        private int anonymousNo = 0;
 
-        public string GetAnonymousFunctionName()
+        public string GetAnonymousName()
         {
-            return "__anonymous_" + (funcNo++);
+            return "__anonymous_" + (anonymousNo++);
         }
 
         public void AddDebug(OpModule codes, string message)
@@ -546,6 +546,8 @@ namespace Girl.LLPML
                 dict.Add(key, value);
                 list.Add(value);
             }
+
+            public int Count { get { return list.Count; } }
 
             public Object[] Values
             {

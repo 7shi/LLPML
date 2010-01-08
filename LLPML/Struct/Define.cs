@@ -30,10 +30,16 @@ namespace Girl.LLPML.Struct
         public bool IsClass { get; set; }
 
         private Arg thisptr;
+        private bool isAnonymous;
 
         public Define(BlockBase parent, string name)
             : base(parent)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                isAnonymous = true;
+                name = Parent.GetAnonymousName();
+            }
             this.name = name;
             thisptr = new Arg(this, "this", Types.ToVarType(Type));
         }
@@ -51,7 +57,11 @@ namespace Girl.LLPML.Struct
 
         public override void Read(XmlTextReader xr)
         {
-            RequiresName(xr);
+            if (string.IsNullOrEmpty(name))
+            {
+                isAnonymous = true;
+                name = Parent.GetAnonymousName();
+            }
 
             BaseType = xr["base"];
             if (name == BaseType)
@@ -71,6 +81,16 @@ namespace Girl.LLPML.Struct
             Define st = GetBaseStruct();
             if (st == null) return null;
             return st.GetMember<T>(name);
+        }
+
+        public override T GetMemberRecursive<T>(string name)
+        {
+            T ret = GetMember<T>(name);
+            if (ret != null || Parent == null) return ret;
+            ret = Parent.GetMemberRecursive<T>(name);
+            if (ret == null || !(ret is Var.Declare || ret is Function)) return ret;
+            if ((ret as NodeBase).Parent is Root) return ret;
+            return null;
         }
 
         public Define GetBaseStruct()
@@ -225,7 +245,7 @@ namespace Girl.LLPML.Struct
             int lv = Level + 1;
             codes.Add(I386.Enter((ushort)(lv * 4), (byte)lv));
             var st = GetBaseStruct();
-            if (st != null) st.AddInit(codes, thisptr.Address);
+            if (st != null && !IsEmpty) st.AddInit(codes, thisptr.Address);
         }
 
         protected override void AfterAddCodes(OpModule codes)
@@ -324,6 +344,7 @@ namespace Girl.LLPML.Struct
             b.CheckStruct(list);
         }
 
+        public bool IsEmpty { get; private set; }
         private bool doneCheckField = false;
 
         public void CheckField()
@@ -331,6 +352,7 @@ namespace Girl.LLPML.Struct
             if (doneCheckField) return;
             doneCheckField = true;
 
+            IsEmpty = isAnonymous && members.Count <= 1;
             foreach (var obj in members.Values)
             {
                 var field = obj as Declare;

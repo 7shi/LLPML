@@ -99,7 +99,7 @@ namespace Girl.LLPML
             if (string.IsNullOrEmpty(name))
             {
                 isAnonymous = true;
-                name = this.Parent.GetAnonymousFunctionName();
+                name = this.Parent.GetAnonymousName();
             }
             this.name = name;
             CallType = CallType.CDecl;
@@ -137,7 +137,7 @@ namespace Girl.LLPML
             if (string.IsNullOrEmpty(name))
             {
                 isAnonymous = true;
-                name = Parent.GetAnonymousFunctionName();
+                name = Parent.GetAnonymousName();
             }
 
             if (xr["static"] == "1")

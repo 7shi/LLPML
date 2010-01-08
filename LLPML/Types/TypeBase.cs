@@ -69,12 +69,14 @@ namespace Girl.LLPML
             var t2 = type.Type;
             if (t1 == t2) return type;
 
-            var st1 = t1 as TypeStruct;
-            var st2 = t2 as TypeStruct;
-            if (st1 == null || st2 == null) return null;
+            var ts1 = t1 as TypeStruct;
+            var ts2 = t2 as TypeStruct;
+            if (ts1 == null || ts2 == null) return null;
 
-            if (st1.GetStruct().CanUpCast(st2.GetStruct()))
-                return type;
+            var st1 = ts1.GetStruct();
+            var st2 = ts2.GetStruct();
+            if (st1 == null || st2 == null) return null;
+            if (st1 == st2 || st1.CanUpCast(st2)) return type;
 
             return null;
         }
@@ -126,23 +128,23 @@ namespace Girl.LLPML
             {
                 case "++": return "operator_inc";
                 case "--": return "operator_dec";
-                case "+" : return "operator_add";
-                case "-" : return "operator_sub";
-                case "&" : return "operator_and";
-                case "|" : return "operator_or";
-                case "^" : return "operator_xor";
+                case "+": return "operator_add";
+                case "-": return "operator_sub";
+                case "&": return "operator_and";
+                case "|": return "operator_or";
+                case "^": return "operator_xor";
                 case "<<": return "operator_left";
                 case ">>": return "operator_right";
-                case "*" : return "operator_mul";
-                case "/" : return "operator_div";
-                case "%" : return "operator_mod";
-                case "!" : return "operator_not";
-                case "~" : return "operator_rev";
+                case "*": return "operator_mul";
+                case "/": return "operator_div";
+                case "%": return "operator_mod";
+                case "!": return "operator_not";
+                case "~": return "operator_rev";
                 case "==": return "operator_equal";
                 case "!=": return "operator_not_equal";
-                case ">" : return "operator_greater";
+                case ">": return "operator_greater";
                 case ">=": return "operator_greater_equal";
-                case "<" : return "operator_less";
+                case "<": return "operator_less";
                 case "<=": return "operator_less_equal";
             }
             // -X => operator_neg

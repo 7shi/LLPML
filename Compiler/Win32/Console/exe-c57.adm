@@ -77,3 +77,14 @@ class InitTest
 
 var it = new InitTest;
 printfln("it.a = %p", it.a);
+
+
+class LeakTest
+{
+	function dtor { printfln(__FUNCTION__); }
+	static function Show(lt : LeakTest) { printfln("%p: %s", lt, typeof(lt).Name); }
+	static function get_New { return new LeakTest; }
+}
+
+var lt = LeakTest.New;
+LeakTest.Show(LeakTest.New);

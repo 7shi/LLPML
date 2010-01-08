@@ -175,7 +175,7 @@ namespace Compiler
                     gens.Add(ext, di);
                     generators.Add(ext, new Project(dn));
                 }
-                else if (!dn.StartsWith("non-"))
+                else if (!dn.StartsWith("not-"))
                     dirs.Add(di);
             }
 
@@ -205,7 +205,7 @@ namespace Compiler
                 var ai = new AdmInfo(name, path, fi.FullName);
                 if (name.StartsWith("exe-"))
                     exes2.Add(ai);
-                else
+                else if (!name.StartsWith("not-"))
                     srcs.Add(ai);
                 hassrc = true;
             }

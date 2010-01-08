@@ -1,0 +1,51 @@
+﻿/// 無名クラス
+
+_Finish _finish;
+
+class Test1
+{
+	int value = 1;
+	printfln(__FUNCTION__);
+	function ctor { printfln(__FUNCTION__); }
+	virtual Show { printfln("value = %d", value); }
+}
+
+var t1 = new Test1
+{
+	value = 2;
+	function ctor { printfln(__FUNCTION__); }
+};
+printfln("typeof(t1) = %s", typeof(t1).Name);
+t1.Show();
+println();
+
+var t2 = new Test1 { value = 3; };
+printfln("typeof(t2) = %s", typeof(t2).Name);
+t2.Show();
+println();
+
+int v1 = 4;
+var t3 = new Test1 { value = v1; };
+printfln("typeof(t3) = %s", typeof(t3).Name);
+t3.Show();
+println();
+
+function Test
+{
+	int v2 = 5;
+	var t4 = new Test1 { value = 5 /*ERROR: v2*/; };
+	printfln("typeof(t4) = %s", typeof(t4).Name);
+	t4.Show();
+	println();
+	
+	var t5 = new Test1 { override Show { printfln(__FUNCTION__); base.Show(); } };
+	printfln("typeof(t5) = %s", typeof(t5).Name);
+	t5.Show();
+	println();
+}
+
+Test();
+
+var t6 = new Test1 { printfln(__FUNCTION__); };
+printfln("typeof(t6) = %s", typeof(t6).Name);
+t6.Show();

@@ -327,6 +327,9 @@
     <None Include="Win32\Console\exe-c58.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Win32\Console\exe-c59.adm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Win32\lib-Core\Object.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

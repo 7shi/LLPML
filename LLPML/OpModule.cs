@@ -147,8 +147,10 @@ namespace Girl.LLPML
             if (vsm != null && vt is TypeDelegate && vsm.GetDelegate() != null)
                 return true;
 
+            var mem = v as Struct.Member;
             return vt.NeedsDtor && !(v is Struct.As)
-                && (v is Call || v is Struct.New || v is Delegate || v is Operator);
+                && (v is Call || v is Struct.New || v is Delegate || v is Operator
+                || (mem != null && mem.IsGetter));
         }
 
         public void AddDtorCodes(TypeBase t)
