@@ -45,17 +45,17 @@ namespace Girl.PE
             return new Function(this, ad, call);
         }
 
-        public Ptr<uint> GetString(string s)
+        public ValueWrap GetString(string s)
         {
             return RData.AddString(s).Address;
         }
 
-        public Ptr<uint> GetBuffer(string name, int size)
+        public ValueWrap GetBuffer(string name, int size)
         {
             return BSS.AddBuffer(name, size).Address;
         }
 
-        public Ptr<uint> GetInt32(string name)
+        public ValueWrap GetInt32(string name)
         {
             return Data.AddBuffer(name, sizeof(int)).Address;
         }
@@ -135,7 +135,7 @@ namespace Girl.PE
             if (!RData.IsEmtpy) AddSection(RData);
             if (!BSS.IsEmtpy) AddSection(BSS);
             AddSection(Import);
-            PEHeader.TimeDateStamp = (uint)(DateTime.Now - new DateTime(1970, 1, 1)).Seconds;
+            PEHeader.TimeDateStamp = (uint)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
             Standard.EntryPoint = text.VirtualAddress;
 
             FileStream fs = new FileStream(output, FileMode.Create);

@@ -8,44 +8,57 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Pointer : VarBase
+    public partial class Pointer : VarBase
     {
-        public override Addr32 Address
-        {
-            get { return parent.GetPointer(name).address; }
-            set { parent.GetPointer(name).address = value; }
-        }
+        private Pointer.Define reference;
 
         private int length = 0;
         public int Length { get { return length; } }
 
         public Pointer() { }
-        public Pointer(Block parent, XmlTextReader xr) : base(parent, xr) { }
+
+        public Pointer(Block parent, string name)
+            : base(parent, name)
+        {
+            reference = parent.GetPointer(name);
+            if (reference == null)
+                throw new Exception("undefined pointer: " + name);
+        }
+
+        public Pointer(Block parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
+            if (!xr.IsEmptyElement)
+                throw Abort(xr, "<" + xr.Name + "> can not have any children");
+
             name = xr["name"];
-            Parse(xr, delegate
+            if (name == null) throw Abort(xr, "name required");
+
+            reference = parent.GetPointer(name);
+            if (reference == null)
+                throw Abort(xr, "undefined pointer: " + name);
+        }
+
+        public void GetValue(List<OpCode> codes, Module m)
+        {
+            AddCodes(codes, m);
+            Addr32 ad = reference.Address;
+            if (parent == reference.Parent || ad.IsAddress)
             {
-                if (xr.NodeType == XmlNodeType.Element)
-                {
-                    int c = 1;
-                    string count = xr["count"];
-                    if (count != null) c = int.Parse(count);
-                    switch (xr.Name)
-                    {
-                        case "int":
-                            length = 4 * c;
-                            break;
-                        case "byte":
-                            length = c;
-                            break;
-                        default:
-                            throw Abort(xr);
-                    }
-                }
-            });
-            if (length > 0) parent.AddPointer(this);
+                codes.Add(I386.Lea(Reg32.EAX, ad));
+                return;
+            }
+            int lv = reference.Parent.Level;
+            if (lv <= 0 || lv >= parent.Level)
+            {
+                throw new Exception("Invalid variable scope: " + name);
+            }
+            codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
+            codes.Add(I386.Sub(Reg32.EAX, (uint)-ad.Disp));
         }
     }
 }

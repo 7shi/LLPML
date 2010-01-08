@@ -16,8 +16,8 @@ namespace Girl.X86
         private int disp = 0;
         public int Disp { get { return disp; } }
 
-        private Ptr<uint> address;
-        public Ptr<uint> Address { get { return address; } }
+        private ValueWrap address;
+        public ValueWrap Address { get { return address; } }
         public bool IsAddress { get { return address != null; } }
 
         private byte middleBits = 0;
@@ -25,7 +25,7 @@ namespace Girl.X86
         public Addr32() { isInitialized = false; }
         public Addr32(Reg32 r) { reg = r; }
         public Addr32(Reg32 r, int offset) { reg = r; disp = offset; }
-        public Addr32(Ptr<uint> ad) { address = ad; }
+        public Addr32(ValueWrap ad) { address = ad; }
         public Addr32(Addr32 src, byte middleBits)
         {
             Set(src);

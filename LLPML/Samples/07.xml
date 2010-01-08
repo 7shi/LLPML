@@ -1,63 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.2.20070806">
+<llpml version="0.3.20070815">
 
-<extern name="GetStdHandle" module="kernel32.dll" type="std" />
-<extern name="ReadConsoleW" module="kernel32.dll" type="std" />
-<extern name="WriteConsoleW" module="kernel32.dll" type="std" />
-<extern name="lstrlenW" module="kernel32.dll" type="std" />
-<extern name="wsprintfW" module="user32.dll" />
+<include src="stdio.xml" />
 
-<int name="STD_INPUT_HANDLE">-10</int>
-<int name="STD_OUTPUT_HANDLE">-11</int>
+<var-int-define name="result">0</var-int-define>
 
-<var-int name="stdin">
-	<call target="GetStdHandle">
-		<int name="STD_INPUT_HANDLE" />
-	</call>
-</var-int>
-<var-int name="stdout">
-	<call target="GetStdHandle">
-		<int name="STD_OUTPUT_HANDLE" />
-	</call>
-</var-int>
-
-<var-int name="result">0</var-int>
 <for name="i" from="1" to="10000">
-	<var-int-add target="result"><var-int name="i" /></var-int-add>
+	<var-int-add name="result"><var-int name="i" /></var-int-add>
 </for>
 
-<ptr name="dummy"><int /></ptr>
-<string name="format">1 + 2 + ... + 10000 = %d
-
-Press [Enter] to exit.
-</string>
-<ptr name="dest"><byte count="64" /></ptr>
-
-<call target="wsprintfW">
-	<ptr name="dest" />
-	<string name="format" />
+<call name="printfln">
+	<string>1 + 2 + ... + 10000 = %d</string>
 	<var-int name="result" />
 </call>
-<var-int name="length">
-	<call target="lstrlenW">
-		<ptr name="dest" />
-	</call>
-</var-int>
-<call target="WriteConsoleW">
-	<var-int name="stdout" />
-	<ptr name="dest" />
-	<var-int name="length" />
-	<ptr name="dummy" />
-	<int>0</int>
-</call>
 
-<ptr name="buffer"><byte count="16" /></ptr>
-<call target="ReadConsoleW">
-	<var-int name="stdin" />
-	<ptr name="buffer" />
-	<int>1</int>
-	<ptr name="dummy" />
-	<int>0</int>
-</call>
+<call name="finish" />
 
 </llpml>

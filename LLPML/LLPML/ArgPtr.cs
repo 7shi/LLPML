@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class ArgPtr : Pointer
+    public class ArgPtr : Pointer.Define
     {
         public ArgPtr() { }
         public ArgPtr(Block parent, XmlTextReader xr) : base(parent, xr) { }

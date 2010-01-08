@@ -1,14 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.1.20070722" subsystem="WINDOWS_GUI">
+<llpml version="0.3.20070815">
 
-<extern name="MessageBoxW" module="user32.dll" type="std" />
-<loop count="3">
-	<call target="MessageBoxW">
-		<int>0</int>
-		<string>こんにちは、世界！</string>
-		<string>だいあろぐ</string>
-		<int>0</int>
-	</call>
-</loop>
+<include src="stdio.xml" />
+
+<call name="printfln">
+	<string>こんにちは、世界！</string>
+</call>
+
+<call name="finish" />
 
 </llpml>

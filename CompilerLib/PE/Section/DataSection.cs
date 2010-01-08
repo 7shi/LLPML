@@ -8,8 +8,8 @@ namespace Girl.PE
 {
     public class ByteData
     {
-        private Ptr<uint> address = new Ptr<uint>(0, true);
-        public Ptr<uint> Address { get { return address; } }
+        private ValueWrap address = new ValueWrap(0, true);
+        public ValueWrap Address { get { return address; } }
 
         private byte[] data;
         public byte[] Data { get { return data; } }

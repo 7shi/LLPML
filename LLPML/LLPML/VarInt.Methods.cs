@@ -11,15 +11,17 @@ namespace Girl.LLPML
     {
         public class NoOperand : NodeBase
         {
-            protected string target;
+            protected string name;
 
             public NoOperand() { }
             public NoOperand(Block parent, XmlTextReader xr) : base(parent, xr) { }
 
             public override void Read(XmlTextReader xr)
             {
-                target = xr["target"];
-                Parse(xr, null);
+                if (!xr.IsEmptyElement)
+                    throw Abort(xr, "<" + xr.Name + "> can not have any children");
+
+                name = xr["name"];
             }
         }
 
@@ -29,7 +31,7 @@ namespace Girl.LLPML
 
             public override void AddCodes(List<OpCode> codes, Module m)
             {
-                codes.Add(I386.Inc(parent.GetVarInt(target).Address));
+                codes.Add(I386.Inc(parent.GetVarInt(name).Address));
             }
         }
 
@@ -39,13 +41,13 @@ namespace Girl.LLPML
 
             public override void AddCodes(List<OpCode> codes, Module m)
             {
-                codes.Add(I386.Dec(parent.GetVarInt(target).Address));
+                codes.Add(I386.Dec(parent.GetVarInt(name).Address));
             }
         }
 
         public class IntOperand : NodeBase
         {
-            protected string target;
+            protected string name;
             protected object operand;
 
             public IntOperand() { }
@@ -53,7 +55,7 @@ namespace Girl.LLPML
 
             public override void Read(XmlTextReader xr)
             {
-                target = xr["target"];
+                name = xr["name"];
                 Parse(xr, delegate
                 {
                     if (xr.NodeType == XmlNodeType.Element)
@@ -66,7 +68,7 @@ namespace Girl.LLPML
                                 break;
                             case "var-int":
                                 if (operand != null) throw Abort(xr);
-                                operand = parent.ReadVarInt(xr);
+                                operand = new VarInt(parent, xr);
                                 break;
                             default:
                                 throw Abort(xr);
@@ -83,15 +85,15 @@ namespace Girl.LLPML
 
             public override void AddCodes(List<OpCode> codes, Module m)
             {
-                Addr32 v = parent.GetVarInt(target).Address;
+                Addr32 dest = parent.GetVarInt(name).Address;
                 if (operand is int)
                 {
-                    codes.Add(I386.Add(v, (uint)(int)operand));
+                    codes.Add(I386.Add(dest, (uint)(int)operand));
                 }
                 else if (operand is VarInt)
                 {
-                    codes.Add(I386.Mov(Reg32.EAX, (operand as VarInt).Address));
-                    codes.Add(I386.Add(v, Reg32.EAX));
+                    codes.Add(I386.Mov(Reg32.EAX, (operand as VarInt).GetAddress(codes, m)));
+                    codes.Add(I386.Add(dest, Reg32.EAX));
                 }
             }
         }
@@ -102,15 +104,15 @@ namespace Girl.LLPML
 
             public override void AddCodes(List<OpCode> codes, Module m)
             {
-                Addr32 v = parent.GetVarInt(target).Address;
+                Addr32 dest = parent.GetVarInt(name).Address;
                 if (operand is int)
                 {
-                    codes.Add(I386.Sub(v, (uint)(int)operand));
+                    codes.Add(I386.Sub(dest, (uint)(int)operand));
                 }
                 else if (operand is VarInt)
                 {
-                    codes.Add(I386.Mov(Reg32.EAX, (operand as VarInt).Address));
-                    codes.Add(I386.Sub(v, Reg32.EAX));
+                    codes.Add(I386.Mov(Reg32.EAX, (operand as VarInt).GetAddress(codes, m)));
+                    codes.Add(I386.Sub(dest, Reg32.EAX));
                 }
             }
         }

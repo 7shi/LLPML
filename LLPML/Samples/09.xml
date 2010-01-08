@@ -1,27 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070814">
+<llpml version="0.3.20070815">
 
-<include src="10.xml" />
+<!-- function -->
 
-<call target="test">
+<include src="stdio.xml" />
+
+<call name="test">
 	<int>2</int>
-	<int>5</int>
+	<int>4</int>
 </call>
 
-<call target="printf"><string>
-Press [Enter] to exit.
-</string></call>
-
-<call target="pause" />
+<call name="finish" />
 
 <function name="test">
 	<arg-int name="a" />
 	<arg-int name="b" />
-	<var-int name="c"><var-int name="a" /></var-int>
-	<var-int-add target="c"><var-int name="b" /></var-int-add>
-	<call target="printf">
-		<string>%d + %d = %d
-</string>
+	<var-int-define name="c" />
+	<var-int-let name="c"><var-int name="a" /></var-int-let>
+	<var-int-add name="c"><var-int name="b" /></var-int-add>
+	<call name="printfln">
+		<string>%d + %d = %d</string>
 		<var-int name="a" />
 		<var-int name="b" />
 		<var-int name="c" />

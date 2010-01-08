@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class ArgInt : VarInt
+    public class ArgInt : VarInt.Define
     {
         public ArgInt() { }
         public ArgInt(Block parent, XmlTextReader xr) : base(parent, xr) { }

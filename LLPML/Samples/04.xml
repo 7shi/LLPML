@@ -1,81 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.2.20070805">
+<llpml version="0.3.20070815">
 
-<extern name="GetStdHandle" module="kernel32.dll" type="std" />
-<extern name="ReadConsoleW" module="kernel32.dll" type="std" />
-<extern name="WriteConsoleW" module="kernel32.dll" type="std" />
+<include src="stdio.xml" />
 
-<int name="STD_INPUT_HANDLE">-10</int>
-<int name="STD_OUTPUT_HANDLE">-11</int>
+<string name="hello">こんにちは、世界！</string>
 
-<var-int name="stdin">
-	<call target="GetStdHandle">
-		<int name="STD_INPUT_HANDLE" />
-	</call>
-</var-int>
-<var-int name="stdout">
-	<call target="GetStdHandle">
-		<int name="STD_OUTPUT_HANDLE" />
-	</call>
-</var-int>
-
-<ptr name="dummy"><int /></ptr>
-<string name="hello">こんにちは、世界！
-</string>
-<call target="WriteConsoleW">
-	<var-int name="stdout" />
+<call name="printfln">
 	<string name="hello" />
-	<int len="hello" />
-	<ptr name="dummy" />
-	<int>0</int>
 </call>
 
 <block>
-	<call target="WriteConsoleW">
-		<var-int name="stdout" />
+	<call name="printfln">
 		<string name="hello" />
-		<int len="hello" />
-		<ptr name="dummy" />
-		<int>0</int>
 	</call>
 
-	<string name="hello">スコープのテスト
-</string>
-	<call target="WriteConsoleW">
-		<var-int name="stdout" />
+	<string name="hello">スコープのテスト</string>
+	
+	<call name="printfln">
 		<string name="hello" />
-		<int len="hello" />
-		<ptr name="dummy" />
-		<int>0</int>
 	</call>
 </block>
 
-<call target="WriteConsoleW">
-	<var-int name="stdout" />
+<call name="printfln">
 	<string name="hello" />
-	<int len="hello" />
-	<ptr name="dummy" />
-	<int>0</int>
 </call>
 
-<string name="wait">
-Press [Enter] to exit.
-</string>
-<call target="WriteConsoleW">
-	<var-int name="stdout" />
-	<string name="wait" />
-	<int len="wait" />
-	<ptr name="dummy" />
-	<int>0</int>
-</call>
-
-<ptr name="buffer"><byte count="16" /></ptr>
-<call target="ReadConsoleW">
-	<var-int name="stdin" />
-	<ptr name="buffer" />
-	<int>1</int>
-	<ptr name="dummy" />
-	<int>0</int>
-</call>
+<call name="finish" />
 
 </llpml>

@@ -67,7 +67,7 @@ namespace Girl.LLPML
             }
             foreach (string name in ptrs.Keys)
             {
-                Pointer p = ptrs[name];
+                Pointer.Define p = ptrs[name];
                 p.Address = new Addr32(m.GetBuffer(name, p.Length));
             }
         }

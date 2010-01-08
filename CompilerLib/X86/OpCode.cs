@@ -7,7 +7,7 @@ namespace Girl.X86
 {
     public class OpCode
     {
-        public Ptr<uint> Address = 0;
+        public ValueWrap Address = 0;
 
         private byte[] data;
         private object op1, op2;
@@ -37,7 +37,7 @@ namespace Girl.X86
             this.op2 = op2;
         }
 
-        public OpCode(byte[] d, Ptr<uint> op, bool rel)
+        public OpCode(byte[] d, ValueWrap op, bool rel)
         {
             data = d;
             op1 = op;
@@ -63,9 +63,9 @@ namespace Girl.X86
                 data = Util.GetBytes(data, (byte)op1);
             else if (op1 is ushort)
                 data = Util.GetBytes(data, (ushort)op1);
-            else if (op1 is Ptr<uint>)
+            else if (op1 is ValueWrap)
             {
-                uint val = ((Ptr<uint>)op1).Value;
+                uint val = ((ValueWrap)op1).Value;
                 if (relative) val -= Address.Value + (uint)data.Length + 4;
                 data = Util.GetBytes(data, val);
             }
@@ -79,7 +79,7 @@ namespace Girl.X86
 
         public void Write(Block block)
         {
-            if (op1 is Ptr<uint> && relative)
+            if (op1 is ValueWrap && relative)
             {
                 block.Add(GetCodes());
             }
@@ -91,7 +91,7 @@ namespace Girl.X86
                 {
                     if (op1 is byte) block.Add((byte)op1);
                     else if (op1 is ushort) block.Add((ushort)op1);
-                    else if (op1 is Ptr<uint>) block.Add((Ptr<uint>)op1);
+                    else if (op1 is ValueWrap) block.Add((ValueWrap)op1);
                     else throw new Exception("The method or operation is not implemented.");
                 }
                 if (op2 is byte) block.Add((byte)op2);

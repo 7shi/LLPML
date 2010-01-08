@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.3.20070815">
+
+<!-- callback -->
+
+<include src="stdio.xml" />
+
+<call name="wrapper">
+	<function-ptr name="test" />
+</call>
+
+<call name="finish" />
+
+<function name="wrapper">
+	<arg-int name="ptr" />
+	<call ptr="ptr" />
+</function>
+
+<function name="test">
+	<call name="printfln">
+		<string>Hello, World!</string>
+	</call>
+</function>
+
+</llpml>

@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.3.20070815">
+
+<!-- stdio functions -->
+
+<extern name="GetStdHandle" module="kernel32.dll" type="std" />
+<extern name="ReadConsole" alias="ReadConsoleW" module="kernel32.dll" type="std" />
+<extern name="WriteConsole" alias="WriteConsoleW" module="kernel32.dll" type="std" />
+<extern name="lstrlen" alias="lstrlenW" module="kernel32.dll" type="std" />
+<extern name="wvsprintf" alias="wvsprintfW" module="user32.dll" type="std" />
+
+<int name="STD_OUTPUT_HANDLE">-11</int>
+<int name="STD_INPUT_HANDLE">-10</int>
+
+<var-int-define name="stdout" />
+<var-int-define name="stdin" />
+
+<var-int-let name="stdout">
+	<call name="GetStdHandle">
+		<int name="STD_OUTPUT_HANDLE" />
+	</call>
+</var-int-let>
+
+<var-int-let name="stdin">
+	<call name="GetStdHandle">
+		<int name="STD_INPUT_HANDLE" />
+	</call>
+</var-int-let>
+
+<function name="print">
+	<arg-int name="text" />
+	<ptr-define name="dummy"><int /></ptr-define>
+	<call name="WriteConsole">
+		<var-int name="stdout" />
+		<var-int name="text" />
+		<call name="lstrlen">
+			<var-int name="text" />
+		</call>
+		<ptr name="dummy" />
+		<int>0</int>
+	</call>
+</function>
+
+<function name="vprintf">
+	<arg-int name="format" />
+	<arg-int name="args" />
+	<ptr-define name="buffer"><char count="1025" /></ptr-define>
+	<call name="wvsprintf">
+		<ptr name="buffer" />
+		<var-int name="format" />
+		<var-int name="args" />
+	</call>
+	<call name="print">
+		<ptr name="buffer" />
+	</call>
+</function>
+
+<function name="printf">
+	<arg-int name="format" />
+	<arg-ptr name="args" />
+	<call name="vprintf">
+		<var-int name="format" />
+		<ptr name="args" />
+	</call>
+</function>
+
+<function name="println">
+	<call name="print">
+		<string>
+</string>
+	</call>
+</function>
+
+<function name="printfln">
+	<arg-int name="format" />
+	<arg-ptr name="args" />
+	<call name="vprintf">
+		<var-int name="format" />
+		<ptr name="args" />
+	</call>
+	<call name="println" />
+</function>
+
+<function name="pause">
+	<ptr-define name="dummy"><int /></ptr-define>
+	<ptr-define name="buffer"><byte count="16" /></ptr-define>
+	<call name="ReadConsole">
+		<var-int name="stdin" />
+		<ptr name="buffer" />
+		<int>1</int>
+		<ptr name="dummy" />
+		<int>0</int>
+	</call>
+</function>
+
+<function name="finish">
+	<call name="println" />
+	<call name="printfln">
+		<string>Press [Enter] to exit.</string>
+	</call>
+	<call name="pause" />
+</function>
+
+</llpml>

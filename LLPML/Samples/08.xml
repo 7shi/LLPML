@@ -1,77 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070814">
+<llpml version="0.3.20070815">
 
-<extern name="GetStdHandle" module="kernel32.dll" type="std" />
-<extern name="ReadConsoleW" module="kernel32.dll" type="std" />
-<extern name="WriteConsoleW" module="kernel32.dll" type="std" />
-<extern name="lstrlenW" module="kernel32.dll" type="std" />
-<extern name="wsprintfW" module="user32.dll" />
+<include src="stdio.xml" />
 
-<int name="STD_INPUT_HANDLE">-10</int>
-<int name="STD_OUTPUT_HANDLE">-11</int>
+<var-int-define name="i">1</var-int-define>
 
-<var-int name="stdin">
-	<call target="GetStdHandle">
-		<int name="STD_INPUT_HANDLE" />
-	</call>
-</var-int>
-<var-int name="stdout">
-	<call target="GetStdHandle">
-		<int name="STD_OUTPUT_HANDLE" />
-	</call>
-</var-int>
+<call name="test" />
+<call name="test" />
+<call name="test" />
+<call name="test" />
+<call name="test" />
 
-<ptr name="dummy"><int /></ptr>
-<var-int name="i">1</var-int>
-
-<call target="test" />
-<call target="test" />
-<call target="test" />
-<call target="test" />
-<call target="test" />
-
-<string name="wait">
-Press [Enter] to exit.
-</string>
-<call target="WriteConsoleW">
-	<var-int name="stdout" />
-	<string name="wait" />
-	<int len="wait" />
-	<ptr name="dummy" />
-	<int>0</int>
-</call>
-
-<ptr name="buffer"><byte count="16" /></ptr>
-<call target="ReadConsoleW">
-	<var-int name="stdin" />
-	<ptr name="buffer" />
-	<int>1</int>
-	<ptr name="dummy" />
-	<int>0</int>
-</call>
+<call name="finish" />
 
 <function name="test">
-	<ptr name="dest"><byte count="64" /></ptr>
-	<string name="format">i=%d
-</string>
-	<call target="wsprintfW">
-		<ptr name="dest" />
-		<string name="format" />
+	<call name="printfln">
+		<string>i=%d</string>
 		<var-int name="i" />
 	</call>
-	<var-int name="length">
-		<call target="lstrlenW">
-			<ptr name="dest" />
-		</call>
-	</var-int>
-	<call target="WriteConsoleW">
-		<var-int name="stdout" />
-		<ptr name="dest" />
-		<var-int name="length" />
-		<ptr name="dummy" />
-		<int>0</int>
-	</call>
-	<var-int-inc target="i" />
+	<var-int-inc name="i" />
 </function>
 
 </llpml>

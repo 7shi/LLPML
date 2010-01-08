@@ -23,6 +23,7 @@ namespace Test
 #endif
             InitializeComponent();
             ReadSample(textBox1, "template.xml");
+            AddTab("stdio.xml");
             for (int i = 1; ; i++)
             {
                 string xml = string.Format("{0:00}.xml", i);
@@ -113,6 +114,7 @@ namespace Test
         {
             TabPage page = new TabPage(title);
             TextBox tb = new TextBox();
+            tb.AcceptsTab = true;
             tb.Multiline = true;
             tb.WordWrap = false;
             tb.ScrollBars = ScrollBars.Both;

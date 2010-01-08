@@ -49,7 +49,7 @@
     <Compile Include="LLPML\Call.cs" />
     <Compile Include="LLPML\Block.cs" />
     <Compile Include="LLPML\VarInt.cs" />
-    <Compile Include="LLPML\Pointer.cs" />
+    <Compile Include="LLPML\Pointer.Define.cs" />
     <Compile Include="LLPML\Loop.cs" />
     <Compile Include="LLPML\For.cs" />
     <Compile Include="LLPML\Break.cs" />
@@ -57,6 +57,12 @@
     <Compile Include="LLPML\VarInt.Methods.cs" />
     <Compile Include="LLPML\ArgPtr.cs" />
     <Compile Include="LLPML\VarBase.cs" />
+    <Compile Include="LLPML\Return.cs" />
+    <Compile Include="LLPML\VarInt.Define.cs" />
+    <Compile Include="LLPML\VarInt.Let.cs" />
+    <Compile Include="LLPML\Pointer.cs" />
+    <Compile Include="LLPML\Function.Ptr.cs" />
+    <Compile Include="LLPML\IntValue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -120,7 +126,13 @@
     <Content Include="Samples\09.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Samples\stdio.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\10.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\11.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

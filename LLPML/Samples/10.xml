@@ -1,66 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.3.20070814">
+<llpml version="0.3.20070815">
 
-<!--
-	stdio functions
-	usage: <include src="10.xml" />
--->
+<!-- function returns value -->
 
-<extern name="GetStdHandle" module="kernel32.dll" type="std" />
-<extern name="ReadConsoleW" module="kernel32.dll" type="std" />
-<extern name="WriteConsoleW" module="kernel32.dll" type="std" />
-<extern name="lstrlenW" module="kernel32.dll" type="std" />
-<extern name="wvsprintfW" module="user32.dll" type="std" />
+<include src="stdio.xml" />
 
-<int name="STD_OUTPUT_HANDLE">-11</int>
-<int name="STD_INPUT_HANDLE">-10</int>
+<var-int-define name="a">3</var-int-define>
+<var-int-define name="b">4</var-int-define>
 
-<var-int name="stdout">
-	<call target="GetStdHandle">
-		<int name="STD_OUTPUT_HANDLE" />
+<call name="printfln">
+	<string>%d + %d = %d</string>
+	<var-int name="a" />
+	<var-int name="b" />
+	<call name="add">
+		<var-int name="a" />
+		<var-int name="b" />
 	</call>
-</var-int>
+</call>
 
-<var-int name="stdin">
-	<call target="GetStdHandle">
-		<int name="STD_INPUT_HANDLE" />
-	</call>
-</var-int>
+<call name="finish" />
 
-<function name="printf">
-	<arg-int name="format" />
-	<arg-ptr name="args" />
-	<ptr name="dummy"><int /></ptr>
-	<ptr name="dest"><byte count="64" /></ptr>
-	<call target="wvsprintfW">
-		<ptr name="dest" />
-		<var-int name="format" />
-		<ptr name="args" />
-	</call>
-	<var-int name="length">
-		<call target="lstrlenW">
-			<ptr name="dest" />
-		</call>
-	</var-int>
-	<call target="WriteConsoleW">
-		<var-int name="stdout" />
-		<ptr name="dest" />
-		<var-int name="length" />
-		<ptr name="dummy" />
-		<int>0</int>
-	</call>
-</function>
-
-<function name="pause">
-	<ptr name="dummy"><int /></ptr>
-	<ptr name="buffer"><byte count="16" /></ptr>
-	<call target="ReadConsoleW">
-		<var-int name="stdin" />
-		<ptr name="buffer" />
-		<int>1</int>
-		<ptr name="dummy" />
-		<int>0</int>
-	</call>
+<function name="add">
+	<arg-int name="a" />
+	<arg-int name="b" />
+	<var-int-add name="a"><var-int name="b" /></var-int-add>
+	<return><var-int name="a" /></return>
 </function>
 
 </llpml>

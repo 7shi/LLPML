@@ -10,9 +10,9 @@ namespace Girl.LLPML
 {
     public class Block : NodeBase
     {
-        private List<NodeBase> sentences = new List<NodeBase>();
+        protected List<NodeBase> sentences = new List<NodeBase>();
         protected OpCode last = new OpCode(), next = new OpCode();
-        public Ptr<uint> Last { get { return last.Address; } }
+        public ValueWrap Last { get { return last.Address; } }
 
         #region int
 
@@ -69,9 +69,14 @@ namespace Girl.LLPML
             string name = xr["name"];
             Parse(xr, delegate
             {
-                if (xr.NodeType == XmlNodeType.Text)
+                switch (xr.NodeType)
                 {
-                    ret = xr.Value;
+                    case XmlNodeType.Text:
+                    case XmlNodeType.Whitespace:
+                        ret = xr.Value;
+                        break;
+                    default:
+                        throw Abort(xr, "text required");
                 }
             });
             if (name != null)
@@ -92,53 +97,48 @@ namespace Girl.LLPML
 
         #region var-int
 
-        protected Dictionary<string, VarInt> var_ints = new Dictionary<string, VarInt>();
+        protected Dictionary<string, VarInt.Define> var_ints
+            = new Dictionary<string, VarInt.Define>();
 
-        public VarInt GetVarInt(string name)
+        public VarInt.Define GetVarInt(string name)
         {
             if (var_ints.ContainsKey(name)) return var_ints[name];
             return parent == null ? null : parent.GetVarInt(name);
         }
 
-        public void AddVarInt(VarInt src)
+        public void AddVarInt(VarInt.Define src)
         {
-            if (var_ints.ContainsKey(src.Name)) return;
+            if (var_ints.ContainsKey(src.Name))
+                throw new Exception("multiple definition: " + src.Name);
             var_ints.Add(src.Name, src);
-        }
-
-        public VarInt ReadVarInt(XmlTextReader xr)
-        {
-            return GetVarInt(new VarInt(this, xr).Name);
         }
 
         #endregion
 
         #region pointer
 
-        protected Dictionary<string, Pointer> ptrs = new Dictionary<string, Pointer>();
+        protected Dictionary<string, Pointer.Define> ptrs
+            = new Dictionary<string, Pointer.Define>();
 
-        public Pointer GetPointer(string name)
+        public Pointer.Define GetPointer(string name)
         {
             if (ptrs.ContainsKey(name)) return ptrs[name];
             return parent == null ? null : parent.GetPointer(name);
         }
 
-        public void AddPointer(Pointer src)
+        public void AddPointer(Pointer.Define src)
         {
-            if (ptrs.ContainsKey(src.Name)) return;
+            if (ptrs.ContainsKey(src.Name))
+                throw new Exception("multiple definition: " + src.Name);
             ptrs.Add(src.Name, src);
-        }
-
-        public Pointer ReadPointer(XmlTextReader xr)
-        {
-            return GetPointer(new Pointer(this, xr).Name);
         }
 
         #endregion
 
         #region function
 
-        private Dictionary<string, Function> functions = new Dictionary<string, Function>();
+        private Dictionary<string, Function> functions
+            = new Dictionary<string, Function>();
 
         public Function GetFunction(string name)
         {
@@ -146,16 +146,11 @@ namespace Girl.LLPML
             return parent == null ? null : parent.GetFunction(name);
         }
 
-        public void SetFunction(string name, Function function)
+        public void AddFunction(Function f)
         {
-            if (functions.ContainsKey(name))
-            {
-                functions[name].Set(function);
-            }
-            else
-            {
-                functions.Add(name, function);
-            }
+            if (functions.ContainsKey(f.Name))
+                throw new Exception("multiple definition: " + f.Name);
+            functions.Add(f.Name, f);
         }
 
         #endregion
@@ -188,8 +183,11 @@ namespace Girl.LLPML
                         case "call":
                             sentences.Add(new Call(this, xr));
                             break;
-                        case "var-int":
-                            sentences.Add(new VarInt(this, xr));
+                        case "var-int-define":
+                            sentences.Add(new VarInt.Define(this, xr));
+                            break;
+                        case "var-int-let":
+                            sentences.Add(new VarInt.Let(this, xr));
                             break;
                         case "var-int-inc":
                             sentences.Add(new VarInt.Inc(this, xr));
@@ -203,8 +201,8 @@ namespace Girl.LLPML
                         case "var-int-sub":
                             sentences.Add(new VarInt.Sub(this, xr));
                             break;
-                        case "ptr":
-                            sentences.Add(new Pointer(this, xr));
+                        case "ptr-define":
+                            sentences.Add(new Pointer.Define(this, xr));
                             break;
                         case "loop":
                             sentences.Add(new Loop(this, xr));
@@ -240,19 +238,17 @@ namespace Girl.LLPML
         protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             int size = Level * 4;
-            foreach (string name in var_ints.Keys)
+            foreach (VarInt.Define v in var_ints.Values)
             {
-                VarInt v = var_ints[name];
-                if (v.GetType() == typeof(VarInt))
+                if (v.GetType() == typeof(VarInt.Define))
                 {
                     size += 4;
                     v.Address = new Addr32(Reg32.EBP, -size);
                 }
             }
-            foreach (string name in ptrs.Keys)
+            foreach (Pointer.Define p in ptrs.Values)
             {
-                Pointer p = ptrs[name];
-                if (p.GetType() == typeof(Pointer))
+                if (p.GetType() == typeof(Pointer.Define))
                 {
                     size += (p.Length + 3) / 4 * 4;
                     p.Address = new Addr32(Reg32.EBP, -size);

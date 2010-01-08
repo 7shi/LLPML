@@ -35,7 +35,7 @@ namespace Girl.PE
                 else if (obj is long) block.Add((long)obj);
                 else if (obj is char[]) block.Add((char[])obj);
                 else if (obj is string) block.Add((string)obj);
-                else if (obj is Ptr<uint>) block.Add((Ptr<uint>)obj);
+                else if (obj is ValueWrap) block.Add((ValueWrap)obj);
                 else throw new Exception("The method or operation is not implemented.");
             }
         }
