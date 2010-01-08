@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.14.20080402">
 
 <title>メンバの構造体</title>
 
@@ -20,6 +20,10 @@ struct Test1 { Test2 a; }
 struct Test2 { var b; }
 Test1 t1 = { { "Member Test" } };
 t1.a.b.printfln();
+
+struct Test3 { var a : Test2; }
+Test3 t3 = { t1.a };
+t3.a.b.printfln();
 ?>
 
 </llpml>

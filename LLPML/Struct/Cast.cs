@@ -7,32 +7,18 @@ using Girl.X86;
 
 namespace Girl.LLPML.Struct
 {
-    public class Cast : Pointer
+    public class Cast : Var
     {
         public IIntValue Source { get; private set; }
 
         private string type;
-        public override string TypeName { get { return type; } }
-
-        public override int TypeSize
+        public override TypeBase Type
         {
-            get { return SizeOf.GetTypeSize(parent, type); }
-        }
-
-        private bool isArray = false;
-        public override bool IsArray { get { return isArray; } }
-
-        private void SetType(string type)
-        {
-            if (type.EndsWith("[]"))
+            get
             {
-                this.type = type.Substring(0, type.Length - 2).TrimEnd();
-                isArray = true;
-            }
-            else
-            {
-                this.type = type;
-                isArray = false;
+                var t = Types.GetType(parent, type);
+                if (!Source.Type.IsValue) return t;
+                return Types.ConvertVarType(t);
             }
         }
 
@@ -40,7 +26,7 @@ namespace Girl.LLPML.Struct
         {
             this.parent = parent;
             name = "__cast";
-            SetType(type);
+            this.type = type;
             Source = source;
         }
 
@@ -52,10 +38,7 @@ namespace Girl.LLPML.Struct
         public override void Read(XmlTextReader xr)
         {
             name = "__cast";
-
-            SetType(xr["type"]);
-            if (type == null)
-                throw Abort(xr, "requires type");
+            this.type = xr["type"];
 
             Parse(xr, delegate
             {
@@ -74,19 +57,25 @@ namespace Girl.LLPML.Struct
 
         public override Addr32 GetAddress(OpCodes codes)
         {
-            if (Source is Pointer)
-                return (Source as Pointer).GetAddress(codes);
-            else if (Source is Struct.Member)
-                return (Source as Struct.Member).GetAddress(codes);
-
-            Source.AddCodes(codes, "mov", null);
-            codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
-            return new Addr32(Reg32.EDX);
+            if (Source is Var)
+                return (Source as Var).GetAddress(codes);
+            else if (Source is IntValue)
+                codes.Add(I386.Mov(Var.DestRegister,
+                    (uint)(Source as IntValue).Value));
+            else if (Source is StringValue)
+                codes.Add(I386.Mov(Var.DestRegister,
+                    codes.Module.GetString((Source as StringValue).Value)));
+            else
+            {
+                Source.AddCodes(codes, "mov", null);
+                codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
+            }
+            return new Addr32(Var.DestRegister);
         }
 
-        public override void GetValue(OpCodes codes)
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            Source.AddCodes(codes, "mov", null);
+            Source.AddCodes(codes, op, dest);
         }
     }
 }

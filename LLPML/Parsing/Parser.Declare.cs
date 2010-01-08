@@ -134,9 +134,9 @@ namespace Girl.LLPML.Parsing
                 });
         }
 
-        private Pointer.Declare[] VarDeclare()
+        private Var.Declare[] VarDeclare()
         {
-            var list = new List<Pointer.Declare>();
+            var list = new List<Var.Declare>();
             string type = null;
             ReadDeclare("var",
                 () =>
@@ -169,38 +169,26 @@ namespace Girl.LLPML.Parsing
                 },
                 (name, eq, si, array) =>
                 {
-                    Pointer.Declare p;
+                    Var.Declare p;
+                    var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
-                        var vd = new Var.Declare(parent, name, type);
+                        IIntValue ex = null;
                         if (eq)
                         {
-                            var ex = Expression();
-                            vd.Value = ex;
-                            if (type == null)
-                            {
-                                // 型推論
-                                if (ex is VarBase)
-                                {
-                                    var vb = ex as VarBase;
-                                    if (vb.TypeName != null)
-                                    {
-                                        if (vb.IsArray)
-                                            vd.TypeName = vb.TypeName + "[]";
-                                        else
-                                            vd.TypeName = vb.TypeName;
-                                    }
-                                }
-                            }
+                            ex = Expression();
+                            // 型推論
+                            if (tb == null) tb = ex.Type;
                         }
+                        var vd = new Var.Declare(parent, name, Types.ConvertVarType(tb), ex);
                         p = vd;
                     }
                     else
                     {
+                        /// todo: 配列を初期化できるようにする
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
-                        var type2 = type == null ? "var" : "var:" + type;
-                        p = new Pointer.Declare(parent, name, type2, (int)array);
+                        p = new Var.Declare(parent, name, Types.ConvertVarType(tb), (int)array);
                     }
                     p.SrcInfo = si;
                     list.Add(p);
@@ -208,13 +196,14 @@ namespace Girl.LLPML.Parsing
             return list.ToArray();
         }
 
-        private Pointer.Declare[] TypedDeclare(string type)
+        private Var.Declare[] TypedDeclare(string type)
         {
-            var list = new List<Pointer.Declare>();
+            var list = new List<Var.Declare>();
             ReadDeclare(type, null,
                 (name, eq, si, array) =>
                 {
-                    Pointer.Declare p;
+                    Var.Declare p;
+                    var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
                         var vs = SizeOf.GetValueSize(type);
@@ -225,7 +214,7 @@ namespace Girl.LLPML.Parsing
                         }
                         else
                         {
-                            var vd = new Var.Declare(parent, name, type);
+                            var vd = new Var.Declare(parent, name, tb);
                             if (eq)
                             {
                                 var ex = Expression();
@@ -236,9 +225,11 @@ namespace Girl.LLPML.Parsing
                     }
                     else
                     {
+                        /// todo: 配列を初期化できるようにする
                         if (eq)
                             throw parent.Abort(si, "{0}: 配列を初期化できません。", type);
-                        p = new Pointer.Declare(parent, name, type, (int)array);
+                        if (tb == null) tb = TypeInt.Instance;
+                        p = new Var.Declare(parent, name, tb, (int)array);
                     }
                     p.SrcInfo = si;
                     list.Add(p);

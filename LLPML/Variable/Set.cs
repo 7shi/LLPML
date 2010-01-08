@@ -43,25 +43,15 @@ namespace Girl.LLPML
             values[0].AddCodes(codes, "push", null);
             var ad = dest.GetAddress(codes);
             codes.Add(I386.Pop(Reg32.EAX));
-            AddSetCodes(dest.Type, dest.Size, codes, ad);
+            var t = dest.Type;
+            if (dest is Index) t = t.Type;
+            t.AddSetCodes(codes, ad);
         }
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
-        }
-
-        public static void AddSetCodes(TypeBase type, int size, OpCodes codes, Addr32 ad)
-        {
-            if (type != null)
-                type.AddSetCodes(codes, ad);
-            else if (size == 2)
-                TypeShort.Instance.AddSetCodes(codes, ad);
-            else if (size == 1)
-                TypeByte.Instance.AddSetCodes(codes, ad);
-            else
-                TypeInt.Instance.AddSetCodes(codes, ad);
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Girl.LLPML
 {
     public class TypeOf : NodeBase, IIntValue
     {
-        public VarBase Target { get; private set; }
+        public Var Target { get; private set; }
 
-        public TypeOf(BlockBase parent, VarBase target) : base(parent) { Target = target; }
+        public TypeOf(BlockBase parent, Var target) : base(parent) { Target = target; }
         public TypeOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -25,7 +25,7 @@ namespace Girl.LLPML
                 {
                     if (Target != null)
                         throw Abort(xr, "too many operands");
-                    Target = v as VarBase;
+                    Target = v as Var;
                     if (Target == null)
                         throw Abort(xr, "variable required");
                 }
@@ -38,7 +38,7 @@ namespace Girl.LLPML
 
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            var t = Target.TypeName;
+            var t = Target.Type.Name;
             if (t == null) t = "var";
             codes.AddCodes(op, dest, codes.Module.GetString(t));
         }

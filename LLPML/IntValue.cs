@@ -41,7 +41,7 @@ namespace Girl.LLPML
                 case "var":
                     return new Var(parent, xr);
                 case "ptr":
-                    return new Pointer(parent, xr);
+                    return new Var(parent, xr);
                 case "this":
                     return new Struct.This(parent, xr);
                 case "base":

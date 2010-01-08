@@ -9,7 +9,7 @@ namespace Girl.LLPML
 {
     public abstract class TypeIntBase : TypeBase
     {
-        protected TypeIntBase()
+        public static void AddOperators(Dictionary<string, Func> funcs)
         {
             funcs["inc"] = funcs["post-inc"] = (codes, dest, arg) => codes.Add(I386.Inc(dest));
             funcs["dec"] = funcs["post-dec"] = (codes, dest, arg) => codes.Add(I386.Dec(dest));
@@ -17,7 +17,7 @@ namespace Girl.LLPML
             funcs["add"] = (codes, dest, arg) => arg.AddCodes(codes, "add", dest);
             funcs["sub"] = (codes, dest, arg) => arg.AddCodes(codes, "sub", dest);
             funcs["and"] = (codes, dest, arg) => arg.AddCodes(codes, "and", dest);
-            funcs["or" ] = (codes, dest, arg) => arg.AddCodes(codes, "or" , dest);
+            funcs["or"] = (codes, dest, arg) => arg.AddCodes(codes, "or", dest);
             funcs["xor"] = (codes, dest, arg) => arg.AddCodes(codes, "xor", dest);
 
             funcs["not"] = (codes, dest, arg) =>
@@ -31,8 +31,6 @@ namespace Girl.LLPML
             };
             funcs["neg"] = (codes, dest, arg) => codes.Add(I386.Neg(Reg32.EAX));
             funcs["rev"] = (codes, dest, arg) => codes.Add(I386.Not(Reg32.EAX));
-
-            AddComparers(funcs, conds);
         }
 
         public static void AddComparers(Dictionary<string, Func> funcs, Dictionary<string, CondPair> conds)
@@ -90,6 +88,18 @@ namespace Girl.LLPML
                     last
                 });
             }
+        }
+
+        // get value
+        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        {
+            codes.AddCodes(op, dest, src);
+        }
+
+        // set value
+        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        {
+            codes.Add(I386.Mov(ad, Reg32.EAX));
         }
     }
 }

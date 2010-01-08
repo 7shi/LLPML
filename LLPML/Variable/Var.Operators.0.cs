@@ -21,13 +21,13 @@ namespace Girl.LLPML
         {
             var ad1 = dest.GetAddress(codes);
             var ad2 = ad1;
-            if (dest.Size < Var.DefaultSize)
+            if (dest.Type.Size < Var.DefaultSize)
             {
                 ad2 = new Addr32(Reg32.ESP);
                 dest.Type.AddGetCodes(codes, "push", null, ad1);
             }
             GetFunc()(codes, ad2, null);
-            if (dest.Size < Var.DefaultSize)
+            if (dest.Type.Size < Var.DefaultSize)
             {
                 codes.Add(I386.Pop(Reg32.EAX));
                 dest.Type.AddSetCodes(codes, ad1);
@@ -43,7 +43,7 @@ namespace Girl.LLPML
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
             var ad = Calculate(codes);
-            if (this.dest.Size < Var.DefaultSize)
+            if (this.dest.Type.Size < Var.DefaultSize)
                 codes.AddCodes(op, dest);
             else
                 codes.AddCodes(op, dest, ad);
@@ -69,13 +69,13 @@ namespace Girl.LLPML
             var ad1 = this.dest.GetAddress(codes);
             var ad2 = ad1;
             this.dest.Type.AddGetCodes(codes, "push", null, ad1);
-            if (this.dest.Size < Var.DefaultSize)
+            if (this.dest.Type.Size < Var.DefaultSize)
             {
                 ad2 = new Addr32(Reg32.ESP);
                 codes.Add(I386.Push(ad2));
             }
             GetFunc()(codes, ad2, null);
-            if (this.dest.Size < Var.DefaultSize)
+            if (this.dest.Type.Size < Var.DefaultSize)
             {
                 codes.Add(I386.Pop(Reg32.EAX));
                 this.dest.Type.AddSetCodes(codes, ad1);

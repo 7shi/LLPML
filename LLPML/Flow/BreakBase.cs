@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public abstract class BreakBase : NodeBase
     {
-        public Pointer.Declare[] UsingPointers { get; protected set; }
+        public Var.Declare[] UsingPointers { get; protected set; }
 
         public BreakBase()
         {
@@ -20,7 +20,7 @@ namespace Girl.LLPML
             : base(parent)
         {
             if (parent != null)
-                UsingPointers = parent.GetMembers<Pointer.Declare>();
+                UsingPointers = parent.GetMembers<Var.Declare>();
         }
 
         public BreakBase(BlockBase parent, XmlTextReader xr)
@@ -31,7 +31,7 @@ namespace Girl.LLPML
         public override void Read(XmlTextReader xr)
         {
             if (parent != null)
-                UsingPointers = parent.GetMembers<Pointer.Declare>();
+                UsingPointers = parent.GetMembers<Var.Declare>();
         }
     }
 }

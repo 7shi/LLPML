@@ -53,7 +53,7 @@ namespace Girl.LLPML.Parsing
                     if (br != null) Rewind();
                     break;
                 }
-                var ar = ret as VarBase;
+                var ar = ret as Var;
                 if (ar == null)
                     throw parent.Abort(si, "配列が必要です。");
                 ret = new Index(parent, ar, Expression()) { SrcInfo = si };
@@ -73,7 +73,6 @@ namespace Girl.LLPML.Parsing
         private IIntValue Member(IIntValue f)
         {
             Struct.Member mem = f as Struct.Member;
-            var si = SrcInfo;
             while (CanRead)
             {
                 var t1 = Read();
@@ -82,6 +81,7 @@ namespace Girl.LLPML.Parsing
                     Rewind();
                     break;
                 }
+                var si = SrcInfo;
                 var t2 = Read();
                 if (!Tokenizer.IsWord(t2))
                     throw Abort("名前が不適切です: {0}", t2);
@@ -98,8 +98,8 @@ namespace Girl.LLPML.Parsing
                 t2m.SrcInfo = SrcInfo;
                 if (mem == null)
                 {
-                    if (f is VarBase)
-                        t2m.Target = f as VarBase;
+                    if (f is Var)
+                        t2m.Target = f as Var;
                     else if (f is Function.Ptr)
                         t2m.TargetType = (f as Function.Ptr).Name;
                     else
@@ -267,7 +267,7 @@ namespace Girl.LLPML.Parsing
                     }
                 case "typeof":
                     {
-                        var ex = Expression() as VarBase;
+                        var ex = Expression() as Var;
                         if (ex == null)
                             throw parent.Abort(si, "typeof: 引数が不適切です。");
                         return new TypeOf(parent, ex) { SrcInfo = si };
@@ -284,11 +284,6 @@ namespace Girl.LLPML.Parsing
 
             var vd = parent.GetVar(t);
             var v = vd != null ? new Var(parent, vd) { SrcInfo = si } : null;
-            IIntValue tv = v;
-
-            var pd = parent.GetPointer(t);
-            var p = pd != null ? new Pointer(parent, pd) { SrcInfo = si } : null;
-            if (tv == null) tv = p;
 
             switch (Read())
             {
@@ -304,8 +299,8 @@ namespace Girl.LLPML.Parsing
                                 throw Abort("{0}: 引数が不完全です。", t);
                             if (ret == null)
                             {
-                                if (tv != null)
-                                    ret = new Call(parent, tv, null, args);
+                                if (v != null)
+                                    ret = new Call(parent, v, null, args);
                                 else
                                     ret = new Call(parent, t, null, args);
                             }
@@ -327,7 +322,6 @@ namespace Girl.LLPML.Parsing
             }
 
             if (v != null) return v;
-            if (p != null) return p;
 
             var i = parent.GetInt(t);
             if (i != null) return new IntValue((int)i) { SrcInfo = si };
@@ -381,7 +375,7 @@ namespace Girl.LLPML.Parsing
             if (br1 == "(")
             {
                 var type = Read();
-                if (Tokenizer.IsWord(type) && parent.GetPointer(type) == null)
+                if (Tokenizer.IsWord(type) && parent.GetVar(type) == null)
                 {
                     var br2 = Read();
                     if (br2 == "[")

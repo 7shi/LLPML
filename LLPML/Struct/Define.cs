@@ -15,13 +15,24 @@ namespace Girl.LLPML.Struct
 
         public string BaseType { get; set; }
 
+        private TypeBase type = null;
+        public TypeBase Type
+        {
+            get
+            {
+                if (type == null)
+                    type = new TypeStruct(this, name);
+                return type;
+            }
+        }
+
         private Arg thisptr;
 
         public Define(BlockBase parent, string name)
             : base(parent)
         {
             this.name = name;
-            thisptr = new Arg(this, "this", name);
+            thisptr = new Arg(this, "this", new TypeReference(Type));
         }
 
         public Define(BlockBase parent, string name, string baseType)
@@ -43,7 +54,7 @@ namespace Girl.LLPML.Struct
             if (name == BaseType)
                 throw Abort(xr, "can not define recursive base type: " + name);
 
-            thisptr = new Arg(this, "this", name);
+            thisptr = new Arg(this, "this", new TypeReference(Type));
             base.Read(xr);
 
             if (!parent.AddStruct(this))
@@ -78,21 +89,6 @@ namespace Girl.LLPML.Struct
             return ret;
         }
 
-        public Define GetStruct(Pointer.Declare p)
-        {
-            if (p is Var.Declare)
-            {
-                Var.Declare v = p as Var.Declare;
-                return v.GetStruct();
-            }
-            else if (p is Struct.Declare)
-            {
-                Struct.Declare st = p as Struct.Declare;
-                return st.GetStruct();
-            }
-            return null;
-        }
-
         public int GetOffset(string name)
         {
             int ret = -1;
@@ -109,31 +105,31 @@ namespace Girl.LLPML.Struct
             return ret + st.GetSize();
         }
 
-        public Pointer.Declare GetMember(string name)
+        public Var.Declare GetMember(string name)
         {
-            Pointer.Declare ret = null;
+            Var.Declare ret = null;
             ForEachMembers((p, pos) =>
-                {
-                    if (p.Name != name) return false;
-                    ret = p;
-                    return true;
-                }, null);
+            {
+                if (p.Name != name) return false;
+                ret = p;
+                return true;
+            }, null);
             if (ret != null) return ret;
             Define st = GetBaseStruct();
             if (st == null) return null;
             return st.GetMember(name);
         }
 
-        public Pointer.Declare[] GetMembers()
+        public Var.Declare[] GetMembers()
         {
-            List<Pointer.Declare> list = new List<Pointer.Declare>();
+            List<Var.Declare> list = new List<Var.Declare>();
             Define st = GetBaseStruct();
             if (st != null) list.AddRange(st.GetMembers());
             ForEachMembers((p, pos) =>
-                {
-                    list.Add(p);
-                    return false;
-                }, null);
+            {
+                list.Add(p);
+                return false;
+            }, null);
             return list.ToArray();
         }
 
@@ -159,14 +155,12 @@ namespace Girl.LLPML.Struct
             foreach (var obj in members.Values)
             {
                 Type t = obj.GetType();
-                if (t == typeof(Var.Declare)
-                    || t == typeof(Pointer.Declare)
-                    || t == typeof(Struct.Declare))
+                if (t == typeof(Var.Declare) || t == typeof(Struct.Declare))
                 {
-                    var p = obj as Pointer.Declare;
+                    var p = obj as Var.Declare;
                     if (p is Struct.Declare)
                     {
-                        var st = GetStruct(p);
+                        var st = Types.GetStruct(p.Type);
                         if (st != null) st.CheckStruct(type);
                     }
                 }
@@ -231,8 +225,8 @@ namespace Girl.LLPML.Struct
 
         public void AddAfterDtor(OpCodes codes)
         {
-            var list = new List<Pointer.Declare>();
-            var poslist = new Dictionary<Pointer.Declare, int>();
+            var list = new List<Var.Declare>();
+            var poslist = new Dictionary<Var.Declare, int>();
             int offset = 0;
             var st = GetBaseStruct();
             if (st != null) offset = st.GetSize();
@@ -249,7 +243,7 @@ namespace Girl.LLPML.Struct
             var ad = new Addr32(Reg32.EBP, 8);
             foreach (var p in list)
             {
-                Define memst = GetStruct(p);
+                Define memst = Types.GetStruct(p.Type);
                 if (memst == null || !memst.NeedsDtor) continue;
 
                 codes.AddRange(new OpCode[]
@@ -273,7 +267,7 @@ namespace Girl.LLPML.Struct
             thisptr.Address = new Addr32(Reg32.EBP, 8);
             ForEachMembers((p, pos) =>
             {
-                p.Address = new Addr32(Reg32.EDX, offset + pos);
+                p.Address = new Addr32(Var.DestRegister, offset + pos);
                 return false;
             }, null);
             int lv = Level + 1;
@@ -293,7 +287,7 @@ namespace Girl.LLPML.Struct
         }
 
         public override void AddDestructors(
-            OpCodes codes, IEnumerable<Pointer.Declare> ptrs)
+            OpCodes codes, IEnumerable<Var.Declare> ptrs)
         {
         }
 
@@ -317,9 +311,9 @@ namespace Girl.LLPML.Struct
 
                 foreach (var s in sentences)
                 {
-                    if (s is DeclareBase)
+                    if (s is Var.Declare)
                     {
-                        var d = s as DeclareBase;
+                        var d = s as Var.Declare;
                         if (!d.NeedsInit && !d.NeedsCtor)
                             continue;
                     }

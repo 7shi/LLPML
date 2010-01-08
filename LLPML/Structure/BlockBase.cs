@@ -10,6 +10,8 @@ namespace Girl.LLPML
 {
     public abstract class BlockBase : BreakBase
     {
+        public const string Separator = ".";
+
         protected List<NodeBase> sentences = new List<NodeBase>();
         public List<NodeBase> Sentences { get { return sentences; } }
 
@@ -31,8 +33,6 @@ namespace Girl.LLPML
 
         protected Dictionary<string, object> members
             = new Dictionary<string, object>();
-
-        public const string Separator = ".";
 
         #region Member
 
@@ -190,9 +190,6 @@ namespace Girl.LLPML
         public Var.Declare GetVar(string name) { return GetMemberRecursive<Var.Declare>(name); }
         public bool AddVar(Var.Declare v) { return AddMember(v.Name, v); }
 
-        public Pointer.Declare GetPointer(string name) { return GetMemberRecursive<Pointer.Declare>(name); }
-        public bool AddPointer(Pointer.Declare p) { return AddMember(p.Name, p); }
-
         public Function GetFunction(string name) { return GetMemberRecursive<Function>(name); }
         public bool AddFunction(Function f) { return AddMember(f.Name, f); }
 
@@ -236,24 +233,22 @@ namespace Girl.LLPML
             }
         }
 
-        protected void ForEachMembers(Func<Pointer.Declare, int, bool> delg1, Action<int> delg2)
+        protected void ForEachMembers(Func<Var.Declare, int, bool> delg1, Action<int> delg2)
         {
             int pos = 0;
             foreach (var obj in members.Values)
             {
                 Type t = obj.GetType();
-                if (t == typeof(Var.Declare)
-                    || t == typeof(Pointer.Declare)
-                    || t == typeof(Struct.Declare))
+                if (t == typeof(Var.Declare) || t == typeof(Struct.Declare))
                 {
-                    var p = obj as Pointer.Declare;
-                    var len = p.TypeSize;
-                    if (len == 0) len = p.Length;
+                    var p = obj as Var.Declare;
+                    var len = p.Type.Size;
+                    /// todo: 64bit長をサポートする
                     if (len > Var.DefaultSize) len = Var.DefaultSize;
                     var pad = pos % len;
                     if (pad > 0) pos += len - pad;
                     if (delg1 != null && delg1(p, pos)) return;
-                    pos += p.Length;
+                    pos += p.Type.Size;
                 }
             }
             var padv = pos % Var.DefaultSize;
@@ -288,7 +283,7 @@ namespace Girl.LLPML
             foreach (NodeBase child in sentences)
                 child.AddCodes(codes);
             if (!IsTerminated)
-                AddDestructors(codes, GetMembers<Pointer.Declare>());
+                AddDestructors(codes, GetMembers<Var.Declare>());
             codes.Add(destruct);
             AfterAddCodes(codes);
             foreach (Function func in GetMembers<Function>())
@@ -322,11 +317,11 @@ namespace Girl.LLPML
         }
 
         public virtual void AddDestructors(
-            OpCodes codes, IEnumerable<Pointer.Declare> ptrs)
+            OpCodes codes, IEnumerable<Var.Declare> ptrs)
         {
             if (ptrs == null) return;
 
-            Stack<Pointer.Declare> ptrs2 = new Stack<Pointer.Declare>(ptrs);
+            Stack<Var.Declare> ptrs2 = new Stack<Var.Declare>(ptrs);
             while (ptrs2.Count > 0)
             {
                 Struct.Declare st = ptrs2.Pop() as Struct.Declare;
@@ -335,7 +330,7 @@ namespace Girl.LLPML
                 var st2 = st.GetStruct();
                 if (st2.NeedsDtor)
                 {
-                    var p = GetPointer(st.Name);
+                    var p = GetVar(st.Name);
                     var ad = p.GetAddress(codes, this);
                     codes.Add(I386.Lea(Reg32.EAX, ad));
                     st2.AddDestructor(codes, null);

@@ -10,13 +10,13 @@ namespace Girl.LLPML
 {
     public class Index : Var
     {
-        private VarBase target;
+        private Var target;
         private IIntValue order;
 
-        public Index(BlockBase parent, VarBase ptr, IIntValue order)
+        public Index(BlockBase parent, Var target, IIntValue order)
             : base(parent)
         {
-            this.target = ptr;
+            this.target = target;
             this.order = order;
         }
 
@@ -35,7 +35,7 @@ namespace Girl.LLPML
                 {
                     if (target == null)
                     {
-                        target = v as VarBase;
+                        target = v as Var;
                         if (target == null)
                             throw Abort("array required");
                     }
@@ -53,66 +53,54 @@ namespace Girl.LLPML
 
         public override Addr32 GetAddress(OpCodes codes)
         {
-            var ts = target.TypeSize;
-            if (ts == 0
-                || (target is Var && !(target as Var).IsArray))
+            var t = Type;
+            if (!t.IsArray)
                 throw Abort("{0} is not array", target.Name);
+            var ts = t.Type.Size;
             var oi = order as IntValue;
             if (oi != null)
             {
                 if (oi.Value < 0)
                     throw Abort("{0}[{1}]: over flow: < 0",
                         target.Name, oi.Value);
-                var ret = target.GetAddress(codes);
-                Pointer.Declare pd = null;
-                if (target is Pointer)
-                    pd = (target as Pointer).Reference;
-                else if (target is Struct.Member)
-                    pd = (target as Struct.Member).GetPointer();
-                if (pd != null)
+                if (t is TypeArray)
                 {
-                    if (oi.Value >= pd.Count)
+                    var tc = (t as TypeArray).Count;
+                    if (oi.Value >= tc)
                         throw Abort("{0}[{1}]: over flow: >= {2}",
-                            target.Name, oi.Value, pd.Count);
+                            target.Name, oi.Value, tc);
                 }
-                else if (!(target is Pointer))
+                var ret = target.GetAddress(codes);
+                if (t.IsValue)
                 {
-                    codes.Add(I386.Mov(Reg32.EDX, ret));
-                    ret = new Addr32(Reg32.EDX);
+                    codes.Add(I386.Mov(Var.DestRegister, ret));
+                    ret = new Addr32(Var.DestRegister);
                 }
                 ret.Add(ts * oi.Value);
                 return ret;
             }
-            codes.Add(I386.Push(Reg32.EAX));
+
             order.AddCodes(codes, "mov", null);
             codes.AddRange(new OpCode[]
-                {
-                    I386.Mov(Reg32.EDX, (uint)ts),
-                    I386.Imul(Reg32.EDX),
-                    I386.Push(Reg32.EAX),
-                });
-            if (target is Pointer)
-                (target as Pointer).GetValue(codes);
-            else
-                (target as IIntValue).AddCodes(codes, "mov", null);
+            {
+                I386.Mov(Reg32.EDX, (uint)ts),
+                I386.Imul(Reg32.EDX),
+                I386.Push(Reg32.EAX),
+            });
+            target.AddCodes(codes, "mov", null);
             codes.AddRange(new OpCode[]
-                {
-                    I386.Pop(Reg32.EDX),
-                    I386.Add(Reg32.EDX, Reg32.EAX),
-                });
-            codes.Add(I386.Pop(Reg32.EAX));
-            return new Addr32(Reg32.EDX);
+            {
+                I386.Pop(Var.DestRegister),
+                I386.Add(Var.DestRegister, Reg32.EAX),
+            });
+            return new Addr32(Var.DestRegister);
         }
 
-        public override bool IsArray { get { return false; } }
-        public override TypeBase Type { get { return Types.GetType(TypeName); } }
-        public override string TypeName { get { return target.TypeName; } }
+        public override TypeBase Type { get { return target.Type; } }
 
-        public override Struct.Define GetStruct()
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            return target.GetStruct();
+            Type.Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }
-
-        public override int Size { get { return target.TypeSize; } }
     }
 }

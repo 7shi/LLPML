@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.14.20080329";
+        public const string LLPMLVersion = "0.14.20080402";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -100,7 +100,7 @@ namespace Girl.LLPML
         {
             ForEachMembers((p, pos) =>
                 {
-                    p.Address = new Addr32(codes.Module.GetBuffer(p.Name, p.Length));
+                    p.Address = new Addr32(codes.Module.GetBuffer(p.Name, p.Type.Size));
                     return false;
                 }, null);
         }

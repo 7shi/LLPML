@@ -118,7 +118,7 @@ namespace Girl.LLPML
                             nb = new Var.ShiftRight(target, xr);
                             break;
                         case "ptr-declare":
-                            nb = new Pointer.Declare(target, xr);
+                            nb = new Var.Declare(target, xr);
                             break;
                         case "struct-define":
                             new Struct.Define(target, xr);

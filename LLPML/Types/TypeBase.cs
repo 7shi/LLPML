@@ -36,14 +36,24 @@ namespace Girl.LLPML
         // get value
         public virtual void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
         {
-            codes.AddCodes(op, dest, src);
+            codes.Add(I386.Lea(Reg32.EAX, src));
+            codes.AddCodes(op, dest);
         }
 
         // set value
         public virtual void AddSetCodes(OpCodes codes, Addr32 ad)
         {
-            codes.Add(I386.Mov(ad, Reg32.EAX));
+            throw new Exception("can not set value!");
         }
+
+        // check array
+        public virtual bool IsArray { get { return false; } }
+
+        // check value
+        public virtual bool IsValue { get { return true; } }
+
+        // recursive type
+        public TypeBase Type { get; protected set; }
 
         // operator name
         public static string GetFuncName(string op)

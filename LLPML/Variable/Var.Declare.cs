@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -9,114 +10,115 @@ namespace Girl.LLPML
 {
     public partial class Var
     {
-        public class Declare : Pointer.Declare
+        public class Declare : NodeBase
         {
+            public virtual TypeBase Type { get; protected set; }
+            public virtual bool NeedsInit { get { return Value != null; } }
+            public virtual bool NeedsCtor { get { return false; } }
+            public virtual bool NeedsDtor { get { return false; } }
+
+            public Addr32 Address { get; set; }
+            public bool IsMember { get; protected set; }
             public IIntValue Value { get; set; }
-            public bool IsArray { get; set; }
-            public bool IsValue { get { return length > 0; } }
-            public override bool NeedsInit { get { return Value != null; } }
-
-            private int length = Var.DefaultSize;
-            public override int Length { get { return length; } }
-
-            private TypeBase type;
-            public override TypeBase Type { get { return type; } }
-
-            public override string TypeName
-            {
-                set
-                {
-                    if (value != null && value.EndsWith("[]"))
-                    {
-                        var t = value.Substring(0, value.Length - 2).TrimEnd();
-                        base.TypeName = t;
-                        TypeSize = length = Var.DefaultSize;
-                        IsArray = true;
-                        type = new TypeArray(value, SizeOf.GetTypeSize(parent, t));
-                    }
-                    else
-                    {
-                        base.TypeName = value;
-                        length = SizeOf.GetValueSize(value);
-                        if (length == 0) length = Var.DefaultSize;
-                        IsArray = false;
-                        type = null;
-                        if (value != null)
-                        {
-                            var st = parent.GetStruct(value);
-                            if (st != null)
-                                type = new TypePointer(st);
-                            else
-                                type = Types.GetType(value);
-                        }
-                        if (type == null)
-                            type = TypeInt.Instance;
-                    }
-                }
-            }
 
             public Declare() { }
 
             public Declare(BlockBase parent, string name)
                 : base(parent, name)
             {
+                Init();
+                AddToParent();
             }
 
-            public Declare(BlockBase parent, string name, string type)
+            public Declare(BlockBase parent, string name, TypeBase type)
                 : this(parent, name)
             {
-                TypeName = type;
+                if (type != null) Type = type;
             }
 
-            public Declare(BlockBase parent, string name, string type, IIntValue value)
+            public Declare(BlockBase parent, string name, TypeBase type, IIntValue value)
                 : this(parent, name, type)
             {
                 Value = value;
             }
 
-            public Declare(BlockBase parent, string name, int value)
-                : this(parent, name, "int", new IntValue(value))
+            public Declare(BlockBase parent, string name, TypeBase type, int count)
+                : this(parent, name)
             {
+                this.Type = new TypeArray(type, count);
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)
                 : base(parent, xr)
             {
+                Init();
+            }
+
+            protected virtual void Init()
+            {
+                if (Type == null) Type = Types.GetValueType("var");
+                IsMember = parent is Struct.Define;
             }
 
             public override void Read(XmlTextReader xr)
             {
                 RequiresName(xr);
-                TypeName = xr["type"];
 
-                Parse(xr, delegate
+                var t = Types.GetType(parent, xr["type"]);
+
+                string slen = xr["length"];
+                if (slen != null)
                 {
-                    IIntValue[] v = IntValue.Read(parent, xr);
-                    if (v != null)
+                    var c = IntValue.Parse(slen);
+                    if (t != null) Type = new TypeArray(t, c);
+                }
+                else
+                {
+                    if (t != null) Type = t;
+                    Parse(xr, delegate
                     {
-                        if (v.Length > 1 || Value != null)
-                            throw Abort(xr, "multiple values");
-                        Value = v[0];
-                    }
-                });
+                        IIntValue[] v = IntValue.Read(parent, xr);
+                        if (v != null)
+                        {
+                            if (v.Length > 1 || Value != null)
+                                throw Abort(xr, "multiple values");
+                            Value = v[0];
+                        }
+                    });
+                }
 
                 AddToParent();
             }
 
-            protected override void AddToParent()
+            public Struct.Define GetStruct()
+            {
+                var ret = Types.GetStruct(Type);
+                if (ret != null) return ret;
+                throw Abort("undefined struct: " + Type.Name);
+            }
+
+            public Addr32 GetAddress(OpCodes codes, BlockBase scope)
+            {
+                if (IsMember)
+                {
+                    var thisptr = new Struct.This(scope);
+                    codes.Add(I386.Mov(Var.DestRegister, thisptr.GetAddress(codes)));
+                    return new Addr32(Address);
+                }
+
+                int plv = scope.Level, lv = parent.Level;
+                if (plv == lv || Address.IsAddress)
+                    return new Addr32(Address);
+                if (lv <= 0 || lv >= plv)
+                    throw Abort("Invalid variable scope: " + name);
+                codes.Add(I386.Mov(Var.DestRegister, new Addr32(Reg32.EBP, -lv * 4)));
+                return new Addr32(Var.DestRegister, Address.Disp);
+            }
+
+            protected virtual void AddToParent()
             {
                 if (!parent.AddVar(this))
                     throw Abort("multiple definitions: " + name);
-            }
-
-            public Struct.Define GetStruct()
-            {
-                if (TypeName == null) return null;
-
-                Struct.Define st = parent.GetStruct(TypeName);
-                if (st != null) return st;
-                //throw Abort("undefined struct: " + TypeName);
-                return null;
             }
 
             public override void AddCodes(OpCodes codes)
@@ -124,9 +126,10 @@ namespace Girl.LLPML
                 if (Value == null) return;
 
                 Value.AddCodes(codes, "mov", null);
-                var ad = address;
-                if (IsMember) ad = GetAddress(codes, parent);
-                type.AddSetCodes(codes, ad);
+                var ad = Address;
+                if (IsMember)
+                    ad = GetAddress(codes, parent);
+                Type.AddSetCodes(codes, ad);
             }
         }
     }

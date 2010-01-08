@@ -10,36 +10,46 @@ namespace Girl.LLPML
     public class TypeStruct : TypeBase
     {
         // type name
-        public override string Name { get { return typeName; } }
+        protected string name;
+        public override string Name { get { return name; } }
+
+        // type size
+        public override int Size { get { return GetStruct().GetSize(); } }
+
+        // check value
+        public override bool IsValue { get { return false; } }
 
         // functions
-        //public override Func GetFunc(string key)
-        //{
-        //    var f = type.GetFunction("operator_" + key);
-        //    if (f == null) return base.GetFunc(key);
-        //    return null;
-        //}
+        public override Func GetFunc(string key)
+        {
+            return base.GetFunc(key);
+
+            /// todo: operator overload
+            //var f = Type.GetFunction("operator_" + key);
+            //return null;
+        }
 
         // conditions
         public override CondPair GetCond(string key)
         {
+            /// todo: operator overload
             return base.GetCond(key);
         }
 
-        private string typeName;
-        //public override int Size { get { return type.GetSize(); } }
+        public BlockBase Parent { get; protected set; }
 
-        public TypeStruct(string typeName)
+        public Struct.Define GetStruct()
         {
-            this.typeName = typeName;
-            //TypeIntBase.AddComparers(funcs, conds);
+            return Parent.GetStruct(name);
         }
 
-        // get value
-        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        public TypeStruct(BlockBase parent, string name)
         {
-            codes.Add(I386.Lea(Reg32.EAX, src));
-            codes.AddCodes(op, dest);
+            if (name.EndsWith("]"))
+                throw new Exception("???");
+            Parent = parent;
+            this.name = name;
+            //TypeIntBase.AddComparers(funcs, conds);
         }
     }
 }

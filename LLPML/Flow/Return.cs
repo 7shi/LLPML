@@ -55,7 +55,7 @@ namespace Girl.LLPML
             }
             BlockBase f = parent.GetFunction();
             BlockBase b = parent;
-            Pointer.Declare[] ptrs = UsingPointers;
+            Var.Declare[] ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 b.AddDestructors(codes, ptrs);

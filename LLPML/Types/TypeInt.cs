@@ -18,6 +18,9 @@ namespace Girl.LLPML
 
         protected TypeInt()
         {
+            AddOperators(funcs);
+            AddComparers(funcs, conds);
+
             funcs["shift-left"] = (codes, dest, arg) => Shift("sal", codes, dest, arg);
             funcs["shift-right"] = (codes, dest, arg) => Shift("sar", codes, dest, arg);
 

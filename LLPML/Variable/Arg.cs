@@ -9,20 +9,9 @@ namespace Girl.LLPML
 {
     public class Arg : Var.Declare
     {
-        public Arg(BlockBase parent, string name, string type)
-            : base(parent, name)
-        {
-            this.TypeName = type;
-        }
-
-        public Arg(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        protected override void Init()
-        {
-        }
+        public Arg(BlockBase parent, string name, TypeBase type) : base(parent, name, type) { }
+        public Arg(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override void Init() { }
 
         public override void Read(XmlTextReader xr)
         {
@@ -39,8 +28,20 @@ namespace Girl.LLPML
             NoChild(xr);
             RequiresName(xr);
 
-            TypeName = xr["type"];
+            var t = Types.GetType(parent, xr["type"]);
+            if (t != null) Type = t;
             AddToParent();
+        }
+    }
+
+    public class ArgPtr : Arg
+    {
+        public ArgPtr(BlockBase parent, string name) : base(parent, name, null) { }
+        public ArgPtr(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+
+        protected override void Init()
+        {
+            Type = new TypeArray(TypeInt.Instance, 1);
         }
     }
 }

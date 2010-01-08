@@ -12,9 +12,9 @@ namespace Girl.LLPML
     {
         public CallType CallType { get; set; }
 
-        protected List<DeclareBase> args
-            = new List<DeclareBase>();
-        public List<DeclareBase> Args { get { return args; } }
+        protected List<Var.Declare> args
+            = new List<Var.Declare>();
+        public List<Var.Declare> Args { get { return args; } }
 
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
@@ -40,7 +40,9 @@ namespace Girl.LLPML
                     if (!parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
                     virtptr = new Var.Declare(
-                        parent, "virtual_" + name, null, new Function.Ptr(ovrfunc));
+                        parent, "virtual_" + name,
+                        null, /// todo: delegate type
+                        new Function.Ptr(ovrfunc));
                     parent.Sentences.Add(virtptr);
                 }
                 else
@@ -110,7 +112,7 @@ namespace Girl.LLPML
 
             if (this.parent is Struct.Define)
             {
-                args.Add(new Arg(this, "this", parent.Name));
+                args.Add(new Arg(this, "this", GetParentType()));
                 thisptr = new Struct.This(this);
             }
         }
@@ -153,7 +155,7 @@ namespace Girl.LLPML
 
             if (parent is Struct.Define)
             {
-                args.Add(new Arg(this, "this", parent.Name));
+                args.Add(new Arg(this, "this", GetParentType()));
                 thisptr = new Struct.This(this);
             }
 
@@ -191,7 +193,7 @@ namespace Girl.LLPML
         protected override void BeforeAddCodes(OpCodes codes)
         {
             argStack = 0;
-            foreach (DeclareBase arg in args)
+            foreach (var arg in args)
             {
                 arg.Address = new Addr32(Reg32.EBP, argStack + 8);
                 argStack += 4;
@@ -251,6 +253,11 @@ namespace Girl.LLPML
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
             codes.AddCodes(op, dest, GetAddress(codes.Module));
+        }
+
+        private TypeBase GetParentType()
+        {
+            return new TypeReference((parent as Struct.Define).Type);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329">
+<llpml version="0.14.20080402">
 
 <include src="win32.xml" />
 <include src="malloc.xml" />
@@ -169,7 +169,7 @@ struct Bitmap : BITMAPINFO
     }
     else
     {
-      var r = c.R * a, g = c.G * a, b = c.B * a;
+      int r = c.R * a, g = c.G * a, b = c.B * a;
       for (var yy = y1; yy < y2; yy++)
       {
         var p : Color[] = addrof Buffer[x1 + yy * Width];

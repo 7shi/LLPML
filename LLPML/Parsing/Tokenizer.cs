@@ -181,7 +181,8 @@ namespace Girl.LLPML.Parsing
         private char? ReadChar()
         {
             if (!CanReadChar) return null;
-            if (pos > 1 && Source[pos - 1] == '\n')
+            char ret = Source[pos++];
+            if (ret == '\n')
             {
                 linePositions.Push(linePosition);
                 linePosition = 1;
@@ -189,7 +190,7 @@ namespace Girl.LLPML.Parsing
             }
             else
                 linePosition++;
-            return Source[pos++];
+            return ret;
         }
 
         private char? PeekChar()

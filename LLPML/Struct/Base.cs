@@ -21,16 +21,11 @@ namespace Girl.LLPML.Struct
                 throw Abort(xr, "has no base type: " + target.Name);
         }
 
-        public override Struct.Define GetStruct()
-        {
-            return target.GetBaseStruct();
-        }
-
-        public override string TypeName
+        public override TypeBase Type
         {
             get
             {
-                return target.BaseType;
+                return Types.GetType(parent, target.BaseType);
             }
         }
     }

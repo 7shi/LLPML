@@ -10,8 +10,8 @@ namespace Girl.LLPML.Struct
 {
     public class Member : Var
     {
-        private VarBase target;
-        public VarBase Target
+        private Var target;
+        public Var Target
         {
             get
             {
@@ -43,8 +43,8 @@ namespace Girl.LLPML.Struct
         }
 
         public Member(Member parent, XmlTextReader xr)
+            :base(parent.parent)
         {
-            this.parent = parent.parent;
             this.root = parent.root;
             isRoot = false;
             SrcInfo = new Parsing.SrcInfo(root.Source, xr);
@@ -70,13 +70,13 @@ namespace Girl.LLPML.Struct
                 if (vs == null) return;
                 foreach (var v in vs)
                 {
-                    if (v is VarBase)
+                    if (v is Var)
                     {
                         if (!isRoot)
                             throw Abort(xr, "needless instance");
                         else if (target != null)
                             throw Abort(xr, "too many operands");
-                        target = v as VarBase;
+                        target = v as Var;
                     }
                     else
                         throw Abort(xr, "invalid element");
@@ -89,28 +89,46 @@ namespace Girl.LLPML.Struct
         private Addr32 GetStructAddress(OpCodes codes)
         {
             var ad = target.GetAddress(codes);
-            if (target is Pointer || target is Index) return ad;
-            codes.Add(I386.Mov(Reg32.EDX, ad));
-            return new Addr32(Reg32.EDX);
+            if (target is Var || target is Index) return ad;
+            codes.Add(I386.Mov(Var.DestRegister, ad));
+            return new Addr32(Var.DestRegister);
         }
 
-        public int GetOffset(Define st)
+        private Addr32 GetAddressInternal(OpCodes codes)
         {
-            int ret = st.GetOffset(name);
-            if (ret < 0) throw Abort("undefined member: " + name);
-            if (Child == null) return ret;
-            return ret + Child.GetOffset(st.GetStruct(st.GetMember(name)));
+            Addr32 ret;
+            if (target is Struct.Member)
+            {
+                var tsm = target as Struct.Member;
+                ret = tsm.GetAddressInternal(codes);
+                if (tsm.GetMember().Type.IsValue)
+                {
+                    codes.Add(I386.Mov(Var.DestRegister, ret));
+                    ret = new Addr32(Var.DestRegister);
+                }
+            }
+            else
+            {
+                ret = target.GetAddress(codes);
+                if (!(target is Index) && target.Type.IsValue)
+                {
+                    codes.Add(I386.Mov(Var.DestRegister, ret));
+                    ret = new Addr32(Var.DestRegister);
+                }
+            }
+            ret.Add(GetTargetStruct().GetOffset(name));
+            return ret;
         }
 
         public override Addr32 GetAddress(OpCodes codes)
         {
-            var ret = new Addr32(GetStructAddress(codes));
-            var st = GetTargetStruct();
-            ret.Add(GetOffset(st));
-            return ret;
+            if (Child != null)
+                return Child.GetAddress(codes);
+            else
+                return GetAddressInternal(codes);
         }
 
-        public Pointer.Declare GetPointer()
+        public Var.Declare GetMember()
         {
             var st = GetTargetStruct();
             if (st == null)
@@ -128,18 +146,7 @@ namespace Girl.LLPML.Struct
         {
             var st = GetTargetStruct();
             if (st == null) return null;
-            return st.GetStruct(st.GetMember(name));
-        }
-
-        public override bool IsArray
-        {
-            get
-            {
-                var p = GetPointer();
-                if (p is Var.Declare)
-                    return (p as Var.Declare).IsArray;
-                return p.Count > 0;
-            }
+            return Types.GetStruct(st.GetMember(name).Type);
         }
 
         public override TypeBase Type
@@ -147,48 +154,8 @@ namespace Girl.LLPML.Struct
             get
             {
                 if (Child == null)
-                    return GetPointer().Type;
+                    return GetMember().Type;
                 return Child.Type;
-            }
-        }
-
-        public override int TypeSize
-        {
-            get
-            {
-                if (Child == null)
-                    return GetPointer().TypeSize;
-                return Child.TypeSize;
-            }
-        }
-
-        public override string TypeName
-        {
-            get
-            {
-                if (Child == null)
-                {
-                    var p = GetPointer();
-                    if (p is Var.Declare) return p.TypeName;
-                    var st = GetStruct();
-                    if (st == null) return null;
-                    return st.Name;
-                }
-                return Child.TypeName;
-            }
-        }
-
-        public override int Size
-        {
-            get
-            {
-                if (Child == null)
-                {
-                    var p = GetPointer();
-                    if (p is Var.Declare) return p.Length;
-                    return Var.DefaultSize;
-                }
-                return Child.Size;
             }
         }
 
@@ -216,8 +183,8 @@ namespace Girl.LLPML.Struct
         {
             if (this.target is Var)
                 return this.target as Var;
-            else if (this.target is Pointer)
-                return this.target as Pointer;
+            else if (this.target is Var)
+                return this.target as Var;
             return null;
         }
 

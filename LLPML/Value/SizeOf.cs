@@ -24,27 +24,14 @@ namespace Girl.LLPML
             get
             {
                 int size = 0;
-                var pd = parent.GetPointer(name);
-                if (pd != null)
-                    size = pd.Length;
+                var vd = parent.GetVar(name);
+                if (vd != null)
+                    size = vd.Type.Size;
                 else
-                    size = GetTypeSize(parent, name);
+                    size = Types.GetType(parent, name).Size;
                 if (size == 0) throw Abort("undefined type: " + name);
                 return size;
             }
-        }
-
-        public static int GetTypeSize(BlockBase parent, string type)
-        {
-            if (type.StartsWith("var:")) return Var.DefaultSize;
-
-            var sz = GetValueSize(type);
-            if (sz > 0) return sz;
-
-            var st = parent.GetStruct(type);
-            if (st != null) return st.GetSize();
-
-            return Var.DefaultSize;
         }
 
         public static int GetValueSize(string type)

@@ -103,13 +103,8 @@ namespace Girl.LLPML
             IIntValue arg1 = null;
             if (target is Struct.Member)
             {
-                var ad = new AddrOf(parent, (target as Struct.Member));
-                st = ad.Target.GetStruct();
-                var tt = (target as Struct.Member).Type;
-                if (tt == null || tt is TypeIntBase)
-                    arg1 = target as Struct.Member;
-                else
-                    arg1 = ad;
+                st = (target as Struct.Member).GetStruct();
+                arg1 = target;
             }
             else if (target is Index)
             {
@@ -117,10 +112,10 @@ namespace Girl.LLPML
                 st = ad.Target.GetStruct();
                 arg1 = ad;
             }
-            else if (target is VarBase)
+            else if (target is Var)
             {
-                type = (target as VarBase).TypeName;
-                st = (target as VarBase).GetStruct();
+                type = (target as Var).Type.Name;
+                st = (target as Var).GetStruct();
                 arg1 = target;
             }
             else
@@ -145,7 +140,7 @@ namespace Girl.LLPML
                             mem2 = mem3;
                         }
                         else
-                            mem2.Target = arg1 as VarBase;
+                            mem2.Target = arg1 as Var;
                         AddCodes(codes, this.args, CallType.CDecl, delegate
                         {
                             codes.Add(I386.Call(mem2.GetAddress(codes)));
@@ -191,8 +186,8 @@ namespace Girl.LLPML
             {
                 AddCodes(codes, args, type, delegate
                 {
-                    if (val is VarBase)
-                        codes.Add(I386.Call((val as VarBase).GetAddress(codes)));
+                    if (val is Var)
+                        codes.Add(I386.Call((val as Var).GetAddress(codes)));
                     else
                     {
                         val.AddCodes(codes, "mov", null);

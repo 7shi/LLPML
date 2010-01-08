@@ -8,25 +8,12 @@ using Girl.X86;
 
 namespace Girl.LLPML.Struct
 {
-    public class Declare : Pointer.Declare
+    public class Declare : Var.Declare
     {
-        public override int Length { get { return GetStruct().GetSize(); } }
-
         private List<object> values = new List<object>();
         public List<object> Values { get { return values; } }
 
         private bool isRoot = true;
-
-        private TypeStruct typeStruct;
-        public override TypeBase Type
-        {
-            get
-            {
-                if (typeStruct == null)
-                    typeStruct = new TypeStruct(TypeName);
-                return typeStruct;
-            }
-        }
 
         public override bool NeedsInit
         {
@@ -66,7 +53,8 @@ namespace Girl.LLPML.Struct
         public Declare(BlockBase parent, string name, string type)
             : base(parent, name)
         {
-            this.TypeName = type;
+            this.Type = Types.GetType(parent, type) as TypeStruct;
+            if (this.Type == null) throw Abort("type required");
         }
 
         public Declare(BlockBase parent, XmlTextReader xr)
@@ -86,8 +74,8 @@ namespace Girl.LLPML.Struct
             if (isRoot)
             {
                 RequiresName(xr);
-                TypeName = xr["type"];
-                if (TypeName == null) throw Abort(xr, "type required");
+                Type = Types.GetType(parent, xr["type"]) as TypeStruct;
+                if (Type == null) throw Abort(xr, "type required");
             }
 
             Parse(xr, delegate
@@ -107,16 +95,11 @@ namespace Girl.LLPML.Struct
             if (isRoot) AddToParent();
         }
 
-        public Define GetStruct()
-        {
-            var st = parent.GetStruct(TypeName);
-            if (st != null) return st;
-            throw Abort("undefined struct: " + TypeName);
-        }
-
         public override void AddCodes(OpCodes codes)
         {
             var st = GetStruct();
+            if (!st.NeedsInit && values.Count == 0 && !st.NeedsCtor)
+                return;
             codes.AddRange(new OpCode[]
             {
                 I386.Lea(Reg32.EAX, GetAddress(codes, parent)),
@@ -133,7 +116,7 @@ namespace Girl.LLPML.Struct
         {
             if (values.Count == 0) return false;
 
-            Pointer.Declare[] members = st.GetMembers();
+            Var.Declare[] members = st.GetMembers();
             if (members.Length != values.Count)
                 throw Abort("initializers mismatched: " + st.Name);
 
@@ -141,11 +124,11 @@ namespace Girl.LLPML.Struct
             codes.Add(I386.Push(ad));
             for (int i = 0; i < values.Count; i++)
             {
-                Pointer.Declare mem = members[i];
+                Var.Declare mem = members[i];
                 object obj = values[i];
                 if (obj is Declare)
                 {
-                    Define memst = st.GetStruct(mem);
+                    Define memst = Types.GetStruct(mem.Type);
                     if (!(mem is Declare) || memst == null)
                         throw Abort("struct required: " + mem.Name);
                     (obj as Declare).AddInitValues(codes, memst);
@@ -155,12 +138,12 @@ namespace Girl.LLPML.Struct
                     if (!(mem is Var.Declare))
                         throw Abort("value required: " + mem.Name);
                     (obj as IIntValue).AddCodes(codes, "mov", null);
-                    codes.Add(I386.Mov(Reg32.EDX, ad));
-                    Set.AddSetCodes(mem.Type, mem.Length, codes, new Addr32(Reg32.EDX));
+                    codes.Add(I386.Mov(Var.DestRegister, ad));
+                    mem.Type.AddSetCodes(codes, new Addr32(Var.DestRegister));
                 }
                 else
                     throw Abort("invalid parameter: " + mem.Name);
-                codes.Add(I386.Add(ad, (uint)mem.Length));
+                codes.Add(I386.Add(ad, (uint)mem.Type.Size));
             }
             codes.Add(I386.Add(Reg32.ESP, 4));
             return true;
