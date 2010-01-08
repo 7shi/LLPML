@@ -25,7 +25,7 @@ namespace Girl.LLPML.Parsing
                         case "=":
                         case "[":
                             Rewind();
-                            return StructDeclare(t);
+                            return TypedDeclare(t);
                     }
                 }
                 Rewind();
@@ -209,7 +209,7 @@ namespace Girl.LLPML.Parsing
             return list.ToArray();
         }
 
-        private Pointer.Declare[] StructDeclare(string type)
+        private Pointer.Declare[] TypedDeclare(string type)
         {
             var list = new List<Pointer.Declare>();
             ReadDeclare(type, null,
@@ -218,8 +218,22 @@ namespace Girl.LLPML.Parsing
                     Pointer.Declare p;
                     if (array == null)
                     {
-                        p = new Struct.Declare(parent, name, type);
-                        if (eq) ReadInitializers(p as Struct.Declare, type);
+                        var vs = SizeOf.GetValueSize(type);
+                        if (vs == 0)
+                        {
+                            p = new Struct.Declare(parent, name, type);
+                            if (eq) ReadInitializers(p as Struct.Declare, type);
+                        }
+                        else
+                        {
+                            var vd = new Var.Declare(parent, name, type);
+                            if (eq)
+                            {
+                                var ex = Expression();
+                                vd.Value = ex;
+                            }
+                            p = vd;
+                        }
                     }
                     else
                     {

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.10.20080205">
 
-<!-- cross reference -->
+<!-- 相互参照 -->
 
 <include src="finish.xml" />
 
 <?llp
 struct Test1
 {
-  // front reference
+  // 前方参照
   var test2 : Test2;
   
   function Show()
@@ -25,7 +25,7 @@ struct Test1
 
 struct Test2
 {
-  // back reference
+  // 後方参照
   var test1 : Test1;
   
   function Show()

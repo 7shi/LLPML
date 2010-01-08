@@ -92,6 +92,7 @@ namespace Girl.X86
                     if (op1 is byte) block.Add((byte)op1);
                     else if (op1 is ushort) block.Add((ushort)op1);
                     else if (op1 is Val32) block.Add((Val32)op1);
+                    else if (op1 is Val32) block.Add((Val32)op1);
                     else throw new Exception("The method or operation is not implemented.");
                 }
                 if (op2 is byte) block.Add((byte)op2);

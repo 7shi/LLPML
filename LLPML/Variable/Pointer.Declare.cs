@@ -54,12 +54,12 @@ namespace Girl.LLPML
                 Type = xr["type"];
                 if (Type == null) Type = "byte";
 
+                TypeSize = SizeOf.GetTypeSize(parent, Type);
+                if (TypeSize == 0) throw Abort(xr, "unknown type: " + Type);
+
                 string slen = xr["length"];
                 if (slen == null) throw Abort(xr, "length required");
                 Count = IntValue.Parse(slen);
-
-                TypeSize = SizeOf.GetTypeSize(parent, Type);
-                if (TypeSize == 0) throw Abort(xr, "unknown type: " + Type);
 
                 length = TypeSize * Count;
                 AddToParent();

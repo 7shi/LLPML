@@ -10,17 +10,16 @@ namespace Girl.LLPML
 {
     public class StringValue : IIntValue
     {
-        private string value;
-        public string Value { get { return value; } }
+        public string Value { get; private set; }
 
         public StringValue(string value)
         {
-            this.value = value;
+            Value = value;
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {
-            IntValue.AddCodes(codes, op, dest, m.GetString(value));
+            IntValue.AddCodes(codes, op, dest, m.GetString(Value));
         }
     }
 }

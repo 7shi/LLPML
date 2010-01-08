@@ -52,11 +52,10 @@ namespace Girl.LLPML
 
         public T[] GetMembers<T>() where T : class
         {
-            List<T> list = new List<T>();
-            foreach (object obj in members.Values)
+            var list = new List<T>();
+            foreach (var obj in members.Values)
             {
-                T t = obj as T;
-                if (t != null) list.Add(t);
+                if (obj is T) list.Add(obj as T);
             }
             return list.ToArray();
         }
@@ -215,17 +214,13 @@ namespace Girl.LLPML
         {
             get
             {
-                foreach (object obj in members.Values)
-                {
-                    Type t = obj.GetType();
-                    if (t == typeof(Var.Declare)
-                        || t == typeof(Pointer.Declare)
-                        || t == typeof(Struct.Declare))
+                bool ret = false;
+                ForEachMembers((p, pos) =>
                     {
+                        ret = true;
                         return true;
-                    }
-                }
-                return false;
+                    }, null);
+                return ret;
             }
         }
 
@@ -241,28 +236,43 @@ namespace Girl.LLPML
             }
         }
 
-        protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
+        protected void ForEachMembers(Func<Pointer.Declare, int, bool> delg1, Action<int> delg2)
         {
-            int stack = Level * 4;
-            foreach (object obj in members.Values)
+            int pos = 0;
+            foreach (var obj in members.Values)
             {
                 Type t = obj.GetType();
-                if (t == typeof(Var.Declare))
+                if (t == typeof(Var.Declare)
+                    || t == typeof(Pointer.Declare)
+                    || t == typeof(Struct.Declare))
                 {
-                    Var.Declare v = obj as Var.Declare;
-                    stack += 4;
-                    v.Address = new Addr32(Reg32.EBP, -stack);
-                }
-                else if (t == typeof(Pointer.Declare) || t == typeof(Struct.Declare))
-                {
-                    Pointer.Declare p = obj as Pointer.Declare;
-                    stack += (p.Length + 3) / 4 * 4;
-                    p.Address = new Addr32(Reg32.EBP, -stack);
+                    var p = obj as Pointer.Declare;
+                    var len = p.TypeSize;
+                    if (len == 0) len = p.Length;
+                    if (len > Var.DefaultSize) len = Var.DefaultSize;
+                    var pad = pos % len;
+                    if (pad > 0) pos += len - pad;
+                    if (delg1 != null && delg1(p, pos)) return;
+                    pos += p.Length;
                 }
             }
+            var padv = pos % Var.DefaultSize;
+            if (padv > 0) pos += Var.DefaultSize - padv;
+            if (delg2 != null) delg2(pos);
+        }
+
+        protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
+        {
             if (HasStackFrame)
             {
-                codes.Add(I386.Enter((ushort)stack, (byte)Level));
+                int stackSize = Level * 4;
+                ForEachMembers(null, size => stackSize += size);
+                ForEachMembers((p, pos) =>
+                {
+                    p.Address = new Addr32(Reg32.EBP, pos - stackSize);
+                    return false;
+                }, null);
+                codes.Add(I386.Enter((ushort)stackSize, (byte)Level));
             }
             string n = GetName();
             if (!string.IsNullOrEmpty(n))

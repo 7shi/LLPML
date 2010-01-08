@@ -81,6 +81,7 @@
     <Compile Include="Struct\Cast.cs" />
     <Compile Include="Value\Null.cs" />
     <Compile Include="Value\AddrOf.cs" />
+    <Compile Include="Value\TypeOf.cs" />
     <Compile Include="Variable\Index.cs" />
     <Compile Include="Variable\Operators\Var.Sub.cs" />
     <Compile Include="Operators\Add.cs" />

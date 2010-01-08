@@ -9,7 +9,8 @@ namespace Girl.LLPML
 {
     public partial class Var : VarBase, IIntValue
     {
-        public const int Size = 4;
+        public const int DefaultSize = 4;
+        public int Size { get { return reference.Length; } }
 
         private Declare reference;
         protected Declare Reference

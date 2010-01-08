@@ -13,6 +13,10 @@ namespace Girl.LLPML
         {
             public IIntValue Value { get; set; }
             public bool IsArray { get; set; }
+            public bool IsValue { get { return length > 0; } }
+
+            private int length = Var.DefaultSize;
+            public override int Length { get { return length; } }
 
             public override string Type
             {
@@ -21,17 +25,18 @@ namespace Girl.LLPML
                     if (value != null && value.EndsWith("[]"))
                     {
                         base.Type = value.Substring(0, value.Length - 2).TrimEnd();
+                        length = Var.DefaultSize;
                         IsArray = true;
                     }
                     else
                     {
                         base.Type = value;
+                        length = SizeOf.GetValueSize(value);
+                        if (length == 0) length = Var.DefaultSize;
                         IsArray = false;
                     }
                 }
             }
-
-            public override int Length { get { return Var.Size; } }
 
             public Declare() { }
 

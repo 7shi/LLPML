@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.10.20080212";
+        public string Version = "0.11.20080218";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
@@ -93,19 +93,11 @@ namespace Girl.LLPML
 
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
-            foreach (object obj in members.Values)
-            {
-                if (obj is Var.Declare)
+            ForEachMembers((p, pos) =>
                 {
-                    Var.Declare v = obj as Var.Declare;
-                    v.Address = new Addr32(m.GetInt32(v.Name));
-                }
-                else if (obj is Pointer.Declare)
-                {
-                    Pointer.Declare p = obj as Pointer.Declare;
                     p.Address = new Addr32(m.GetBuffer(p.Name, p.Length));
-                }
-            }
+                    return false;
+                }, null);
         }
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)

@@ -55,6 +55,8 @@ namespace Girl.LLPML
                     return new SizeOf(parent, xr);
                 case "addr-of":
                     return new AddrOf(parent, xr);
+                case "type-of":
+                    return new TypeOf(parent, xr);
                 case "index":
                     return new Index(parent, xr);
                 case "get-function":

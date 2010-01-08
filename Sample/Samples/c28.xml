@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.11.20080218">
+
+<!-- 整数型 -->
+
+<include src="finish.xml" />
+
+<?llp
+main();
+
+function main()
+{
+  var a;
+  byte b, c;
+  var d;
+  byte e, f;
+  short g;
+  show("a", addrof a, sizeof a, typeof a);
+  show("b", addrof b, sizeof b, typeof b);
+  show("c", addrof c, sizeof c, typeof c);
+  show("d", addrof d, sizeof d, typeof d);
+  show("e", addrof e, sizeof e, typeof e);
+  show("f", addrof f, sizeof f, typeof f);
+  show("g", addrof g, sizeof g, typeof g);
+  
+  function show(name, p, size, type)
+  {
+    printfln(
+      "%s: addrof = %p (+ %02d), sizeof = %d, typeof = %s",
+      name, p, p - addrof(a), size, type);
+  }
+  
+  e = 0x12345678;
+  printfln("e = %02x, f = %02x, g = %04x", e, f, g);
+}
+?>
+
+</llpml>

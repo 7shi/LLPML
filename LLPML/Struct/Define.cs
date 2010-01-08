@@ -69,36 +69,12 @@ namespace Girl.LLPML.Struct
         public int GetSize()
         {
             int ret = 0;
+            ForEachMembers(null, size => ret = size);
             Define st = GetBaseStruct();
-            if (st != null) ret = st.GetSize();
-            foreach (object obj in members.Values)
-            {
-                Pointer.Declare p = GetMember(obj);
-                if (p != null) ret += p.Length;
-            }
+            if (st != null) ret += st.GetSize();
             if (ret == 0)
-                ret = Var.Size;
-            else
-                ret = (ret + Var.Size - 1) / Var.Size * Var.Size;
+                ret = Var.DefaultSize;
             return ret;
-        }
-
-        public int GetOffset(string name)
-        {
-            int ret = 0;
-            Define st = GetBaseStruct();
-            if (st != null) ret = st.GetSize();
-            foreach (object obj in members.Values)
-            {
-                Pointer.Declare p = GetMember(obj);
-                if (p != null)
-                {
-                    if (p.Name == name) return ret;
-                    ret += p.Length;
-                }
-            }
-            if (st != null) return st.GetOffset(name);
-            return -1;
         }
 
         public Define GetStruct(Pointer.Declare p)
@@ -116,19 +92,32 @@ namespace Girl.LLPML.Struct
             return null;
         }
 
-        private Pointer.Declare GetMember(object obj)
+        public int GetOffset(string name)
         {
-            if (obj is Arg) return null;
-            return obj as Pointer.Declare;
+            int ret = -1;
+            ForEachMembers((p, pos) =>
+                {
+                    if (p.Name != name) return false;
+                    ret = pos;
+                    return true;
+                }, null);
+            Define st = GetBaseStruct();
+            if (st == null) return ret;
+
+            if (ret < 0) return st.GetOffset(name);
+            return ret + st.GetSize();
         }
 
         public Pointer.Declare GetMember(string name)
         {
-            foreach (object obj in members.Values)
-            {
-                Pointer.Declare p = GetMember(obj);
-                if (p != null && p.Name == name) return p;
-            }
+            Pointer.Declare ret = null;
+            ForEachMembers((p, pos) =>
+                {
+                    if (p.Name != name) return false;
+                    ret = p;
+                    return true;
+                }, null);
+            if (ret != null) return ret;
             Define st = GetBaseStruct();
             if (st == null) return null;
             return st.GetMember(name);
@@ -139,11 +128,11 @@ namespace Girl.LLPML.Struct
             List<Pointer.Declare> list = new List<Pointer.Declare>();
             Define st = GetBaseStruct();
             if (st != null) list.AddRange(st.GetMembers());
-            foreach (object obj in members.Values)
-            {
-                Pointer.Declare p = GetMember(obj);
-                if (p != null) list.Add(p);
-            }
+            ForEachMembers((p, pos) =>
+                {
+                    list.Add(p);
+                    return false;
+                }, null);
             return list.ToArray();
         }
 
@@ -166,13 +155,15 @@ namespace Girl.LLPML.Struct
             }
             else if (type == name)
                 throw Abort("can not define recursive type: " + name);
-            foreach (object obj in members.Values)
-            {
-                var mem = GetMember(obj);
-                if (!(mem is Struct.Declare)) continue;
-                Define st = GetStruct(mem);
-                if (st != null) st.CheckStruct(type);
-            }
+            ForEachMembers((p, pos) =>
+                {
+                    if (p is Struct.Declare)
+                    {
+                        var st = GetStruct(p);
+                        if (st != null) st.CheckStruct(type);
+                    }
+                    return false;
+                }, null);
         }
 
         public void CheckBaseStruct(string name)
@@ -200,7 +191,7 @@ namespace Girl.LLPML.Struct
         public void AddInit(List<OpCode> codes, Module m, Addr32 ad)
         {
             CallBlock(codes, m, ad, this);
-            codes.Add(I386.Add(Reg32.ESP, Var.Size));
+            codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
         }
 
         public void AddConstructor(List<OpCode> codes, Module m, Addr32 ad)
@@ -210,7 +201,7 @@ namespace Girl.LLPML.Struct
 
             CallBlock(codes, m, ad, f);
             if (f.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, Var.Size));
+                codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
         }
 
         public void AddDestructor(List<OpCode> codes, Module m, Addr32 ad)
@@ -220,7 +211,7 @@ namespace Girl.LLPML.Struct
 
             CallBlock(codes, m, ad, f);
             if (f.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, Var.Size));
+                codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
         }
 
         public void AddBeforeCtor(List<OpCode> codes, Module m, Var th)
@@ -240,22 +231,24 @@ namespace Girl.LLPML.Struct
 
         public void AddAfterDtor(List<OpCode> codes, Module m, Var th)
         {
-            Define st = GetBaseStruct();
-            int pos = GetSize();
-            object[] members = new object[this.members.Count];
-            this.members.Values.CopyTo(members, 0);
-            Array.Reverse(members);
-            foreach (object obj in members)
-            {
-                Pointer.Declare p = GetMember(obj);
-                if (p != null) pos -= p.Length;
-                Define memst = GetStruct(p);
-                if (memst != null)
+            var list = new List<Pointer.Declare>();
+            var poslist = new Dictionary<Pointer.Declare, int>();
+            ForEachMembers((p, pos) =>
                 {
-                    codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
-                    memst.AddDestructor(codes, m, new Addr32(Reg32.EAX, pos));
-                }
+                    list.Add(p);
+                    poslist[p] = pos;
+                    return false;
+                }, null);
+            list.Reverse();
+            foreach (var p in list)
+            {
+                Define memst = GetStruct(p);
+                if (memst == null) continue;
+
+                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
+                memst.AddDestructor(codes, m, new Addr32(Reg32.EAX, poslist[p]));
             }
+            Define st = GetBaseStruct();
             if (st != null)
             {
                 codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
@@ -268,18 +261,14 @@ namespace Girl.LLPML.Struct
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             Define st = GetBaseStruct();
-            int pos = 0;
-            if (st != null) pos = st.GetSize();
+            int offset = 0;
+            if (st != null) offset = st.GetSize();
             thisptr.Address = new Addr32(Reg32.EBP, 8);
-            foreach (object obj in members.Values)
+            ForEachMembers((p, pos) =>
             {
-                Pointer.Declare p = GetMember(obj);
-                if (p != null)
-                {
-                    p.Address = new Addr32(Reg32.EDX, pos);
-                    pos += p.Length;
-                }
-            }
+                p.Address = new Addr32(Reg32.EDX, offset + pos);
+                return false;
+            }, null);
             int lv = Level + 1;
             codes.Add(I386.Enter((ushort)(lv * 4), (byte)lv));
             if (st != null) st.AddInit(codes, m, thisptr.Address);

@@ -33,26 +33,37 @@ namespace Girl.LLPML
 
         public static int GetTypeSize(BlockBase parent, string type)
         {
-            if (type.StartsWith("var:")) return Var.Size;
+            if (type.StartsWith("var:")) return Var.DefaultSize;
 
-            switch (type)
-            {
-                case "byte":
-                    return 1;
-                case "char":
-                case "short":
-                    return 2;
-                case "int":
-                    return 4;
-                case "long":
-                    return 8;
-                case "var":
-                    return Var.Size;
-            }
+            var sz = GetValueSize(type);
+            if (sz > 0) return sz;
 
             var st = parent.GetStruct(type);
             if (st != null) return st.GetSize();
 
+            return Var.DefaultSize;
+        }
+
+        public static int GetValueSize(string type)
+        {
+            switch (type)
+            {
+                case "byte":
+                case "sbyte":
+                    return 1;
+                case "char":
+                case "short":
+                case "ushort":
+                    return 2;
+                case "int":
+                case "uint":
+                    return 4;
+                //case "long":
+                //case "ulong":
+                //    return 8;
+                case "var":
+                    return Var.DefaultSize;
+            }
             return 0;
         }
     }

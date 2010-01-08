@@ -248,21 +248,28 @@ namespace Girl.LLPML.Parsing
                     return new StringValue(parent.Root.Source);
                 case "sizeof":
                     {
-                        Check("sizeof", "(");
+                        var br = Read();
+                        if (br != "(")
+                            if (br != null) Rewind();
                         var arg = Read();
                         if (arg == null)
                             throw Abort("sizeof: 引数が必要です。");
-                        Check("sizeof", ")");
+                        if (br == "(") Check("sizeof", ")");
                         return new SizeOf(parent, arg);
                     }
                 case "addrof":
                     {
-                        Check("addrof", "(");
                         var ex = Expression() as Var;
                         if (ex == null)
                             throw parent.Abort(ln, lp, "addrof: 引数が不適切です。");
-                        Check("addrof", ")");
                         return new AddrOf(parent, ex);
+                    }
+                case "typeof":
+                    {
+                        var ex = Expression() as VarBase;
+                        if (ex == null)
+                            throw parent.Abort(ln, lp, "typeof: 引数が不適切です。");
+                        return new TypeOf(parent, ex);
                     }
             }
 
