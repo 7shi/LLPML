@@ -332,10 +332,14 @@ namespace Girl.LLPML
                 Struct.Declare st = ptrs2.Pop() as Struct.Declare;
                 if (st == null) continue;
 
-                var p = GetPointer(st.Name);
-                var ad = p.GetAddress(codes, this);
-                codes.Add(I386.Lea(Reg32.EAX, ad));
-                st.GetStruct().AddDestructor(codes, null);
+                var st2 = st.GetStruct();
+                if (st2.NeedsDtor)
+                {
+                    var p = GetPointer(st.Name);
+                    var ad = p.GetAddress(codes, this);
+                    codes.Add(I386.Lea(Reg32.EAX, ad));
+                    st2.AddDestructor(codes, null);
+                }
             }
         }
 

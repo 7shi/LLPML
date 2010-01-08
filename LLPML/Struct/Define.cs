@@ -250,7 +250,7 @@ namespace Girl.LLPML.Struct
             foreach (var p in list)
             {
                 Define memst = GetStruct(p);
-                if (memst == null) continue;
+                if (memst == null || !memst.NeedsDtor) continue;
 
                 codes.AddRange(new OpCode[]
                 {

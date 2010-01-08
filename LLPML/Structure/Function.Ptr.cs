@@ -12,9 +12,13 @@ namespace Girl.LLPML
     {
         public class Ptr : NodeBase, IIntValue
         {
-            public Ptr() { }
+            private Function func;
+            private Val32 address;
+
             public Ptr(BlockBase parent, string name) : base(parent, name) { }
             public Ptr(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+            public Ptr(Val32 address) { this.address = address; }
+            public Ptr(Function func) { this.func = func; }
 
             public override void Read(XmlTextReader xr)
             {
@@ -34,7 +38,29 @@ namespace Girl.LLPML
 
             public void AddCodes(OpCodes codes, string op, Addr32 dest)
             {
-                codes.AddCodes(op, dest, GetAddress(codes.Module));
+                Val32 v;
+                var m = codes.Module;
+                if (address != null)
+                    v = new Val32(m.Specific.ImageBase, address);
+                else if (func != null)
+                    v = func.GetAddress(m);
+                else
+                    v = GetAddress(m);
+                codes.AddCodes(op, dest, v);
+            }
+
+            public Function GetGetter()
+            {
+                var f = parent.GetFunction(name);
+                if (f != null) return null;
+                return parent.GetFunction("get_" + name);
+            }
+
+            public Function GetSetter()
+            {
+                var f = parent.GetFunction(name);
+                if (f != null) return null;
+                return parent.GetFunction("set_" + name);
             }
         }
     }

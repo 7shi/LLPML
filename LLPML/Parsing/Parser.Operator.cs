@@ -122,6 +122,16 @@ namespace Girl.LLPML.Parsing
                 Handler = (arg1, arg2) =>
                 {
                     var dest = arg1 as Var;
+                    if (arg1 is Function.Ptr)
+                    {
+                        var fp = arg1 as Function.Ptr;
+                        if (fp.GetSetter() != null)
+                        {
+                            var m = new Struct.Member(fp.Parent, fp.Name);
+                            m.Target = new Struct.This(fp.Parent);
+                            dest = m;
+                        }
+                    }
                     if (dest == null)
                         throw parser.Abort("¶•Ó‚É‘ã“ü‚Å‚«‚Ü‚¹‚ñ: {0}", Name);
                     return handler(dest, arg2);

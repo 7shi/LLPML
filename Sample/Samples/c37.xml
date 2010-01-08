@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.14.20080329">
+
+<title>委譲</title>
+
+<include src="finish.xml" />
+<include src="delegate.xml" />
+
+<?llp
+struct Test
+{
+  var Text;
+  
+  function Show()
+  {
+    printfln(Text);
+  }
+}
+
+Test a, b;
+a.Text = "a";
+b.Text = "b";
+
+a.Show();
+b.Show();
+
+Delegate delg_a, delg_b;
+delg_a.Bind1(a, Test.Show);
+delg_b.Bind1(b, Test.Show);
+
+delg_a();
+delg_b();
+?>
+
+</llpml>

@@ -1,39 +1,151 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.13.20080327">
+<llpml version="0.14.20080329">
 
-<include src="malloc.xml" />
+<!-- 実行時静的束縛 -->
+
+<include src="jit.xml" />
+<include src="binary.xml" />
 
 <?llp
-00000000  B878563412        mov eax,0x12345678
-00000005  68EFCDAB89        push dword 0x89abcdef
-0000000A  FF742410          push dword [esp+0x10]
-0000000E  FF74240C          push dword [esp+0xc]
-00000012  FF742408          push dword [esp+0x8]
-00000016  FF742404          push dword [esp+0x4]
-0000001A  FFD0              call eax
-0000001C  81C410000000      add esp,0x10
-00000022  C21000            ret 0x10
-00000025  C3                ret
-var f : byte[] = VirtualAlloc(null, 16, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+struct Delegate : _JIT_Buffer
+{
+  function WritePush(bw : BinaryWriter, v)
+  {
+    // push v
+    bw.WriteByte(0x68);
+    bw.Write(v);
+  }
+  
+  function WriteEpilogue(bw : BinaryWriter, func)
+  {
+    // mov eax, func
+    bw.WriteByte(0xb8);
+    bw.Write(func);
+    
+    // jmp eax
+    bw.WriteByte(0xff);
+    bw.WriteByte(0xe0);
+  }
+  
+  function set_Delegate(delg : Delegate)
+  {
+    __jit_free(Ptr);
+    if (delg == null)
+      Ptr = null;
+    else
+    {
+      Ptr = delg.Ptr;
+      delg.Ptr = null;
+      delete_Delegate(delg);
+    }
+    return Ptr;
+  }
+  
+  function Bind(func)
+  {
+    BinaryWriter bw;
+    bw.Init(Ptr, _JIT_Alloc_Size);
+    WriteEpilogue(bw, func);
+  }
+  
+  function Bind1(arg1, func)
+  {
+    BinaryWriter bw;
+    bw.Init(Ptr, _JIT_Alloc_Size);
+    bw.WriteByte(0x58); // pop eax
+    WritePush(bw, arg1);
+    bw.WriteByte(0x50); // push eax
+    WriteEpilogue(bw, func);
+  }
+  
+  function Bind2(arg1, arg2, func)
+  {
+    BinaryWriter bw;
+    bw.Init(Ptr, _JIT_Alloc_Size);
+    bw.WriteByte(0x58); // pop eax
+    WritePush(bw, arg2);
+    WritePush(bw, arg1);
+    bw.WriteByte(0x50); // push eax
+    WriteEpilogue(bw, func);
+  }
+  
+  function Bind3(arg1, arg2, arg3, func)
+  {
+    BinaryWriter bw;
+    bw.Init(Ptr, _JIT_Alloc_Size);
+    bw.WriteByte(0x58); // pop eax
+    WritePush(bw, arg3);
+    WritePush(bw, arg2);
+    WritePush(bw, arg1);
+    bw.WriteByte(0x50); // push eax
+    WriteEpilogue(bw, func);
+  }
+  
+  function Bind4(arg1, arg2, arg3, arg4, func)
+  {
+    BinaryWriter bw;
+    bw.Init(Ptr, _JIT_Alloc_Size);
+    bw.WriteByte(0x58); // pop eax
+    WritePush(bw, arg4);
+    WritePush(bw, arg3);
+    WritePush(bw, arg2);
+    WritePush(bw, arg1);
+    bw.WriteByte(0x50); // push eax
+    WriteEpilogue(bw, func);
+  }
+  
+  function Bind1Std(arg1, func, argc)
+  {
+    BinaryWriter bw;
+    bw.Init(Ptr, _JIT_Alloc_Size);
+    
+    int stack = argc * 4;
+    if (argc <= 10)
+    {
+      for (int i = 0; i < argc; i++)
+      {
+        // push dword [esp+stack]
+        bw.WriteByte(0xff);
+        bw.WriteByte(0x74);
+        bw.WriteByte(0x24);
+        bw.WriteByte(stack);
+      }
+      WritePush(bw, arg1);
+      
+      // mov eax, func
+      bw.WriteByte(0xb8);
+      bw.Write(func);
+      
+      // call eax
+      bw.WriteByte(0xff);
+      bw.WriteByte(0xd0);
+      
+      // add esp, (stack + 4)
+      bw.WriteByte(0x81);
+      bw.WriteByte(0xc4);
+      bw.Write(stack + 4);
+    }
+    
+    // ret stack
+    bw.WriteByte(0xc2);
+    bw.WriteShort(stack);
+  }
+}
 
-// mov eax, [esp+4]
-f[0] = 0x8b;
-f[1] = 0x44;
-f[2] = 0x24;
-f[3] = 4;
+function new_Delegate(arg, func)
+{
+  var ret = (Delegate)malloc(sizeof Delegate);
+  ret.izer();
+  ret.ctor();
+  ret.Bind1(arg, func);
+  return ret;
+}
 
-// sub eax, [esp+8]
-f[4] = 0x2b;
-f[5] = 0x44;
-f[6] = 0x24;
-f[7] = 8;
-
-// ret
-f[8] = 0xc3;
-
-printfln("f(5, 3) = %d", f(5, 3));
-
-VirtualFree(f, 0, MEM_RELEASE);
+function delete_Delegate(delg : Delegate)
+{
+  delg.dtor();
+  free(delg);
+}
 ?>
 
 </llpml>

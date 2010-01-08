@@ -62,21 +62,21 @@ namespace Girl.LLPML
             {
             }
 
-            public Declare(BlockBase parent, string name, IIntValue value)
+            public Declare(BlockBase parent, string name, string type)
                 : this(parent, name)
+            {
+                TypeName = type;
+            }
+
+            public Declare(BlockBase parent, string name, string type, IIntValue value)
+                : this(parent, name, type)
             {
                 Value = value;
             }
 
             public Declare(BlockBase parent, string name, int value)
-                : this(parent, name, new IntValue(value))
+                : this(parent, name, "int", new IntValue(value))
             {
-            }
-
-            public Declare(BlockBase parent, string name, string type)
-                : this(parent, name)
-            {
-                this.TypeName = type;
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)

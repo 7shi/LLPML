@@ -1,25 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.12.20080325" subsystem="WINDOWS_GUI">
+<llpml version="0.14.20080329" subsystem="WINDOWS_GUI">
 
 <title>αブレンド</title>
 
 <include src="stdio.xml" />
-<include src="mmx.xml" />
-<include src="sse.xml" />
 <include src="WinWrap.xml" />
+<include src="Drawing.xml" />
 
 <?llp
-const string className = "LLPML Test Window";
 const int width = 256, height = 256;
-var hInstance = GetModuleHandle(null);
-var alive = true;
-var fMMX = __check_mmx();
-var fSSE2 = __check_sse2();
+Bitmap bmp;
+bmp.SetSize(width, height);
+
 var mode = 0;
-if (fSSE2)
-  mode = 2;
-else if (fMMX)
-  mode = 1;
+if (bmp.EnableMMX ) mode = 1;
+if (bmp.EnableSSE2) mode = 2;
+var mode_max = mode;
+
 char fpsBuf[1025];
 var fpsBufLen = 0;
 var fpsFormat[3];
@@ -27,76 +24,26 @@ fpsFormat[0] = "%d fps";
 fpsFormat[1] = "%d fps(MMX)";
 fpsFormat[2] = "%d fps(SSE2)";
 
-WNDCLASSEX wcex;
-wcex.style         = CS_VREDRAW | CS_HREDRAW;
-wcex.lpfnWndProc   = WndProc;
-wcex.hInstance     = hInstance;
-wcex.hCursor       = LoadCursor(null, IDC_ARROW);
-wcex.hbrBackground = COLOR_WINDOW + 1;
-wcex.lpszClassName = className;
-wcex.RegisterClassEx();
-
-Bitmap bmp;
-bmp.SetSize(width, height);
-var pixelCount = width * height;
-
-MainMenu mainMenu;
-MenuItem miFile, miFileExit;
-miFile.Text = "ファイル(&F)";
-miFileExit.Text = "終了(&X)";
-miFile.Append(miFileExit);
-MenuItem miOpt, miOptNormal, miOptMMX, miOptSSE2;
-miOpt.Text = "オプション(&M)";
-miOptNormal.Text = "通常演算(&N)";
-miOptNormal.UseRadio();
-miOptMMX.Text = "&MMX";
-miOptMMX.Enabled = fMMX;
-miOptMMX.UseRadio();
-miOptSSE2.Text = "&SSE2";
-miOptSSE2.Enabled = fSSE2;
-miOptSSE2.UseRadio();
-miOpt.Append(miOptNormal);
-miOpt.Append(miOptMMX);
-miOpt.Append(miOptSSE2);
-MenuItem miHelp, miHelpAbout;
-miHelp.Text = "ヘルプ(&H)";
-miHelpAbout.Text = "バージョン情報(&A)";
-miHelp.Append(miHelpAbout);
-mainMenu.Append(miFile);
-mainMenu.Append(miOpt);
-mainMenu.Append(miHelp);
-SetMode(mode);
-
-var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
-RECT r = { 0, 0, width, height };
-r.AdjustWindowRectEx(dwStyle, true, 0);
-Control form;
-form.lpClassName  = className;
-form.lpWindowName = "テスト";
-form.dwStyle      = dwStyle;
-form.nWidth       = r.right - r.left;
-form.nHeight      = r.bottom - r.top;
-form.hMenu        = mainMenu.hMenu;
-form.hInstance    = hInstance;
-form.Show();
+Form1 form1;
+form1.Show();
 
 // ループ
 var count = 0;
 var fps = 0;
 var tick = GetTickCount();
-while (DoEvents())
+while (Application_DoEvents())
 {
   // 描画
   bmp.Clear();
   var bx = (count & 63) - 64;
   for (var i = 0; i < 4; i++)
     for (var j = 0; j < 5; j++)
-      FillRectangle(bx + j * 64, 8 + i * 64, 48, 48, 0xa00000ff);
+      bmp.FillRectangle(0xa00000ff, bx + j * 64, 8 + i * 64, 48, 48);
   for (var i = 0; i < 4; i++)
     for (var j = 0; j < 5; j++)
-      FillRectangle(8 + i * 64, bx + j * 64, 48, 48, 0xa0ff0000);
+      bmp.FillRectangle(0xa0ff0000, 8 + i * 64, bx + j * 64, 48, 48);
   count++;
-  form.Invalidate();
+  form1.Invalidate();
   
   // fps
   fps++;
@@ -114,179 +61,96 @@ while (DoEvents())
   }
 }
 
-function __stdcall WndProc(hWnd, msg, wParam, lParam)
+struct Form1 : Form
 {
-  switch (msg)
-  {
-    case WM_PAINT:
-    {
-      PAINTSTRUCT ps;
-      var hdc = hWnd.BeginPaint(ps);
-      hdc.SetDIBitsToDevice(0, 0, width, height, 0, 0, 0, height,
-        bmp.Buffer, bmp, DIB_RGB_COLORS);
-      if (fpsBufLen > 0) hdc.TextOut(8, 8, fpsBuf, fpsBufLen);
-      hWnd.EndPaint(ps);
-      break;
-    }
-    case WM_LBUTTONDOWN:
-      if (fMMX || fSSE2)
-      {
-        if (mode == 0) mode = 2; else mode--;
-        if (mode == 2 && !fSSE2) mode--;
-        SetMode(mode);
-      }
-      break;
-    case WM_COMMAND:
-      switch (LOWORD(wParam))
-      {
-        case miFileExit.wID:
-          hWnd.DestroyWindow();
-          break;
-        case miOptNormal.wID:
-          SetMode(0);
-          break;
-        case miOptMMX.wID:
-          SetMode(1);
-          break;
-        case miOptSSE2.wID:
-          SetMode(2);
-          break;
-        case miHelpAbout.wID:
-          MessageBox(hWnd, __LLPML__, "バージョン情報", 0);
-          break;
-      }
-      break;
-    case WM_DESTROY:
-      alive = false;
-      PostQuitMessage(0);
-      break;
-    default:
-      return hWnd.DefWindowProc(msg, wParam, lParam);
-  }
-  return 0;
-}
-
-function FillRectangle(x, y, w, h, color)
-{
-  var x1 = x;
-  if (x1 < 0) x1 = 0;
-  var y1 = y;
-  if (y1 < 0) y1 = 0;
-  var x2 = x + w;
-  if (x2 > width) x2 = width;
-  var y2 = y + h;
-  if (y2 > height) y2 = height;
+  MainMenu mainMenu1;
+  MenuItem miFile, miFileExit;
+  MenuItem miOpt, miOptNormal, miOptMMX, miOptSSE2;
+  MenuItem miHelp, miHelpAbout;
   
-  var buffer : Color[] = bmp.Buffer;
-  var c : Color = addrof color;
-  int a = c.A;
-  if (a > 127) a++;
-  var aa = 256 - a;
+  function ctor()
+  {
+    dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+    Rectangle r = { 0, 0, width, height };
+    r.AdjustWindowRectEx(dwStyle, true, 0);
+    
+    Text    = "テスト";
+    nWidth  = r.Width;
+    nHeight = r.Height;
+    hMenu   = mainMenu1.hMenu;
+    
+    miFile.Text = "ファイル(&F)";
+    miFileExit.Text = "終了(&X)";
+    miFileExit.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    {
+      this.hWnd.DestroyWindow();
+    }));
+    miFile.Append(miFileExit);
+    miOpt.Text = "オプション(&M)";
+    miOptNormal.Text = "通常演算(&N)";
+    miOptNormal.UseRadio();
+    miOptNormal.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    {
+      this.SetMode(0);
+    }));
+    miOptMMX.Text = "&MMX";
+    miOptMMX.Enabled = mode_max >= 1;
+    miOptMMX.UseRadio();
+    miOptMMX.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    {
+      this.SetMode(1);
+    }));
+    miOptSSE2.Text = "&SSE2";
+    miOptSSE2.Enabled = mode_max == 2;
+    miOptSSE2.UseRadio();
+    miOptSSE2.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    {
+      this.SetMode(2);
+    }));
+    miOpt.Append(miOptNormal);
+    miOpt.Append(miOptMMX);
+    miOpt.Append(miOptSSE2);
+    miHelp.Text = "ヘルプ(&H)";
+    miHelpAbout.Text = "バージョン情報(&A)";
+    miHelpAbout.Click.Add(new_Delegate(this, function(this : Form1, sender, e)
+    {
+      MessageBox(this.hWnd, __LLPML__, "バージョン情報", 0);
+    }));
+    miHelp.Append(miHelpAbout);
+    mainMenu1.Append(miFile);
+    mainMenu1.Append(miOpt);
+    mainMenu1.Append(miHelp);
+    mainMenu = mainMenu1;
+    
+    SetMode(mode);
+  }
   
-  if (mode == 2) // SSE2
+  override OnPaint(e : PaintEventArgs)
   {
-    var 端数 = x2 & 1;
-    x2 -= 端数;
-    __m128iw fore  =
-    {
-      c.B * a, c.G * a, c.R * a, 0xff00,
-      c.B * a, c.G * a, c.R * a, 0xff00
-    };
-    __m128iw alpha = { aa, aa, aa, 0, aa, aa, aa, 0 };
-    __movd(__xmm0, 0);
-    __movdqu(__xmm1, fore);
-    __movdqu(__xmm2, alpha);
-    for (var yy = y1; yy < y2; yy++)
-    {
-      var p : Color[] = addrof buffer[x1 + yy * width];
-      for (var xx = x1; xx < x2; xx += 2)
-      {
-        __movq(__xmm3, p);
-        __punpcklbw(__xmm3, __xmm0);
-        __pmullw(__xmm3, __xmm2);
-        __paddw(__xmm3, __xmm1);
-        __psrlw(__xmm3, 8);
-        __packuswb(__xmm3, __xmm0);
-        __movq(p, __xmm3);
-        p += 2;
-      }
-      if (端数)
-      {
-        __movd(__xmm3, p);
-        __punpcklbw(__xmm3, __xmm0);
-        __pmullw(__xmm3, __xmm2);
-        __paddw(__xmm3, __xmm1);
-        __psrlw(__xmm3, 8);
-        __packuswb(__xmm3, __xmm0);
-        __movd(p, __xmm3);
-      }
-    }
+    e.hDC.SetDIBitsToDevice(
+      0, 0, width, height, 0, 0, 0, height,
+      bmp.Buffer, bmp, DIB_RGB_COLORS);
+    if (fpsBufLen > 0)
+      e.hDC.TextOut(8, 8, fpsBuf, fpsBufLen);
   }
-  else if (mode == 1) // MMX
+  
+  override OnMouseDown(e : MouseEventArgs)
   {
-    __m64w fore  = { c.B * a, c.G * a, c.R * a, 0xff00 };
-    __m64w alpha = { aa, aa, aa, 0 };
-    __movd(__mm0, 0);
-    __movq(__mm1, fore);
-    __movq(__mm2, alpha);
-    for (var yy = y1; yy < y2; yy++)
-    {
-      var p : Color[] = addrof buffer[x1 + yy * width];
-      for (var xx = x1; xx < x2; xx++)
-      {
-        __movd(__mm3, p);
-        __punpcklbw(__mm3, __mm0);
-        __pmullw(__mm3, __mm2);
-        __paddw(__mm3, __mm1);
-        __psrlw(__mm3, 8);
-        __packuswb(__mm3, __mm0);
-        __movd(p, __mm3);
-        p++;
-      }
-    }
-    __emms();
+    var m = mode - 1;
+    if (m < 0) m = mode_max;
+    if (m != mode) SetMode(m);
   }
-  else
-  {
-    var r = c.R * a, g = c.G * a, b = c.B * a;
-    for (var yy = y1; yy < y2; yy++)
-    {
-      var p : Color[] = addrof buffer[x1 + yy * width];
-      for (var xx = x1; xx < x2; xx++)
-      {
-        ((int[])p)[0] =
-          (((r + p[0].R * aa) & 0xff00) << 8)
-          | ((g + p[0].G * aa) & 0xff00)
-          | ((b + p[0].B * aa) >> 8);
-        //p.B = (b + p.B * aa) >> 8;
-        //p.G = (g + p.G * aa) >> 8;
-        //p.R = (r + p.R * aa) >> 8;
-        p++;
-      }
-    }
-  }
-}
 
-function DoEvents()
-{
-  MSG msg;
-  while (alive && msg.PeekMessage(null, 0, 0, PM_REMOVE))
+  function SetMode(m)
   {
-    msg.TranslateMessage();
-    msg.DispatchMessage();
+    mode = m;
+    fpsBufLen = 0;
+    fps = 0;
+    miOptNormal.Checked = m == 0;
+    bmp.EnableMMX  = miOptMMX .Checked = m == 1;
+    bmp.EnableSSE2 = miOptSSE2.Checked = m == 2;
+    tick = GetTickCount();
   }
-  return alive;
-}
-
-function SetMode(m)
-{
-  mode = m;
-  fpsBufLen = 0;
-  fps = 0;
-  miOptNormal.Checked = m == 0;
-  miOptMMX   .Checked = m == 1;
-  miOptSSE2  .Checked = m == 2;
-  tick = GetTickCount();
 }
 ?>
 

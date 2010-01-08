@@ -19,6 +19,80 @@ namespace Girl.LLPML
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
 
+        protected Function virtfunc;
+
+        protected Var.Declare virtptr;
+        public bool IsVirtual
+        {
+            get { return virtptr != null; }
+
+            set
+            {
+                if (!value)
+                {
+                    if (virtptr != null)
+                        throw Abort("can not remove virtual");
+                }
+                else if (parent is Struct.Define)
+                {
+                    var ovrfunc = new Function(parent, "override_" + name);
+                    ovrfunc.SetOverride(this);
+                    if (!parent.AddFunction(ovrfunc))
+                        throw Abort("multiple definitions: " + ovrfunc.Name);
+                    virtptr = new Var.Declare(
+                        parent, "virtual_" + name, null, new Function.Ptr(ovrfunc));
+                    parent.Sentences.Add(virtptr);
+                }
+                else
+                    throw Abort("can not make virtual");
+            }
+        }
+
+        protected Var ovrptr;
+        public bool IsOverride
+        {
+            get { return ovrptr != null; }
+
+            set
+            {
+                if (!value)
+                {
+                    if (ovrptr != null)
+                        throw Abort("can not remove override");
+                }
+                else if (parent is Struct.Define)
+                {
+                    var st = (parent as Struct.Define).GetBaseStruct();
+                    Function vf = null;
+                    if (st != null) vf = st.GetFunction(name);
+                    if (vf == null || (!vf.IsVirtual && !vf.IsOverride))
+                        throw Abort("can not find virtual: {0}", name);
+                    first = vf.first;
+                    var ovrfunc = new Function(parent, "override_" + name);
+                    ovrfunc.SetOverride(this);
+                    if (!parent.AddFunction(ovrfunc))
+                        throw Abort("multiple definitions: " + ovrfunc.Name);
+                    ovrptr = new Var(parent, "virtual_" + name);
+                    var setvp = new Set(parent, ovrptr, new Function.Ptr(ovrfunc));
+                    parent.Sentences.Add(setvp);
+                }
+                else
+                    throw Abort("can not make override");
+            }
+        }
+
+        protected void SetOverride(Function virtfunc)
+        {
+            this.virtfunc = virtfunc;
+            args = virtfunc.args;
+            members = virtfunc.members;
+            sentences = virtfunc.sentences;
+            SrcInfo = virtfunc.SrcInfo;
+            construct = virtfunc.construct;
+            destruct = virtfunc.destruct;
+            last = virtfunc.last;
+        }
+
         public Function()
         {
         }
@@ -28,13 +102,13 @@ namespace Girl.LLPML
         {
             if (string.IsNullOrEmpty(name))
             {
-                parent = root;
-                name = parent.GetAnonymousFunctionName();
+                this.parent = root;
+                name = this.parent.GetAnonymousFunctionName();
             }
             this.name = name;
             CallType = CallType.CDecl;
 
-            if (parent is Struct.Define)
+            if (this.parent is Struct.Define)
             {
                 args.Add(new Arg(this, "this", parent.Name));
                 thisptr = new Struct.This(this);
@@ -72,6 +146,11 @@ namespace Girl.LLPML
                 name = parent.GetAnonymousFunctionName();
             }
 
+            if (xr["virtual"] == "1")
+                IsVirtual = true;
+            else if (xr["override"] == "1")
+                IsOverride = true;
+
             if (parent is Struct.Define)
             {
                 args.Add(new Arg(this, "this", parent.Name));
@@ -89,6 +168,25 @@ namespace Girl.LLPML
 
         private ushort argStack;
         public override bool HasStackFrame { get { return true; } }
+
+        public override void AddCodes(OpCodes codes)
+        {
+            if (IsVirtual)
+            {
+                var st = parent as Struct.Define;
+                var offset = st.GetOffset(virtptr.Name);
+                codes.AddRange(new OpCode[]
+                {
+                    first,
+                    I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP, 4)),
+                    I386.Jmp(new Addr32(Reg32.EAX, offset))
+                });
+            }
+            else if (!IsOverride)
+            {
+                base.AddCodes(codes);
+            }
+        }
 
         protected override void BeforeAddCodes(OpCodes codes)
         {

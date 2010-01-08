@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.13.20080327">
+<llpml version="0.14.20080329">
 
 <include src="win32.xml" />
-<include src="malloc.xml" />
+<include src="stdio.xml" />
+<include src="delegate.xml" />
+<include src="ArrayList.xml" />
 
 <?llp
+var g_hInstance = GetModuleHandle(null);
 var g_nAutoID = 0x2000;
 
 function winforms_get_auto_id()
@@ -12,50 +15,10 @@ function winforms_get_auto_id()
   return g_nAutoID++;
 }
 
-struct Color
-{
-  byte B, G, R, A;
-}
-
-struct Bitmap : BITMAPINFO
-{
-  var Buffer : Color[] = null;
-  var Count = 0;
-  
-  function ctor()
-  {
-    __stosb(this, 0, sizeof BITMAPINFO);
-    bmiHeader.biSize        = sizeof BITMAPINFOHEADER;
-    bmiHeader.biPlanes      = 1;
-    bmiHeader.biCompression = BI_RGB;
-    bmiHeader.biBitCount    = 32;
-  }
-  
-  function dtor()
-  {
-    if (Buffer != null) free(Buffer);
-  }
-  
-  function SetSize(width, height)
-  {
-    bmiHeader.biWidth  = width;
-    bmiHeader.biHeight = -height;
-    Count = width * height;
-    if (Buffer != null) free(Buffer);
-    Buffer = malloc(sizeof(Color) * Count);
-    Clear();
-  }
-  
-  function Clear()
-  {
-    if (Buffer != null)
-      __stosd(Buffer, 0xffffffff, Count);
-  }
-}
-
 struct MainMenu
 {
   var hMenu;
+  ArrayList MenuItems;
   
   function ctor()
   {
@@ -69,14 +32,28 @@ struct MainMenu
   
   function Append(menuItem : MenuItem)
   {
+    MenuItems.Add(menuItem);
     menuItem.hMenu = hMenu;
     hMenu.InsertMenuItem(-1, true, menuItem);
+  }
+  
+  function FindMenuItem(id)
+  {
+    for (int i = 0; i < MenuItems.Count; i++)
+    {
+      var mi : MenuItem = MenuItems.Ptr[i];
+      var ret = mi.FindMenuItem(id);
+      if (ret != null) return ret;
+    }
+    return null;
   }
 }
 
 struct MenuItem : MENUITEMINFO
 {
   var hMenu = null;
+  ArrayList MenuItems;
+  ArrayList Click;
   
   function ctor()
   {
@@ -91,6 +68,8 @@ struct MenuItem : MENUITEMINFO
   {
     if (hSubMenu != null)
       hSubMenu.DestroyMenu();
+    for (int i = 0; i < Click.Count; i++)
+      delete_Delegate(Click.Ptr[i]);
   }
   
   function set_Text(text)
@@ -98,6 +77,7 @@ struct MenuItem : MENUITEMINFO
     fMask |= MIIM_STRING;
     dwTypeData = text;
     Refresh();
+    return text;
   }
   
   function set_Enabled(enabled)
@@ -107,6 +87,7 @@ struct MenuItem : MENUITEMINFO
     else
       fState |= MFS_DISABLED;
     Refresh();
+    return enabled;
   }
   
   function set_Checked(checked)
@@ -116,6 +97,7 @@ struct MenuItem : MENUITEMINFO
     else
       fState &= ~MFS_CHECKED;
     Refresh();
+    return checked;
   }
   
   function UseRadio()
@@ -127,6 +109,7 @@ struct MenuItem : MENUITEMINFO
   
   function Append(menuItem : MenuItem)
   {
+    MenuItems.Add(menuItem);
     if (hSubMenu == null)
     {
       fMask |= MIIM_SUBMENU;
@@ -142,6 +125,27 @@ struct MenuItem : MENUITEMINFO
     if (hMenu != null)
       hMenu.SetMenuItemInfo(wID, false, this);
   }
+  
+  virtual OnClick(e)
+  {
+    for (int i = 0; i < Click.Count; i++)
+    {
+      var delg : Delegate = Click.Ptr[i];
+      delg.Ptr(this, e);
+    }
+  }
+  
+  function FindMenuItem(id)
+  {
+    if (id == wID) return this;
+    for (int i = 0; i < MenuItems.Count; i++)
+    {
+      var mi : MenuItem = MenuItems.Ptr[i];
+      var ret = mi.FindMenuItem(id);
+      if (ret != null) return ret;
+    }
+    return null;
+  }
 }
 
 struct Control
@@ -156,15 +160,16 @@ struct Control
   var nHeight       = 0;
   var hWndParent    = null;
   var hMenu         = null;
-  var hInstance     = null;
+  var hInstance     = g_hInstance;
   var lpParam       = null;
   var hWnd          = null;
   
-  function ctor()
+  function dtor()
   {
+    Close();
   }
   
-  function Create()
+  virtual Create()
   {
     if (hWnd != null) return;
     hWnd = CreateWindowEx(
@@ -175,22 +180,189 @@ struct Control
   
   function Show()
   {
-    Create();
+    if (hWnd == null) Create();
     hWnd.ShowWindow(SW_SHOWNORMAL);
     hWnd.UpdateWindow();
   }
   
   function Hide()
   {
-    Create();
+    if (hWnd == null) Create();
     hWnd.ShowWindow(SW_HIDE);
+  }
+  
+  function Close()
+  {
+    if (hWnd == null) return;
+    hWnd.DestroyWindow();
   }
   
   function Invalidate()
   {
-    Create();
+    if (hWnd == null) Create();
     hWnd.InvalidateRect(null, false);
   }
+  
+  function set_Text(text)
+  {
+    lpWindowName = text;
+    return text;
+  }
+  
+  virtual OnPaint(e : PaintEventArgs) { }
+  virtual OnMouseDown(e : MouseEventArgs) { }
+  virtual OnMouseUp(e : MouseEventArgs) { }
+  virtual OnClosed(e) { Application_Exit(); }
+  
+  virtual WndProc(hWnd, uMsg, wParam, lParam)
+  {
+    switch (uMsg)
+    {
+      case WM_PAINT:
+      {
+        PaintEventArgs e;
+        e.hDC = hWnd.BeginPaint(e.ps);
+        OnPaint(e);
+        hWnd.EndPaint(e.ps);
+        return 0;
+      }
+      case WM_LBUTTONDOWN:
+      case WM_RBUTTONDOWN:
+      case WM_MBUTTONDOWN:
+      {
+        MouseEventArgs e;
+        e.Init(uMsg, lParam);
+        OnMouseDown(e);
+        return 0;
+      }
+      case WM_LBUTTONUP:
+      case WM_RBUTTONUP:
+      case WM_MBUTTONUP:
+      {
+        MouseEventArgs e;
+        e.Init(uMsg, lParam);
+        OnMouseUp(e);
+        return 0;
+      }
+      case WM_DESTROY:
+        OnClosed(null);
+        return 0;
+    }
+    return hWnd.DefWindowProc(uMsg, wParam, lParam);
+  }
+}
+
+struct Form : Control
+{
+  WNDCLASSEX wcex;
+  Delegate wndProc;
+  char className[1025];
+  var mainMenu : MainMenu = null;
+  
+  function ctor()
+  {
+    wndProc.Bind1Std(this, WndProc, 4);
+    className.wsprintf("WinWrap_%x", winforms_get_auto_id());
+    lpClassName = className;
+    dwStyle     = WS_OVERLAPPEDWINDOW;
+    
+    __stosb(wcex, 0, sizeof WNDCLASSEX);
+    wcex.cbSize        = sizeof WNDCLASSEX;
+    wcex.style         = CS_VREDRAW | CS_HREDRAW;
+    wcex.lpfnWndProc   = wndProc.Ptr;
+    wcex.hInstance     = g_hInstance;
+    wcex.hCursor       = LoadCursor(null, IDC_ARROW);
+    wcex.hbrBackground = COLOR_WINDOW + 1;
+    wcex.lpszClassName = className;
+  }
+  
+  override Create()
+  {
+    if (hWnd != null) return;
+    wcex.RegisterClassEx();
+    ((Control)this).override_Create();
+  }
+  
+  override OnClosed(e) { Application_Exit(); }
+  
+  override WndProc(hWnd, uMsg, wParam, lParam)
+  {
+    switch (uMsg)
+    {
+      case WM_COMMAND:
+        if (mainMenu != null)
+        {
+          var mi : MenuItem = mainMenu.FindMenuItem(LOWORD(wParam));
+          if (mi != null) mi.OnClick(null);
+        }
+        return 0;
+    }
+    return ((Control)this).override_WndProc(hWnd, uMsg, wParam, lParam);
+  }
+}
+
+struct PaintEventArgs
+{
+  PAINTSTRUCT ps;
+  var hDC;
+}
+
+struct MouseEventArgs
+{
+  int Button, X, Y;
+  
+  function Init(uMsg, lParam)
+  {
+    switch (uMsg)
+    {
+      case WM_LBUTTONDOWN:
+      case WM_LBUTTONUP:
+      case WM_LBUTTONDBLCLK:
+        Button = MK_LBUTTON;
+        break;
+      case WM_RBUTTONDOWN:
+      case WM_RBUTTONUP:
+      case WM_RBUTTONDBLCLK:
+        Button = MK_RBUTTON;
+        break;
+      case WM_MBUTTONDOWN:
+      case WM_MBUTTONUP:
+      case WM_MBUTTONDBLCLK:
+        Button = MK_MBUTTON;
+        break;
+    }
+    X = GET_X_LPARAM(lParam);
+    Y = GET_Y_LPARAM(lParam);
+  }
+}
+
+function Application_Run()
+{
+  MSG uMsg;
+  while (uMsg.GetMessage(null, 0, 0))
+  {
+    uMsg.TranslateMessage();
+    uMsg.DispatchMessage();
+  }
+}
+
+int g_fAlive = true;
+
+function Application_DoEvents()
+{
+  MSG uMsg;
+  while (g_fAlive && uMsg.PeekMessage(null, 0, 0, PM_REMOVE))
+  {
+    uMsg.TranslateMessage();
+    uMsg.DispatchMessage();
+  }
+  return g_fAlive;
+}
+
+function Application_Exit()
+{
+  g_fAlive = false;
+  PostQuitMessage(0);
 }
 ?>
 

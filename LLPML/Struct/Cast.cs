@@ -76,6 +76,8 @@ namespace Girl.LLPML.Struct
         {
             if (Source is Pointer)
                 return (Source as Pointer).GetAddress(codes);
+            else if (Source is Struct.Member)
+                return (Source as Struct.Member).GetAddress(codes);
 
             Source.AddCodes(codes, "mov", null);
             codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));

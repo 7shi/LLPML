@@ -24,13 +24,15 @@ namespace Girl.LLPML.Parsing
                 case "{":
                     Rewind();
                     nb = new Block(parent);
-                    ReadBlock(nb as Block, "block");
+                    ReadBlock("block", nb as Block);
                     break;
                 case "struct":
                     StructDefine().SrcInfo = si;
                     return null;
                 case "function":
-                    Function().SrcInfo = si;
+                case "virtual":
+                case "override":
+                    Function(t).SrcInfo = si;
                     return null;
                 case "extern":
                     Extern();
@@ -166,7 +168,7 @@ namespace Girl.LLPML.Parsing
                 Rewind();
 
             var ret = new Struct.Define(parent, name, baseType);
-            ReadBlock(ret, "struct");
+            ReadBlock("struct", ret);
             if (!parent.AddStruct(ret))
                 throw Abort("struct: {0}: 定義が重複しています。", name);
             return ret;
@@ -184,7 +186,7 @@ namespace Girl.LLPML.Parsing
             }
         }
 
-        private void ReadBlock(BlockBase block, string type)
+        private void ReadBlock(string type, BlockBase block)
         {
             Check(type, "{");
 
@@ -206,9 +208,9 @@ namespace Girl.LLPML.Parsing
             this.parent = parent;
         }
 
-        private Function Function()
+        private Function Function(string type)
         {
-            if (!CanRead) throw Abort("function: 定義が必要です。");
+            if (!CanRead) throw Abort("{0}: 定義が必要です。", type);
 
             var name = Read();
             CallType ct = CheckCallType(CallType.CDecl, ref name);
@@ -220,15 +222,19 @@ namespace Girl.LLPML.Parsing
             else if (!Tokenizer.IsWord(name))
             {
                 Rewind();
-                throw Abort("function: 名前が不適切です: {0}", name);
+                throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
             var ret = new Function(parent, name);
             ret.CallType = ct;
-            ReadArgs("function", ret);
-            ReadBlock(ret, "function");
+            ReadArgs(type, ret);
+            ReadBlock(type, ret);
             if (!ret.Parent.AddFunction(ret))
-                throw Abort("function: {0}: 定義が重複しています。", ret.Name);
+                throw Abort("{0}: {1}: 定義が重複しています。", type, ret.Name);
+            if (type == "virtual")
+                ret.IsVirtual = true;
+            else if (type == "override")
+                ret.IsOverride = true;
             return ret;
         }
 
@@ -267,7 +273,7 @@ namespace Girl.LLPML.Parsing
                 ex.CallType = ct2;
                 ReadArgs("extern", ex);
                 if (!parent.AddFunction(ex))
-                    throw Abort("function: {0}: 定義が重複しています。", name);
+                    throw Abort("extern: {0}: 定義が重複しています。", name);
                 list.Add(ex);
 
                 if (!loop) break;

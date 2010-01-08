@@ -13,7 +13,7 @@ namespace Girl.LLPML
         private IIntValue target;
         protected List<IIntValue> args = new List<IIntValue>();
 
-        private Var var;
+        private IIntValue val;
         private CallType type = CallType.CDecl;
 
         public Call()
@@ -32,14 +32,14 @@ namespace Girl.LLPML
             this.args.AddRange(args);
         }
 
-        public Call(BlockBase parent, Var var)
+        public Call(BlockBase parent, IIntValue val)
             : base(parent)
         {
-            this.var = var;
+            this.val = val;
         }
 
-        public Call(BlockBase parent, Var var, IIntValue target, params IIntValue[] args)
-            : this(parent, var)
+        public Call(BlockBase parent, IIntValue val, IIntValue target, params IIntValue[] args)
+            : this(parent, val)
         {
             this.target = target;
             this.args.AddRange(args);
@@ -61,7 +61,7 @@ namespace Girl.LLPML
             }
             else if (name == null && var != null)
             {
-                this.var = new Var(parent, var);
+                this.val = new Var(parent, var);
                 if (xr["type"] == "std") type = CallType.Std;
             }
             else
@@ -83,48 +83,77 @@ namespace Girl.LLPML
             });
         }
 
-        public Function GetFunction(IIntValue target, out List<IIntValue> args)
+        public Function GetFunction(OpCodes codes, IIntValue target, out List<IIntValue> args)
         {
             Function ret = null;
-            if (target == null)
+            bool isStatic = target is Function.Ptr;
+            if (target == null || isStatic)
             {
                 ret = parent.GetFunction(name);
                 if (ret == null)
                     throw Abort("undefined function: {0}", name);
-                else if (ret.HasThis)
-                    return GetFunction(new Struct.This(parent), out args);
+                else if (ret.HasThis && !isStatic)
+                    return GetFunction(codes, new Struct.This(parent), out args);
                 args = this.args;
                 return ret;
             }
 
-            args = new List<IIntValue>();
             string type = null;
             Struct.Define st = null;
+            IIntValue arg1 = null;
             if (target is Struct.Member)
             {
                 var ad = new AddrOf(parent, (target as Struct.Member));
                 st = ad.Target.GetStruct();
-                args.Add(ad);
+                var tt = (target as Struct.Member).Type;
+                if (tt == null || tt is TypeIntBase)
+                    arg1 = target as Struct.Member;
+                else
+                    arg1 = ad;
             }
             else if (target is Index)
             {
                 var ad = new AddrOf(parent, target as Index);
                 st = ad.Target.GetStruct();
-                args.Add(ad);
+                arg1 = ad;
             }
             else if (target is VarBase)
             {
                 type = (target as VarBase).TypeName;
                 st = (target as VarBase).GetStruct();
-                args.Add(target);
+                arg1 = target;
             }
             else
             {
                 //throw Abort("struct instance or pointer required: " + name);
-                args.Add(target);
+                arg1 = target;
             }
+            args = new List<IIntValue>();
             if (st != null)
+            {
                 ret = st.GetFunction(name);
+                if (ret == null)
+                {
+                    var mem = st.GetMember(name);
+                    if (mem != null)
+                    {
+                        var mem2 = new Struct.Member(parent, name);
+                        if (arg1 is Struct.Member)
+                        {
+                            var mem3 = arg1 as Struct.Member;
+                            mem3.Append(mem2);
+                            mem2 = mem3;
+                        }
+                        else
+                            mem2.Target = arg1 as VarBase;
+                        AddCodes(codes, this.args, CallType.CDecl, delegate
+                        {
+                            codes.Add(I386.Call(mem2.GetAddress(codes)));
+                        });
+                        return null;
+                    }
+                }
+            }
             if (ret == null)
                 ret = parent.GetFunction(name);
             if (ret == null)
@@ -134,6 +163,7 @@ namespace Girl.LLPML
                 else
                     throw Abort("undefined method: " + st.GetMemberName(name));
             }
+            args.Add(arg1);
             args.AddRange(this.args);
             return ret;
         }
@@ -149,8 +179,8 @@ namespace Girl.LLPML
                 }
 
                 List<IIntValue> args;
-                var f = GetFunction(target, out args);
-                //if (f == null) return;
+                var f = GetFunction(codes, target, out args);
+                if (f == null) return;
                 var fargs = f.Args.ToArray();
                 var len = fargs.Length;
                 if (!((len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1) || args.Count == len))
@@ -161,7 +191,13 @@ namespace Girl.LLPML
             {
                 AddCodes(codes, args, type, delegate
                 {
-                    codes.Add(I386.Call(var.GetAddress(codes)));
+                    if (val is VarBase)
+                        codes.Add(I386.Call((val as VarBase).GetAddress(codes)));
+                    else
+                    {
+                        val.AddCodes(codes, "mov", null);
+                        codes.Add(I386.Call(Reg32.EAX));
+                    }
                 });
             }
         }

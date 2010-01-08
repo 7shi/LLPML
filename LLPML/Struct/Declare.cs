@@ -17,6 +17,17 @@ namespace Girl.LLPML.Struct
 
         private bool isRoot = true;
 
+        private TypeStruct typeStruct;
+        public override TypeBase Type
+        {
+            get
+            {
+                if (typeStruct == null)
+                    typeStruct = new TypeStruct(TypeName);
+                return typeStruct;
+            }
+        }
+
         public override bool NeedsInit
         {
             get

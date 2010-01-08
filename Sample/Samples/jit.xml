@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.14.20080329">
+
+<!-- JIT -->
+
+<include src="ArrayList.xml" />
+
+<?llp
+const int _JIT_Page_Size    = 65536; // 64KB
+const int _JIT_Alloc_Size   = 64;    // 64バイト固定
+const int _JIT_Alloc_DWords = 16;
+const int _JIT_Alloc_Shift  = 6;
+
+_JIT_Manager _jit_manager;
+
+function __jit_alloc()
+{
+  return _jit_manager.Alloc();
+}
+
+function __jit_free(ptr)
+{
+  return _jit_manager.Free(ptr);
+}
+
+// ----
+
+extern "kernel32.dll" __stdcall
+{
+  VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect);
+  VirtualFree(lpAddress, dwSize, dwFreeType);
+}
+
+const int MEM_COMMIT   = 0x00001000;
+const int MEM_RESERVE  = 0x00002000;
+const int MEM_DECOMMIT = 0x00004000;
+const int MEM_RELEASE  = 0x00008000;
+const int MEM_FREE     = 0x00010000;
+const int MEM_PRIVATE  = 0x00020000;
+const int MEM_MAPPED   = 0x00040000;
+const int MEM_RESET    = 0x00080000;
+const int MEM_TOP_DOWN = 0x00100000;
+const int MEM_PHYSICAL = 0x00400000;
+
+const int PAGE_NOACCESS          = 0x0001;
+const int PAGE_READONLY          = 0x0002;
+const int PAGE_READWRITE         = 0x0004;
+const int PAGE_WRITECOPY         = 0x0008;
+const int PAGE_EXECUTE           = 0x0010;
+const int PAGE_EXECUTE_READ      = 0x0020;
+const int PAGE_EXECUTE_READWRITE = 0x0040;
+const int PAGE_EXECUTE_WRITECOPY = 0x0080;
+const int PAGE_GUARD             = 0x0100;
+const int PAGE_NOCACHE           = 0x0200;
+
+struct _JIT_Allocator
+{
+  var buffer, current, end, count;
+  ArrayList freed;
+
+  function ctor()
+  {
+    buffer = VirtualAlloc(null, _JIT_Page_Size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    current = buffer;
+    end = buffer + _JIT_Page_Size;
+    count = 0;
+  }
+
+  function dtor()
+  {
+    VirtualFree(buffer, 0, MEM_RELEASE);
+  }
+  
+  function get_IsEmpty()
+  {
+    return count == 0;
+  }
+  
+  function get_IsFull()
+  {
+    return current == end && freed.Count == 0;
+  }
+  
+  function Alloc()
+  {
+    var ret;
+    if (current < end)
+    {
+      ret = current;
+      current += _JIT_Alloc_Size;
+    }
+    else
+    {
+      var c = freed.Count;
+      if (c == 0) return null; // full
+      ret = freed.RemoveAt(c - 1);
+    }
+    __stosd(ret, 0, _JIT_Alloc_DWords);
+    count++;
+    return ret;
+  }
+  
+  function Free(ptr)
+  {
+    if (ptr < buffer || ptr >= end
+      || (ptr >> _JIT_Alloc_Shift << _JIT_Alloc_Shift) != ptr)
+      return false;
+    
+    count--;
+    if (ptr + _JIT_Alloc_Size == current)
+      current -= _JIT_Alloc_Size;
+    else
+      freed.Add(ptr);
+    return true;
+  }
+}
+
+struct _JIT_Manager
+{
+  ArrayList allocators;
+  
+  function dtor()
+  {
+    for (int i = allocators.Count - 1; i >= 0; i--)
+    {
+      var allocator = (_JIT_Allocator)allocators.Ptr[i];
+      allocators.RemoveAt(i);
+      allocator.dtor();
+      free(allocator);
+    }
+  }
+  
+  function Alloc()
+  {
+    var ret;
+    for (int i = allocators.Count - 1; i >= 0; i--)
+    {
+      var allocator = (_JIT_Allocator)allocators.Ptr[i];
+      ret = allocator.Alloc();
+      if (ret != null) return ret;
+    }
+    
+    var alloc = (_JIT_Allocator)malloc(sizeof _JIT_Allocator);
+    alloc.izer();
+    alloc.ctor();
+    allocators.Add(alloc);
+    return alloc.Alloc();
+  }
+  
+  function Free(ptr)
+  {
+    if (ptr == null) return false;
+    
+    var c = allocators.Count;
+    for (int i = c - 1; i >= 0; i--)
+    {
+      var allocator = (_JIT_Allocator)allocators.Ptr[i];
+      if (allocator.Free(ptr))
+      {
+        if (allocator.IsEmpty && c > 1)
+        {
+          allocators.RemoveAt(i);
+          allocator.dtor();
+          free(allocator);
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+struct _JIT_Buffer
+{
+  var Ptr;
+  
+  function ctor()
+  {
+    Ptr = __jit_alloc();
+  }
+  
+  function dtor()
+  {
+    __jit_free(Ptr);
+  }
+}
+?>
+
+</llpml>

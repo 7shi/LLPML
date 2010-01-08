@@ -25,8 +25,10 @@ namespace Girl.LLPML.Struct
             }
         }
 
+        public string TargetType { get; set; }
+
         private bool isRoot = true;
-        public Member Child { get; set; }
+        public Member Child { get; protected set; }
 
         public Member(BlockBase parent, string name)
             : base(parent)
@@ -60,7 +62,7 @@ namespace Girl.LLPML.Struct
                 {
                     if (Child != null)
                         throw Abort(xr, "multiple members");
-                    Child = new Member(this, xr);
+                    Append(new Member(this, xr));
                     return;
                 }
 
@@ -103,21 +105,28 @@ namespace Girl.LLPML.Struct
         public override Addr32 GetAddress(OpCodes codes)
         {
             var ret = new Addr32(GetStructAddress(codes));
-            var st = target.GetStruct();
+            var st = GetTargetStruct();
             ret.Add(GetOffset(st));
             return ret;
         }
 
         public Pointer.Declare GetPointer()
         {
-            var st = target.GetStruct();
-            if (st == null) return null;
+            var st = GetTargetStruct();
+            if (st == null)
+                throw Abort("undefined member: {0}", name);
             return st.GetMember(name);
+        }
+
+        public Define GetTargetStruct()
+        {
+            if (target != null) return target.GetStruct();
+            return parent.GetStruct(TargetType);
         }
 
         public override Define GetStruct()
         {
-            var st = target.GetStruct();
+            var st = GetTargetStruct();
             if (st == null) return null;
             return st.GetStruct(st.GetMember(name));
         }
@@ -133,18 +142,39 @@ namespace Girl.LLPML.Struct
             }
         }
 
-        public override TypeBase Type { get { return GetPointer().Type; } }
-        public override int TypeSize { get { return GetPointer().TypeSize; } }
+        public override TypeBase Type
+        {
+            get
+            {
+                if (Child == null)
+                    return GetPointer().Type;
+                return Child.Type;
+            }
+        }
+
+        public override int TypeSize
+        {
+            get
+            {
+                if (Child == null)
+                    return GetPointer().TypeSize;
+                return Child.TypeSize;
+            }
+        }
 
         public override string TypeName
         {
             get
             {
-                var p = GetPointer();
-                if (p is Var.Declare) return p.TypeName;
-                var st = GetStruct();
-                if (st == null) return null;
-                return st.Name;
+                if (Child == null)
+                {
+                    var p = GetPointer();
+                    if (p is Var.Declare) return p.TypeName;
+                    var st = GetStruct();
+                    if (st == null) return null;
+                    return st.Name;
+                }
+                return Child.TypeName;
             }
         }
 
@@ -152,23 +182,30 @@ namespace Girl.LLPML.Struct
         {
             get
             {
-                var p = GetPointer();
-                if (p is Var.Declare) return p.Length;
-                return Var.DefaultSize;
+                if (Child == null)
+                {
+                    var p = GetPointer();
+                    if (p is Var.Declare) return p.Length;
+                    return Var.DefaultSize;
+                }
+                return Child.Size;
             }
         }
 
         public void Append(Struct.Member mem)
         {
             if (Child == null)
+            {
                 Child = mem;
+                Child.target = this;
+            }
             else
                 Child.Append(mem);
         }
 
-        private bool CheckProperty(string prefix)
+        private bool CheckFunction(string prefix)
         {
-            var st = target.GetStruct();
+            var st = GetTargetStruct();
             int ret = st.GetOffset(name);
             if (ret >= 0) return false;
             var f = st.GetFunction(prefix + name);
@@ -184,8 +221,35 @@ namespace Girl.LLPML.Struct
             return null;
         }
 
-        public bool IsSetter { get { return CheckProperty("set_"); } }
-        public bool IsGetter { get { return CheckProperty("get_"); } }
+        public bool IsFunction
+        {
+            get
+            {
+                if (Child == null)
+                    return CheckFunction("");
+                return Child.IsFunction;
+            }
+        }
+
+        public bool IsSetter
+        {
+            get
+            {
+                if (Child == null)
+                    return CheckFunction("set_");
+                return Child.IsSetter;
+            }
+        }
+
+        public bool IsGetter
+        {
+            get
+            {
+                if (Child == null)
+                    return CheckFunction("get_");
+                return Child.IsGetter;
+            }
+        }
 
         public void AddSetterCodes(OpCodes codes, IIntValue arg)
         {
@@ -199,6 +263,11 @@ namespace Girl.LLPML.Struct
             {
                 var getter = new Call(parent, "get_" + name, ConvertTarget());
                 getter.AddCodes(codes, op, dest);
+            }
+            else if (IsFunction)
+            {
+                var fp = new Function.Ptr(GetTargetStruct(), name);
+                fp.AddCodes(codes, op, dest);
             }
             else
                 base.AddCodes(codes, op, dest);

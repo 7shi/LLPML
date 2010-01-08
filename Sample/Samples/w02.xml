@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080324" subsystem="WINDOWS_GUI">
+<llpml version="0.14.20080329" subsystem="WINDOWS_GUI">
 
 <title>ウィンドウ</title>
 
@@ -11,6 +11,8 @@ const string className = "LLPML Test Window";
 var hInstance = GetModuleHandle(null);
 
 WNDCLASSEX wcex;
+__stosb(wcex, 0, sizeof WNDCLASSEX);
+wcex.cbSize        = sizeof WNDCLASSEX;
 wcex.style         = CS_VREDRAW | CS_HREDRAW;
 wcex.lpfnWndProc   = WndProc;
 wcex.hInstance     = hInstance;
@@ -39,18 +41,18 @@ var hWnd = CreateWindowEx(
 hWnd.ShowWindow(SW_SHOWNORMAL);
 hWnd.UpdateWindow();
 
-MSG msg;
-while (msg.GetMessage(null, 0, 0))
+MSG uMsg;
+while (uMsg.GetMessage(null, 0, 0))
 {
-  msg.TranslateMessage();
-  msg.DispatchMessage();
+  uMsg.TranslateMessage();
+  uMsg.DispatchMessage();
 }
 
 hWnd.DestroyWindow();
 
-function __stdcall WndProc(hWnd, msg, wParam, lParam)
+function __stdcall WndProc(hWnd, uMsg, wParam, lParam)
 {
-  switch (msg)
+  switch (uMsg)
   {
     case WM_PAINT:
     {
@@ -73,7 +75,7 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
       PostQuitMessage(0);
       break;
     default:
-      return hWnd.DefWindowProc(msg, wParam, lParam);
+      return hWnd.DefWindowProc(uMsg, wParam, lParam);
   }
   return 0;
   

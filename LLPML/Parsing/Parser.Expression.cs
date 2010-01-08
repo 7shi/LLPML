@@ -100,6 +100,8 @@ namespace Girl.LLPML.Parsing
                 {
                     if (f is VarBase)
                         t2m.Target = f as VarBase;
+                    else if (f is Function.Ptr)
+                        t2m.TargetType = (f as Function.Ptr).Name;
                     else
                         throw Abort("構造体ではありません。");
                     mem = t2m;
@@ -241,14 +243,10 @@ namespace Girl.LLPML.Parsing
                     return new IntValue(0) { SrcInfo = si };
                 case "function":
                     {
-                        var f = Function();
+                        var f = Function(t);
                         f.SrcInfo = si;
                         return f;
                     }
-                case "__FUNCTION__":
-                    return new StringValue(parent.GetName());
-                case "__FILE__":
-                    return new StringValue(parent.Root.Source);
                 case "sizeof":
                     {
                         var br = Read();
@@ -274,15 +272,23 @@ namespace Girl.LLPML.Parsing
                             throw parent.Abort(si, "typeof: 引数が不適切です。");
                         return new TypeOf(parent, ex) { SrcInfo = si };
                     }
+                case "__FUNCTION__":
+                    return new StringValue(parent.GetName());
+                case "__FILE__":
+                    return new StringValue(si.Source);
+                case "__LINE__":
+                    return new IntValue(si.Number);
                 case "__LLPML__":
                     return new StringValue("LLPML ver." + Root.LLPMLVersion);
             }
 
             var vd = parent.GetVar(t);
             var v = vd != null ? new Var(parent, vd) { SrcInfo = si } : null;
+            IIntValue tv = v;
 
             var pd = parent.GetPointer(t);
             var p = pd != null ? new Pointer(parent, pd) { SrcInfo = si } : null;
+            if (tv == null) tv = p;
 
             switch (Read())
             {
@@ -290,12 +296,30 @@ namespace Girl.LLPML.Parsing
                     break;
                 case "(":
                     {
-                        var args = Arguments(",", ")", false);
-                        if (args == null)
-                            throw Abort("{0}: 引数が不完全です。", t);
-                        if (v != null)
-                            return new Call(parent, v, null, args) { SrcInfo = si };
-                        return new Call(parent, t, null, args) { SrcInfo = si };
+                        Call ret = null;
+                        for (; ; )
+                        {
+                            var args = Arguments(",", ")", false);
+                            if (args == null)
+                                throw Abort("{0}: 引数が不完全です。", t);
+                            if (ret == null)
+                            {
+                                if (tv != null)
+                                    ret = new Call(parent, tv, null, args);
+                                else
+                                    ret = new Call(parent, t, null, args);
+                            }
+                            else
+                                ret = new Call(parent, ret, null, args);
+                            var br = Read();
+                            if (br != "(")
+                            {
+                                Rewind();
+                                break;
+                            }
+                        }
+                        ret.SrcInfo = si;
+                        return ret;
                     }
                 default:
                     Rewind();

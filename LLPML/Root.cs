@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.13.20080327";
+        public const string LLPMLVersion = "0.14.20080329";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -49,11 +49,12 @@ namespace Girl.LLPML
                 {
                     case "include":
                         {
-                            string src = xr["src"];
+                            var src = xr["src"];
                             if (src == null) throw Abort(xr, "<include> requires \"src\"");
-                            if (!included.Contains(src))
+                            var srcl = src.ToLower();
+                            if (!included.Contains(srcl))
                             {
-                                included.Add(src);
+                                included.Add(srcl);
                                 sources.Push(src);
                                 TextReader tr = null;
                                 if (StreamDelegate != null) tr = StreamDelegate(src);

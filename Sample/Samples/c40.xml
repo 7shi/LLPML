@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.14.20080329">
+
+<title>継続渡し</title>
+
+<include src="finish.xml" />
+<include src="delegate.xml" />
+
+<?llp
+function cont(a)
+{
+  printfln("a: %d", a);
+  return new_Delegate(a, function(a)
+  {
+    printfln("a += 2: %d", a += 2);
+    return new_Delegate(a, function(a)
+    {
+      printfln("a += 3: %d", a += 3);
+      return null;
+    });
+  });
+};
+Delegate delg;
+delg.Delegate = cont(5);
+while (delg.Ptr != null)
+  delg.Delegate = delg();
+?>
+
+</llpml>

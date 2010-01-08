@@ -88,7 +88,9 @@ namespace Girl.LLPML
                 {
                     for (int i = 0; i < len; i++)
                     {
+                        codes.Add(I386.Push(Reg32.EDX));
                         values[i].AddCodes(codes, "mov", null);
+                        codes.Add(I386.Pop(Reg32.EDX));
                         codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
                         codes.Add(I386.Jcc(Cc.E, Block.First));
                     }

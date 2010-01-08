@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.14.20080329">
+
+<title>クロージャ</title>
+
+<include src="finish.xml" />
+<include src="delegate.xml" />
+
+<?llp
+Delegate next, prev;
+
+// クロージャ定義時に値を束縛
+function counter()
+{
+  var a = 10;
+  next.Delegate = new_Delegate(a, function(a)
+  {
+    return ++a;
+  });
+  prev.Delegate = new_Delegate(a, function(a)
+  {
+    return --a;
+  });
+  a = 5;
+  printfln("a = %d", a);
+  printfln("next() = %d", next()); // 反映されない
+}
+
+counter();
+println();
+printfln("next() = %d", next());
+printfln("next() = %d", next()); // 変化なし
+printfln("prev() = %d", prev());
+printfln("prev() = %d", prev()); // 変化なし
+?>
+
+</llpml>
