@@ -5,10 +5,12 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{62E95A12-AE8E-4165-92DE-A8DFF09498FF}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LLPML</RootNamespace>
     <AssemblyName>LLPML</AssemblyName>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,113 +38,102 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LLPML\Operators\Neg.cs" />
-    <Compile Include="LLPML\Operators\Rev.cs" />
-    <Compile Include="LLPML\Parsing\Parser.cs" />
-    <Compile Include="LLPML\Parsing\Tokenizer.cs" />
-    <Compile Include="LLPML\Structure\Extern.cs" />
-    <Compile Include="LLPML\Flow\Cond.cs" />
-    <Compile Include="LLPML\Flow\While.cs" />
-    <Compile Include="LLPML\Flow\For.Init.cs" />
-    <Compile Include="LLPML\Flow\Do.cs" />
-    <Compile Include="LLPML\Flow\If.cs" />
-    <Compile Include="LLPML\Flow\Switch.cs" />
-    <Compile Include="LLPML\Flow\Continue.cs" />
-    <Compile Include="LLPML\Flow\BreakBase.cs" />
-    <Compile Include="LLPML\Structure\Function.cs" />
-    <Compile Include="LLPML\NodeBase.cs" />
-    <Compile Include="LLPML\Operators\Comparers\UnsignedGreaterEqual.cs" />
-    <Compile Include="LLPML\Operators\Comparers\UnsignedLess.cs" />
-    <Compile Include="LLPML\Operators\Comparers\UnsignedLessEqual.cs" />
-    <Compile Include="LLPML\Operators\ShiftLeft.cs" />
-    <Compile Include="LLPML\Operators\ShiftRight.cs" />
-    <Compile Include="LLPML\Operators\UnsignedShiftLeft.cs" />
-    <Compile Include="LLPML\Operators\UnsignedShiftRight.cs" />
-    <Compile Include="LLPML\Struct\Invoke.cs" />
-    <Compile Include="LLPML\Struct\MemberPtr.cs" />
-    <Compile Include="LLPML\Struct\Method.cs" />
-    <Compile Include="LLPML\Struct\This.cs" />
-    <Compile Include="LLPML\Struct\Base.cs" />
-    <Compile Include="LLPML\Struct\Cast.cs" />
-    <Compile Include="LLPML\Value\Null.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.Sub.cs" />
-    <Compile Include="LLPML\Operators\Add.cs" />
-    <Compile Include="LLPML\Variable\Operators\Dec.cs" />
-    <Compile Include="LLPML\Operators\Sub.cs" />
-    <Compile Include="LLPML\Operators\And.cs" />
-    <Compile Include="LLPML\Operators\Or.cs" />
-    <Compile Include="LLPML\Operators\Xor.cs" />
-    <Compile Include="LLPML\Operators\AndAlso.cs" />
-    <Compile Include="LLPML\Operators\OrElse.cs" />
-    <Compile Include="LLPML\Operators\Not.cs" />
-    <Compile Include="LLPML\Operators\Comparers\Equal.cs" />
-    <Compile Include="LLPML\Operators\Comparers\NotEqual.cs" />
-    <Compile Include="LLPML\Operators\Comparers\Greater.cs" />
-    <Compile Include="LLPML\Operators\Comparers\GreaterEqual.cs" />
-    <Compile Include="LLPML\Operators\Comparers\LessEqual.cs" />
-    <Compile Include="LLPML\Operators\Comparers\Less.cs" />
-    <Compile Include="LLPML\Operators\Comparers\UnsignedGreater.cs" />
-    <Compile Include="LLPML\Operators\Mul.cs" />
-    <Compile Include="LLPML\Operators\UnsignedMul.cs" />
-    <Compile Include="LLPML\Operators\Div.cs" />
-    <Compile Include="LLPML\Operators\UnsignedDiv.cs" />
-    <Compile Include="LLPML\Operators\Mod.cs" />
-    <Compile Include="LLPML\Operators\UnsignedMod.cs" />
-    <Compile Include="LLPML\Root.cs" />
-    <Compile Include="LLPML\Structure\Call.cs" />
-    <Compile Include="LLPML\Structure\Block.cs" />
-    <Compile Include="LLPML\Value\IIntValue.cs" />
-    <Compile Include="LLPML\Struct\Size.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.And.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.Or.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.ShiftLeft.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.ShiftRight.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.UnsignedShiftRight.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.UnsignedShiftLeft.cs" />
-    <Compile Include="LLPML\Variable\Var.cs" />
-    <Compile Include="LLPML\Variable\Pointer.Declare.cs" />
-    <Compile Include="LLPML\Flow\For.cs" />
-    <Compile Include="LLPML\Flow\Break.cs" />
-    <Compile Include="LLPML\Variable\Arg.cs" />
-    <Compile Include="LLPML\Variable\Operators\Inc.cs" />
-    <Compile Include="LLPML\Variable\ArgPtr.cs" />
-    <Compile Include="LLPML\Variable\VarBase.cs" />
-    <Compile Include="LLPML\Flow\Return.cs" />
-    <Compile Include="LLPML\Variable\Pointer.cs" />
-    <Compile Include="LLPML\Structure\Function.Ptr.cs" />
-    <Compile Include="LLPML\IntValue.cs" />
-    <Compile Include="LLPML\Variable\Var.Declare.cs" />
-    <Compile Include="LLPML\Struct\Member.cs" />
-    <Compile Include="LLPML\Struct\Define.cs" />
-    <Compile Include="LLPML\Struct\Define.Member.cs" />
-    <Compile Include="LLPML\Struct\Declare.cs" />
-    <Compile Include="LLPML\Variable\Operators\Let.cs" />
-    <Compile Include="LLPML\Variable\DeclareBase.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.Add.cs" />
-    <Compile Include="LLPML\Operators\Operator.cs" />
-    <Compile Include="LLPML\Value\StringValue.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.Operator.cs" />
-    <Compile Include="LLPML\Variable\Operators\PostDec.cs" />
-    <Compile Include="LLPML\Variable\Operators\PostInc.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.Mul.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.UnsignedMul.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.Div.cs" />
-    <Compile Include="LLPML\Variable\Operators\Var.UnsignedDiv.cs" />
-    <Compile Include="LLPML\Delegates.cs" />
-    <Compile Include="LLPML\Structure\BlockBase.cs" />
-    <Compile Include="LLPML\Structure\BlockName.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Operators\Neg.cs" />
+    <Compile Include="Operators\Rev.cs" />
+    <Compile Include="Parsing\Parser.cs" />
+    <Compile Include="Parsing\Tokenizer.cs" />
+    <Compile Include="Structure\Extern.cs" />
+    <Compile Include="Flow\Cond.cs" />
+    <Compile Include="Flow\While.cs" />
+    <Compile Include="Flow\For.Init.cs" />
+    <Compile Include="Flow\Do.cs" />
+    <Compile Include="Flow\If.cs" />
+    <Compile Include="Flow\Switch.cs" />
+    <Compile Include="Flow\Continue.cs" />
+    <Compile Include="Flow\BreakBase.cs" />
+    <Compile Include="Structure\Function.cs" />
+    <Compile Include="NodeBase.cs" />
+    <Compile Include="Operators\Comparers\UnsignedGreaterEqual.cs" />
+    <Compile Include="Operators\Comparers\UnsignedLess.cs" />
+    <Compile Include="Operators\Comparers\UnsignedLessEqual.cs" />
+    <Compile Include="Operators\ShiftLeft.cs" />
+    <Compile Include="Operators\ShiftRight.cs" />
+    <Compile Include="Operators\UnsignedShiftLeft.cs" />
+    <Compile Include="Operators\UnsignedShiftRight.cs" />
+    <Compile Include="Struct\Invoke.cs" />
+    <Compile Include="Struct\MemberPtr.cs" />
+    <Compile Include="Struct\Method.cs" />
+    <Compile Include="Struct\This.cs" />
+    <Compile Include="Struct\Base.cs" />
+    <Compile Include="Struct\Cast.cs" />
+    <Compile Include="Value\Null.cs" />
+    <Compile Include="Variable\Operators\Var.Sub.cs" />
+    <Compile Include="Operators\Add.cs" />
+    <Compile Include="Variable\Operators\Dec.cs" />
+    <Compile Include="Operators\Sub.cs" />
+    <Compile Include="Operators\And.cs" />
+    <Compile Include="Operators\Or.cs" />
+    <Compile Include="Operators\Xor.cs" />
+    <Compile Include="Operators\AndAlso.cs" />
+    <Compile Include="Operators\OrElse.cs" />
+    <Compile Include="Operators\Not.cs" />
+    <Compile Include="Operators\Comparers\Equal.cs" />
+    <Compile Include="Operators\Comparers\NotEqual.cs" />
+    <Compile Include="Operators\Comparers\Greater.cs" />
+    <Compile Include="Operators\Comparers\GreaterEqual.cs" />
+    <Compile Include="Operators\Comparers\LessEqual.cs" />
+    <Compile Include="Operators\Comparers\Less.cs" />
+    <Compile Include="Operators\Comparers\UnsignedGreater.cs" />
+    <Compile Include="Operators\Mul.cs" />
+    <Compile Include="Operators\UnsignedMul.cs" />
+    <Compile Include="Operators\Div.cs" />
+    <Compile Include="Operators\UnsignedDiv.cs" />
+    <Compile Include="Operators\Mod.cs" />
+    <Compile Include="Operators\UnsignedMod.cs" />
+    <Compile Include="Root.cs" />
+    <Compile Include="Structure\Call.cs" />
+    <Compile Include="Structure\Block.cs" />
+    <Compile Include="Value\IIntValue.cs" />
+    <Compile Include="Struct\Size.cs" />
+    <Compile Include="Variable\Operators\Var.And.cs" />
+    <Compile Include="Variable\Operators\Var.Or.cs" />
+    <Compile Include="Variable\Operators\Var.ShiftLeft.cs" />
+    <Compile Include="Variable\Operators\Var.ShiftRight.cs" />
+    <Compile Include="Variable\Operators\Var.UnsignedShiftRight.cs" />
+    <Compile Include="Variable\Operators\Var.UnsignedShiftLeft.cs" />
+    <Compile Include="Variable\Var.cs" />
+    <Compile Include="Variable\Pointer.Declare.cs" />
+    <Compile Include="Flow\For.cs" />
+    <Compile Include="Flow\Break.cs" />
+    <Compile Include="Variable\Arg.cs" />
+    <Compile Include="Variable\Operators\Inc.cs" />
+    <Compile Include="Variable\ArgPtr.cs" />
+    <Compile Include="Variable\VarBase.cs" />
+    <Compile Include="Flow\Return.cs" />
+    <Compile Include="Variable\Pointer.cs" />
+    <Compile Include="Structure\Function.Ptr.cs" />
+    <Compile Include="IntValue.cs" />
+    <Compile Include="Variable\Var.Declare.cs" />
+    <Compile Include="Struct\Member.cs" />
+    <Compile Include="Struct\Define.cs" />
+    <Compile Include="Struct\Define.Member.cs" />
+    <Compile Include="Struct\Declare.cs" />
+    <Compile Include="Variable\Operators\Let.cs" />
+    <Compile Include="Variable\DeclareBase.cs" />
+    <Compile Include="Variable\Operators\Var.Add.cs" />
+    <Compile Include="Operators\Operator.cs" />
+    <Compile Include="Value\StringValue.cs" />
+    <Compile Include="Variable\Operators\Var.Operator.cs" />
+    <Compile Include="Variable\Operators\PostDec.cs" />
+    <Compile Include="Variable\Operators\PostInc.cs" />
+    <Compile Include="Variable\Operators\Var.Mul.cs" />
+    <Compile Include="Variable\Operators\Var.UnsignedMul.cs" />
+    <Compile Include="Variable\Operators\Var.Div.cs" />
+    <Compile Include="Variable\Operators\Var.UnsignedDiv.cs" />
+    <Compile Include="Delegates.cs" />
+    <Compile Include="Structure\BlockBase.cs" />
+    <Compile Include="Structure\BlockName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -168,96 +159,6 @@
       <Project>{526CD5A4-092E-4FA1-BD4E-8D33D13D39B4}</Project>
       <Name>CompilerLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Samples\01.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\template.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\02.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\03.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\04.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\16.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\05.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\06.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\07.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\stdio.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\08.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\09.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\10.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\11.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\12.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\13.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\14.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\15.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\17.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\18.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\19.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\win32.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\20.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\21.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\22.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\23.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\finish.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\24.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\25.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ToDo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
