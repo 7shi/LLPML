@@ -1,0 +1,68 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{526CD5A4-092E-4FA1-BD4E-8D33D13D39B4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Girl</RootNamespace>
+    <AssemblyName>CompilerLib</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Binary\Block.cs" />
+    <Compile Include="Binary\Ref.cs" />
+    <Compile Include="Binary\Util.cs" />
+    <Compile Include="Binary\WriterBase.cs" />
+    <Compile Include="PE\DOSHeader.cs" />
+    <Compile Include="PE\Function.cs" />
+    <Compile Include="PE\HeaderBase.cs" />
+    <Compile Include="PE\Module.cs" />
+    <Compile Include="PE\PEHeaders.cs" />
+    <Compile Include="PE\Section\AnySection.cs" />
+    <Compile Include="PE\Section\DataSection.cs" />
+    <Compile Include="PE\Section\ImportSection.cs" />
+    <Compile Include="PE\Section\Library.cs" />
+    <Compile Include="PE\Section\SectionBase.cs" />
+    <Compile Include="PE\Section\Symbol.cs" />
+    <Compile Include="PE\Section\TextSection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="X86\OpCode.Test.cs" />
+    <Compile Include="X86\Enums.cs" />
+    <Compile Include="X86\OpCode.cs" />
+    <Compile Include="X86\I8086.cs" />
+    <Compile Include="X86\I386.cs" />
+    <Compile Include="X86\Addr32.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
