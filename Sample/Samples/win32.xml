@@ -1,28 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080203">
+<llpml version="0.10.20080205">
 
-<extern module="kernel32.dll" type="std" name="Sleep" />
-<extern module="kernel32.dll" type="std" suffix="W" name="GetModuleHandle" />
-<extern module="user32.dll" type="std" name="ShowWindow" />
-<extern module="user32.dll" type="std" name="UpdateWindow" />
-<extern module="user32.dll" type="std" name="DestroyWindow" />
-<extern module="user32.dll" type="std" name="TranslateMessage" />
-<extern module="user32.dll" type="std" name="PostQuitMessage" />
-<extern module="user32.dll" type="std" name="BeginPaint" />
-<extern module="user32.dll" type="std" name="EndPaint" />
-<extern module="user32.dll" type="std" name="GetDC" />
-<extern module="user32.dll" type="std" name="GetSysColorBrush" />
-<extern module="user32.dll" type="std" name="InvalidateRect" />
-<extern module="user32.dll" type="std" name="FillRect" />
-<extern module="user32.dll" type="std" suffix="W" name="DefWindowProc" />
-<extern module="user32.dll" type="std" suffix="W" name="LoadCursor" />
-<extern module="user32.dll" type="std" suffix="W" name="RegisterClassEx" />
-<extern module="user32.dll" type="std" suffix="W" name="CreateWindowEx" />
-<extern module="user32.dll" type="std" suffix="W" name="GetMessage" />
-<extern module="user32.dll" type="std" suffix="W" name="DispatchMessage" />
-<extern module="gdi32.dll" type="std" suffix="W" name="TextOut" />
+<?llp
+extern "kernel32.dll" __stdcall
+{
+  Sleep(dwMilliseconds);
+  __widecharset GetModuleHandle(lpModuleName);
+}
+extern "user32.dll" __stdcall
+{
+  ShowWindow(hWnd, nCmdShow);
+  UpdateWindow(hWnd);
+  DestroyWindow(hWnd);
+  TranslateMessage(lpMsg);
+  PostQuitMessage(nExitCode);
+  BeginPaint(hWnd, lpPaint);
+  EndPaint(hWnd, lpPaint);
+  GetDC(hWnd);
+  GetSysColorBrush(nIndex);
+  InvalidateRect(hWnd, lpRect, bErase);
+  FillRect(hDC, lprc, hbr);
+}
+extern "user32.dll" __stdcall __widecharset
+{
+  MessageBox(hWnd, lpText, lpCation, uType);
+  DefWindowProc(hWnd, Msg, wParam, lParam);
+  LoadCursor(hInstance, lpCursorName);
+  RegisterClassEx(lpwcx);
+  CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+  GetMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
+  DispatchMessage(lpmsg);
+}
+extern "gdi32.dll" __stdcall __widecharset
+  TextOut(hdc, nXStart, nYStart, lpString, cbString);
 
-<?llpml
 const int CS_VREDRAW     = 1;
 const int CS_HREDRAW     = 2;
 const int COLOR_WINDOW   = 5;

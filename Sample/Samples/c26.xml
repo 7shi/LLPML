@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.10.20080205">
+
+<!-- heap -->
+
+<include src="finish.xml" />
+<include src="malloc.xml" />
+
+<?llp
+struct Test
+{
+  var a = 1;
+  
+  function ctor() {}
+  function dtor() {}
+  
+  function Show()
+  {
+    printfln("[%s] this = %p, a = %d", __FUNCTION__, this, a);
+  }
+}
+
+function Test_new()
+{
+  var ret : Test = malloc(sizeof(Test));
+  ret.ctor();
+  return ret;
+}
+
+function Test_delete(this : Test)
+{
+  this.dtor();
+  free(this);
+}
+
+Test test1;
+printfln("test1 = %p", test1);
+test1.Show();
+
+var test2 : Test = Test_new();
+printfln("test2 = %p", test2);
+test2.Show();
+test2.a = 2;
+test2.Show();
+Test_delete(test2);
+?>
+
+</llpml>

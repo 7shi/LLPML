@@ -11,12 +11,11 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.10.20080203";
+        public string Version = "0.10.20080205";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
-        public delegate TextReader StreamHandler(string name);
-        public StreamHandler StreamDelegate;
+        public Func<string, TextReader> StreamDelegate;
 
         private List<string> included = new List<string>();
 

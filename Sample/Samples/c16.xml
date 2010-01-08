@@ -5,7 +5,7 @@
 
 <include src="finish.xml" />
 
-<?llpml
+<?llp
 struct Point { var x, y; }
 struct Points { Point p1, p2; }
 

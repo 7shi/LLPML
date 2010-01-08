@@ -158,7 +158,7 @@ namespace Girl.LLPML
                     }
 
                 case XmlNodeType.ProcessingInstruction:
-                    if (xr.Name == "llpml")
+                    if (xr.Name == "llp")
                     {
                         char[] data = new char[1024];
                         var rs = xr.ReadString();

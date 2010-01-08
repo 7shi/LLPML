@@ -11,20 +11,55 @@ namespace Girl.LLPML
     {
         private string module, alias;
 
-        public Extern() { }
-        public Extern(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Extern()
+        {
+        }
 
-        public override DeclareBase[] GetArgs() { return null; }
+        public Extern(BlockBase parent, string name, string module, string alias)
+            : base(parent, name)
+        {
+            this.module = module;
+            this.alias = alias;
+        }
+
+        public Extern(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
+
+        protected override void ReadBlock(XmlTextReader xr)
+        {
+            switch (xr.NodeType)
+            {
+                case XmlNodeType.Element:
+                    switch (xr.Name)
+                    {
+                        case "arg":
+                            args.Add(new Arg(this, xr));
+                            return;
+                        case "arg-ptr":
+                            args.Add(new ArgPtr(this, xr));
+                            return;
+                        default:
+                            throw Abort(xr, "extern: invalid element: {0}", xr.Name);
+                    }
+
+                case XmlNodeType.Whitespace:
+                case XmlNodeType.Comment:
+                    break;
+
+                default:
+                    throw Abort(xr, "extern: argument required");
+            }
+        }
 
         public override void Read(XmlTextReader xr)
         {
-            NoChild(xr);
-
             module = xr["module"];
             alias = xr["alias"];
+            var suffix = xr["suffix"];
             base.Read(xr);
 
-            var suffix = xr["suffix"];
             if (suffix != null)
             {
                 if (alias == null)

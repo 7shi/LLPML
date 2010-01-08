@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.9.20080127">
 
+<!-- callback -->
+
 <include src="finish.xml" />
 
-<?llpml
-var i = 1;
+<?llp
+wrapper(addrof(test));
 
-test();
-test();
-test();
-test();
-test();
+function wrapper(ptr)
+{
+  ptr();
+}
 
 function test()
 {
-  printfln("i = %d", i);
-  i++;
+  printfln("Hello, World!");
 }
 ?>
 

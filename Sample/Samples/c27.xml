@@ -5,7 +5,7 @@
 
 <include src="finish.xml" />
 
-<?llpml
+<?llp
 var a[16];
 printfln("var a[16]");
 printfln("a = %p", a);

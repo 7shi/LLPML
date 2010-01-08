@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.10.20080205" subsystem="WINDOWS_GUI">
+
+<?llp
+extern "user32.dll" __stdcall __widecharset
+  MessageBox(hWnd, lpText, lpCation, uType);
+
+MessageBox(null, "こんにちは、世界！", "だいあろぐ", 0);
+?>
+
+</llpml>

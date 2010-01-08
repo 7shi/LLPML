@@ -5,7 +5,7 @@
 
 <include src="finish.xml" />
 
-<?llpml
+<?llp
 struct Test
 {
   var a = 1, b = 2;

@@ -15,7 +15,6 @@ namespace Girl.LLPML
         protected List<DeclareBase> args
             = new List<DeclareBase>();
         public List<DeclareBase> Args { get { return args; } }
-        public virtual DeclareBase[] GetArgs() { return args.ToArray(); }
 
         private Var thisptr;
 

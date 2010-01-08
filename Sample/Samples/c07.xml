@@ -5,7 +5,7 @@
 
 <include src="finish.xml" />
 
-<?llpml
+<?llp
 var a = 3, b = 4;
 printfln("%d + %d = %d", a, b, add(a, b));
 

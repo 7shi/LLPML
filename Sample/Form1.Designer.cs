@@ -1,4 +1,4 @@
-﻿namespace _Sample
+﻿namespace Sample
 {
     partial class Form1
     {
@@ -45,7 +45,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.menuStrip1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -63,8 +63,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(492, 24);
-            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Size = new System.Drawing.Size(520, 24);
+            this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
@@ -153,9 +153,9 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 444);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 552);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(492, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(520, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -169,7 +169,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(410, 340);
+            this.textBox1.Size = new System.Drawing.Size(392, 404);
             this.textBox1.TabIndex = 0;
             this.textBox1.WordWrap = false;
             // 
@@ -187,8 +187,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.textBox2);
-            this.splitContainer1.Size = new System.Drawing.Size(410, 420);
-            this.splitContainer1.SplitterDistance = 340;
+            this.splitContainer1.Size = new System.Drawing.Size(392, 528);
+            this.splitContainer1.SplitterDistance = 404;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.TabStop = false;
             // 
@@ -202,7 +202,7 @@
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox2.Size = new System.Drawing.Size(410, 76);
+            this.textBox2.Size = new System.Drawing.Size(392, 120);
             this.textBox2.TabIndex = 0;
             this.textBox2.WordWrap = false;
             // 
@@ -214,34 +214,32 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.listBox1);
+            this.splitContainer2.Panel1.Controls.Add(this.treeView1);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer1);
-            this.splitContainer2.Size = new System.Drawing.Size(492, 420);
-            this.splitContainer2.SplitterDistance = 78;
+            this.splitContainer2.Size = new System.Drawing.Size(520, 528);
+            this.splitContainer2.SplitterDistance = 124;
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.TabStop = false;
             // 
-            // listBox1
+            // treeView1
             // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.IntegralHeight = false;
-            this.listBox1.ItemHeight = 12;
-            this.listBox1.Location = new System.Drawing.Point(0, 0);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(78, 420);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.TabStop = false;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.FullRowSelect = true;
+            this.treeView1.HideSelection = false;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(124, 528);
+            this.treeView1.TabIndex = 0;
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(492, 466);
+            this.ClientSize = new System.Drawing.Size(520, 574);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.statusStrip1);
@@ -278,11 +276,11 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.TreeView treeView1;
 
 
     }

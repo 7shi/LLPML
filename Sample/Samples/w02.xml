@@ -6,9 +6,9 @@
 <include src="stdio.xml" />
 <include src="win32.xml" />
 
-<?llpml
+<?llp
 const string className = "LLPML Test Window";
-var hInstance = GetModuleHandle();
+var hInstance = GetModuleHandle(null);
 
 WNDCLASSEX wcex =
 {

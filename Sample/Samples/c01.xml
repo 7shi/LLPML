@@ -3,7 +3,7 @@
 
 <include src="finish.xml" />
 
-<?llpml
+<?llp
 printfln("こんにちは、世界！");
 ?>
 

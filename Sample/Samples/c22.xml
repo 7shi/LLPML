@@ -11,7 +11,7 @@ Float(-1, -1);
 printf("3.14159265 => ");
 Float(314159265, -8);
 
-<?llpml
+<?llp
 const int INT_MAX    = 0x7fffffff;
 const int EXP_DIGIT  = 8;
 const int EXP_MAX    = 0xff;

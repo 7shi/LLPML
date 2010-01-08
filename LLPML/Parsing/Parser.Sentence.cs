@@ -33,6 +33,9 @@ namespace Girl.LLPML.Parsing
                 case "function":
                     Function().SetLine(ln, lp);
                     return null;
+                case "extern":
+                    Extern();
+                    return null;
                 case "if":
                     nb = If();
                     break;
@@ -177,8 +180,7 @@ namespace Girl.LLPML.Parsing
             if (t != text)
             {
                 if (t != null) Rewind();
-                var escaped = text.Replace("{", "{{").Replace("}", "}}");
-                throw Abort("{0}: {1} が必要です。", type, escaped);
+                throw Abort("{0}: {1} が必要です。", type, text);
             }
         }
 
@@ -208,41 +210,127 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("function: 名前が必要です。");
 
-            CallType ct = CallType.CDecl;
             var name = Read();
-            if (name == "__stdcall")
-            {
-                ct = CallType.Std;
-                name = Read();
-            }
+            CallType ct = CheckCallType(CallType.CDecl, ref name);
             if (!Tokenizer.IsWord(name))
             {
                 Rewind();
                 throw Abort("function: 名前が不適切です: {0}", name);
             }
 
-            Check("function", "(");
-
             var ret = new Function(parent, name);
             ret.CallType = ct;
+            ReadArgs("function", ret);
+            ReadBlock(ret, "function");
+            if (!parent.AddFunction(ret))
+                throw Abort("function: {0}: 定義が重複しています。", name);
+            return ret;
+        }
+
+        private Extern[] Extern()
+        {
+            if (!CanRead) throw Abort("extern: 名前が必要です。");
+
+            var module = String();
+            if (module == null) throw Abort("extern: モジュール名が必要です。");
+
+            var t = Peek();
+            CallType ct1 = CheckCallType(CallType.CDecl, ref t);
+            t = Peek();
+            var sfx1 = CheckSuffix(null, ref t);
+            var br1 = Read();
+            var loop = false;
+            if (br1 == "{") loop = true; else Rewind();
+
+            var list = new List<Extern>();
+            for (; ; )
+            {
+                var ln = tokenizer.LineNumber;
+                var lp = tokenizer.LinePosition;
+                var name = Read();
+                CallType ct2 = CheckCallType(ct1, ref name);
+                var sfx2 = CheckSuffix(sfx1, ref name);
+                if (!Tokenizer.IsWord(name))
+                {
+                    Rewind();
+                    throw Abort("extern: 名前が不適切です: {0}", name);
+                }
+                string alias = null;
+                if (sfx2 != null) alias = name + sfx2;
+
+                var ex = new Extern(parent, name, module.Value, alias);
+                ex.SetLine(ln, lp);
+                ex.CallType = ct2;
+                ReadArgs("extern", ex);
+                if (!parent.AddFunction(ex))
+                    throw Abort("function: {0}: 定義が重複しています。", name);
+                list.Add(ex);
+
+                if (!loop) break;
+                Check("extern", ";");
+                var br2 = Read();
+                if (br2 == "}") break;
+                Rewind();
+            }
+            return list.ToArray();
+        }
+
+        private CallType CheckCallType(CallType ct, ref string t)
+        {
+            if (t == "__stdcall")
+            {
+                t = Read();
+                return CallType.Std;
+            }
+            else if (t == "__cdecl")
+            {
+                t = Read();
+                return CallType.CDecl;
+            }
+            return ct;
+        }
+
+        private string CheckSuffix(string sfx, ref string t)
+        {
+            if (t == "__widecharset")
+            {
+                t = Read();
+                return "W";
+            }
+            else if (t == "__ansicharset")
+            {
+                t = Read();
+                return "A";
+            }
+            else if (t == "__nocharset")
+            {
+                t = Read();
+                return null;
+            }
+            return sfx;
+        }
+
+        private void ReadArgs(string tp, Function f)
+        {
+            Check(tp, "(");
             var first = true;
             for (; ; )
             {
                 var t = Read();
                 if (t == null)
-                    throw Abort("function: {0}: ) が必要です。", name);
+                    throw Abort("{0}: {1}: ) が必要です。", tp, f.Name);
                 if (t == ")") break;
                 if (first)
                     Rewind();
                 else if (t != ",")
-                    throw Abort("function: {0}: ) が必要です。", name);
+                    throw Abort("{0}: {1}: ) が必要です。", tp, f.Name);
                 first = false;
 
                 var arg = Read();
                 if (!Tokenizer.IsWord(arg))
                 {
                     if (arg != null) Rewind();
-                    throw Abort("function: {0}: 引数の名前が不適切です: {1}", name, arg);
+                    throw Abort("{0}: {1}: 引数の名前が不適切です: {1}", tp, f.Name, arg);
                 }
 
                 string type = null;
@@ -250,29 +338,24 @@ namespace Girl.LLPML.Parsing
                 if (colon == ":")
                 {
                     if (!CanRead)
-                        throw Abort("function: {0}: {1}: 引数に型が必要です。", name, arg);
+                        throw Abort("{0}: {1}: {2}: 引数に型が必要です。", tp, f.Name, arg);
                     type = Read();
                     if (type == "params")
                     {
-                        ret.Args.Add(new ArgPtr(ret, arg));
+                        f.Args.Add(new ArgPtr(f, arg));
                         continue;
                     }
                     else if (!Tokenizer.IsWord(type))
                     {
                         if (type != null) Rewind();
-                        throw Abort("function: {0}: {1}: 引数の型が不適切です。", name, arg);
+                        throw Abort("{0}: {1}: {2}: 引数の型が不適切です。", tp, f.Name, arg);
                     }
                 }
                 else
                     Rewind();
 
-                ret.Args.Add(new Arg(ret, arg, type));
+                f.Args.Add(new Arg(f, arg, type));
             }
-
-            ReadBlock(ret, "function");
-            if (!parent.AddFunction(ret))
-                throw Abort("function: {0}: 定義が重複しています。", name);
-            return ret;
         }
 
         private Cond ReadCond(BlockBase parent, string type)

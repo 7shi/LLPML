@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.10.20080205">
+
+<!-- cross reference -->
+
+<include src="finish.xml" />
+
+<?llp
+struct Test1
+{
+  // front reference
+  var test2 : Test2;
+  
+  function Show()
+  {
+    printfln(__FUNCTION__);
+  }
+  
+  function Show2()
+  {
+    printfln(__FUNCTION__);
+    test2.Show();
+  }
+}
+
+struct Test2
+{
+  // back reference
+  var test1 : Test1;
+  
+  function Show()
+  {
+    printfln(__FUNCTION__);
+  }
+  
+  function Show1()
+  {
+    printfln(__FUNCTION__);
+    test1.Show();
+  }
+}
+
+Test1 test1;
+Test2 test2;
+
+test1.Show();
+test2.Show();
+
+test1.test2 = test2;
+test1.Show2();
+
+test2.test1 = test1;
+test2.Show1();
+?>
+
+</llpml>

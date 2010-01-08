@@ -65,7 +65,7 @@ printfln(
   "%d: a == 3 || b == 3",
   a == 3 || b == 3);
 
-<?llpml
+<?llp
 // and also
 
 printfln(

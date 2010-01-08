@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.10.20080205">
+
+<!-- heap functions -->
+
+<?llp
+extern "kernel32.dll" __stdcall
+{
+  GetProcessHeap();
+  HeapAlloc(hHeap, dwFlags, dwBytes);
+  HeapReAlloc(hHeap, dwFlags, lpMem, dwBytes);
+  HeapFree(hHeap, dwFlags, lpMem);
+}
+
+var g_hProcessHeap = GetProcessHeap();
+
+function malloc(size)
+{
+  return HeapAlloc(g_hProcessHeap, 0, size);
+}
+
+function realloc(ptr, size)
+{
+  return HeapReAlloc(g_hProcessHeap, 0, ptr, size);
+}
+
+function free(ptr)
+{
+  HeapFree(g_hProcessHeap, 0, ptr);
+}
+?>
+
+</llpml>

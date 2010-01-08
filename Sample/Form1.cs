@@ -12,7 +12,7 @@ using Girl.LLPML;
 using Girl.PE;
 using Girl.X86;
 
-namespace _Sample
+namespace Sample
 {
     public partial class Form1 : Form
     {
@@ -43,14 +43,10 @@ namespace _Sample
                 tb.SelectionLength = SelectionLength;
                 tb.ScrollToCaret();
             }
-
-            public override string ToString()
-            {
-                return Name;
-            }
         }
 
         private TextData selectedData;
+        private TreeNode workArea, window, console;
 
         public Form1()
         {
@@ -58,40 +54,54 @@ namespace _Sample
             I386.Test();
 #endif
             InitializeComponent();
-            AddItem("stdio.xml");
-            AddItem("finish.xml");
-            AddItem("win32.xml");
+            treeView1.Nodes.AddRange(new TreeNode[]
+            {
+                workArea = new TreeNode("ワークエリア"),
+                window = new TreeNode("ウィンドウ"),
+                console = new TreeNode("コンソール"),
+            });
+            treeView1.ExpandAll();
+            console.Nodes.Add(CreateItem("stdio.xml"));
+            console.Nodes.Add(CreateItem("malloc.xml"));
+            console.Nodes.Add(CreateItem("finish.xml"));
+            ReadSamples(console, "c");
+            window.Nodes.Add(CreateItem("win32.xml"));
+            ReadSamples(window, "w");
+            newToolStripMenuItem.PerformClick();
+        }
+
+        private void ReadSamples(TreeNode parent, string prefix)
+        {
             for (int i = 1; ; i++)
             {
-                string xml = string.Format("{0:00}.xml", i);
+                string xml = string.Format("{0}{1:00}.xml", prefix, i);
                 if (!File.Exists(GetSampleFileName(xml))) break;
-                AddItem(xml);
+                parent.Nodes.Add(CreateItem(xml));
             }
-            newToolStripMenuItem.PerformClick();
         }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (selectedData == null) return;
+
             Cursor cur = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
 #if !DEBUG
             try
-#endif
             {
+#endif
                 StringReader sr = new StringReader(textBox1.Text);
                 XmlTextReader xr = new XmlTextReader(sr);
                 Root root = new Root();
-                root.StreamDelegate = delegate(string name)
-                {
-                    foreach (TextData td in listBox1.Items)
+                root.StreamDelegate = name =>
                     {
-                        if (td.Name == name)
-                        {
-                            return new StringReader(td.Text);
-                        }
-                    }
-                    return null;
-                };
+                        var n = console.Nodes[name];
+                        if (n == null) n = window.Nodes[name];
+                        if (n == null) return null;
+                        var td = n.Tag as TextData;
+                        if (td == null) return null;
+                        return new StringReader(td.Text);
+                    };
                 if (selectedData.Output != null)
                 {
                     root.Output = Path.GetFileNameWithoutExtension(selectedData.Output) + ".exe";
@@ -111,14 +121,14 @@ namespace _Sample
                 module.Link(exe);
                 textBox2.AppendText("出力: " + exe + "\r\n");
                 Process.Start(exe);
-            }
 #if !DEBUG
+            }
             catch (Exception ex)
             {
                 textBox2.AppendText(ex.ToString() + "\r\n");
             }
 #endif
-            Cursor.Current = cur;
+                Cursor.Current = cur;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -139,24 +149,26 @@ namespace _Sample
             return ret;
         }
 
-        private TextData AddItem(string xml, string title, string output)
+        private TreeNode CreateItem(string xml, string title, string output)
         {
-            TextData ret = new TextData(title, ReadSample(xml), output);
-            listBox1.Items.Add(ret);
+            var ret = new TreeNode(title);
+            ret.Name = title;
+            ret.Tag = new TextData(title, ReadSample(xml), output);
             return ret;
         }
 
-        private TextData AddItem(string xml)
+        private TreeNode CreateItem(string xml)
         {
-            return AddItem(xml, xml, xml);
+            return CreateItem(xml, xml, xml);
         }
 
         private int newCount = 1;
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddItem("template.xml", "New " + newCount, null);
-            listBox1.SelectedIndex = listBox1.Items.Count - 1;
+            var n = CreateItem("template.xml", "New " + newCount, null);
+            workArea.Nodes.Add(n);
+            treeView1.SelectedNode = n;
             newCount++;
         }
 
@@ -168,31 +180,42 @@ namespace _Sample
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int id = listBox1.SelectedIndex;
-            if (id < 0) return;
-            selectedData = null;
-            listBox1.Items.RemoveAt(id);
-            listBox1.SelectedIndex = Math.Min(id, listBox1.Items.Count - 1);
+            var n = treeView1.SelectedNode;
+            if (n == null || n.Parent == null) return;
+
+            var nn = n.NextVisibleNode;
+            if (nn == null) nn = n.PrevVisibleNode;
+            treeView1.SelectedNode = nn;
+            n.Remove();
         }
 
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            int c = listBox1.Items.Count;
-            closeToolStripMenuItem.Enabled = c > 0;
-            nextToolStripMenuItem.Enabled = listBox1.SelectedIndex < c - 1;
+            var n = treeView1.SelectedNode;
+            closeToolStripMenuItem.Enabled = n != null && n.Parent != null;
+            nextToolStripMenuItem.Enabled = n != null && n.NextVisibleNode != null;
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            int id = listBox1.SelectedIndex;
             TextData sel = null;
-            if (id >= 0) sel = listBox1.Items[id] as TextData;
+            var n = e.Node;
+            if (n != null) sel = n.Tag as TextData;
             if (sel == selectedData) return;
 
-            textBox1.Focus();
-            if (selectedData != null) selectedData.From(textBox1);
+            if (selectedData != null)
+                selectedData.From(textBox1);
             selectedData = sel;
-            if (selectedData != null) selectedData.To(textBox1);
+            if (selectedData != null)
+            {
+                textBox1.Enabled = true;
+                selectedData.To(textBox1);
+            }
+            else
+            {
+                textBox1.Clear();
+                textBox1.Enabled = false;
+            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -203,9 +226,11 @@ namespace _Sample
 
         private void nextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int id = listBox1.SelectedIndex;
-            if (id < listBox1.Items.Count - 1)
-                listBox1.SelectedIndex = id + 1;
+            var n = treeView1.SelectedNode;
+            if (n == null) return;
+            var nn = n.NextVisibleNode;
+            if (nn == null) return;
+            treeView1.SelectedNode = nn;
         }
     }
 }

@@ -149,26 +149,28 @@ namespace Girl.LLPML.Struct
 
         public string GetMemberName(string name)
         {
-            return this.name + "::" + name;
+            return this.name + Separator + name;
         }
 
         public void CheckStruct()
         {
-            CheckBaseStruct(name);
-            foreach (object obj in members.Values)
-            {
-                Define st = GetStruct(GetMember(obj));
-                if (st != null) st.CheckStruct(name);
-            }
+            CheckStruct(null);
         }
 
         public void CheckStruct(string type)
         {
-            if (type == name)
+            if (type == null)
+            {
+                CheckBaseStruct(name);
+                type = name;
+            }
+            else if (type == name)
                 throw Abort("can not define recursive type: " + name);
             foreach (object obj in members.Values)
             {
-                Define st = GetStruct(GetMember(obj));
+                var mem = GetMember(obj);
+                if (!(mem is Struct.Declare)) continue;
+                Define st = GetStruct(mem);
                 if (st != null) st.CheckStruct(type);
             }
         }

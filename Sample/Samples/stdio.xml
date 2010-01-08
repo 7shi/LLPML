@@ -1,15 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080203">
+<llpml version="0.10.20080205">
 
 <!-- stdio functions -->
 
-<extern module="kernel32.dll" type="std" name="GetStdHandle" />
-<extern module="kernel32.dll" type="std" suffix="W" name="ReadConsole" />
-<extern module="kernel32.dll" type="std" suffix="W" name="WriteConsole" />
-<extern module="kernel32.dll" type="std" suffix="W" name="lstrlen" />
-<extern module="user32.dll" type="std" suffix="W" name="wvsprintf" />
+<?llp
+extern "kernel32.dll" __stdcall __widecharset
+{
+  __nocharset GetStdHandle(nStdHandle);
+  WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
+  ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pInputControl);
+  lstrlen(lpString);
+}
+extern "user32.dll" __stdcall __widecharset
+  wvsprintf(lpOutput, lpFmt, arglist);
 
-<?llpml
 const int STD_OUTPUT_HANDLE = -11;
 const int STD_INPUT_HANDLE  = -10;
 

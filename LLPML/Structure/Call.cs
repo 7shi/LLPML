@@ -84,13 +84,10 @@ namespace Girl.LLPML
                 Function f = GetFunction();
                 if (f == null)
                     throw Abort("undefined function: " + name);
-                DeclareBase[] fargs = f.GetArgs();
-                if (fargs != null)
-                {
-                    int len = fargs.Length;
-                    if (!(len > 0 && fargs[len - 1] is ArgPtr) && args.Count != len)
-                        throw Abort("argument mismatched: " + name);
-                }
+                DeclareBase[] fargs = f.Args.ToArray();
+                int len = fargs.Length;
+                if (!((len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1) || args.Count == len))
+                    throw Abort("argument mismatched: " + name);
                 AddCodes(codes, m, f, args);
             }
             else

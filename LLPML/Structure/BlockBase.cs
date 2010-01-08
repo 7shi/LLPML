@@ -32,6 +32,8 @@ namespace Girl.LLPML
         protected Dictionary<string, object> members
             = new Dictionary<string, object>();
 
+        public const string Separator = ".";
+
         #region Member
 
         public virtual T GetMember<T>(string name) where T : class
@@ -373,7 +375,7 @@ namespace Girl.LLPML
                     if (ret == "")
                         ret = b.Name;
                     else
-                        ret = b.Name + "::" + ret;
+                        ret = b.Name + Separator + ret;
                 }
             }
             return ret;

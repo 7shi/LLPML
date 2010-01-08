@@ -3,7 +3,7 @@
 
 <include src="stdio.xml" />
 
-<?llpml
+<?llp
 struct _Finish
 {
   // destructor

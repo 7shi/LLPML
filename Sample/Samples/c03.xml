@@ -3,7 +3,7 @@
 
 <include src="finish.xml" />
 
-<?llpml
+<?llp
 var i = 1;
 const string format = "i=%d";
 printfln(format, i);
