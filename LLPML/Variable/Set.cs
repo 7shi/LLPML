@@ -31,10 +31,19 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpCodes codes)
         {
+            if (dest is Struct.Member)
+            {
+                var mem = dest as Struct.Member;
+                if (mem.IsSetter)
+                {
+                    mem.AddSetterCodes(codes, values[0]);
+                    return;
+                }
+            }
             values[0].AddCodes(codes, "push", null);
             var ad = dest.GetAddress(codes);
             codes.Add(I386.Pop(Reg32.EAX));
-            AddCodes(dest.Size, codes, ad);
+            AddSetCodes(dest.Type, dest.Size, codes, ad);
         }
 
         public override void AddCodes(OpCodes codes, string op, Addr32 dest)
@@ -43,20 +52,16 @@ namespace Girl.LLPML
             codes.AddCodes(op, dest);
         }
 
-        public static void AddCodes(int size, OpCodes codes, Addr32 ad)
+        public static void AddSetCodes(TypeBase type, int size, OpCodes codes, Addr32 ad)
         {
-            switch (size)
-            {
-                case 2:
-                    codes.Add(I386.MovW(ad, Reg16.AX));
-                    break;
-                case 1:
-                    codes.Add(I386.MovB(ad, Reg8.AL));
-                    break;
-                default:
-                    codes.Add(I386.Mov(ad, Reg32.EAX));
-                    break;
-            }
+            if (type != null)
+                type.AddSetCodes(codes, ad);
+            else if (size == 2)
+                TypeShort.Instance.AddSetCodes(codes, ad);
+            else if (size == 1)
+                TypeByte.Instance.AddSetCodes(codes, ad);
+            else
+                TypeInt.Instance.AddSetCodes(codes, ad);
         }
     }
 }

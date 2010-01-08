@@ -24,14 +24,14 @@ namespace Girl.LLPML
                 if (dest.Size < Var.DefaultSize)
                 {
                     ad2 = new Addr32(Reg32.ESP);
-                    codes.AddCodes(dest.Size, "push", null, ad1);
+                    dest.Type.AddGetCodes(codes, "push", null, ad1);
                 }
                 foreach (IIntValue v in values)
                     f(codes, ad2, v);
                 if (dest.Size < Var.DefaultSize)
                 {
                     codes.Add(I386.Pop(Reg32.EAX));
-                    Set.AddCodes(dest.Size, codes, ad1);
+                    dest.Type.AddSetCodes(codes, ad1);
                 }
                 return ad1;
             }

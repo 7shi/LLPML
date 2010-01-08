@@ -11,13 +11,19 @@ namespace Girl.LLPML
             switch (type)
             {
                 case "int":
-                case "short":
-                case "sbyte":
                     return TypeInt.Instance;
+                case "short":
+                    return TypeShort.Instance;
+                case "sbyte":
+                    return TypeSByte.Instance;
                 case "uint":
-                case "ushort":
-                case "byte":
                     return TypeUInt.Instance;
+                case "ushort":
+                    return TypeUShort.Instance;
+                case "byte":
+                    return TypeByte.Instance;
+                case "char":
+                    return TypeChar.Instance;
                 default:
                     return null;
             }

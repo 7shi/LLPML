@@ -64,4 +64,67 @@ namespace Girl.LLPML
             conds["less-equal"] = new CondPair(Cc.BE, Cc.NBE);
         }
     }
+
+    public class TypeUShort : TypeUInt
+    {
+        // type name
+        public override string Name { get { return "ushort"; } }
+
+        // type size
+        public override int Size { get { return 2; } }
+
+        // singleton
+        private static TypeUShort instance = new TypeUShort();
+        public static new TypeUShort Instance { get { return instance; } }
+        protected TypeUShort() { }
+
+        // get value
+        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        {
+            codes.AddCodesUW(op, dest, src);
+        }
+
+        // set value
+        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        {
+            codes.Add(I386.MovW(ad, Reg16.AX));
+        }
+    }
+
+    public class TypeChar : TypeUShort
+    {
+        // type name
+        public override string Name { get { return "char"; } }
+
+        // singleton
+        private static TypeChar instance = new TypeChar();
+        public static new TypeChar Instance { get { return instance; } }
+        protected TypeChar() { }
+    }
+
+    public class TypeByte : TypeUInt
+    {
+        // type name
+        public override string Name { get { return "byte"; } }
+
+        // type size
+        public override int Size { get { return 1; } }
+
+        // singleton
+        private static TypeByte instance = new TypeByte();
+        public static new TypeByte Instance { get { return instance; } }
+        protected TypeByte() { }
+
+        // get value
+        public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        {
+            codes.AddCodesUB(op, dest, src);
+        }
+
+        // set value
+        public override void AddSetCodes(OpCodes codes, Addr32 ad)
+        {
+            codes.Add(I386.MovB(ad, Reg8.AL));
+        }
+    }
 }

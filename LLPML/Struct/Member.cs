@@ -162,5 +162,43 @@ namespace Girl.LLPML.Struct
             else
                 Child.Append(mem);
         }
+
+        private bool CheckProperty(string prefix)
+        {
+            var st = target.GetStruct();
+            int ret = st.GetOffset(name);
+            if (ret >= 0) return false;
+            var f = st.GetFunction(prefix + name);
+            return f != null;
+        }
+
+        private IIntValue ConvertTarget()
+        {
+            if (this.target is Var)
+                return this.target as Var;
+            else if (this.target is Pointer)
+                return this.target as Pointer;
+            return null;
+        }
+
+        public bool IsSetter { get { return CheckProperty("set_"); } }
+        public bool IsGetter { get { return CheckProperty("get_"); } }
+
+        public void AddSetterCodes(OpCodes codes, IIntValue arg)
+        {
+            var setter = new Call(parent, "set_" + name, ConvertTarget(), arg);
+            setter.AddCodes(codes);
+        }
+
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        {
+            if (IsGetter)
+            {
+                var getter = new Call(parent, "get_" + name, ConvertTarget());
+                getter.AddCodes(codes, op, dest);
+            }
+            else
+                base.AddCodes(codes, op, dest);
+        }
     }
 }

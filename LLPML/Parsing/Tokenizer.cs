@@ -7,24 +7,26 @@ namespace Girl.LLPML.Parsing
 {
     public class Tokenizer
     {
-        private class IntString
+        private class Data
         {
-            public int Int;
+            public int Pos, LineNumber, LinePosition;
             public string String;
 
-            public IntString(int i, string s)
+            public Data(int pos, int lineNumber, int linePosition)
             {
-                Int = i;
-                String = s;
+                Pos = pos;
+                LineNumber = lineNumber;
+                LinePosition = linePosition;
             }
         }
 
         private string file;
         public string Source { get; private set; }
 
-        private int pos = 0, lineNumber = 0, linePosition = 0;
-        private Stack<IntString> tokens = new Stack<IntString>();
-        private Stack<IntString> results = new Stack<IntString>();
+        private int pos = 0, lineNumber = 1, linePosition = 1;
+        private Stack<int> linePositions = new Stack<int>();
+        private Stack<Data> tokens = new Stack<Data>();
+        private Stack<Data> results = new Stack<Data>();
 
         private string[] reserved;
         public string[] Reserved { set { reserved = value; } }
@@ -32,7 +34,7 @@ namespace Girl.LLPML.Parsing
         public Tokenizer(string file, string src)
         {
             this.file = file;
-            Source = src.TrimEnd();
+            Source = src;
         }
 
         public Tokenizer(string file, string src, int lineNumber, int linePosition)
@@ -51,7 +53,7 @@ namespace Girl.LLPML.Parsing
 
         public string Read()
         {
-            IntString ret = ReadInternal();
+            Data ret = ReadInternal();
             if (ret == null) return null;
 
             if (ret.String == "//")
@@ -87,6 +89,20 @@ namespace Girl.LLPML.Parsing
             return ret.String;
         }
 
+        private void SkipSpaces()
+        {
+            for (; ; )
+            {
+                var ch = ReadChar();
+                if (ch == null) break;
+                if (ch > ' ')
+                {
+                    RewindChar();
+                    break;
+                }
+            }
+        }
+
         public void Rewind()
         {
             if (tokens.Count > 0) results.Push(tokens.Pop());
@@ -109,49 +125,17 @@ namespace Girl.LLPML.Parsing
             }
         }
 
-        public int Position
-        {
-            get
-            {
-                int ret = pos;
-                if (results.Count > 0) ret = results.Peek().Int;
-                for (; ret < Source.Length; ret++)
-                {
-                    if (Source[ret] > ' ') break;
-                }
-                return ret;
-            }
-        }
-
         public SrcInfo SrcInfo
         {
             get
             {
-                return new SrcInfo(file, LineNumber, LinePosition);
-            }
-        }
-
-        protected int LineNumber
-        {
-            get
-            {
-                int num = lineNumber;
-                foreach (char ch in Source.Substring(0, Position))
+                if (results.Count > 0)
                 {
-                    if (ch == '\n') num++;
+                    var d = results.Peek();
+                    return new SrcInfo(file, d.LineNumber, d.LinePosition);
                 }
-                return num;
-            }
-        }
-
-        protected int LinePosition
-        {
-            get
-            {
-                var pos = Position;
-                var p = Source.LastIndexOf('\n', Math.Min(pos, Source.Length - 1));
-                if (p < 0) return linePosition + pos;
-                return pos - p;
+                SkipSpaces();
+                return new SrcInfo(file, lineNumber, linePosition);
             }
         }
 
@@ -197,6 +181,14 @@ namespace Girl.LLPML.Parsing
         private char? ReadChar()
         {
             if (!CanReadChar) return null;
+            if (pos > 1 && Source[pos - 1] == '\n')
+            {
+                linePositions.Push(linePosition);
+                linePosition = 1;
+                lineNumber++;
+            }
+            else
+                linePosition++;
             return Source[pos++];
         }
 
@@ -208,14 +200,23 @@ namespace Girl.LLPML.Parsing
 
         private void RewindChar()
         {
-            if (pos > 0) pos--;
+            if (pos <= 0) return;
+
+            pos--;
+            linePosition--;
+            if (linePosition < 1)
+            {
+                linePosition = linePositions.Pop();
+                lineNumber--;
+            }
         }
 
-        private IntString ReadInternal()
+        private Data ReadInternal()
         {
             if (results.Count > 0) return results.Pop();
 
-            int pos = this.pos;
+            SkipSpaces();
+            var ret = new Data(pos, lineNumber, linePosition);
             StringBuilder sb = new StringBuilder();
             char? ch, pre = null, str = null;
             bool isWord = true;
@@ -276,7 +277,8 @@ namespace Girl.LLPML.Parsing
                 pre = ch;
             }
             if (sb.Length == 0) return null;
-            return new IntString(pos, sb.ToString());
+            ret.String = sb.ToString();
+            return ret;
         }
 
         private bool? IsReserved(string s)
@@ -292,7 +294,7 @@ namespace Girl.LLPML.Parsing
         public Exception Abort(string msg)
         {
             return new Exception(string.Format(
-                "{0}: [{1}:{2}] {3}", file, LineNumber, LinePosition, msg));
+                "{0}: [{1}:{2}] {3}", file, lineNumber, linePosition, msg));
         }
     }
 }

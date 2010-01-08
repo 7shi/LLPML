@@ -60,7 +60,7 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("{0}: 名前が必要です。", category);
 
-            var si = tokenizer.SrcInfo;
+            var si = SrcInfo;
             var name = Read();
             if (!Tokenizer.IsWord(name))
             {
@@ -255,7 +255,7 @@ namespace Girl.LLPML.Parsing
                 if (Peek() == "{")
                 {
                     var st2 = new Struct.Declare(st);
-                    st2.SrcInfo = tokenizer.SrcInfo;
+                    st2.SrcInfo = SrcInfo;
                     ReadInitializers(st2, type);
                     st.Values.Add(st2);
                 }

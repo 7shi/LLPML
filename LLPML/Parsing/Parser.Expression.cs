@@ -38,7 +38,7 @@ namespace Girl.LLPML.Parsing
             IIntValue ret = null;
             for (; ; )
             {
-                var si = tokenizer.SrcInfo;
+                var si = SrcInfo;
                 if (ret == null)
                     ret = Member();
                 else
@@ -56,7 +56,7 @@ namespace Girl.LLPML.Parsing
                 var ar = ret as VarBase;
                 if (ar == null)
                     throw parent.Abort(si, "配列が必要です。");
-                ret = new Index(parent, ar, Expression());
+                ret = new Index(parent, ar, Expression()) { SrcInfo = si };
                 Check("配列", "]");
             }
             return ret;
@@ -73,6 +73,7 @@ namespace Girl.LLPML.Parsing
         private IIntValue Member(IIntValue f)
         {
             Struct.Member mem = f as Struct.Member;
+            var si = SrcInfo;
             while (CanRead)
             {
                 var t1 = Read();
@@ -89,12 +90,12 @@ namespace Girl.LLPML.Parsing
                     var args = Arguments(",", ")", false);
                     if (args == null)
                         throw Abort("引数が不完全です。");
-                    if (mem != null) return new Call(parent, t2, mem, args);
-                    return new Call(parent, t2, f, args);
+                    if (mem != null) return new Call(parent, t2, mem, args) { SrcInfo = si };
+                    return new Call(parent, t2, f, args) { SrcInfo = si };
                 }
                 Rewind();
                 var t2m = new Struct.Member(parent, t2);
-                t2m.SrcInfo = tokenizer.SrcInfo;
+                t2m.SrcInfo = SrcInfo;
                 if (mem == null)
                 {
                     if (f is VarBase)
@@ -147,6 +148,7 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("式がありません。");
 
+            var si = SrcInfo;
             var t = Read();
             switch (t)
             {
@@ -156,32 +158,30 @@ namespace Girl.LLPML.Parsing
                         var v = Integer();
                         if (v != null)
                         {
-                            if (t == "-") return new IntValue(-v.Value);
+                            if (t == "-") return new IntValue(-v.Value) { SrcInfo = si };
                             return v;
                         }
                         var n = Expression();
-                        if (t == "-") return new Neg(parent, n);
+                        if (t == "-") return new Neg(parent, n) { SrcInfo = si };
                         return n;
                     }
                 case "!":
-                    return new Not(parent, Expression());
+                    return new Not(parent, Expression()) { SrcInfo = si };
                 case "~":
-                    return new Rev(parent, Expression());
+                    return new Rev(parent, Expression()) { SrcInfo = si };
                 case "++":
                     {
-                        var si = tokenizer.SrcInfo;
                         var target = Member() as Var;
                         if (target == null)
                             throw parent.Abort(si, "++: 対象が変数ではありません。");
-                        return new Inc(parent, target);
+                        return new Inc(parent, target) { SrcInfo = si };
                     }
                 case "--":
                     {
-                        var si = tokenizer.SrcInfo;
                         var target = Member() as Var;
                         if (target == null)
                             throw parent.Abort(si, "--: 対象が変数ではありません。");
-                        return new Dec(parent, target);
+                        return new Dec(parent, target) { SrcInfo = si };
                     }
             }
             Rewind();
@@ -197,6 +197,7 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) return v;
 
+            var si = SrcInfo;
             switch (Read())
             {
                 case "++":
@@ -204,14 +205,14 @@ namespace Girl.LLPML.Parsing
                         var target = v as Var;
                         if (target == null)
                             throw Abort("++: 対象が変数ではありません。");
-                        return new PostInc(parent, target);
+                        return new PostInc(parent, target) { SrcInfo = si };
                     }
                 case "--":
                     {
                         var target = v as Var;
                         if (target == null)
                             throw Abort("--: 対象が変数ではありません。");
-                        return new PostDec(parent, target);
+                        return new PostDec(parent, target) { SrcInfo = si };
                     }
             }
             Rewind();
@@ -228,16 +229,16 @@ namespace Girl.LLPML.Parsing
             var sv = String();
             if (sv != null) return sv;
 
-            var si = tokenizer.SrcInfo;
+            var si = SrcInfo;
             var t = Read();
             switch (t)
             {
                 case "null":
-                    return new Null(parent);
+                    return new Null(parent) { SrcInfo = si };
                 case "true":
-                    return new IntValue(1);
+                    return new IntValue(1) { SrcInfo = si };
                 case "false":
-                    return new IntValue(0);
+                    return new IntValue(0) { SrcInfo = si };
                 case "__FUNCTION__":
                     return new StringValue(parent.GetName());
                 case "__FILE__":
@@ -251,31 +252,31 @@ namespace Girl.LLPML.Parsing
                         if (arg == null)
                             throw Abort("sizeof: 引数が必要です。");
                         if (br == "(") Check("sizeof", ")");
-                        return new SizeOf(parent, arg);
+                        return new SizeOf(parent, arg) { SrcInfo = si };
                     }
                 case "addrof":
                     {
                         var ex = Expression() as Var;
                         if (ex == null)
                             throw parent.Abort(si, "addrof: 引数が不適切です。");
-                        return new AddrOf(parent, ex);
+                        return new AddrOf(parent, ex) { SrcInfo = si };
                     }
                 case "typeof":
                     {
                         var ex = Expression() as VarBase;
                         if (ex == null)
                             throw parent.Abort(si, "typeof: 引数が不適切です。");
-                        return new TypeOf(parent, ex);
+                        return new TypeOf(parent, ex) { SrcInfo = si };
                     }
                 case "__LLPML__":
                     return new StringValue("LLPML ver." + Root.LLPMLVersion);
             }
 
             var vd = parent.GetVar(t);
-            var v = vd != null ? new Var(parent, vd) : null;
+            var v = vd != null ? new Var(parent, vd) { SrcInfo = si } : null;
 
             var pd = parent.GetPointer(t);
-            var p = pd != null ? new Pointer(parent, pd) : null;
+            var p = pd != null ? new Pointer(parent, pd) { SrcInfo = si } : null;
 
             switch (Read())
             {
@@ -287,8 +288,8 @@ namespace Girl.LLPML.Parsing
                         if (args == null)
                             throw Abort("{0}: 引数が不完全です。", t);
                         if (v != null)
-                            return new Call(parent, v, null, args);
-                        return new Call(parent, t, null, args);
+                            return new Call(parent, v, null, args) { SrcInfo = si };
+                        return new Call(parent, t, null, args) { SrcInfo = si };
                     }
                 default:
                     Rewind();
@@ -299,14 +300,14 @@ namespace Girl.LLPML.Parsing
             if (p != null) return p;
 
             var i = parent.GetInt(t);
-            if (i != null) return new IntValue((int)i);
+            if (i != null) return new IntValue((int)i) { SrcInfo = si };
 
             var s = parent.GetString(t);
             if (s != null) return new StringValue(s);
 
             // 未定義語を関数ポインタとして解釈
             if (Tokenizer.IsWord(t))
-                return new Function.Ptr(parent, t);
+                return new Function.Ptr(parent, t) { SrcInfo = si };
 
             Rewind();
             throw Abort("評価できません: {0}", t);
@@ -314,9 +315,10 @@ namespace Girl.LLPML.Parsing
 
         private IntValue Integer()
         {
+            var si = SrcInfo;
             var t = Read();
             if (t == null) return null;
-            if (t.StartsWith("0x")) return new IntValue(t);
+            if (t.StartsWith("0x")) return new IntValue(t) { SrcInfo = si };
 
             foreach (var ch in t)
             {
@@ -326,11 +328,12 @@ namespace Girl.LLPML.Parsing
                     return null;
                 }
             }
-            return new IntValue(t);
+            return new IntValue(t) { SrcInfo = si };
         }
 
         private StringValue String()
         {
+            var si = SrcInfo;
             var t = Read();
             if (t == null) return null;
             if (t.Length < 2 || !t.StartsWith("\"") || !t.EndsWith("\""))
@@ -343,6 +346,7 @@ namespace Girl.LLPML.Parsing
 
         private Struct.Cast Cast()
         {
+            var si = SrcInfo;
             var br1 = Read();
             if (br1 == "(")
             {
@@ -365,7 +369,7 @@ namespace Girl.LLPML.Parsing
                         }
                     }
                     if (br2 == ")")
-                        return new Struct.Cast(parent, type, Expression());
+                        return new Struct.Cast(parent, type, Expression()) { SrcInfo = si };
                     Rewind();
                 }
                 Rewind();

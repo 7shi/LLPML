@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080324">
+<llpml version="0.12.20080325">
 
 <include src="win32.xml" />
 <include src="malloc.xml" />
@@ -41,6 +41,7 @@ struct Bitmap : BITMAPINFO
     bmiHeader.biWidth  = width;
     bmiHeader.biHeight = -height;
     Count = width * height;
+    if (Buffer != null) free(Buffer);
     Buffer = malloc(sizeof(Color) * Count);
     Clear();
   }
@@ -140,6 +141,55 @@ struct MenuItem : MENUITEMINFO
   {
     if (hMenu != null)
       hMenu.SetMenuItemInfo(wID, false, this);
+  }
+}
+
+struct Control
+{
+  var dwExStyle     = 0;
+  var lpClassName   = null;
+  var lpWindowName  = "";
+  var dwStyle       = 0;
+  var X             = CW_USEDEFAULT;
+  var Y             = 0;
+  var nWidth        = CW_USEDEFAULT;
+  var nHeight       = 0;
+  var hWndParent    = null;
+  var hMenu         = null;
+  var hInstance     = null;
+  var lpParam       = null;
+  var hWnd          = null;
+  
+  function ctor()
+  {
+  }
+  
+  function Create()
+  {
+    if (hWnd != null) return;
+    hWnd = CreateWindowEx(
+      dwExStyle, lpClassName, lpWindowName,
+      dwStyle, X, Y, nWidth, nHeight,
+      hWndParent, hMenu, hInstance, lpParam);
+  }
+  
+  function Show()
+  {
+    Create();
+    hWnd.ShowWindow(SW_SHOWNORMAL);
+    hWnd.UpdateWindow();
+  }
+  
+  function Hide()
+  {
+    Create();
+    hWnd.ShowWindow(SW_HIDE);
+  }
+  
+  function Invalidate()
+  {
+    Create();
+    hWnd.InvalidateRect(null, false);
   }
 }
 ?>

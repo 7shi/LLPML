@@ -19,6 +19,10 @@ printfln("a << 5 = %08x : %08x", a << 5, aa << 5);
 printfln("a >> 5 = %08x : %08x", a >> 5, aa >> 5);
 printfln("a << c = %08x : %08x", a << c, aa << cc);
 printfln("a >> c = %08x : %08x", a >> c, aa >> cc);
+
+short s = -1;
+ushort us = 0xffff;
+printfln("s = %d(%x), us = %u(%x)", s, s, us, us);
 ?>
 
 </llpml>

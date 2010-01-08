@@ -66,9 +66,14 @@ namespace Girl.LLPML
             return reference.GetAddress(codes, parent);
         }
 
-        public void AddCodes(OpCodes codes, string op, Addr32 dest)
+        public virtual void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            codes.AddCodes(Size, op, dest, GetAddress(codes));
+            var ad = GetAddress(codes);
+            var t = Type;
+            if (t != null)
+                t.AddGetCodes(codes, op, dest, ad);
+            else
+                codes.AddCodes(op, dest, ad);
         }
     }
 }

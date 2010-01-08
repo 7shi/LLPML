@@ -11,6 +11,9 @@ namespace Girl.LLPML
         // type name
         public abstract string Name { get; }
 
+        // type size
+        public virtual int Size { get { return Var.DefaultSize; } }
+
         // functions
         public delegate void Func(OpCodes codes, Addr32 dest, IIntValue arg);
         protected Dictionary<string, Func> funcs = new Dictionary<string, Func>();
@@ -30,6 +33,19 @@ namespace Girl.LLPML
             return c;
         }
 
+        // get value
+        public virtual void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
+        {
+            codes.AddCodes(op, dest, src);
+        }
+
+        // set value
+        public virtual void AddSetCodes(OpCodes codes, Addr32 ad)
+        {
+            codes.Add(I386.Mov(ad, Reg32.EAX));
+        }
+
+        // operator name
         public static string GetFuncName(string op)
         {
             switch (op)

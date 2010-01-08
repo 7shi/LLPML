@@ -25,7 +25,8 @@ namespace Girl.LLPML
             }
         }
 
-        public Return(BlockBase parent, IIntValue value) : base(parent) { Value = value; }
+        public Return(BlockBase parent) : base(parent) { }
+        public Return(BlockBase parent, IIntValue value) : this(parent) { Value = value; }
         public Return(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)

@@ -24,13 +24,13 @@ namespace Girl.LLPML
             if (dest.Size < Var.DefaultSize)
             {
                 ad2 = new Addr32(Reg32.ESP);
-                codes.AddCodes(dest.Size, "push", null, ad1);
+                dest.Type.AddGetCodes(codes, "push", null, ad1);
             }
             GetFunc()(codes, ad2, null);
             if (dest.Size < Var.DefaultSize)
             {
                 codes.Add(I386.Pop(Reg32.EAX));
-                Set.AddCodes(dest.Size, codes, ad1);
+                dest.Type.AddSetCodes(codes, ad1);
             }
             return ad1;
         }
@@ -68,7 +68,7 @@ namespace Girl.LLPML
         {
             var ad1 = this.dest.GetAddress(codes);
             var ad2 = ad1;
-            codes.AddCodes(this.dest.Size, "push", null, ad1);
+            this.dest.Type.AddGetCodes(codes, "push", null, ad1);
             if (this.dest.Size < Var.DefaultSize)
             {
                 ad2 = new Addr32(Reg32.ESP);
@@ -78,7 +78,7 @@ namespace Girl.LLPML
             if (this.dest.Size < Var.DefaultSize)
             {
                 codes.Add(I386.Pop(Reg32.EAX));
-                Set.AddCodes(this.dest.Size, codes, ad1);
+                this.dest.Type.AddSetCodes(codes, ad1);
             }
             codes.Add(I386.Pop(Reg32.EAX));
             codes.AddCodes(op, dest);

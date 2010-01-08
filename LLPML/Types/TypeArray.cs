@@ -13,12 +13,13 @@ namespace Girl.LLPML
         public override string Name { get { return type; } }
 
         private string type;
-        public int Size { get; private set; }
+        private int size;
+        public override int Size { get { return size; } }
 
         public TypeArray(string type, int size)
         {
             this.type = type;
-            Size = size;
+            this.size = size;
 
             funcs["inc"] = funcs["post-inc"] = (codes, dest, arg) =>
             {

@@ -149,7 +149,7 @@ namespace Girl.LLPML
                         char[] data = new char[1024];
                         var rs = xr.ReadString();
                         var t = new Tokenizer(target.Root.Source,
-                            xr.Value, xr.LineNumber + 1, 0);
+                            xr.Value, xr.LineNumber + 1, 1);
                         var sents = Block.ReadText(target, t);
                         if (sents != null) Sentences.AddRange(sents);
                         break;

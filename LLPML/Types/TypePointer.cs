@@ -17,9 +17,7 @@ namespace Girl.LLPML
         {
             var f = type.GetFunction("operator_" + key);
             if (f == null) return base.GetFunc(key);
-            return (codes, dest, arg) =>
-            {
-            };
+            return null;
         }
 
         // conditions
@@ -29,7 +27,7 @@ namespace Girl.LLPML
         }
 
         private Struct.Define type;
-        public int Size { get { return type.GetSize(); } }
+        public override int Size { get { return type.GetSize(); } }
 
         public TypePointer(Struct.Define type)
         {

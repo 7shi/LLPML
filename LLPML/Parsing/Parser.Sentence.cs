@@ -16,7 +16,7 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("文がありません。");
 
-            var si = tokenizer.SrcInfo;
+            var si = SrcInfo;
             var t = Read();
             NodeBase nb = null;
             switch (t)
@@ -89,7 +89,7 @@ namespace Girl.LLPML.Parsing
             }
             else
             {
-                var si = tokenizer.SrcInfo;
+                var si = SrcInfo;
                 var nb = CheckReserved(t);
                 if (nb != null)
                 {
@@ -115,7 +115,9 @@ namespace Girl.LLPML.Parsing
                 case "do":
                     return Do();
                 case "return":
-                    return new Return(parent, Expression());
+                    if (CanRead && Peek() != ";")
+                        return new Return(parent, Expression());
+                    return new Return(parent);
                 case "break":
                     {
                         var brk = new Break(parent);
@@ -243,7 +245,7 @@ namespace Girl.LLPML.Parsing
             var list = new List<Extern>();
             for (; ; )
             {
-                var si = tokenizer.SrcInfo;
+                var si = SrcInfo;
                 var name = Read();
                 CallType ct2 = CheckCallType(ct1, ref name);
                 var sfx2 = CheckSuffix(sfx1, ref name);
@@ -393,7 +395,7 @@ namespace Girl.LLPML.Parsing
         {
             Block ret = null;
             var p = this.parent;
-            var si = tokenizer.SrcInfo;
+            var si = SrcInfo;
             if (Peek() == "{")
             {
                 this.parent = parent;
@@ -490,7 +492,7 @@ namespace Girl.LLPML.Parsing
         {
             Check("switch", "(");
 
-            var si = tokenizer.SrcInfo;
+            var si = SrcInfo;
             var expr = Expression() as IIntValue;
             if (expr == null)
                 throw parent.Abort(si, "switch: 値が必要です。");

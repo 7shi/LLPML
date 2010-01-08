@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080324" subsystem="WINDOWS_GUI">
+<llpml version="0.12.20080325" subsystem="WINDOWS_GUI">
 
 <title>αブレンド</title>
 
 <include src="stdio.xml" />
 <include src="mmx.xml" />
 <include src="sse.xml" />
-<include src="winforms.xml" />
+<include src="winwrap.xml" />
 
 <?llp
 const string className = "LLPML Test Window";
@@ -42,25 +42,25 @@ var pixelCount = width * height;
 
 MainMenu mainMenu;
 MenuItem miFile, miFileExit;
-miFile.set_Text("ファイル(&F)");
-miFileExit.set_Text("終了(&X)");
+miFile.Text = "ファイル(&F)";
+miFileExit.Text = "終了(&X)";
 miFile.Append(miFileExit);
 MenuItem miOpt, miOptNormal, miOptMMX, miOptSSE2;
-miOpt.set_Text("オプション(&M)");
-miOptNormal.set_Text("通常演算(&N)");
+miOpt.Text = "オプション(&M)";
+miOptNormal.Text = "通常演算(&N)";
 miOptNormal.UseRadio();
-miOptMMX.set_Text("&MMX");
+miOptMMX.Text = "&MMX";
+miOptMMX.Enabled = fMMX;
 miOptMMX.UseRadio();
-miOptMMX.set_Enabled(fMMX);
-miOptSSE2.set_Text("&SSE2");
+miOptSSE2.Text = "&SSE2";
+miOptSSE2.Enabled = fSSE2;
 miOptSSE2.UseRadio();
-miOptSSE2.set_Enabled(fSSE2);
 miOpt.Append(miOptNormal);
 miOpt.Append(miOptMMX);
 miOpt.Append(miOptSSE2);
 MenuItem miHelp, miHelpAbout;
-miHelp.set_Text("ヘルプ(&H)");
-miHelpAbout.set_Text("バージョン情報(&A)");
+miHelp.Text = "ヘルプ(&H)";
+miHelpAbout.Text = "バージョン情報(&A)";
 miHelp.Append(miHelpAbout);
 mainMenu.Append(miFile);
 mainMenu.Append(miOpt);
@@ -70,22 +70,15 @@ SetMode(mode);
 var dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 RECT r = { 0, 0, width, height };
 r.AdjustWindowRectEx(dwStyle, true, 0);
-var hWnd = CreateWindowEx(
-  /* dwExStyle    */ 0,
-  /* lpClassName  */ className,
-  /* lpWindowName */ "テスト",
-  /* dwStyle      */ dwStyle,
-  /* X            */ CW_USEDEFAULT,
-  /* Y            */ 0,
-  /* nWidth       */ r.right - r.left,
-  /* nHeight      */ r.bottom - r.top,
-  /* hWndParent   */ null,
-  /* hMenu        */ mainMenu.hMenu,
-  /* hInstance    */ hInstance,
-  /* lpParam      */ null
-);
-hWnd.ShowWindow(SW_SHOWNORMAL);
-hWnd.UpdateWindow();
+Control form;
+form.lpClassName  = className;
+form.lpWindowName = "テスト";
+form.dwStyle      = dwStyle;
+form.nWidth       = r.right - r.left;
+form.nHeight      = r.bottom - r.top;
+form.hMenu        = mainMenu.hMenu;
+form.hInstance    = hInstance;
+form.Show();
 
 // ループ
 var count = 0;
@@ -103,7 +96,7 @@ while (DoEvents())
     for (var j = 0; j < 5; j++)
       FillRectangle(8 + i * 64, bx + j * 64, 48, 48, 0xa0ff0000);
   count++;
-  hWnd.InvalidateRect(null, false);
+  form.Invalidate();
   
   // fps
   fps++;
@@ -290,9 +283,9 @@ function SetMode(m)
   mode = m;
   fpsBufLen = 0;
   fps = 0;
-  miOptNormal.set_Checked(m == 0);
-  miOptMMX.set_Checked(m == 1);
-  miOptSSE2.set_Checked(m == 2);
+  miOptNormal.Checked = m == 0;
+  miOptMMX   .Checked = m == 1;
+  miOptSSE2  .Checked = m == 2;
   tick = GetTickCount();
 }
 ?>

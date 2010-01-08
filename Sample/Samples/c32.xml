@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.12.20080325">
+
+<title>プロパティ</title>
+
+<include src="finish.xml" />
+
+<?llp
+struct Test
+{
+  var value;
+  
+  function get_Value()
+  {
+    return value;
+  }
+  
+  function set_Value(value)
+  {
+    this.value = value;
+  }
+}
+
+Test t;
+t.Value = 5;
+printfln("t.Value = %d", t.Value);
+?>
+
+</llpml>

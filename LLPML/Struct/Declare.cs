@@ -108,7 +108,7 @@ namespace Girl.LLPML.Struct
                     if (!(mem is Var.Declare))
                         throw Abort("value required: " + mem.Name);
                     (obj as IIntValue).AddCodes(codes, "mov", null);
-                    Set.AddCodes(mem.Length, codes, new Addr32(ad));
+                    Set.AddSetCodes(mem.Type, mem.Length, codes, new Addr32(ad));
                     ad.Add(mem.Length);
                 }
                 else

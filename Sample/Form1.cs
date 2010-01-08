@@ -62,7 +62,7 @@ namespace Sample
             string[] libs =
             {
                 "stdio", "string", "malloc", "finish",
-                "cpuid", "mmx", "sse", "win32", "winforms"
+                "cpuid", "mmx", "sse", "win32", "winwrap"
             };
             foreach (var lib in libs)
                 library.Nodes.Add(CreateItem(lib + ".xml"));
@@ -96,6 +96,7 @@ namespace Sample
 
             var cur = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
+            DateTime start = DateTime.Now;
 #if !DEBUG
             try
             {
@@ -128,7 +129,9 @@ namespace Sample
 
             var exe = GetFullName(root.Output);
             module.Link(exe);
+            var time = (DateTime.Now - start).TotalMilliseconds;
             textBox2.AppendText("èoóÕ: " + exe + "\r\n");
+            textBox2.AppendText("èäóvéûä‘: " + time + "ms\r\n");
             Process.Start(exe);
 #if !DEBUG
             }

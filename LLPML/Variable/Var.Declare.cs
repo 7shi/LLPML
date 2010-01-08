@@ -122,10 +122,9 @@ namespace Girl.LLPML
                 if (Value == null) return;
 
                 Value.AddCodes(codes, "mov", null);
-                if (HasThis)
-                    Set.AddCodes(length, codes, GetAddress(codes, null));
-                else
-                    Set.AddCodes(length, codes, address);
+                var ad = address;
+                if (HasThis) ad = GetAddress(codes, null);
+                type.AddSetCodes(codes, ad);
             }
         }
     }

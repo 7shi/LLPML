@@ -54,7 +54,7 @@ namespace Girl.X86
             }
         }
 
-        public void AddCodesW(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesSW(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
@@ -74,7 +74,47 @@ namespace Girl.X86
             }
         }
 
-        public void AddCodesB(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesUW(string op, Addr32 dest, Addr32 ad)
+        {
+            switch (op)
+            {
+                case "push":
+                    AddRange(new OpCode[] {
+                        I386.MovzxW(Reg32.EAX, ad),
+                        I386.Push(Reg32.EAX)
+                    });
+                    break;
+                default:
+                    Add(I386.MovW(Reg16.AX, ad));
+                    if (dest != null)
+                        Add(I386.FromNameW(op, dest, Reg16.AX));
+                    else
+                        Add(I386.MovzxW(Reg32.EAX, Reg16.AX));
+                    break;
+            }
+        }
+
+        public void AddCodesSB(string op, Addr32 dest, Addr32 ad)
+        {
+            switch (op)
+            {
+                case "push":
+                    AddRange(new OpCode[] {
+                        I386.MovsxB(Reg32.EAX, ad),
+                        I386.Push(Reg32.EAX)
+                    });
+                    break;
+                default:
+                    Add(I386.MovB(Reg8.AL, ad));
+                    if (dest != null)
+                        Add(I386.FromNameB(op, dest, Reg8.AL));
+                    else
+                        Add(I386.MovsxB(Reg32.EAX, Reg8.AL));
+                    break;
+            }
+        }
+
+        public void AddCodesUB(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
@@ -90,22 +130,6 @@ namespace Girl.X86
                         Add(I386.FromNameB(op, dest, Reg8.AL));
                     else
                         Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
-                    break;
-            }
-        }
-
-        public void AddCodes(int size, string op, Addr32 dest, Addr32 ad)
-        {
-            switch (size)
-            {
-                case 2:
-                    AddCodesW(op, dest, ad);
-                    break;
-                case 1:
-                    AddCodesB(op, dest, ad);
-                    break;
-                default:
-                    AddCodes(op, dest, ad);
                     break;
             }
         }
