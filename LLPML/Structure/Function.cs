@@ -103,7 +103,6 @@ namespace Girl.LLPML
         {
             if (string.IsNullOrEmpty(name))
             {
-                //this.parent = root;
                 isAnonymous = true;
                 name = this.parent.GetAnonymousFunctionName();
             }
@@ -115,6 +114,7 @@ namespace Girl.LLPML
                 args.Add(new Arg(this, "this", GetParentType()));
                 thisptr = new Struct.This(this);
             }
+            CheckAnonymousMember();
         }
 
         public Function(BlockBase parent, XmlTextReader xr)
@@ -144,7 +144,6 @@ namespace Girl.LLPML
             name = xr["name"];
             if (string.IsNullOrEmpty(name))
             {
-                //parent = root;
                 isAnonymous = true;
                 name = parent.GetAnonymousFunctionName();
             }
@@ -167,6 +166,8 @@ namespace Girl.LLPML
                 throw Abort(xr, "multiple definitions: " + name);
 
             base.Read(xr);
+
+            CheckAnonymousMember();
         }
 
         protected bool isAnonymous = false;
@@ -175,7 +176,7 @@ namespace Girl.LLPML
         {
             get
             {
-                if (isAnonymous) return 0;
+                if (isAnonymous) return 1;
                 return base.Level;
             }
         }
@@ -287,6 +288,45 @@ namespace Girl.LLPML
                 type = new TypeFunction(this);
                 return type;
             }
+        }
+
+        protected List<Var.Declare> autoArgs = new List<Var.Declare>();
+        public Var.Declare[] GetAutoArgs()
+        {
+            if (autoArgs.Count == 0) return null;
+            return autoArgs.ToArray();
+        }
+
+        protected void InsertArg(Arg arg)
+        {
+            args.Insert(0, arg);
+            autoArgs.Insert(0, arg);
+        }
+
+        public override Var.Declare GetVar(string name)
+        {
+            if (!isAnonymous) return base.GetVar(name);
+
+            var v = GetMember<Var.Declare>(name);
+            if (v != null) return v;
+
+            var vp = parent.GetVar(name);
+            if (vp == null || vp.IsMember) return vp;
+
+            var arg = new Arg(this, name, vp.Type);
+            InsertArg(arg);
+            return arg;
+        }
+
+        protected void CheckAnonymousMember()
+        {
+            if (!isAnonymous || HasThis) return;
+
+            var f = parent as Function;
+            if (f == null || !f.HasThis) return;
+
+            InsertArg(new Arg(this, "this", f.thisptr.Type));
+            thisptr = new Struct.This(this);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.18.20080421">
 
 <title>クイックソート</title>
 
@@ -29,8 +29,8 @@ function QuickSort(src : ArrayList, dest : ArrayList)
   
   var x = src.Ptr[0];
   ArrayList lt, ge;
-  lt |< src.FindPartial(1, delegate(x, \(x, n) => n < x));
-  ge |< src.FindPartial(1, delegate(x, \(x, n) => n >= x));
+  lt |< src.FindPartial(1, \n => n <  x);
+  ge |< src.FindPartial(1, \n => n >= x);
   dest |< lt.QuickSort;
   dest |< Add(x);
   dest |< ge.QuickSort;

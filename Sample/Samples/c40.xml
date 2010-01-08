@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.18.20080421">
 
 <title>継続渡し</title>
 
@@ -10,15 +10,15 @@
 function cont(a)
 {
   printfln("a: %d", a);
-  return delegate(a, \a =>
+  return function
   {
     printfln("a += 2: %d", a += 2);
-    return delegate(a, \a =>
+    return function
     {
       printfln("a += 3: %d", a += 3);
       return null;
-    });
-  });
+    };
+  };
 };
 
 var delg = cont(5);

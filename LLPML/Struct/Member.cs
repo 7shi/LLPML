@@ -160,6 +160,14 @@ namespace Girl.LLPML.Struct
             return Child != null ? Child.GetStruct() : GetStructInternal();
         }
 
+        protected bool GetIsStatic()
+        {
+            if (target == null) return true;
+            if (target is Member)
+                return (target as Member).GetIsStatic();
+            return false;
+        }
+
         protected TypeBase TypeInternal
         {
             get
@@ -171,7 +179,12 @@ namespace Girl.LLPML.Struct
                 if (m != null) return m.Type;
 
                 var f = st.GetFunction(name);
-                if (f != null) return f.Type;
+                if (f != null)
+                {
+                    var delg = GetDelegate();
+                    if (delg != null) return delg.Type;
+                    return f.Type;
+                }
 
                 var g = st.GetFunction("get_" + name);
                 if (g != null) return g.ReturnType;
@@ -214,12 +227,33 @@ namespace Girl.LLPML.Struct
             return target;
         }
 
+        private bool flgDelg;
+        private Delegate delg;
+
+        private Delegate GetDelegate()
+        {
+            if (flgDelg) return delg;
+            flgDelg = true;
+
+            var st = GetTargetStruct();
+            if (st == null) return null;
+
+            var m = st.GetMember(name);
+            if (m != null) return null;
+
+            var f = st.GetFunction(name);
+            if (f == null || GetIsStatic()) return null;
+
+            delg = new Delegate(parent, f.CallType, new[] { target }, f);
+            return delg;
+        }
+
         private Function GetFunction(string prefix)
         {
             var st = GetTargetStruct();
             if (st == null) return null;
-            int ret = st.GetOffset(name);
-            if (ret >= 0) return null;
+            int of = st.GetOffset(name);
+            if (of >= 0) return null;
             return st.GetFunction(prefix + name);
         }
 
@@ -283,8 +317,14 @@ namespace Girl.LLPML.Struct
                 GetCall("get_").AddCodes(codes, op, dest);
             else if (IsFunctionInternal)
             {
-                var fp = new Function.Ptr(GetTargetStruct(), name);
-                fp.AddCodes(codes, op, dest);
+                var delg = GetDelegate();
+                if (delg != null)
+                    delg.AddCodes(codes, op, dest);
+                else
+                {
+                    var fp = new Function.Ptr(GetTargetStruct(), name);
+                    fp.AddCodes(codes, op, dest);
+                }
             }
             else
                 TypeInternal.AddGetCodes(codes, op, dest, GetAddressInternal(codes));

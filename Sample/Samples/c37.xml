@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.18.20080421">
 
 <title>委譲</title>
 
@@ -24,10 +24,11 @@ b.Text = "b";
 a.Show();
 b.Show();
 
-var delg_a = delegate(a, Test.Show);
-var delg_b = delegate(b, Test.Show);
+var delg_a = a.Show;
+var delg_b = b.Show;
 
 printfln("typeof Test.Show = %s", typeof Test.Show);
+printfln("typeof a.Show = %s", typeof a.Show);
 printfln("typeof delg_a = %s", typeof delg_a);
 printfln("typeof delg_b = %s", typeof delg_b);
 

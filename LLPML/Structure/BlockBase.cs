@@ -195,7 +195,7 @@ namespace Girl.LLPML
 
         #endregion
 
-        public Var.Declare GetVar(string name) { return GetMemberRecursive<Var.Declare>(name); }
+        public virtual Var.Declare GetVar(string name) { return GetMemberRecursive<Var.Declare>(name); }
         public bool AddVar(Var.Declare v) { return AddMember(v.Name, v); }
 
         public Function GetFunction(string name) { return GetMemberRecursive<Function>(name); }

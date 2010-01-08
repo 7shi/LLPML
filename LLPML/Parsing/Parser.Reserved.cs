@@ -25,7 +25,7 @@ namespace Girl.LLPML.Parsing
                         var f = Function(t);
                         if (f == null) break;
                         f.SrcInfo = si;
-                        return f;
+                        return AutoDelegate(f);
                     }
                 case "delegate":
                     {
@@ -54,7 +54,7 @@ namespace Girl.LLPML.Parsing
                         var lambda = Lambda();
                         if (lambda == null) break;
                         lambda.SrcInfo = si;
-                        return lambda;
+                        return AutoDelegate(lambda);
                     }
                 case "sizeof":
                     {

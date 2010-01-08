@@ -23,6 +23,7 @@ namespace Girl.LLPML
         public IIntValue[] Args { get; protected set; }
         public IIntValue Function { get; protected set; }
         public CallType CallType { get; protected set; }
+        public bool Auto { get; set; }
 
         public Delegate(BlockBase parent, CallType callType, IIntValue[] args)
             : base(parent)
@@ -33,6 +34,14 @@ namespace Girl.LLPML
             Args = new IIntValue[len - 1];
             Array.Copy(args, Args, len - 1);
             Function = args[len - 1];
+            CallType = callType;
+        }
+
+        public Delegate(BlockBase parent, CallType callType, IIntValue[] args, IIntValue func)
+            :base(parent)
+        {
+            Args = args;
+            Function = func;
             CallType = callType;
         }
 

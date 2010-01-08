@@ -1,23 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.16.20080410">
+<llpml version="0.18.20080421">
 
 <title>ラムダ式</title>
 
 <include src="finish.xml" />
+<include src="jit.xml" />
 
 <?llp
-// 間接呼び出し
-var f = \(a, b) => a - b;
-printfln("f(5, 3) = %d", f(5, 3));
+// 間接呼び出し 1
+var f1 = \(a, b) => a - b;
+printfln("f1(5, 3) = %d", f1(5, 3));
 
-// 直接呼び出し
+// 直接呼び出し 1
 printfln(
   "(\\(a, b) => a - b)(5, 3) = %d",
-   (\ (a, b) => a - b)(5, 3));
+   ( \(a, b) => a - b)(5, 3));
+println();
+
+// 間接呼び出し 2
+var f2 = \a => \b => a - b;
+printfln("f2(5)(3) = %d", f2(5)(3));
+
+// 直接呼び出し 2
+printfln(
+  "(\\a => \\b => a - b)(5)(3) = %d",
+   ( \a =>  \b => a - b)(5)(3));
+println();
 
 // 引数1個
 var inc = \a => a + 1;
 printfln("inc(3) = %d", inc(3));
+println();
 
 // 引数なし
 wrapper(\ => printfln("anonymous!"));

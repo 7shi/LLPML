@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.14.20080329" subsystem="WINDOWS_GUI">
+<llpml version="0.18.20080421" subsystem="WINDOWS_GUI">
 
 <title>αブレンド</title>
 
@@ -81,41 +81,41 @@ struct Form1 : Form
     
     miFile.Text = "ファイル(&F)";
     miFileExit.Text = "終了(&X)";
-    miFileExit.Click.Add(delegate(this, function(this : Form1, sender, e)
+    miFileExit.Click.Add(\(sender, e) =>
     {
-      this.hWnd.DestroyWindow();
-    }));
+      hWnd.DestroyWindow();
+    });
     miFile.Append(miFileExit);
     miOpt.Text = "オプション(&M)";
     miOptNormal.Text = "通常演算(&N)";
     miOptNormal.UseRadio();
-    miOptNormal.Click.Add(delegate(this, function(this : Form1, sender, e)
+    miOptNormal.Click.Add(\(sender, e) =>
     {
-      this.SetMode(0);
-    }));
+      SetMode(0);
+    });
     miOptMMX.Text = "&MMX";
     miOptMMX.Enabled = mode_max >= 1;
     miOptMMX.UseRadio();
-    miOptMMX.Click.Add(delegate(this, function(this : Form1, sender, e)
+    miOptMMX.Click.Add(\(sender, e) =>
     {
-      this.SetMode(1);
-    }));
+      SetMode(1);
+    });
     miOptSSE2.Text = "&SSE2";
     miOptSSE2.Enabled = mode_max == 2;
     miOptSSE2.UseRadio();
-    miOptSSE2.Click.Add(delegate(this, function(this : Form1, sender, e)
+    miOptSSE2.Click.Add(\(sender, e) =>
     {
-      this.SetMode(2);
-    }));
+      SetMode(2);
+    });
     miOpt.Append(miOptNormal);
     miOpt.Append(miOptMMX);
     miOpt.Append(miOptSSE2);
     miHelp.Text = "ヘルプ(&H)";
     miHelpAbout.Text = "バージョン情報(&A)";
-    miHelpAbout.Click.Add(delegate(this, function(this : Form1, sender, e)
+    miHelpAbout.Click.Add(\(sender, e) =>
     {
-      MessageBox(this.hWnd, __LLPML__, "バージョン情報", 0);
-    }));
+      MessageBox(hWnd, __LLPML__, "バージョン情報", 0);
+    });
     miHelp.Append(miHelpAbout);
     mainMenu1.Append(miFile);
     mainMenu1.Append(miOpt);

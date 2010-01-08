@@ -1,9 +1,5 @@
 [済]
-- 型でデストラクタのチェック
-- TypeFunction, TypeDelegate
--- TypeFunctionの引数チェック
--- TypeDelegateの自動解放
-- 配列のctor/dtor
+- クロージャ
 
 [未]
 - 簡略記法

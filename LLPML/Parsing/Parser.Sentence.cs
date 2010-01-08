@@ -208,6 +208,23 @@ namespace Girl.LLPML.Parsing
             this.parent = parent;
         }
 
+        private IIntValue AutoDelegate(Function f)
+        {
+            if (f == null) return null;
+
+            var autoArgs = f.GetAutoArgs();
+            if (autoArgs == null) return f;
+
+            var args = new IIntValue[autoArgs.Length];
+            for (int i = 0; i < args.Length; i++)
+                args[i] = new Var(parent, autoArgs[i].Name);
+            return new Delegate(parent, f.CallType, args, f)
+            {
+                SrcInfo = f.SrcInfo,
+                Auto = true,
+            };
+        }
+
         private Function Function(string type)
         {
             if (!CanRead) throw Abort("{0}: 定義が必要です。", type);

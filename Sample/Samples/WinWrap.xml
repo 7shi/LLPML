@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.18.20080421">
 
 <include src="win32.xml" />
 <include src="stdio.xml" />
@@ -19,8 +19,14 @@ struct Event : ArrayList
 {
   function dtor()
   {
+    Clear();
+  }
+  
+  function Clear()
+  {
     for (int i = 0; i < Count; i++)
       __jit_free(Ptr[i]);
+    Count = 0;
   }
   
   function Add(delg)

@@ -13,8 +13,8 @@ delegate next, prev;
 function counter()
 {
   var a = 10;
-  next = delegate(a, \a => ++a);
-  prev = delegate(a, \a => --a);
+  next = \ => ++a;
+  prev = \ => --a;
   a = 5;
   printfln("a = %d", a);
   printfln("next() = %d", next()); // 反映されない
@@ -26,6 +26,12 @@ printfln("next() = %d", next());
 printfln("next() = %d", next()); // 変化なし
 printfln("prev() = %d", prev());
 printfln("prev() = %d", prev()); // 変化なし
+println();
+
+var f = \a => \b => a + b;
+printfln("typeof f = %s", typeof f);
+printfln("typeof f(2) = %s", typeof f(2));
+printfln("f(2)(3) = %d", f(2)(3));
 ?>
 
 </llpml>

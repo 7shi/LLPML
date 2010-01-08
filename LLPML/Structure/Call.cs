@@ -210,6 +210,11 @@ namespace Girl.LLPML
                 var t = arg.Type;
                 if (t != null) return t.NeedsDtor;
             }
+            else if (arg is Struct.Member)
+            {
+                var t = arg.Type;
+                if (t is TypeDelegate) return t.NeedsDtor;
+            }
             return false;
         }
 

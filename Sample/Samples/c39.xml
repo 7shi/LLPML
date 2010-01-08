@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.17.20080421">
+<llpml version="0.18.20080421">
 
 <title>カリー化</title>
 
@@ -11,8 +11,7 @@ var mul = \(a, b) => a * b;
 var mul2 = \a => mul(2, a);
 printfln("mul2(3) = %d", mul2(3));
 
-// a => b => a * b
-var curried = \a => delegate(a, \(a, b) => a * b);
+var curried = \a => \b => a * b;
 printfln("typeof curried = %s", typeof curried);
 println();
 
