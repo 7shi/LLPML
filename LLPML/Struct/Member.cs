@@ -133,6 +133,8 @@ namespace Girl.LLPML.Struct
         {
             get
             {
+                var p = GetPointer();
+                if (p is Var.Declare) return p.Type;
                 var st = GetStruct();
                 if (st == null) return null;
                 return st.Name;

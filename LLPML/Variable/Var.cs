@@ -67,18 +67,7 @@ namespace Girl.LLPML
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
         {
-            switch (Size)
-            {
-                case 2:
-                    IntValue.AddCodesW(codes, op, dest, GetAddress(codes, m));
-                    break;
-                case 1:
-                    IntValue.AddCodesB(codes, op, dest, GetAddress(codes, m));
-                    break;
-                default:
-                    IntValue.AddCodes(codes, op, dest, GetAddress(codes, m));
-                    break;
-            }
+            IntValue.AddCodes(Size, codes, op, dest, GetAddress(codes, m));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080306" subsystem="WINDOWS_GUI">
+<llpml version="0.11.20080307" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
@@ -114,9 +114,9 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
     {
       PAINTSTRUCT ps;
       var hdc = hWnd.BeginPaint(ps);
-	    SetDIBitsToDevice(hdc, 0, 0, width, height, 0, 0, 0, height,
-		    buffer, bmpInfo, DIB_RGB_COLORS);
-		  if (fpsBufLen > 0) hdc.TextOut(8, 8, fpsBuf, fpsBufLen);
+      SetDIBitsToDevice(hdc, 0, 0, width, height, 0, 0, 0, height,
+        buffer, bmpInfo, DIB_RGB_COLORS);
+      if (fpsBufLen > 0) hdc.TextOut(8, 8, fpsBuf, fpsBufLen);
       hWnd.EndPaint(ps);
       break;
     }
@@ -132,12 +132,22 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
 
 function ClearBuffer(color)
 {
-  for (var i = 0; i < pixelCount; i++) buffer[i] = color;
+  var end = buffer + pixelCount * sizeof(int);
+  if (buffer < end)
+  {
+    for (var p = buffer; p < end; p += sizeof(int))
+      p[0] = color;
+  }
 }
 
 function FillRectangle(x, y, w, h, color)
 {
   var c : Color = addrof(color);
+  int a = c.A;
+  if (a > 127) a++;
+  var aa = 256 - a;
+  var r = c.R * a, g = c.G * a, b = c.B * a;
+  
   var x1 = x;
   if (x1 < 0) x1 = 0;
   var y1 = y;
@@ -146,26 +156,17 @@ function FillRectangle(x, y, w, h, color)
   if (x2 > width) x2 = width;
   var y2 = y + h;
   if (y2 > height) y2 = height;
+  
   for (var yy = y1; yy < y2; yy++)
   {
     var p : Color = addrof(buffer[x1 + yy * width]);
     for (var xx = x1; xx < x2; xx++)
     {
-      p.B = (c.B * c.A + p.B * (255 - c.A)) >> 8;
-      p.G = (c.G * c.A + p.G * (255 - c.A)) >> 8;
-      p.R = (c.R * c.A + p.R * (255 - c.A)) >> 8;
+      p.B = (b + p.B * aa) >> 8;
+      p.G = (g + p.G * aa) >> 8;
+      p.R = (r + p.R * aa) >> 8;
       p += sizeof(Color);
     }
-    /*
-    var p = x1 + yy * width;
-    for (var xx = x1; xx < x2; xx++)
-    {
-      buffer[p].B = (c.B * c.A + buffer[p].B * (255 - c.A)) >> 8;
-      buffer[p].G = (c.G * c.A + buffer[p].G * (255 - c.A)) >> 8;
-      buffer[p].R = (c.R * c.A + buffer[p].R * (255 - c.A)) >> 8;
-      p++;
-    }
-    */
   }
 }
 

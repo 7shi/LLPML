@@ -286,5 +286,21 @@ namespace Girl.LLPML
                     break;
             }
         }
+
+        public static void AddCodes(int size, List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
+        {
+            switch (size)
+            {
+                case 2:
+                    IntValue.AddCodesW(codes, op, dest, ad);
+                    break;
+                case 1:
+                    IntValue.AddCodesB(codes, op, dest, ad);
+                    break;
+                default:
+                    IntValue.AddCodes(codes, op, dest, ad);
+                    break;
+            }
+        }
     }
 }

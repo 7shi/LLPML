@@ -105,15 +105,11 @@ namespace Girl.LLPML
             {
                 if (Value == null) return;
 
+                Value.AddCodes(codes, m, "mov", null);
                 if (HasThis)
-                {
-                    Value.AddCodes(codes, m, "mov", null);
-                    codes.Add(I386.Mov(GetAddress(codes, m, null), Reg32.EAX));
-                }
+                    Let.AddCodes(length, codes, m, GetAddress(codes, m, null));
                 else
-                {
-                    Value.AddCodes(codes, m, "mov", address);
-                }
+                    Let.AddCodes(length, codes, m, address);
             }
         }
     }

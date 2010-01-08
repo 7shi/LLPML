@@ -4,9 +4,10 @@
 <!-- stdio functions -->
 
 <?llp
+extern "kernel32.dll" __stdcall
+  GetStdHandle(nStdHandle);
 extern "kernel32.dll" __stdcall __widecharset
 {
-  __nocharset GetStdHandle(nStdHandle);
   WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
   ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pInputControl);
   lstrlen(lpString);
