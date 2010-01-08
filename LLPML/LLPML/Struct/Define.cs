@@ -26,6 +26,9 @@ namespace Girl.LLPML.Struct
                             case "member":
                                 members.Add(new Member(parent, xr));
                                 break;
+                            case "method":
+                                new Method(this, xr);
+                                break;
                             default:
                                 throw Abort(xr);
                         }
@@ -71,6 +74,11 @@ namespace Girl.LLPML.Struct
                 if (m.Name == name) return m;
             }
             return null;
+        }
+
+        public string GetMemberName(string name)
+        {
+            return this.name + "::" + name;
         }
     }
 }

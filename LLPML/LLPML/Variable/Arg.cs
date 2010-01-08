@@ -9,8 +9,20 @@ namespace Girl.LLPML
 {
     public class Arg : Var.Declare
     {
-        public Arg() { }
-        public Arg(Block parent, XmlTextReader xr) : base(parent, xr) { }
+        public Arg()
+        {
+        }
+
+        public Arg(Block parent, string name, string type)
+            : base(parent, name)
+        {
+            this.type = type;
+        }
+
+        public Arg(Block parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {

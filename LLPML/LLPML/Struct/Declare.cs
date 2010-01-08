@@ -21,6 +21,8 @@ namespace Girl.LLPML.Struct
         }
 
         private string type;
+        public string Type { get { return type; } }
+
         private List<object> values = new List<object>();
         private bool isRoot = true;
 

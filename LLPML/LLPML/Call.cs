@@ -12,11 +12,17 @@ namespace Girl.LLPML
     {
         public List<IIntValue> args = new List<IIntValue>();
 
-        private Var ptr;
-        private CallType type;
+        protected Var ptr;
+        protected CallType type;
 
         public Call() { }
         public Call(Block parent, XmlTextReader xr) : base(parent, xr) { }
+
+        protected virtual void AddArg(XmlTextReader xr)
+        {
+            IIntValue v = IntValue.Read(parent, xr, false);
+            if (v != null) args.Add(v);
+        }
 
         public override void Read(XmlTextReader xr)
         {
@@ -39,8 +45,7 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                IIntValue v = IntValue.Read(parent, xr, false);
-                if (v != null) args.Add(v);
+                AddArg(xr);
             });
         }
 

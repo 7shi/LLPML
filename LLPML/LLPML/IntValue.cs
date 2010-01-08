@@ -40,8 +40,12 @@ namespace Girl.LLPML
                             return new Var.Ptr(parent, xr);
                         case "ptr":
                             return new Pointer(parent, xr);
+                        case "this":
+                            return new Struct.This(parent, xr);
                         case "call":
                             return new Call(parent, xr);
+                        case "invoke":
+                            return new Struct.Invoke(parent, xr);
                         case "function-ptr":
                             return new Function.Ptr(parent, xr);
                         case "struct-member":

@@ -13,6 +13,7 @@ namespace Girl.LLPML
         {
             private IIntValue value;
             protected string type;
+            public string Type { get { return type; } }
 
             public Declare() { }
 

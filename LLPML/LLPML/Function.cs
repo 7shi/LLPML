@@ -36,9 +36,14 @@ namespace Girl.LLPML
             base.ReadBlock(xr);
         }
 
-        public override void Read(XmlTextReader xr)
+        protected virtual void ReadName(XmlTextReader xr)
         {
             RequiresName(xr);
+        }
+
+        public override void Read(XmlTextReader xr)
+        {
+            ReadName(xr);
 
             type = CallType.CDecl;
             if (xr["type"] == "std") type = CallType.Std;

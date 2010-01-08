@@ -10,7 +10,8 @@ namespace Girl.LLPML
 {
     public partial class Pointer : VarBase, IIntValue
     {
-        private Pointer.Declare reference;
+        private Declare reference;
+        public Declare Reference { get { return reference; } }
 
         private int length = 0;
         public int Length { get { return length; } }

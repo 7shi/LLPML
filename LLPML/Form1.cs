@@ -16,21 +16,57 @@ namespace Test
 {
     public partial class Form1 : Form
     {
+        private class TextData
+        {
+            public string Name, Text, Output;
+            public int SelectionStart, SelectionLength;
+
+            public TextData(string name, string text, string output)
+            {
+                Name = name;
+                Text = text;
+                Output = output;
+            }
+
+            public void From(TextBox tb)
+            {
+                Text = tb.Text;
+                SelectionStart = tb.SelectionStart;
+                SelectionLength = tb.SelectionLength;
+            }
+
+            public void To(TextBox tb)
+            {
+                tb.Clear();
+                tb.Text = Text;
+                tb.SelectionStart = SelectionStart;
+                tb.SelectionLength = SelectionLength;
+                tb.ScrollToCaret();
+            }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+
+        private TextData selectedData;
+
         public Form1()
         {
 #if DEBUG
             I386.Test();
 #endif
             InitializeComponent();
-            ReadSample(textBox1, "template.xml");
-            AddTab("stdio.xml");
-            AddTab("win32.xml");
+            AddItem("stdio.xml");
+            AddItem("win32.xml");
             for (int i = 1; ; i++)
             {
                 string xml = string.Format("{0:00}.xml", i);
                 if (!File.Exists(GetSampleFileName(xml))) break;
-                AddTab(xml);
+                AddItem(xml);
             }
+            newToolStripMenuItem.PerformClick();
         }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
@@ -41,25 +77,23 @@ namespace Test
             try
 #endif
             {
-                TextBox tb = tabControl1.SelectedTab.Controls[0] as TextBox;
-                StringReader sr = new StringReader(tb.Text);
+                StringReader sr = new StringReader(textBox1.Text);
                 XmlTextReader xr = new XmlTextReader(sr);
                 Root root = new Root();
                 root.StreamDelegate = delegate(string name)
                 {
-                    foreach (TabPage page in tabControl1.TabPages)
+                    foreach (TextData td in listBox1.Items)
                     {
-                        if (page.Text == name)
+                        if (td.Name == name)
                         {
-                            TextBox textBox = page.Controls[0] as TextBox;
-                            return new StringReader(textBox.Text);
+                            return new StringReader(td.Text);
                         }
                     }
                     return null;
                 };
-                if (tb.Tag is string)
+                if (selectedData.Output != null)
                 {
-                    root.Output = Path.GetFileNameWithoutExtension(tb.Tag as string) + ".exe";
+                    root.Output = Path.GetFileNameWithoutExtension(selectedData.Output) + ".exe";
                 }
                 while (xr.Read())
                 {
@@ -102,43 +136,33 @@ namespace Test
             return Path.Combine(GetFullName("Samples"), xml);
         }
 
-        private void ReadSample(TextBox tb, string xml)
+        private string ReadSample(string xml)
         {
             StreamReader sr = new StreamReader(GetSampleFileName(xml));
-            tb.Clear();
-            tb.AppendText(sr.ReadToEnd());
-            tb.SelectionStart = 0;
+            string ret = sr.ReadToEnd();
             sr.Close();
+            return ret;
         }
 
-        private TabPage AddTab(string xml, string title, string output)
+        private TextData AddItem(string xml, string title, string output)
         {
-            TabPage page = new TabPage(title);
-            TextBox tb = new TextBox();
-            tb.AcceptsTab = true;
-            tb.Multiline = true;
-            tb.WordWrap = false;
-            tb.ScrollBars = ScrollBars.Both;
-            tb.Dock = DockStyle.Fill;
-            tb.Tag = output;
-            tb.Font = textBox1.Font;
-            ReadSample(tb, xml);
-            page.Controls.Add(tb);
-            tabControl1.TabPages.Add(page);
-            return page;
+            TextData ret = new TextData(title, ReadSample(xml), output);
+            listBox1.Items.Add(ret);
+            return ret;
         }
 
-        private TabPage AddTab(string xml)
+        private TextData AddItem(string xml)
         {
-            return AddTab(xml, xml, xml);
+            return AddItem(xml, xml, xml);
         }
 
         private int newCount = 1;
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            AddItem("template.xml", "New " + newCount, null);
+            listBox1.SelectedIndex = listBox1.Items.Count - 1;
             newCount++;
-            tabControl1.SelectedTab = AddTab("template.xml", "New " + newCount, null);
         }
 
         private string GetFullName(string exe)
@@ -147,20 +171,34 @@ namespace Test
             return Path.Combine(path, exe);
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            tabControl1.SelectedTab.Controls[0].Focus();
-        }
-
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tabControl1.TabCount < 2) return;
-            tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            int id = listBox1.SelectedIndex;
+            if (id < 0) return;
+            selectedData = null;
+            listBox1.Items.RemoveAt(id);
+            listBox1.SelectedIndex = Math.Min(id, listBox1.Items.Count - 1);
         }
 
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            closeToolStripMenuItem.Enabled = tabControl1.TabCount > 1;
+            closeToolStripMenuItem.Enabled = listBox1.Items.Count > 0;
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox1.Focus();
+            if (selectedData != null) selectedData.From(textBox1);
+            int id = listBox1.SelectedIndex;
+            if (id < 0)
+            {
+                selectedData = null;
+            }
+            else
+            {
+                selectedData = listBox1.Items[id] as TextData;
+                selectedData.To(textBox1);
+            }
         }
     }
 }
