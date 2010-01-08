@@ -53,7 +53,7 @@ namespace Girl.LLPML.Parsing
                     return;
             }
 
-            Rewind();
+            //Rewind();
             throw Abort("const: 型が指定されていません。");
         }
 
@@ -67,7 +67,7 @@ namespace Girl.LLPML.Parsing
             var name = Read();
             if (!Tokenizer.IsWord(name))
             {
-                Rewind();
+                //Rewind();
                 throw Abort("{0}: 名前が不適切です: {1}", category, name);
             }
 
@@ -149,7 +149,7 @@ namespace Girl.LLPML.Parsing
                     type = Read();
                     if (!Tokenizer.IsWord(type))
                     {
-                        if (type != null) Rewind();
+                        //if (type != null) Rewind();
                         throw Abort("var: 型が必要です。");
                     }
                     var ar = Read();
@@ -263,7 +263,7 @@ namespace Girl.LLPML.Parsing
                     break;
                 else if (t != ",")
                 {
-                    if (t != null) Rewind();
+                    //if (t != null) Rewind();
                     throw Abort("{0}: }}}} が必要です。", type);
                 }
             }

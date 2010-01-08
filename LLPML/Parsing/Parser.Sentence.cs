@@ -95,7 +95,7 @@ namespace Girl.LLPML.Parsing
             }
             else if (sep != separator)
             {
-                if (sep != null) Rewind();
+                //if (sep != null) Rewind();
                 throw Abort("{0} が必要です。", separator);
             }
             if (list.Count == 0) return null;
@@ -175,7 +175,7 @@ namespace Girl.LLPML.Parsing
             var name = Read();
             if (!Tokenizer.IsWord(name))
             {
-                Rewind();
+                //Rewind();
                 throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
@@ -188,7 +188,7 @@ namespace Girl.LLPML.Parsing
                 baseType = Read();
                 if (!Tokenizer.IsWord(baseType))
                 {
-                    Rewind();
+                    //Rewind();
                     throw Abort("{0}: {1}: 型が必要です。", type, name);
                 }
                 if (name == baseType)
@@ -221,7 +221,7 @@ namespace Girl.LLPML.Parsing
             var t = Read();
             if (t != text)
             {
-                if (t != null) Rewind();
+                //if (t != null) Rewind();
                 throw Abort("{0}: {1} が必要です。", type, text);
             }
         }
@@ -278,7 +278,7 @@ namespace Girl.LLPML.Parsing
             }
             else if (!Tokenizer.IsWord(name))
             {
-                Rewind();
+                //Rewind();
                 throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
@@ -292,7 +292,7 @@ namespace Girl.LLPML.Parsing
                 var ftype = Read();
                 if (!Tokenizer.IsWord(ftype))
                 {
-                    Rewind();
+                    //Rewind();
                     throw Abort("{0}: 型が不適切です: {1}", type, ftype);
                 }
                 ret.SetReturnType(Types.GetVarType(this.parent, ftype));
@@ -335,7 +335,7 @@ namespace Girl.LLPML.Parsing
                 var sfx2 = CheckSuffix(sfx1, ref name);
                 if (!Tokenizer.IsWord(name))
                 {
-                    Rewind();
+                    //Rewind();
                     throw Abort("extern: 名前が不適切です: {0}", name);
                 }
                 string alias = null;
@@ -352,7 +352,7 @@ namespace Girl.LLPML.Parsing
                     var ftype = Read();
                     if (!Tokenizer.IsWord(ftype))
                     {
-                        Rewind();
+                        //Rewind();
                         throw Abort("extern: 型が不適切です: {0}", ftype);
                     }
                     ex.SetReturnType(Types.GetVarType(this.parent, ftype));
@@ -428,7 +428,7 @@ namespace Girl.LLPML.Parsing
                 var arg = Read();
                 if (!Tokenizer.IsWord(arg))
                 {
-                    if (arg != null) Rewind();
+                    //if (arg != null) Rewind();
                     throw Abort("{0}: {1}: 引数の名前が不適切です: {1}", tp, f.Name, arg);
                 }
 
@@ -446,7 +446,7 @@ namespace Girl.LLPML.Parsing
                     }
                     else if (!Tokenizer.IsWord(type))
                     {
-                        if (type != null) Rewind();
+                        //if (type != null) Rewind();
                         throw Abort("{0}: {1}: {2}: 引数の型が不適切です。", tp, f.Name, arg);
                     }
                     var ar = Read();
@@ -540,7 +540,7 @@ namespace Girl.LLPML.Parsing
             var t = Read();
             if (t != "while")
             {
-                if (t != null) Rewind();
+                //if (t != null) Rewind();
                 throw Abort("do: while がありません。");
             }
             ret.Cond = ReadCond(ret, "do");

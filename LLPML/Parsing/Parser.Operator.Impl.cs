@@ -33,7 +33,7 @@ namespace Girl.LLPML.Parsing
             var t2 = Read();
             if (!Tokenizer.IsWord(t2))
             {
-                Rewind();
+                //Rewind();
                 throw Abort("名前が不適切です: {0}", t2);
             }
             var t2m = new Struct.Member(parent, t2);

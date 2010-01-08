@@ -31,7 +31,7 @@ namespace Compiler
                     var result = proj.Compile(verbose);
                     result.WriteLine();
                     outputs.Add(result.Output);
-                    if (result.Exception == null)
+                    if (result.Exceptions.Count == 0)
                     {
                         success++;
                         if (proj.IsAnonymous) Process.Start(result.Exe);

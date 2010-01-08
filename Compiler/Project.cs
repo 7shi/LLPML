@@ -51,6 +51,14 @@ namespace Compiler
             var ret = new ResultInfo();
             var start = DateTime.Now;
             var root = new Root();
+            string lastError = null;
+            root.Error += ex =>
+            {
+                ret.Exceptions.Add(ex);
+                if (ex.Message == lastError)
+                    throw new Exception("エラーのため続行できません。");
+                lastError = ex.Message;
+            };
             if (!IsAnonymous) root.Output = Name + ".exe";
             ret.Output = root.Output;
             ret.Exe = Path.Combine(BaseDir, root.Output);
@@ -114,7 +122,8 @@ namespace Compiler
                 if (verbose) Console.WriteLine("コンパイルしています。");
                 var codes = new OpModule(module);
                 root.AddCodes(codes);
-                module.Text.OpCodes = codes.ToArray();
+                if (ret.Exceptions.Count > 0) return ret;
+                    module.Text.OpCodes = codes.ToArray();
 
                 if (verbose) Console.WriteLine("リンクしています。");
                 ret.Exe = Path.Combine(BaseDir, root.Output);
@@ -126,7 +135,7 @@ namespace Compiler
 #if !DEBUG
             catch (Exception ex)
             {
-                ret.Exception = ex;
+                ret.Exceptions.Add(ex);
             }
 #endif
             return ret;
@@ -297,12 +306,15 @@ namespace Compiler
     {
         public string Output, Exe;
         public double Time;
-        public Exception Exception;
+        public List<Exception> Exceptions = new List<Exception>();
 
         public void WriteLine()
         {
-            if (Exception != null)
-                Console.WriteLine(Exception.Message);
+            if (Exceptions.Count > 0)
+            {
+                foreach (var ex in Exceptions)
+                    Console.WriteLine(ex.Message);
+            }
             else if (string.IsNullOrEmpty(Output))
                 Console.WriteLine("更新は不要です。");
             else

@@ -144,7 +144,7 @@ namespace Girl.LLPML.Parsing
             if (Tokenizer.IsWord(t))
                 return new Variant(parent, t) { SrcInfo = si };
 
-            Rewind();
+            //Rewind();
             throw Abort("評価できません: {0}", t);
         }
 

@@ -30,7 +30,19 @@ namespace Girl.LLPML.Parsing
             var ret = new List<NodeBase>();
             while (CanRead)
             {
+#if DEBUG
                 var s = Sentence();
+#else
+                NodeBase[] s = null;
+                try
+                {
+                    s = Sentence();
+                }
+                catch (Exception ex)
+                {
+                    parent.Root.OnError(ex);
+                }
+#endif
                 if (s != null) ret.AddRange(s);
             }
             return ret.ToArray();

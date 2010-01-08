@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string VERSION = "1.5.2008.1021";
+        public const string VERSION = "1.5.2008.1022";
         public string Version = VERSION;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -193,6 +193,12 @@ namespace Girl.LLPML
                     return true;
             }
             return false;
+        }
+
+        public event Action<Exception> Error;
+        public void OnError(Exception ex)
+        {
+            if (Error != null) Error(ex);
         }
     }
 }

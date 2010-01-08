@@ -302,7 +302,20 @@ namespace Girl.LLPML
             BeforeAddCodes(codes);
             codes.Add(construct);
             foreach (NodeBase child in sentences)
+            {
+#if DEBUG
                 child.AddCodes(codes);
+#else
+                try
+                {
+                    child.AddCodes(codes);
+                }
+                catch (Exception ex)
+                {
+                    root.OnError(ex);
+                }
+#endif
+            }
             if (!IsTerminated)
             {
                 var mems = new List<Var.Declare>();
