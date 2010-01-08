@@ -128,6 +128,15 @@ namespace Girl.LLPML.Parsing
             var si = SrcInfo;
             var t = Read();
 
+            if (t == "::")
+            {
+                var p = parent;
+                parent = p.Root;
+                var ret = Expression();
+                parent = p;
+                return ret;
+            }
+
             var v = parent.GetVar(t);
             if (v != null) return new Var(parent, v) { SrcInfo = si };
 
@@ -185,8 +194,19 @@ namespace Girl.LLPML.Parsing
                 var br2 = Read();
                 if (br2 == "*")
                 {
-                    type += "*";
+                    type += br2;
                     br2 = Read();
+                }
+                else if (br2 == "[")
+                {
+                    var br3 = Read();
+                    if (br3 == "]")
+                    {
+                        type += "[]";
+                        br2 = Read();
+                    }
+                    else if (br3 != null)
+                        Rewind();
                 }
                 if (br2 == ")")
                     return new Cast(parent, type, Expression()) { SrcInfo = si };

@@ -103,7 +103,7 @@ namespace Girl.LLPML.Parsing
                     if (op.Name.Length > 1) reserved.Add(op.Name);
                 }
             }
-            reserved.AddRange(new[] { "//", "/*", "=>" });
+            reserved.AddRange(new[] { "//", "/*", "=>", "::" });
             tokenizer.Reserved = reserved.ToArray();
         }
 

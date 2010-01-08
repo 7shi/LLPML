@@ -14,20 +14,21 @@ namespace Girl.LLPML.Struct
         public const string DereferencePtr = "__dereference_ptr";
 
         public IIntValue Length { get; protected set; }
-        public bool IsArray { get { return arrayType != null; } }
+        public bool IsArray { get { return !(Length is IntValue && (Length as IntValue).Value == -1); } }
+        public TypeBase Type { get; protected set; }
         public bool NoSet { get; set; }
 
         public New(BlockBase parent, string type)
             : base(parent)
         {
-            this.type = Types.GetVarType(parent, type);
+            Type = Types.GetVarType(parent, type);
             Length = new IntValue(-1);
         }
 
         public New(BlockBase parent, string type, IIntValue length)
             : base(parent)
         {
-            arrayType = Types.GetType(parent, type);
+            Type = new TypeReference(parent, Types.GetType(parent, type), true);
             Length = length;
         }
 
@@ -45,12 +46,12 @@ namespace Girl.LLPML.Struct
             int len;
             if (length != null && int.TryParse(length, out len))
             {
-                arrayType = Types.GetType(parent, type);
+                Type = new TypeReference(parent, Types.GetType(parent, type), true);
                 Length = new IntValue(len);
             }
             else
             {
-                this.type = Types.GetVarType(parent, type);
+                Type = Types.GetVarType(parent, type);
                 Length = new IntValue(-1);
             }
         }
@@ -108,22 +109,6 @@ namespace Girl.LLPML.Struct
                 I386.Add(Reg32.ESP, 16),
             });
             codes.AddCodes(op, dest);
-        }
-
-        private TypeBase type, arrayType;
-
-        public TypeBase Type
-        {
-            get
-            {
-                if (type != null) return type;
-
-                TypeBase t = arrayType;
-                if (t is TypeStruct && (t as TypeStruct).IsClass)
-                    t = new TypeReference(parent, t);
-                type = new TypeReference(parent, t, true);
-                return type;
-            }
         }
     }
 }

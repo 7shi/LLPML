@@ -438,7 +438,18 @@ namespace Girl.LLPML.Parsing
                     }
                     var ar = Read();
                     if (ar == "*")
-                        type += "*";
+                        type += ar;
+                    else if (ar == "[")
+                    {
+                        ar = Read();
+                        if (ar == "]")
+                            type += "[]";
+                        else
+                        {
+                            if (ar != null) Rewind();
+                            Rewind();
+                        }
+                    }
                     else if (ar != null)
                         Rewind();
                 }

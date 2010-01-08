@@ -48,9 +48,12 @@ namespace Girl.LLPML
         // cast
         public override TypeBase Cast(TypeBase type)
         {
-            if (type is TypeVar) return type;
-            if (!(type is TypeReference)) return null;
-            return base.Cast(type);
+            if (type is TypeVar)
+                return type;
+            else if (type is TypeReference)
+                return Type.Cast(type.Type);
+            else
+                return null;
         }
 
         // set value
@@ -76,6 +79,25 @@ namespace Girl.LLPML
                 if (flag) codes.Add(I386.Pop(ad.Register));
             }
             base.AddSetCodes(codes, ad);
+        }
+
+        // recursive type
+        private bool doneInferType = false;
+        public override TypeBase Type
+        {
+            get
+            {
+                if (doneInferType) return base.Type;
+
+                doneInferType = true;
+                if (IsArray)
+                {
+                    var ts = base.Type as TypeStruct;
+                    if (ts != null && ts.IsClass)
+                        Type = new TypeReference(ts.Parent, ts);
+                }
+                return base.Type;
+            }
         }
 
         // type constructor

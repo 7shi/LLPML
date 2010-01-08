@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.22.20080818">
+
+<title>スコープ解決演算子</title>
+
+<include src="finish.xml" />
+
+<?llp
+function test()
+{
+  printfln(__FUNCTION__);
+}
+
+struct A
+{
+  function ctor()
+  {
+    test();
+    ::test();
+  }
+  
+  function test()
+  {
+    printfln(__FUNCTION__);
+  }
+}
+
+A a;
+?>
+
+</llpml>

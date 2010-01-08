@@ -55,7 +55,7 @@ namespace Girl.LLPML
         public virtual bool IsValue { get { return true; } }
 
         // recursive type
-        public TypeBase Type { get; protected set; }
+        public virtual TypeBase Type { get; protected set; }
 
         // cast
         public virtual TypeBase Cast(TypeBase type)
