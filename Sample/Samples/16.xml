@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- flow -->
 
 <include src="finish.xml" />
 
+<?llpml
 for (var i = 0; 5 > i; i++)
 {
   if (i == 2)
@@ -54,5 +55,6 @@ for (var i = 0; ; i++)
   printfln("[for] i = %d", i);
   if (i == 2) break;
 }
+?>
 
 </llpml>

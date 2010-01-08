@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- struct member function -->
 
 <include src="finish.xml" />
 
+<?llpml
 struct Point
 {
   var x, y;
@@ -22,5 +23,6 @@ p.Show();
 // pointer
 var pp : Point = p;
 pp.Show();
+?>
 
 </llpml>

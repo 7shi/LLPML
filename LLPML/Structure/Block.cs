@@ -140,9 +140,6 @@ namespace Girl.LLPML
                         case "struct-declare":
                             nb = new Struct.Declare(target, xr);
                             break;
-                        case "script":
-                            new Script(target, xr);
-                            break;
                         default:
                             throw Abort(xr);
                     }
@@ -159,6 +156,20 @@ namespace Girl.LLPML
                         if (sents != null) Sentences.AddRange(sents);
                         break;
                     }
+
+                case XmlNodeType.ProcessingInstruction:
+                    if (xr.Name == "llpml")
+                    {
+                        char[] data = new char[1024];
+                        var rs = xr.ReadString();
+                        var t = new Tokenizer(target.Root.Source,
+                            xr.Value, xr.LineNumber + 1, 0);
+                        var sents = Block.ReadText(target, t);
+                        if (sents != null) Sentences.AddRange(sents);
+                        break;
+                    }
+                    else
+                        throw Abort(xr, "unknow instruction: " + xr.Name);
 
                 default:
                     throw Abort(xr, "element required");

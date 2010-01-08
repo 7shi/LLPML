@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- variable pointer -->
 
 <include src="finish.xml" />
 
+<?llpml
 var a;
 
 {
@@ -13,5 +14,6 @@ var a;
   printfln("addrof(a) = %p [global]", addrof(a));
   printfln("addrof(b) = %p [stack]", addrof(b));
 }
+?>
 
 </llpml>

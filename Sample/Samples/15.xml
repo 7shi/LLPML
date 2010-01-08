@@ -13,7 +13,7 @@ printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
 println();
 
 <call name="printfln">
-  <string>%d: a &gt; b (signed)</string>
+  <string>%d: a > b (signed)</string>
   <greater>
     <var name="a" />
     <var name="b" />
@@ -61,7 +61,7 @@ println();
 </call>
 
 <call name="printfln">
-  <string>a &gt;&gt; 5 = %d (signed)</string>
+  <string>a >> 5 = %d (signed)</string>
   <shift-right>
     <var name="a" />
     <int>5</int>
@@ -77,7 +77,7 @@ println();
 </call>
 
 <call name="printfln">
-  <string>a &gt;&gt; c = %d (signed)</string>
+  <string>a >> c = %d (signed)</string>
   <shift-right>
     <var name="a" />
     <var name="c" />
@@ -89,7 +89,7 @@ println();
 <call name="println" />
 
 <call name="printfln">
-  <string>%d: a &gt; b (unsigned)</string>
+  <string>%d: a > b (unsigned)</string>
   <unsigned-greater>
     <var name="a" />
     <var name="b" />
@@ -137,7 +137,7 @@ println();
 </call>
 
 <call name="printfln">
-  <string>a &gt;&gt; 5 = %u (unsigned)</string>
+  <string>a >> 5 = %u (unsigned)</string>
   <unsigned-shift-right>
     <var name="a" />
     <int>5</int>
@@ -153,7 +153,7 @@ println();
 </call>
 
 <call name="printfln">
-  <string>a &gt;&gt; c = %u (unsigned)</string>
+  <string>a >> c = %u (unsigned)</string>
   <unsigned-shift-right>
     <var name="a" />
     <var name="c" />

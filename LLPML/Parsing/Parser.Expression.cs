@@ -143,16 +143,20 @@ namespace Girl.LLPML.Parsing
                     return new Rev(parent, Expression());
                 case "++":
                     {
+                        var ln = tokenizer.LineNumber;
+                        var lp = tokenizer.LinePosition;
                         var target = Primary() as Var;
                         if (target == null)
-                            throw Abort("++: 対象が変数ではありません。");
+                            throw parent.Abort(ln, lp, "++: 対象が変数ではありません。");
                         return new Inc(parent, target);
                     }
                 case "--":
                     {
+                        var ln = tokenizer.LineNumber;
+                        var lp = tokenizer.LinePosition;
                         var target = Primary() as Var;
                         if (target == null)
-                            throw Abort("--: 対象が変数ではありません。");
+                            throw parent.Abort(ln, lp, "--: 対象が変数ではありません。");
                         return new Dec(parent, target);
                     }
             }

@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- constructor and destructor -->
 
 <include src="finish.xml" />
 
+<?llpml
 struct Name
 {
   printfln("%p [%s]", this, __FUNCTION__);
@@ -86,5 +87,6 @@ function test(a)
   Name h = { "h" };
   return "normal";
 }
+?>
 
 </llpml>

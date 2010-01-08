@@ -1,20 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
-<extern name="GetModuleHandle" alias="GetModuleHandleW" module="kernel32.dll" type="std" />
-<extern name="Sleep" module="kernel32.dll" type="std" />
-<extern name="DefWindowProc" alias="DefWindowProcW" module="user32.dll" type="std" />
-<extern name="LoadCursor" alias="LoadCursorW" module="user32.dll" type="std" />
-<extern name="RegisterClassEx" alias="RegisterClassExW" module="user32.dll" type="std" />
-<extern name="CreateWindowEx" alias="CreateWindowExW" module="user32.dll" type="std" />
-<extern name="ShowWindow" module="user32.dll" type="std" />
-<extern name="UpdateWindow" module="user32.dll" type="std" />
-<extern name="DestroyWindow" module="user32.dll" type="std" />
-<extern name="GetMessage" alias="GetMessageW" module="user32.dll" type="std" />
-<extern name="TranslateMessage" module="user32.dll" type="std" />
-<extern name="DispatchMessage" alias="DispatchMessageW" module="user32.dll" type="std" />
-<extern name="PostQuitMessage" module="user32.dll" type="std" />
+<extern module="kernel32.dll" type="std" name="GetModuleHandle" alias="GetModuleHandleW" />
+<extern module="kernel32.dll" type="std" name="Sleep" />
+<extern module="user32.dll" type="std" name="DefWindowProc" alias="DefWindowProcW" />
+<extern module="user32.dll" type="std" name="LoadCursor" alias="LoadCursorW" />
+<extern module="user32.dll" type="std" name="RegisterClassEx" alias="RegisterClassExW" />
+<extern module="user32.dll" type="std" name="CreateWindowEx" alias="CreateWindowExW" />
+<extern module="user32.dll" type="std" name="ShowWindow" />
+<extern module="user32.dll" type="std" name="UpdateWindow" />
+<extern module="user32.dll" type="std" name="DestroyWindow" />
+<extern module="user32.dll" type="std" name="GetMessage" alias="GetMessageW" />
+<extern module="user32.dll" type="std" name="TranslateMessage" />
+<extern module="user32.dll" type="std" name="DispatchMessage" alias="DispatchMessageW" />
+<extern module="user32.dll" type="std" name="PostQuitMessage" />
 
+<?llpml
 const int CS_VREDRAW     = 1;
 const int CS_HREDRAW     = 2;
 const int COLOR_WINDOW   = 5;
@@ -26,20 +27,11 @@ const int WS_SYSMENU     = 0x80000;
 const int WS_THICKFRAME  = 0x40000;
 const int WS_MINIMIZEBOX = 0x20000;
 const int WS_MAXIMIZEBOX = 0x10000;
-<var-declare name="WS_OVERLAPPEDWINDOW">
-  <or>
-    WS_OVERLAPPED,
-    WS_CAPTION,
-    WS_SYSMENU,
-    WS_THICKFRAME,
-    WS_MINIMIZEBOX,
-    WS_MAXIMIZEBOX,
-  </or>
-</var-declare>
+var WS_OVERLAPPEDWINDOW =
+  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
+  WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 const int SW_SHOWNORMAL = 1;
 const int WM_DESTROY = 2;
-
-var hInstance = GetModuleHandle();
 
 struct WNDCLASSEX
 {
@@ -71,5 +63,6 @@ struct MSG
   var time;
   var pt : POINT;
 }
+?>
 
 </llpml>

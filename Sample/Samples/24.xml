@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- IEEE 754 single precision floating point -->
 
@@ -11,8 +11,7 @@ Float(-1, -1);
 printf("3.14159265 => ");
 Float(314159265, -8);
 
-<!-- -->
-
+<?llpml
 const int INT_MAX    = 0x7fffffff;
 const int EXP_DIGIT  = 8;
 const int EXP_MAX    = 0xff;
@@ -23,11 +22,11 @@ function Float(s, e10)
 {
   var sign = 0, e2 = 0, ss;
   if (s == 0) e10 = 0;
-  if (0 > s) sign = 1, s = -s;
+  if (s < 0) sign = 1, s = -s;
   while (s % 10 == 0) e10++, s /= 10;
   while (e10 != 0)
   {
-    if (0 > e10)
+    if (e10 < 0)
     {
       e2--, s *= 2;
       ss = s % 10;
@@ -39,13 +38,14 @@ function Float(s, e10)
     }
     else if (e10 > 0)
     {
-      if (s and 1 == 1 andalso INT_MAX / 10 >= s) e10--, s *= 10;
-      e2++, s = s / 2 + (s and 1);
+      if (s & 1 == 1 && s <= INT_MAX / 10) e10--, s *= 10;
+      e2++, s = s / 2 + (s & 1);
     }
   }
-  while (s > 0 andalso SIGN_MAX >= s) e2--, s *= 2;
-  while (s > SIGN_MAX * 2 + 1) e2++, s = s / 2 + (s and 1);
-  printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s and SIGN_MAX);
+  while (0 < s && s <= SIGN_MAX) e2--, s *= 2;
+  while (s > SIGN_MAX * 2 + 1) e2++, s = s / 2 + (s & 1);
+  printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s & SIGN_MAX);
 }
+?>
 
 </llpml>

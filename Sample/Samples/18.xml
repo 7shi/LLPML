@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- struct in struct -->
 
 <include src="finish.xml" />
 
+<?llpml
 struct Point { var x, y; }
 struct Points { Point p1, p2; }
 
@@ -14,5 +15,6 @@ vprintfln("p = ((%d, %d), (%d, %d))", p);
 p.p1.x = 9;
 p.p2.y = 8;
 vprintfln("p = ((%d, %d), (%d, %d))", p);
+?>
 
 </llpml>

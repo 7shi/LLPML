@@ -3,11 +3,11 @@
 
 <!-- stdio functions -->
 
-<extern name="GetStdHandle" module="kernel32.dll" type="std" />
-<extern name="ReadConsole" alias="ReadConsoleW" module="kernel32.dll" type="std" />
-<extern name="WriteConsole" alias="WriteConsoleW" module="kernel32.dll" type="std" />
-<extern name="lstrlen" alias="lstrlenW" module="kernel32.dll" type="std" />
-<extern name="wvsprintf" alias="wvsprintfW" module="user32.dll" type="std" />
+<extern module="kernel32.dll" type="std" name="GetStdHandle" />
+<extern module="kernel32.dll" type="std" name="ReadConsole" alias="ReadConsoleW" />
+<extern module="kernel32.dll" type="std" name="WriteConsole" alias="WriteConsoleW" />
+<extern module="kernel32.dll" type="std" name="lstrlen" alias="lstrlenW" />
+<extern module="user32.dll" type="std" name="wvsprintf" alias="wvsprintfW" />
 
 const int STD_OUTPUT_HANDLE = -11;
 const int STD_INPUT_HANDLE  = -10;

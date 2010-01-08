@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <include src="finish.xml" />
 
+<?llpml
 const string hello = "こんにちは、世界！";
 printfln(hello);
 
@@ -13,5 +14,6 @@ printfln(hello);
 }
 
 printfln(hello);
+?>
 
 </llpml>

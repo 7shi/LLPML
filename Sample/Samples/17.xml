@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123" subsystem="WINDOWS_GUI">
+<llpml version="0.9.20080127" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
 <include src="win32.xml" />
 
+<?llpml
 const string className = "LLPML Test Window";
+
+var hInstance = GetModuleHandle();
 
 WNDCLASSEX wcex =
 {
@@ -60,5 +63,6 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
   }
   return DefWindowProc(hWnd, msg, wParam, lParam);
 }
+?>
 
 </llpml>

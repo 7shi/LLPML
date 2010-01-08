@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- calculation -->
 
 <include src="finish.xml" />
 
+<?llpml
 var a = 4;
 
 printfln("a = %d", a);
@@ -22,8 +23,6 @@ printfln("a = %d", a);
 printfln("a--: %d", a--);
 printfln("a = %d", a);
 
-<script><!--
-
 printfln("a += 2: %d", a += 2);
 printfln("a -= 2: %d", a -= 2);
 printfln("a *= 2: %d", a *= 2);
@@ -34,7 +33,6 @@ printfln("a <<= 5: %d", a <<= 5);
 printfln("a >>= 5: %d", a >>= 5);
 printfln("a <<= a: %d", a <<= a);
 printfln("a = %d", a);
-
---></script>
+?>
 
 </llpml>

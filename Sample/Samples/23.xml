@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- inheritance -->
 
 <include src="finish.xml" />
 
+<?llpml
 struct Test1
 {
   var a;
@@ -65,5 +66,6 @@ Test1 test1 = { 1 };
   test2.Show();
   vprintfln("test2: a, b, c = %d, %d, %d", test2);
 }
+?>
 
 </llpml>

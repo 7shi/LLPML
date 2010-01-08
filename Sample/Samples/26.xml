@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- struct -->
 
 <include src="finish.xml" />
 
+<?llpml
 struct Test
 {
   var a = 1, b = 2;
@@ -47,5 +48,6 @@ function show(p : Test)
   printfln("p.Add() = %d", p.Add());
   p.Show();
 }
+?>
 
 </llpml>

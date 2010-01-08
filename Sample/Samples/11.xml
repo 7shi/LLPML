@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- struct -->
 
 <include src="finish.xml" />
 
+<?llpml
 struct Point { var x, y; }
 
 // global
@@ -31,5 +32,6 @@ vprintfln("p1(x, y) = (%d, %d)", p1);
 }
 
 printfln("p1(x, y) = (%d, %d)", p1.x, p1.y);
+?>
 
 </llpml>

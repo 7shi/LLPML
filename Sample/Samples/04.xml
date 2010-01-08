@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <include src="finish.xml" />
 
+<?llpml
 var i = 1;
 const string format = "i=%d";
 printfln(format, i);
@@ -30,5 +31,6 @@ printfln(format, i);
 }
 
 printfln(format, i);
+?>
 
 </llpml>

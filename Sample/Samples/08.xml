@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.9.20080127">
 
 <!-- function returns value -->
 
 <include src="finish.xml" />
 
+<?llpml
 var a = 3, b = 4;
 printfln("%d + %d = %d", a, b, add(a, b));
 
@@ -12,5 +13,6 @@ function add(a, b)
 {
   return a + b;
 }
+?>
 
 </llpml>

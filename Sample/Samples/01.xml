@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021" subsystem="WINDOWS_GUI">
+<llpml version="0.9.20080127" subsystem="WINDOWS_GUI">
 
-<extern name="MessageBox" alias="MessageBoxW" module="user32.dll" type="std" />
+<extern module="user32.dll" type="std" name="MessageBox" alias="MessageBoxW" />
 
+<?llpml
 MessageBox(null, "こんにちは、世界！", "だいあろぐ", 0);
+?>
 
 </llpml>
