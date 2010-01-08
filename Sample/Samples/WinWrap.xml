@@ -141,7 +141,7 @@ struct MenuItem : MENUITEMINFO
     for (int i = 0; i < MenuItems.Count; i++)
     {
       var mi : MenuItem = MenuItems.Ptr[i];
-      var ret = mi.FindMenuItem(id);
+      var ret : MenuItem = mi.FindMenuItem(id);
       if (ret != null) return ret;
     }
     return null;

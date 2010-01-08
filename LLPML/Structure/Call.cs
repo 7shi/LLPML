@@ -14,7 +14,7 @@ namespace Girl.LLPML
         protected List<IIntValue> args = new List<IIntValue>();
 
         private IIntValue val;
-        private CallType type = CallType.CDecl;
+        private CallType callType = CallType.CDecl;
 
         public Call()
         {
@@ -62,7 +62,7 @@ namespace Girl.LLPML
             else if (name == null && var != null)
             {
                 this.val = new Var(parent, var);
-                if (xr["type"] == "std") type = CallType.Std;
+                if (xr["type"] == "std") callType = CallType.Std;
             }
             else
             {
@@ -165,6 +165,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpCodes codes)
         {
+            if (codes == null) return;
+
             if (name != null)
             {
                 if (name.StartsWith("__"))
@@ -184,7 +186,7 @@ namespace Girl.LLPML
             }
             else
             {
-                AddCodes(codes, args, type, delegate
+                AddCodes(codes, args, callType, delegate
                 {
                     if (val is Var)
                         codes.Add(I386.Call((val as Var).GetAddress(codes)));
@@ -197,7 +199,26 @@ namespace Girl.LLPML
             }
         }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
+        protected TypeBase type;
+        protected bool doneInferType = false;
+
+        public TypeBase Type
+        {
+            get
+            {
+                if (doneInferType || !root.IsCompiling)
+                    return type;
+
+                doneInferType = true;
+                List<IIntValue> args;
+                var f = GetFunction(null, target, out args);
+                if (f != null)
+                    type = f.ReturnType;
+                else
+                    type = TypeInt.Instance;
+                return type;
+            }
+        }
 
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {

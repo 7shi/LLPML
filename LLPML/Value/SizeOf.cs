@@ -33,28 +33,5 @@ namespace Girl.LLPML
                 return size;
             }
         }
-
-        public static int GetValueSize(string type)
-        {
-            switch (type)
-            {
-                case "byte":
-                case "sbyte":
-                    return 1;
-                case "char":
-                case "short":
-                case "ushort":
-                    return 2;
-                case "int":
-                case "uint":
-                    return 4;
-                //case "long":
-                //case "ulong":
-                //    return 8;
-                case "var":
-                    return Var.DefaultSize;
-            }
-            return 0;
-        }
     }
 }

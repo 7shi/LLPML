@@ -228,6 +228,19 @@ namespace Girl.LLPML.Parsing
             var ret = new Function(parent, name);
             ret.CallType = ct;
             ReadArgs(type, ret);
+            var comma = Read();
+            if (comma == ":")
+            {
+                var ftype = Read();
+                if (!Tokenizer.IsWord(ftype))
+                {
+                    Rewind();
+                    throw Abort("{0}: 型が不適切です: {1}", type, ftype);
+                }
+                ret.SetReturnType(Types.GetVarType(parent, ftype));
+            }
+            else
+                Rewind();
             ReadBlock(type, ret);
             if (!ret.Parent.AddFunction(ret))
                 throw Abort("{0}: {1}: 定義が重複しています。", type, ret.Name);

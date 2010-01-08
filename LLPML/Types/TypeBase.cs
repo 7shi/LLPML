@@ -55,6 +55,12 @@ namespace Girl.LLPML
         // recursive type
         public TypeBase Type { get; protected set; }
 
+        // cast
+        public virtual TypeBase Cast(TypeBase type)
+        {
+            return null;
+        }
+
         // operator name
         public static string GetFuncName(string op)
         {

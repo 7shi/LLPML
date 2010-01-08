@@ -34,11 +34,6 @@ namespace Girl.LLPML
             return null;
         }
 
-        public TypeReference(TypeBase type)
-        {
-            Type = type;
-        }
-
         // get value
         public override void AddGetCodes(OpCodes codes, string op, Addr32 dest, Addr32 src)
         {
@@ -49,6 +44,19 @@ namespace Girl.LLPML
         public override void AddSetCodes(OpCodes codes, Addr32 ad)
         {
             codes.Add(I386.Mov(ad, Reg32.EAX));
+        }
+
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeReference)
+                return Type.Cast((type as TypeReference).Type);
+            return null;
+        }
+
+        public TypeReference(TypeBase type)
+        {
+            Type = type;
         }
     }
 }

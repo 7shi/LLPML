@@ -25,7 +25,7 @@ namespace Girl.LLPML.Struct
         {
             get
             {
-                return Types.GetType(parent, target.BaseType);
+                return new TypeReference(target.GetBaseStruct().Type);
             }
         }
     }

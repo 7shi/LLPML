@@ -173,14 +173,9 @@ namespace Girl.LLPML.Parsing
                     var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
-                        IIntValue ex = null;
-                        if (eq)
-                        {
-                            ex = Expression();
-                            // 型推論
-                            if (tb == null) tb = ex.Type;
-                        }
-                        var vd = new Var.Declare(parent, name, Types.ConvertVarType(tb), ex);
+                        if (tb != null) tb = Types.ConvertVarType(tb);
+                        var vd = new Var.Declare(parent, name, tb);
+                        if (eq) vd.Value = Expression();
                         p = vd;
                     }
                     else
@@ -188,7 +183,8 @@ namespace Girl.LLPML.Parsing
                         /// todo: 配列を初期化できるようにする
                         if (eq)
                             throw parent.Abort(si, "var: 配列を初期化できません。");
-                        p = new Var.Declare(parent, name, Types.ConvertVarType(tb), (int)array);
+                        p = new Var.Declare(
+                            parent, name, Types.ConvertVarType(tb), (int)array);
                     }
                     p.SrcInfo = si;
                     list.Add(p);
@@ -206,8 +202,8 @@ namespace Girl.LLPML.Parsing
                     var tb = Types.GetType(parent, type);
                     if (array == null)
                     {
-                        var vs = SizeOf.GetValueSize(type);
-                        if (vs == 0)
+                        var vs = Types.GetValueType(type);
+                        if (vs == null)
                         {
                             p = new Struct.Declare(parent, name, type);
                             if (eq) ReadInitializers(p as Struct.Declare, type);

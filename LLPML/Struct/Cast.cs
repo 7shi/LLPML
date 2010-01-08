@@ -17,7 +17,8 @@ namespace Girl.LLPML.Struct
             get
             {
                 var t = Types.GetType(parent, type);
-                if (!Source.Type.IsValue) return t;
+                if (!(Source is Call || Source.Type.IsValue))
+                    return t;
                 return Types.ConvertVarType(t);
             }
         }

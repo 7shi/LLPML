@@ -36,6 +36,14 @@ namespace Girl.LLPML
             return base.GetCond(key);
         }
 
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeStruct && (type as TypeStruct).name == name)
+                return this;
+            return null;
+        }
+
         public BlockBase Parent { get; protected set; }
 
         public Struct.Define GetStruct()

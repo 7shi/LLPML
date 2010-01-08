@@ -19,9 +19,7 @@ namespace Girl.LLPML
             set
             {
                 this.value = value;
-                BlockBase f = parent.GetFunction();
-                Var.Declare retval = f.GetVar("__retval");
-                if (retval == null) new Var.Declare(f, "__retval");
+                parent.GetFunction().AddTypeInfo(value);
             }
         }
 
@@ -47,10 +45,11 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpCodes codes)
         {
+            ///if (castFailed != null) throw Abort(castFailed);
             if (value != null)
             {
                 value.AddCodes(codes, "mov", null);
-                Var retval = new Var(parent, "__retval");
+                Var retval = parent.GetFunction().GetRetVal(parent);
                 codes.Add(I386.Mov(retval.GetAddress(codes), Reg32.EAX));
             }
             BlockBase f = parent.GetFunction();

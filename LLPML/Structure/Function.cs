@@ -19,6 +19,8 @@ namespace Girl.LLPML
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
 
+        public TypeBase Type { get { return TypeInt.Instance; } }
+
         protected Function virtfunc;
 
         protected Var.Declare virtptr;
@@ -231,11 +233,8 @@ namespace Girl.LLPML
         {
             if (thisptr != null && name == Struct.Define.Constructor)
                 thisptr.AddCodes(codes, "mov", null);
-            else if (members.ContainsKey("__retval"))
-            {
-                var retval = new Var(this, "__retval");
-                retval.AddCodes(codes, "mov", null);
-            }
+            else if (retVal != null)
+                GetRetVal(this).AddCodes(codes, "mov", null);
             base.AddExitCodes(codes);
             if (CallType == CallType.Std && argStack > 0)
                 codes.Add(I386.Ret(argStack));
@@ -248,8 +247,6 @@ namespace Girl.LLPML
             return new Val32(m.Specific.ImageBase, First);
         }
 
-        public TypeBase Type { get { return null; } }
-
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
             codes.AddCodes(op, dest, GetAddress(codes.Module));
@@ -258,6 +255,12 @@ namespace Girl.LLPML
         private TypeBase GetParentType()
         {
             return new TypeReference((parent as Struct.Define).Type);
+        }
+
+        public void SetReturnType(TypeBase type)
+        {
+            doneInferType = true;
+            this.returnType = type;
         }
     }
 }

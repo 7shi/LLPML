@@ -38,9 +38,7 @@ namespace Girl.LLPML
 
         public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            var t = Target.Type.Name;
-            if (t == null) t = "var";
-            codes.AddCodes(op, dest, codes.Module.GetString(t));
+            codes.AddCodes(op, dest, codes.Module.GetString(Target.Type.Name));
         }
     }
 }

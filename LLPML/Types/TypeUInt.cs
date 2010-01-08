@@ -16,6 +16,14 @@ namespace Girl.LLPML
         private static TypeUInt instance = new TypeUInt();
         public static TypeUInt Instance { get { return instance; } }
 
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeUInt || type is TypeShort || type is TypeSByte)
+                return this;
+            return null;
+        }
+
         protected TypeUInt()
         {
             AddOperators(funcs);
@@ -92,6 +100,18 @@ namespace Girl.LLPML
         {
             codes.Add(I386.MovW(ad, Reg16.AX));
         }
+
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeUShort || type is TypeSByte || type is TypeByte)
+                return this;
+            else if (type is TypeInt)
+                return TypeInt.Instance;
+            else if (type is TypeUInt)
+                return TypeUInt.Instance;
+            return null;
+        }
     }
 
     public class TypeChar : TypeUShort
@@ -128,6 +148,22 @@ namespace Girl.LLPML
         public override void AddSetCodes(OpCodes codes, Addr32 ad)
         {
             codes.Add(I386.MovB(ad, Reg8.AL));
+        }
+
+        // cast
+        public override TypeBase Cast(TypeBase type)
+        {
+            if (type is TypeSByte)
+                return this;
+            else if (type is TypeInt)
+                return TypeInt.Instance;
+            else if (type is TypeUInt)
+                return TypeUInt.Instance;
+            else if (type is TypeShort)
+                return TypeShort.Instance;
+            else if (type is TypeUShort)
+                return TypeUShort.Instance;
+            return null;
         }
     }
 }

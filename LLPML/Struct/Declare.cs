@@ -53,8 +53,8 @@ namespace Girl.LLPML.Struct
         public Declare(BlockBase parent, string name, string type)
             : base(parent, name)
         {
-            this.Type = Types.GetType(parent, type) as TypeStruct;
-            if (this.Type == null) throw Abort("type required");
+            this.type = Types.GetType(parent, type) as TypeStruct;
+            if (this.type == null) throw Abort("type required");
         }
 
         public Declare(BlockBase parent, XmlTextReader xr)
@@ -74,8 +74,8 @@ namespace Girl.LLPML.Struct
             if (isRoot)
             {
                 RequiresName(xr);
-                Type = Types.GetType(parent, xr["type"]) as TypeStruct;
-                if (Type == null) throw Abort(xr, "type required");
+                type = Types.GetType(parent, xr["type"]) as TypeStruct;
+                if (type == null) throw Abort(xr, "type required");
             }
 
             Parse(xr, delegate
@@ -147,6 +147,17 @@ namespace Girl.LLPML.Struct
             }
             codes.Add(I386.Add(Reg32.ESP, 4));
             return true;
+        }
+
+        public void CheckField(Define st1, Define st2)
+        {
+            st2.MakeUp();
+            if (st1 == st2)
+                throw Abort(
+                    "can not define recursive field: {0}",
+                    st1.GetMemberName(name));
+            var b = st2.GetBaseStruct();
+            if (b != null) CheckField(st1, b);
         }
     }
 }

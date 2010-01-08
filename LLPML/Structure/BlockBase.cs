@@ -31,6 +31,14 @@ namespace Girl.LLPML
         public virtual bool AcceptsContinue { get { return false; } }
         public virtual Val32 Continue { get { return null; } }
 
+        protected Var.Declare retVal;
+        public Var GetRetVal(BlockBase parent)
+        {
+            if (retVal == null)
+                retVal = new Var.Declare(this, "__retval");
+            return new Var(parent, retVal);
+        }
+
         protected Dictionary<string, object> members
             = new Dictionary<string, object>();
 
@@ -404,13 +412,74 @@ namespace Girl.LLPML
             });
         }
 
-        public virtual void MakeUp()
+        private List<IIntValue> typeInfos = new List<IIntValue>();
+
+        public void AddTypeInfo(IIntValue v)
         {
-            foreach (Struct.Define st in GetMembers<Struct.Define>())
+            GetRetVal(this);
+            typeInfos.Add(v);
+        }
+
+        protected TypeBase returnType;
+        protected bool doneInferType = false;
+
+        public virtual TypeBase ReturnType
+        {
+            get
             {
-                st.CheckStruct();
-                st.MakeUp();
+                if (doneInferType || !root.IsCompiling)
+                    return returnType;
+
+                doneInferType = true;
+                foreach (var v in typeInfos)
+                {
+                    var t = returnType;
+                    if (!InferType(v))
+                    {
+                        var err = string.Format(
+                            "can not cast return type: {0} => {1}",
+                            v.Type.Name, t.Name);
+                        if (v is NodeBase)
+                            throw (v as NodeBase).Abort(err);
+                        throw Abort(err);
+                    }
+                }
+                return returnType;
             }
+        }
+
+        private bool InferType(IIntValue v)
+        {
+            var vt = v.Type;
+            if (vt == null) return true;
+
+            var t = returnType;
+            if (v is Null)
+            {
+                if (t == null || t is TypeReference || t is TypeIterator)
+                    return true;
+                return false;
+            }
+            returnType = Types.Cast(t, Types.ConvertVarType(vt));
+            return returnType != null;
+        }
+
+        protected bool doneMakeUp = false;
+
+        public void MakeUp()
+        {
+            if (doneMakeUp) return;
+            doneMakeUp = true;
+
+            MakeUpInternal();
+
+            foreach (var obj in members.Values)
+                if (obj is BlockBase)
+                    (obj as BlockBase).MakeUp();
+        }
+
+        protected virtual void MakeUpInternal()
+        {
         }
     }
 }

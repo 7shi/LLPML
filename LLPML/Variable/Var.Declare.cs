@@ -12,14 +12,13 @@ namespace Girl.LLPML
     {
         public class Declare : NodeBase
         {
-            public virtual TypeBase Type { get; protected set; }
-            public virtual bool NeedsInit { get { return Value != null; } }
-            public virtual bool NeedsCtor { get { return false; } }
-            public virtual bool NeedsDtor { get { return false; } }
-
             public Addr32 Address { get; set; }
             public bool IsMember { get; protected set; }
             public IIntValue Value { get; set; }
+
+            public virtual bool NeedsInit { get { return Value != null; } }
+            public virtual bool NeedsCtor { get { return false; } }
+            public virtual bool NeedsDtor { get { return false; } }
 
             public Declare() { }
 
@@ -33,7 +32,11 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name, TypeBase type)
                 : this(parent, name)
             {
-                if (type != null) Type = type;
+                if (type != null)
+                {
+                    doneInferType = true;
+                    this.type = type;
+                }
             }
 
             public Declare(BlockBase parent, string name, TypeBase type, IIntValue value)
@@ -45,7 +48,8 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name, TypeBase type, int count)
                 : this(parent, name)
             {
-                this.Type = new TypeArray(type, count);
+                doneInferType = true;
+                this.type = new TypeArray(type, count);
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)
@@ -56,7 +60,7 @@ namespace Girl.LLPML
 
             protected virtual void Init()
             {
-                if (Type == null) Type = Types.GetValueType("var");
+                if (type == null) type = Types.GetValueType("var");
                 IsMember = parent is Struct.Define;
             }
 
@@ -70,11 +74,11 @@ namespace Girl.LLPML
                 if (slen != null)
                 {
                     var c = IntValue.Parse(slen);
-                    if (t != null) Type = new TypeArray(t, c);
+                    if (t != null) type = new TypeArray(t, c);
                 }
                 else
                 {
-                    if (t != null) Type = t;
+                    if (t != null) type = t;
                     Parse(xr, delegate
                     {
                         IIntValue[] v = IntValue.Read(parent, xr);
@@ -130,6 +134,23 @@ namespace Girl.LLPML
                 if (IsMember)
                     ad = GetAddress(codes, parent);
                 Type.AddSetCodes(codes, ad);
+            }
+
+            protected TypeBase type;
+            protected bool doneInferType = false;
+
+            public virtual TypeBase Type
+            {
+                get
+                {
+                    if (doneInferType || !root.IsCompiling)
+                        return type;
+
+                    doneInferType = true;
+                    if (Value != null)
+                        type = Types.ConvertVarType(Value.Type);
+                    return type;
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string LLPMLVersion = "0.14.20080402";
+        public const string LLPMLVersion = "0.15.20080403";
         public string Version = LLPMLVersion;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
@@ -99,10 +99,10 @@ namespace Girl.LLPML
         protected override void BeforeAddCodes(OpCodes codes)
         {
             ForEachMembers((p, pos) =>
-                {
-                    p.Address = new Addr32(codes.Module.GetBuffer(p.Name, p.Type.Size));
-                    return false;
-                }, null);
+            {
+                p.Address = new Addr32(codes.Module.GetBuffer(p.Name, p.Type.Size));
+                return false;
+            }, null);
         }
 
         protected override void AfterAddCodes(OpCodes codes)
@@ -113,11 +113,8 @@ namespace Girl.LLPML
 
         public override void AddExitCodes(OpCodes codes)
         {
-            if (members.ContainsKey("__retval"))
-            {
-                var retval = new Var(this, "__retval");
-                retval.AddCodes(codes, "push", null);
-            }
+            if (retVal != null)
+                GetRetVal(this).AddCodes(codes, "push", null);
             else
                 codes.Add(I386.Push((Val32)0));
             codes.Add(I386.Call(codes.Module.GetFunction(
@@ -138,10 +135,14 @@ namespace Girl.LLPML
             return "";
         }
 
+        public bool IsCompiling { get; protected set; }
+
         public override void AddCodes(OpCodes codes)
         {
+            IsCompiling = true;
             MakeUp();
             base.AddCodes(codes);
+            IsCompiling = false;
         }
     }
 }

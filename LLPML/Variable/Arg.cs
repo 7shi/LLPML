@@ -29,7 +29,7 @@ namespace Girl.LLPML
             RequiresName(xr);
 
             var t = Types.GetType(parent, xr["type"]);
-            if (t != null) Type = t;
+            if (t != null) type = t;
             AddToParent();
         }
     }
@@ -41,7 +41,7 @@ namespace Girl.LLPML
 
         protected override void Init()
         {
-            Type = new TypeArray(TypeInt.Instance, 1);
+            type = new TypeArray(TypeInt.Instance, 1);
         }
     }
 }

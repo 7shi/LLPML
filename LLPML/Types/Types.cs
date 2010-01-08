@@ -33,6 +33,7 @@ namespace Girl.LLPML
             switch (type)
             {
                 case "var":
+                case "bool":
                 case "int":
                     return TypeInt.Instance;
                 case "short":
@@ -64,6 +65,11 @@ namespace Girl.LLPML
                 return t;
         }
 
+        public static TypeBase GetVarType(BlockBase parent, string type)
+        {
+            return ConvertVarType(GetType(parent, type));
+        }
+
         public static Struct.Define GetStruct(TypeBase t)
         {
             if (t == null)
@@ -72,6 +78,12 @@ namespace Girl.LLPML
                 return (t as TypeStruct).GetStruct();
             else
                 return GetStruct(t.Type);
+        }
+
+        public static TypeBase Cast(TypeBase t1, TypeBase t2)
+        {
+            if (t1 == null) return t2;
+            return t1.Cast(t2);
         }
     }
 }

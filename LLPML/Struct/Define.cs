@@ -15,7 +15,8 @@ namespace Girl.LLPML.Struct
 
         public string BaseType { get; set; }
 
-        private TypeBase type = null;
+        protected TypeBase type;
+
         public TypeBase Type
         {
             get
@@ -138,45 +139,6 @@ namespace Girl.LLPML.Struct
             return this.name + Separator + name;
         }
 
-        public void CheckStruct()
-        {
-            CheckStruct(null);
-        }
-
-        public void CheckStruct(string type)
-        {
-            if (type == null)
-            {
-                CheckBaseStruct(name);
-                type = name;
-            }
-            else if (type == name)
-                throw Abort("can not define recursive type: " + name);
-            foreach (var obj in members.Values)
-            {
-                Type t = obj.GetType();
-                if (t == typeof(Var.Declare) || t == typeof(Struct.Declare))
-                {
-                    var p = obj as Var.Declare;
-                    if (p is Struct.Declare)
-                    {
-                        var st = Types.GetStruct(p.Type);
-                        if (st != null) st.CheckStruct(type);
-                    }
-                }
-            }
-        }
-
-        public void CheckBaseStruct(string name)
-        {
-            Define b = GetBaseStruct();
-            if (b == null) return;
-
-            if (b.name == name)
-                throw Abort("can not define recursive base type: " + name);
-            b.CheckBaseStruct(name);
-        }
-
         public override Struct.Define ThisStruct { get { return this; } }
 
         private void CallBlock(OpCodes codes, Addr32 ad, Block b, CallType ct)
@@ -291,17 +253,6 @@ namespace Girl.LLPML.Struct
         {
         }
 
-        public override void MakeUp()
-        {
-            string[] funcs = { Initializer, Constructor, Destructor };
-            foreach (var func in funcs)
-            {
-                var f = base.GetMember<Function>(func);
-                if (f == null) AddFunction(new Function(this, func));
-            }
-            base.MakeUp();
-        }
-
         public bool NeedsInit
         {
             get
@@ -349,6 +300,59 @@ namespace Girl.LLPML.Struct
                     return true;
                 }
                 return false;
+            }
+        }
+
+        private bool doneCheckStruct = false;
+
+        public void CheckStruct()
+        {
+            if (doneCheckStruct) return;
+            doneCheckStruct = true;
+
+            var list = new List<Define>();
+            CheckStruct(list);
+            CheckField();
+        }
+
+        private void CheckStruct(List<Define> list)
+        {
+            MakeUp();
+            if (list.Contains(this))
+                throw Abort("can not define recursive type: " + list[0].name);
+            list.Add(this);
+            var b = GetBaseStruct();
+            if (b != null) b.CheckStruct(list);
+        }
+
+        private bool doneCheckField = false;
+
+        public void CheckField()
+        {
+            if (doneCheckField) return;
+            doneCheckField = true;
+
+            foreach (var obj in members.Values)
+            {
+                var field = obj as Declare;
+                if (field == null) continue;
+
+                var t = field.Type;
+                if (!(t is TypeStruct)) continue;
+
+                var st = (t as TypeStruct).GetStruct();
+                field.CheckField(this, st);
+            }
+        }
+
+        protected override void MakeUpInternal()
+        {
+            CheckStruct();
+            string[] funcs = { Initializer, Constructor, Destructor };
+            foreach (var func in funcs)
+            {
+                var f = base.GetMember<Function>(func);
+                if (f == null) AddFunction(new Function(this, func));
             }
         }
     }
