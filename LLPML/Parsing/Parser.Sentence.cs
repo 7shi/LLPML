@@ -414,6 +414,7 @@ namespace Girl.LLPML.Parsing
             var first = true;
             for (; ; )
             {
+                var si = SrcInfo;
                 var t = Read();
                 if (t == null)
                     throw Abort("{0}: {1}: ) が必要です。", tp, f.Name);
@@ -469,7 +470,7 @@ namespace Girl.LLPML.Parsing
                     Rewind();
 
                 var argt = Types.GetVarType(parent, type);
-                f.Args.Add(new Arg(f, arg, argt));
+                f.Args.Add(new Arg(f, arg, argt) { SrcInfo = si });
             }
         }
 

@@ -36,21 +36,37 @@ namespace Girl.LLPML
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            AddCodes(Parent, Target, codes, op, dest);
+            AddCodes(this, Parent, Target, codes, op, dest);
         }
 
         public static TypeBase GetType(BlockBase parent, IIntValue target)
         {
-            var fp = target as Variant;
-            if (fp != null && parent.GetFunction(fp.Name) == null)
-                return Types.GetType(parent, (target as Variant).Name);
-            else
-                return target.Type;
+            var v = target as Variant;
+            if (v != null)
+            {
+                var vt = v.GetVariantType();
+                if (vt != null) return vt;
+                return Types.GetType(parent, v.Name);
+            }
+            return target.Type;
         }
 
-        public static void AddCodes(BlockBase parent, IIntValue target, OpModule codes, string op, Addr32 dest)
+        public static void AddCodes(NodeBase caller, BlockBase parent, IIntValue target, OpModule codes, string op, Addr32 dest)
         {
-            var tt = GetType(parent, target);
+            if (target is TypeOf) target = (target as TypeOf).Target;
+
+            var v = target as Variant;
+            if (v != null && parent.GetFunction(v.Name) == null)
+            {
+                var fpname = (target as Variant).Name;
+                var fpt = Types.GetType(parent, fpname);
+                if (fpt == null || !fpt.Check())
+                    throw caller.Abort("undefined type: {0}", fpname);
+                codes.AddCodes(op, dest, codes.GetTypeObject(fpt));
+                return;
+            }
+
+            var tt = target.Type;
             var tr = tt as TypeReference;
             var tts = tt.Type as TypeStruct;
             if (tr != null && (tr.IsArray || (tts != null && tts.IsClass)))

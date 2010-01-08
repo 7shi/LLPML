@@ -51,6 +51,11 @@ namespace Girl.LLPML.Parsing
 
         private IIntValue Index(IIntValue target, int order)
         {
+            var t = Read();
+            if (t == "]" && target is Variant)
+                return new TypeOf(parent, new Variant(parent, (target as Variant).Name + "[]"));
+            else if (t != null)
+                Rewind();
             var ret = new Index(parent, target, Expression());
             Check("配列", "]");
             return ret;

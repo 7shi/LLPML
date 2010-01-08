@@ -138,7 +138,7 @@ namespace Girl.LLPML
                 }
                 catch
                 {
-                    throw Abort("–¢’è‹`‚ÌŒ^‚Å‚·: {0}", type.Name);
+                    throw Abort("undefined type: {0}: {1}", name, type.Name);
                 }
 
                 if (Value != null)

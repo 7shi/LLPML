@@ -1,0 +1,58 @@
+﻿/// プロパティのプロパティ
+
+_Finish _finish;
+
+class Test1
+{
+	int a = 1;
+}
+
+class Test2
+{
+	var test = new Test1;
+	
+	function get_Test
+	{
+		return test;
+	}
+	
+	function ctor
+	{
+		printfln("test: %p", test);
+		printfln("Test: %p", Test);
+		printfln("test.a: %p", test.a);
+		printfln("Test.a: %p", Test.a);
+		printfln("typeof test.a: %s", typeof(test.a).Name);
+		printfln("typeof Test.a: %s", typeof(Test.a).Name);
+		Test.a = 2;
+	}
+}
+
+class Test3
+{
+	var test = new Test2;
+	
+	function get_Test
+	{
+		return test;
+	}
+	
+	function ctor
+	{
+		printfln("test: %p", test);
+		printfln("Test: %p", Test);
+		printfln("test.Test: %p", test.Test);
+		printfln("Test.Test: %p", Test.Test);
+		printfln("test.Test.a: %p", test.Test.a);
+		printfln("Test.Test.a: %p", Test.Test.a);
+		printfln("addrof test.Test.a: %p", addrof test.Test.a);
+		printfln("addrof Test.Test.a: %p", addrof Test.Test.a);
+		printfln("typeof test.Test.a: %s", typeof(test.Test.a).Name);
+		printfln("typeof Test.Test.a: %s", typeof(Test.Test.a).Name);
+		Test.Test.a = 2;
+	}
+}
+
+var t = new Test3;
+printfln("t.test.Test.a = %d", t.test.Test.a);
+printfln("t.Test.Test.a = %d", t.Test.Test.a);

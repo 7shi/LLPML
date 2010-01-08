@@ -219,6 +219,8 @@ namespace Girl.LLPML
             base.BeforeAddCodes(codes);
             foreach (var arg in args)
             {
+                if (!arg.Type.Check())
+                    throw arg.Abort("undefined type: {0}: {1}", arg.Name, arg.Type.Name);
                 if (ArgNeededGC(arg))
                 {
                     codes.Add(I386.Mov(Reg32.EAX, arg.Address));

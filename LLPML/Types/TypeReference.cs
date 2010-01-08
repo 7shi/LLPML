@@ -45,7 +45,9 @@ namespace Girl.LLPML
         // cast
         public override TypeBase Cast(TypeBase type)
         {
-            if (type is TypeVar)
+            if (IsArray && type.Name == "var:object")
+                return type;
+            else if (type is TypeVar)
                 return type;
             else if (type is TypeString && IsArray && Type is TypeChar)
                 return type;

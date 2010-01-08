@@ -176,9 +176,16 @@ namespace Girl.LLPML.Parsing
                     if (array == null)
                     {
                         if (tb != null) tb = Types.ToVarType(tb);
-                        var vd = new Var.Declare(parent, name, tb);
-                        if (eq) vd.Value = Expression();
-                        v = vd;
+                        try
+                        {
+                            var vd = new Var.Declare(parent, name, tb);
+                            if (eq) vd.Value = Expression();
+                            v = vd;
+                        }
+                        catch
+                        {
+                            throw parent.Abort(si, "var: 宣言が重複しています: {0}", name);
+                        }
                     }
                     else
                     {

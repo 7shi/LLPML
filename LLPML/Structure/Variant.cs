@@ -28,23 +28,31 @@ namespace Girl.LLPML
         {
             get
             {
-                var v = GetVar();
-                if (v != null) return v.Type;
+                var ret = GetVariantType();
+                if (ret != null) return ret;
 
-                var c = GetConst();
-                if (c != null) return c.Type;
-
-                var f = GetFunction();
-                if (f != null) return f.Type;
-
-                var g = GetGetter();
-                if (g != null) return g.ReturnType;
-
-                var s = GetSetter();
-                if (s != null) return s.Args[1].Type;
-
-                throw Abort("can not find: {0}", name);
+                throw Abort("undefined symbol: {0}", name);
             }
+        }
+
+        public TypeBase GetVariantType()
+        {
+            var v = GetVar();
+            if (v != null) return v.Type;
+
+            var c = GetConst();
+            if (c != null) return c.Type;
+
+            var f = GetFunction();
+            if (f != null) return f.Type;
+
+            var g = GetGetter();
+            if (g != null) return g.ReturnType ?? TypeVar.Instance;
+
+            var s = GetSetter();
+            if (s != null) return s.Args[1].Type;
+
+            return null;
         }
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
@@ -78,7 +86,7 @@ namespace Girl.LLPML
                         new Call(Parent, g.Name).AddCodes(codes, op, dest);
                         return;
                     }
-                    throw Abort("undefined word: " + name);
+                    throw Abort("undefined symbol: " + name);
                 }
                 v = f.GetAddress(m);
             }

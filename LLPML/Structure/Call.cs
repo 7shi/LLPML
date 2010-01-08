@@ -86,7 +86,12 @@ namespace Girl.LLPML
                 if (memf == null)
                     memf = Parent.GetFunction(mem.GetName());
                 if (memf == null)
-                    throw Abort("call: undefined function: {0}", mem.FullName);
+                {
+                    if (!string.IsNullOrEmpty(mem.TargetType))
+                        throw Abort("call: undefined symbol: {0}", mem.TargetType);
+                    else
+                        throw Abort("call: undefined function: {0}", mem.FullName);
+                }
                 var memt = mem.GetTarget();
                 args = new List<IIntValue>();
                 if (memt != null && !memf.IsStatic)

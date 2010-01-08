@@ -38,8 +38,10 @@ namespace Compiler
                     }
                 }
                 var sw = new StreamWriter("_cleanup.bat", false, Encoding.Default);
-                foreach (var o in outputs) sw.WriteLine("del {0}", o);
-                foreach (var g in projs.Generated) sw.WriteLine("del {0}", g);
+                foreach (var o in outputs)
+                    sw.WriteLine("del {0}", o.Replace('/', '\\'));
+                foreach (var g in projs.Generated)
+                    sw.WriteLine("del {0}", g.Replace('/', '\\'));
                 sw.WriteLine("pause");
                 sw.Close();
                 Console.WriteLine();

@@ -1,0 +1,30 @@
+﻿/// バグチェック
+
+_Finish _finish;
+
+struct Test1 { var Data = new byte[10]; }
+Test1 test;
+
+var rawaddr = \v => addrof test.Data[v + 2];
+printfln("test.Data = %p", addrof test.Data);
+printfln("rawaddr(5) = %p", rawaddr(5));
+
+struct Test2
+{
+	Test1 test;
+	
+	virtual get_Size
+	{
+		return sizeof test;
+	}
+	
+	virtual get_Prop {}
+	
+	function Test
+	{
+		return Prop;
+	}
+}
+
+Test2 t;
+printfln("t.Size = %d", t.Size);

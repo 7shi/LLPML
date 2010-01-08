@@ -10,8 +10,18 @@ namespace Girl.LLPML
 {
     public class SizeOf : IntValue
     {
-        public SizeOf(BlockBase parent, string name) : base(parent, name) { }
-        public SizeOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public IIntValue target;
+
+        public SizeOf(BlockBase parent, IIntValue target)
+            : base(parent)
+        {
+            this.target = target;
+        }
+
+        public SizeOf(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
@@ -23,14 +33,23 @@ namespace Girl.LLPML
         {
             get
             {
-                int size = 0;
-                var vd = Parent.GetVar(name);
-                if (vd != null)
-                    size = vd.Type.Size;
-                else
-                    size = Types.GetType(Parent, name).Size;
-                if (size == 0) throw Abort("undefined type: " + name);
-                return size;
+                if (target is Variant)
+                {
+                    var v = Parent.GetVar((target as Variant).Name);
+                    if (v != null)
+                    {
+                        var vt = v.Type;
+                        if (vt is TypeArray) return vt.Size;
+                    }
+                }
+                TypeBase t = null;
+                try
+                {
+                    t = TypeOf.GetType(Parent, target);
+                }
+                catch { }
+                if (t != null) return t.Size;
+                throw Abort("undefined type: " + name);
             }
         }
     }

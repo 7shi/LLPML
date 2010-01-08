@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public const string VERSION = "1.5.2008.1016";
+        public const string VERSION = "1.5.2008.1021";
         public string Version = VERSION;
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;

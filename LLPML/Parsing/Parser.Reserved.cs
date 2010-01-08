@@ -68,7 +68,7 @@ namespace Girl.LLPML.Parsing
                         var br = Read();
                         if (br != "(")
                             if (br != null) Rewind();
-                        var arg = Read();
+                        var arg = Expression();
                         if (arg == null)
                             throw parent.Abort(si, "sizeof: 引数が必要です。");
                         if (br == "(") Check("sizeof", ")");
@@ -85,6 +85,11 @@ namespace Girl.LLPML.Parsing
                         if (arg == null)
                             throw parent.Abort(si, "typeof: 引数が必要です。");
                         if (br == "(") Check("typeof", ")");
+                        if (arg is TypeOf)
+                        {
+                            (arg as TypeOf).SrcInfo = si;
+                            return arg;
+                        }
                         return new TypeOf(parent, arg) { SrcInfo = si };
                     }
                 case "__FUNCTION__":

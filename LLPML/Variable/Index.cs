@@ -106,8 +106,15 @@ namespace Girl.LLPML
                 var t = target.Type;
                 if (t is TypeString)
                     return TypeConstChar.Instance;
-                else
+                else if (t != null)
                     return t.Type;
+                if (target is Struct.Member)
+                    throw Abort("index: undefined member: {0}",
+                        (target as Struct.Member).FullName);
+                else if (target is NodeBase)
+                    throw Abort("index: undefined symbol: {0}",
+                        (target as NodeBase).Name);
+                throw Abort("index: undefined symbol");
             }
         }
 

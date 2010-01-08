@@ -23,8 +23,8 @@ namespace Girl.LLPML.Struct
             var f = Parent.GetFunction(Tag);
             if (f == null) throw Abort("is: can not find: {0}", Tag);
 
-            TypeOf.AddCodes(Parent, values[1], codes, "push", null);
-            TypeOf.AddCodes(Parent, values[0], codes, "push", null);
+            TypeOf.AddCodes(this, Parent, values[1], codes, "push", null);
+            TypeOf.AddCodes(this, Parent, values[0], codes, "push", null);
             codes.AddRange(new[]
             {
                 I386.Call(f.First),

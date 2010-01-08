@@ -84,6 +84,13 @@ namespace Girl.LLPML
             codes.Add(I386.Call(dtor.First));
         }
 
+        // type check
+        public override bool Check()
+        {
+            var ret = Parent.GetStruct(name);
+            return ret != null;
+        }
+
         public Struct.Define GetStruct()
         {
             var ret = Parent.GetStruct(name);

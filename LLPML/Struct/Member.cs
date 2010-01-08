@@ -127,11 +127,42 @@ namespace Girl.LLPML.Struct
                 ret = tv.GetAddress(codes);
                 if (!(tv is Index)) t = tv.Type;
             }
-            else
+            else if (target != null)
             {
                 target.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
                 ret = new Addr32(Var.DestRegister);
+            }
+            else
+            {
+                var g = Parent.GetFunction("get_" + TargetType);
+                if (g != null)
+                {
+                    new Call(Parent, g.Name).AddCodes(codes, "mov", null);
+                    if (mem != null)
+                    {
+                        codes.Add(I386.Add(Reg32.EAX, (uint)st.GetOffset(name)));
+                        codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
+                        return new Addr32(Var.DestRegister);
+                    }
+                    if (IsFunctionInternal)
+                    {
+                        // TODO: Delegate
+                    }
+                    else if (IsGetterInternal)
+                    {
+                        var gg = GetFunction("get_");
+                        codes.AddRange(new[]
+                        {
+                            I386.Push(Reg32.EAX),
+                            I386.Call(gg.First)
+                        });
+                        if (gg.CallType == CallType.CDecl)
+                            codes.Add(I386.Add(Reg32.ESP, 4));
+                        return null;
+                    }
+                    throw Abort("undefined member: {0}.{1}", st.FullName, name);
+                }
             }
 
             if (t != null && t.IsValue)
@@ -147,8 +178,7 @@ namespace Girl.LLPML.Struct
 
             if (IsFunctionInternal)
             {
-                GetCall("").AddCodes(codes, "mov", null);
-                return null;
+                // TODO: Delegate
             }
             else if (IsGetterInternal)
             {
@@ -174,8 +204,11 @@ namespace Girl.LLPML.Struct
                 return (target as Member).GetStructInternal();
             else if (target != null)
                 return Types.GetStruct(target.Type);
-            else
-                return Parent.GetStruct(TargetType);
+
+            var g = Parent.GetFunction("get_" + TargetType);
+            if (g != null)
+                return Types.GetStruct(g.ReturnType.Type);
+            return Parent.GetStruct(TargetType);
         }
 
         protected Define GetStructInternal()
@@ -386,15 +419,35 @@ namespace Girl.LLPML.Struct
 
         protected void AddCodesInternal(OpModule codes, string op, Addr32 dest)
         {
+            var st = GetTargetStruct();
+            var target = Target;
             if (IsLengthInternal)
             {
-                Target.AddCodes(codes, "mov", null);
+                target.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -4)));
                 codes.AddCodes(op, dest);
                 return;
             }
             else if (IsGetterInternal)
             {
+                if (target == null)
+                {
+                    var g = Parent.GetFunction("get_" + TargetType);
+                    if (g != null)
+                    {
+                        new Call(Parent, g.Name).AddCodes(codes, "mov", null);
+                        var gg = GetFunction("get_");
+                        codes.AddRange(new[]
+                        {
+                            I386.Push(Reg32.EAX),
+                            I386.Call(gg.First)
+                        });
+                        if (gg.CallType == CallType.CDecl)
+                            codes.Add(I386.Add(Reg32.ESP, 4));
+                        codes.AddCodes(op, dest);
+                        return;
+                    }
+                }
                 GetCall("get_").AddCodes(codes, op, dest);
                 return;
             }
@@ -410,7 +463,6 @@ namespace Girl.LLPML.Struct
                 }
                 return;
             }
-            var st = GetTargetStruct();
             if (st != null)
             {
                 var ci = st.GetInt(name);
@@ -446,6 +498,8 @@ namespace Girl.LLPML.Struct
                     n = (target as Member).FullName;
                 else if (target is NodeBase)
                     n = (target as NodeBase).Name;
+                else if (!string.IsNullOrEmpty(TargetType))
+                    n = TargetType;
                 if (string.IsNullOrEmpty(n)) return name;
                 return n + "." + name;
             }

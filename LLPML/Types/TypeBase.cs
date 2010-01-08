@@ -105,6 +105,20 @@ namespace Girl.LLPML
             codes.Add(I386.Add(Reg32.ESP, 4));
         }
 
+        // type check
+        public virtual bool Check()
+        {
+            try
+            {
+                if (Type != null) return Type.Check();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
         // operator name
         public static string GetFuncName(string op)
         {

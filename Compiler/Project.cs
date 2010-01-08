@@ -183,8 +183,9 @@ namespace Compiler
                 if (!generators.ContainsKey(ext)) continue;
                 var name = Path.ChangeExtension(fi.Name, null);
                 var adm = name + ".adm";
-                without.Add(adm);
-                var ai = new AdmInfo(name, path, new FileInfo(adm));
+                without.Add(Combine(path, adm));
+                var ai = new AdmInfo(name, path,
+                    new FileInfo(Path.Combine(fi.DirectoryName, adm)));
                 ai.Source = fi;
                 ai.Generator = generators[ext].Name;
                 srcs.Add(ai);
@@ -193,7 +194,7 @@ namespace Compiler
             }
             foreach (var fi in dir.GetFiles("*.adm"))
             {
-                if (without.Contains(fi.Name)) continue;
+                if (without.Contains(Combine(path, fi.Name))) continue;
                 var name = Path.ChangeExtension(fi.Name, null);
                 var ai = new AdmInfo(name, path, fi);
                 if (name.StartsWith("exe-"))

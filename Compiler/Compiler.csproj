@@ -153,6 +153,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Win32\Console\exe-c57.adm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Win32\Console\exe-c56.adm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Win32\Console\exe-c01.adm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -14,7 +14,7 @@ namespace Girl.LLPML
         private int value;
         public virtual int Value { get { return value; } }
 
-        protected IntValue(BlockBase parent, string name) : base(parent, name) { }
+        protected IntValue(BlockBase parent) : base(parent) { }
         protected IntValue(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         public IntValue(int value) { this.value = value; }
         public IntValue(string value) : this(Parse(value)) { }
