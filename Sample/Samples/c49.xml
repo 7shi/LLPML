@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.20.20080708">
+
+<title>メンバのオフセット</title>
+
+<include src="finish.xml" />
+
+<?llp
+struct Test1 {}
+struct Test2 : Test1 { int a; }
+struct Test3 : Test2 { int b; }
+
+printfln("sizeof(Test1) = %d", sizeof(Test1));
+printfln("sizeof(Test2) = %d", sizeof(Test2));
+printfln("sizeof(Test3) = %d", sizeof(Test3));
+println();
+
+Test2 t2;
+printfln("t2 = %p", t2);
+printfln("addrof t2.a = %p", addrof t2.a);
+println();
+
+Test3 t3;
+printfln("t3 = %p", t3);
+printfln("addrof t3.a = %p", addrof t3.a);
+printfln("addrof t3.b = %p", addrof t3.b);
+?>
+
+</llpml>

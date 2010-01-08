@@ -93,6 +93,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Samples\c49.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\w01.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

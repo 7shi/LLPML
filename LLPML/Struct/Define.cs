@@ -33,7 +33,7 @@ namespace Girl.LLPML.Struct
             : base(parent)
         {
             this.name = name;
-            thisptr = new Arg(this, "this", new TypeReference(Type));
+            thisptr = new Arg(this, "this", new TypeReference(this, Type));
         }
 
         public Define(BlockBase parent, string name, string baseType)
@@ -55,7 +55,7 @@ namespace Girl.LLPML.Struct
             if (name == BaseType)
                 throw Abort(xr, "can not define recursive base type: " + name);
 
-            thisptr = new Arg(this, "this", new TypeReference(Type));
+            thisptr = new Arg(this, "this", new TypeReference(this, Type));
             base.Read(xr);
 
             if (!parent.AddStruct(this))
@@ -79,12 +79,18 @@ namespace Girl.LLPML.Struct
             throw Abort("undefined struct: " + BaseType);
         }
 
-        public int GetSize()
+        protected int GetSizeInternal()
         {
             int ret = 0;
             ForEachMembers(null, size => ret = size);
             Define st = GetBaseStruct();
-            if (st != null) ret += st.GetSize();
+            if (st != null) ret += st.GetSizeInternal();
+            return ret;
+        }
+
+        public int GetSize()
+        {
+            var ret = GetSizeInternal();
             if (ret == 0)
                 ret = Var.DefaultSize;
             return ret;
@@ -94,16 +100,16 @@ namespace Girl.LLPML.Struct
         {
             int ret = -1;
             ForEachMembers((p, pos) =>
-                {
-                    if (p.Name != name) return false;
-                    ret = pos;
-                    return true;
-                }, null);
+            {
+                if (p.Name != name) return false;
+                ret = pos;
+                return true;
+            }, null);
             Define st = GetBaseStruct();
             if (st == null) return ret;
 
             if (ret < 0) return st.GetOffset(name);
-            return ret + st.GetSize();
+            return ret + st.GetSizeInternal();
         }
 
         public Var.Declare GetMember(string name)
@@ -188,7 +194,7 @@ namespace Girl.LLPML.Struct
             var poslist = new Dictionary<Var.Declare, int>();
             int offset = 0;
             var st = GetBaseStruct();
-            if (st != null) offset = st.GetSize();
+            if (st != null) offset = st.GetSizeInternal();
             ForEachMembers((p, pos) =>
             {
                 if (p.NeedsDtor)
@@ -215,7 +221,7 @@ namespace Girl.LLPML.Struct
         {
             Define st = GetBaseStruct();
             int offset = 0;
-            if (st != null) offset = st.GetSize();
+            if (st != null) offset = st.GetSizeInternal();
             thisptr.Address = new Addr32(Reg32.EBP, 8);
             ForEachMembers((p, pos) =>
             {

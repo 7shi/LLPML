@@ -434,7 +434,7 @@ namespace Girl.LLPML.Parsing
                 else if (colon != null)
                     Rewind();
 
-                var argt = Types.ConvertVarType(Types.GetType(parent, type));
+                var argt = Types.GetVarType(parent, type);
                 f.Args.Add(new Arg(f, arg, argt));
             }
         }

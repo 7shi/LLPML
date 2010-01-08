@@ -261,11 +261,6 @@ namespace Girl.LLPML
             codes.AddCodes(op, dest, GetAddress(codes.Module));
         }
 
-        private TypeBase GetParentType()
-        {
-            return new TypeReference((parent as Struct.Define).Type);
-        }
-
         public void SetReturnType(TypeBase type)
         {
             doneInferReturnType = true;
@@ -318,9 +313,10 @@ namespace Girl.LLPML
 
         protected void CheckThisArg()
         {
-            if (this.parent is Struct.Define && !IsStatic)
+            if (parent is Struct.Define && !IsStatic)
             {
-                args.Add(new Arg(this, "this", GetParentType()));
+                var type = new TypeReference(this, (parent as Struct.Define).Type);
+                args.Add(new Arg(this, "this", type));
                 thisptr = new Struct.This(this);
             }
         }
@@ -334,6 +330,16 @@ namespace Girl.LLPML
 
             InsertArg(new Arg(this, "this", f.thisptr.Type));
             thisptr = new Struct.This(this);
+        }
+
+        protected override void MakeUpInternal()
+        {
+            if (HasThis && CallType != CallType.CDecl &&
+                (name == Struct.Define.Constructor
+                || name == Struct.Define.Destructor))
+            {
+                throw Abort("{0}: must be __cdecl", FullName);
+            }
         }
     }
 }

@@ -18,23 +18,25 @@ namespace Girl.LLPML
 
             private Addr32 Calculate(OpCodes codes)
             {
-                var ad1 = dest.GetAddress(codes);
-                var ad2 = ad1;
+                var ad = dest.GetAddress(codes);
                 var f = GetFunc();
                 var size = dest.Type.Size;
-                if (size < Var.DefaultSize)
+                var indirect = (dest.Reference != null && dest.Reference.Parent != parent)
+                    || size < Var.DefaultSize;
+                if (indirect)
                 {
-                    ad2 = new Addr32(Reg32.ESP);
-                    dest.Type.AddGetCodes(codes, "push", null, ad1);
+                    dest.Type.AddGetCodes(codes, "push", null, ad);
+                    ad = new Addr32(Reg32.ESP);
                 }
                 foreach (IIntValue v in values)
-                    f(codes, ad2, v);
-                if (size < Var.DefaultSize)
+                    f(codes, ad, v);
+                if (indirect)
                 {
                     codes.Add(I386.Pop(Reg32.EAX));
-                    dest.Type.AddSetCodes(codes, ad1);
+                    ad = dest.GetAddress(codes);
+                    dest.Type.AddSetCodes(codes, ad);
                 }
-                return ad1;
+                return ad;
             }
 
             public override void AddCodes(OpCodes codes)

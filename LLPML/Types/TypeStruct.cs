@@ -57,16 +57,24 @@ namespace Girl.LLPML
         }
 
         // type constructor
-        public override bool NeedsCtor { get { return GetStruct().NeedsCtor; } }
+        public override bool NeedsCtor
+        {
+            get
+            {
+                var st = GetStruct();
+                return st.NeedsInit || st.NeedsCtor;
+            }
+        }
         public override void AddConstructor(OpCodes codes)
         {
             var st = GetStruct();
             var f1 = st.GetFunction(Struct.Define.Initializer);
             var f2 = st.GetFunction(Struct.Define.Constructor);
-            codes.Add(I386.Call(f1.First));
-            if (f2.CallType != CallType.CDecl)
-                codes.Add(I386.Push(new Addr32(Reg32.ESP)));
-            codes.Add(I386.Call(f2.First));
+            codes.AddRange(new[]
+            {
+                I386.Call(f1.First),
+                I386.Call(f2.First),
+            });
         }
 
         // type destructor
@@ -74,12 +82,8 @@ namespace Girl.LLPML
         public override void AddDestructor(OpCodes codes)
         {
             var dtor = GetStruct().GetFunction(Struct.Define.Destructor);
-            if (dtor.CallType != CallType.CDecl)
-                codes.Add(I386.Push(new Addr32(Reg32.ESP)));
             codes.Add(I386.Call(dtor.First));
         }
-
-        public BlockBase Parent { get; protected set; }
 
         public Struct.Define GetStruct()
         {

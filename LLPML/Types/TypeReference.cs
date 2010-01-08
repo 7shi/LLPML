@@ -42,8 +42,9 @@ namespace Girl.LLPML
             return base.Cast(type);
         }
 
-        public TypeReference(TypeBase type)
+        public TypeReference(BlockBase parent, TypeBase type)
         {
+            Parent = parent;
             Type = type;
         }
     }

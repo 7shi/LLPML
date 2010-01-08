@@ -152,7 +152,7 @@ namespace Girl.LLPML
 
                     doneInferType = true;
                     if (Value != null)
-                        type = Types.ConvertVarType(Value.Type);
+                        type = Types.ConvertVarType(parent, Value.Type);
                     return type;
                 }
             }

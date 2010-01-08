@@ -1,91 +1,91 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.11.20080314">
 
-<title>論理演算 1</title>
+<title>論理演算 2</title>
 
 <include src="finish.xml" />
 
-var a = 1, b = 2, c = 1;
+var a = -1, b = 0, c = 1;
 printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
 
-// equal
+<!-- greater -->
 
-printfln("%d: a == 1", a == 1);
-printfln("%d: a == 2", a == 2);
-printfln("%d: a == b", a == b);
+printfln("%d: a > b", a > b);
+printfln("%d: b > a", b > a);
 
 <call name="printfln">
-  "%d: a == b == 1"
-  <equal>a, b, 1</equal>
+  <string>%d: a > b > c</string>
+  <greater>a, b, c</greater>
 </call>
 
 <call name="printfln">
-  "%d: a == c == 1"
-  <equal>a, c, 1</equal>
+  <string>%d: c > b > a</string>
+  <greater>c, b, a</greater>
 </call>
 
 <call name="printfln">
-  "%d: a == c == 2"
-  <equal>a, c, 2</equal>
+  <string>%d: b > 0 > a</string>
+  <greater>b, 0, a</greater>
 </call>
 
-// not equal
+<!-- greater equal -->
 
-printfln("%d: a != 1", a != 1);
-printfln("%d: a != 2", a != 2);
-printfln("%d: a != b", a != b);
-
-<call name="printfln">
-  "%d: a != b != 1"
-  <not-equal>a, b, 1</not-equal>
-</call>
+printfln("%d: a >= b", a >= b);
+printfln("%d: b >= a", b >= a);
 
 <call name="printfln">
-  "%d: a != b != 3"
-  <not-equal>a, b, 3</not-equal>
+  <string>%d: a >= b >= c</string>
+  <greater-equal>a, b, c</greater-equal>
 </call>
 
 <call name="printfln">
-  "%d: a != c != 1"
-  <not-equal>a, c, 1</not-equal>
+  <string>%d: c >= b >= a</string>
+  <greater-equal>c, b, a</greater-equal>
 </call>
 
-// or else
+<call name="printfln">
+  <string>%d: b >= 0 >= a</string>
+  <greater-equal>b, 0, a</greater-equal>
+</call>
 
-printfln(
-  "%d: a == 1 || b == 1",
-  a == 1 || b == 1);
-printfln(
-  "%d: a == 1 || b == 2",
-  a == 1 || b == 2);
-printfln(
-  "%d: a == 2 || b == 2",
-  a == 2 || b == 2);
-printfln(
-  "%d: a == 3 || b == 3",
-  a == 3 || b == 3);
+<!-- less -->
 
-<?llp
-// and also
+printfln("%d: a &lt; b", a lt b);
+printfln("%d: b &lt; a", b lt a);
 
-printfln(
-  "%d: a == 1 && b == 1",
-  a == 1 && b == 1);
-printfln(
-  "%d: a == 1 && b == 2",
-  a == 1 && b == 2);
-printfln(
-  "%d: a == 2 && b == 2",
-  a == 2 && b == 2);
-printfln(
-  "%d: a == 3 && b == 3",
-  a == 3 && b == 3);
+<call name="printfln">
+  <string>%d: a &lt; b &lt; c</string>
+  <less>a, b, c</less>
+</call>
 
-// not
+<call name="printfln">
+  <string>%d: c &lt; b &lt; a</string>
+  <less>c, b, a</less>
+</call>
 
-printfln(
-  "%d: !(a == 2) && b == 2",
-  !(a == 2) && b == 2);
-?>
+<call name="printfln">
+  <string>%d: a &lt; 0 &lt; b</string>
+  <less>a, 0, b</less>
+</call>
+
+<!-- less equal -->
+
+printfln("%d: a &lt;= b", a le b);
+printfln("%d: b &lt;= a", b le a);
+
+<call name="printfln">
+  <string>%d: a &lt;= b &lt;= c</string>
+  <less-equal>a, b, c</less-equal>
+</call>
+
+<call name="printfln">
+  <string>%d: c &lt;= b &lt;= a</string>
+  <less-equal>c, b, a</less-equal>
+</call>
+
+<call name="printfln">
+  <string>%d: a &lt;= 0 &lt;= b</string>
+  <less-equal>a, 0, b</less-equal>
+</call>
 
 </llpml>

@@ -1,60 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.11.20080314">
 
-<title>制御構造</title>
+<title>構造体</title>
 
 <include src="finish.xml" />
 
 <?llp
-for (var i = 0; 5 > i; i++)
+struct Point { var x, y; }
+
+// global
+Point p1 = { 1, 2 };
+vprintfln("p1(x, y) = (%d, %d)", p1);
+
 {
-  if (i == 2)
+  // stack
+  Point p2 = { 3, 4 };
+  vprintfln("p2(x, y) = (%d, %d)", p2);
+
   {
-    printfln("skip...");
-    continue;
+    // lexical scope
+    p2.x = 5;
+    p2.y = 6;
   }
-  printfln("[for] i = %d", i);
+
+  printfln("p1 = %p, p2 = %p", p1, p2);
+  printfln("p2(x, y) = (%d, %d)", p2.x, p2.y);
+
+  // lexical scope
+  p1.x++;
+  p1.y--;
 }
 
-var i = 0;
-do
-{
-  printf("[do] i = %d ", i);
-  if (i == 0)
-    printfln("(zero)");
-  else if (i == 1)
-    printfln("(one)");
-  else if (i == 2)
-    printfln("(two)");
-  else
-    printfln("(...)");
-  i++;
-} while (5 > i);
-
-while (i > 0)
-{
-  printf("[while] i = %d ", i);
-  switch (i)
-  {
-    case 5:
-    case 4:
-      printfln("(4 or 5)");
-      break;
-    case 3:
-      printfln("(3)");
-      break;
-    default:
-      printfln("(etc)");
-      break;
-  }
-  i--;
-}
-
-for (var i = 0; ; i++)
-{
-  printfln("[for] i = %d", i);
-  if (i == 2) break;
-}
+printfln("p1(x, y) = (%d, %d)", p1.x, p1.y);
 ?>
 
 </llpml>

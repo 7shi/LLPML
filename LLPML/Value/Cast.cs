@@ -19,7 +19,7 @@ namespace Girl.LLPML
                 var t = Types.GetType(parent, type);
                 if (!(Source is Call || Source.Type.IsValue))
                     return t;
-                return Types.ConvertVarType(t);
+                return Types.ConvertVarType(parent, t);
             }
         }
 

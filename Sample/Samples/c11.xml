@@ -1,38 +1,91 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.11.20080314">
 
-<title>計算</title>
+<title>論理演算 1</title>
 
 <include src="finish.xml" />
 
+var a = 1, b = 2, c = 1;
+printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
+
+// equal
+
+printfln("%d: a == 1", a == 1);
+printfln("%d: a == 2", a == 2);
+printfln("%d: a == b", a == b);
+
+<call name="printfln">
+  "%d: a == b == 1"
+  <equal>a, b, 1</equal>
+</call>
+
+<call name="printfln">
+  "%d: a == c == 1"
+  <equal>a, c, 1</equal>
+</call>
+
+<call name="printfln">
+  "%d: a == c == 2"
+  <equal>a, c, 2</equal>
+</call>
+
+// not equal
+
+printfln("%d: a != 1", a != 1);
+printfln("%d: a != 2", a != 2);
+printfln("%d: a != b", a != b);
+
+<call name="printfln">
+  "%d: a != b != 1"
+  <not-equal>a, b, 1</not-equal>
+</call>
+
+<call name="printfln">
+  "%d: a != b != 3"
+  <not-equal>a, b, 3</not-equal>
+</call>
+
+<call name="printfln">
+  "%d: a != c != 1"
+  <not-equal>a, c, 1</not-equal>
+</call>
+
+// or else
+
+printfln(
+  "%d: a == 1 || b == 1",
+  a == 1 || b == 1);
+printfln(
+  "%d: a == 1 || b == 2",
+  a == 1 || b == 2);
+printfln(
+  "%d: a == 2 || b == 2",
+  a == 2 || b == 2);
+printfln(
+  "%d: a == 3 || b == 3",
+  a == 3 || b == 3);
+
 <?llp
-var a = 4;
+// and also
 
-printfln("a = %d", a);
-printfln("1 + 2 + a - 5: %d", 1 + 2 + a - 5);
+printfln(
+  "%d: a == 1 && b == 1",
+  a == 1 && b == 1);
+printfln(
+  "%d: a == 1 && b == 2",
+  a == 1 && b == 2);
+printfln(
+  "%d: a == 2 && b == 2",
+  a == 2 && b == 2);
+printfln(
+  "%d: a == 3 && b == 3",
+  a == 3 && b == 3);
 
-printfln("++a: %d", ++a);
-printfln("a = %d", a);
+// not
 
-printfln("a++: %d", a++);
-printfln("a = %d", a);
-
-printfln("--a: %d", --a);
-printfln("a = %d", a);
-
-printfln("a--: %d", a--);
-printfln("a = %d", a);
-
-printfln("a += 2: %d", a += 2);
-printfln("a -= 2: %d", a -= 2);
-printfln("a *= 2: %d", a *= 2);
-printfln("a /= 2: %d", a /= 2);
-printfln("a |= 8: %d", a |= 8);
-printfln("a &= 7: %d", a &= 7);
-printfln("a <<= 5: %d", a <<= 5);
-printfln("a >>= 5: %d", a >>= 5);
-printfln("a <<= a: %d", a <<= a);
-printfln("a = %d", a);
+printfln(
+  "%d: !(a == 2) && b == 2",
+  !(a == 2) && b == 2);
 ?>
 
 </llpml>

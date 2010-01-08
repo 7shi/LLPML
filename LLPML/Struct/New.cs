@@ -10,6 +10,7 @@ namespace Girl.LLPML.Struct
     public class New : NodeBase, IIntValue
     {
         public const string Function = "__operator_new";
+
         public TypeBase Type { get; protected set; }
         public bool IsArray { get; protected set; }
         public IIntValue Length { get; protected set; }

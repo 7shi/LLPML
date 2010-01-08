@@ -114,20 +114,20 @@ namespace Girl.LLPML
         // set value
         public override void AddSetCodes(OpCodes codes, Addr32 ad)
         {
-            if (!ad.IsAddress && ad.Register == Var.DestRegister)
-                codes.Add(I386.Push(ad.Register));
-            codes.Add(I386.Push(Reg32.EAX));
-            AddDestructor(codes, ad);
+            var flag = !ad.IsAddress && ad.Register == Var.DestRegister;
+            if (flag) codes.Add(I386.Push(ad.Register));
 
-            var f = parent.GetFunction(Delegate.Duplicate);
-            if (f == null)
-                throw parent.Abort("delegate: can not find: {0}", Delegate.Duplicate);
-            codes.Add(I386.Call(f.First));
-            if (f.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, 4));
+            codes.AddRange(new[]
+            {
+                I386.Push(Reg32.EAX),
+                I386.Push(ad),
+                GetCall("delegate", Delegate.Free),
+                I386.Add(Reg32.ESP, 4),
+                GetCall("delegate", Delegate.Duplicate),
+                I386.Add(Reg32.ESP, 4),
+            });
 
-            if (!ad.IsAddress && ad.Register == Var.DestRegister)
-                codes.Add(I386.Pop(ad.Register));
+            if (flag) codes.Add(I386.Pop(ad.Register));
             base.AddSetCodes(codes, ad);
         }
 
@@ -146,26 +146,20 @@ namespace Girl.LLPML
         public override bool NeedsDtor { get { return true; } }
         public override void AddDestructor(OpCodes codes)
         {
-            var f = parent.GetFunction(Delegate.Free);
-            if (f == null)
-                throw parent.Abort("delegate: can not find: {0}", Delegate.Free);
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(new Addr32(Reg32.EAX)),
-                I386.Call(f.First),
+                GetCall("delegate", Delegate.Free),
+                I386.Add(Reg32.ESP, 4),
             });
-            if (f.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, 4));
         }
-
-        protected BlockBase parent;
 
         public TypeDelegate(
             BlockBase parent, CallType callType, TypeBase retType, IEnumerable<Var.Declare> args)
             : base(callType, retType, args)
         {
-            this.parent = parent;
+            Parent = parent;
         }
     }
 }

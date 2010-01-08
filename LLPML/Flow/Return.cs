@@ -31,7 +31,7 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                IIntValue[] v = IntValue.Read(parent, xr);
+                var v = IntValue.Read(parent, xr);
                 if (v != null)
                 {
                     if (v.Length > 1 || value != null)
@@ -49,12 +49,12 @@ namespace Girl.LLPML
             if (value != null)
             {
                 value.AddCodes(codes, "mov", null);
-                Var retval = parent.GetFunction().GetRetVal(parent);
+                var retval = parent.GetFunction().GetRetVal(parent);
                 codes.Add(I386.Mov(retval.GetAddress(codes), Reg32.EAX));
             }
-            BlockBase f = parent.GetFunction();
-            BlockBase b = parent;
-            Var.Declare[] ptrs = UsingPointers;
+            var f = parent.GetFunction();
+            var b = parent;
+            var ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 b.AddDestructors(codes, ptrs);

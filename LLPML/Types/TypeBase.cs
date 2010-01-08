@@ -8,6 +8,8 @@ namespace Girl.LLPML
 {
     public abstract class TypeBase
     {
+        public BlockBase Parent { get; protected set; }
+
         // type name
         public abstract string Name { get; }
 
@@ -126,6 +128,15 @@ namespace Girl.LLPML
             }
             // -X => operator_neg
             return null;
+        }
+
+        // others
+        protected OpCode GetCall(string tag, string name)
+        {
+            var f = Parent.GetFunction(name);
+            if (f == null)
+                throw Parent.Abort("{0}: can not find: {1}", tag, name);
+            return I386.Call(f.First);
         }
     }
 }

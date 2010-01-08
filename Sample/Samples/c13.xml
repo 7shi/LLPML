@@ -1,91 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.11.20080314">
 
-<title>論理演算 2</title>
+<title>制御構造</title>
 
 <include src="finish.xml" />
 
-var a = -1, b = 0, c = 1;
-printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
+<?llp
+for (var i = 0; 5 > i; i++)
+{
+  if (i == 2)
+  {
+    printfln("skip...");
+    continue;
+  }
+  printfln("[for] i = %d", i);
+}
 
-<!-- greater -->
+var i = 0;
+do
+{
+  printf("[do] i = %d ", i);
+  if (i == 0)
+    printfln("(zero)");
+  else if (i == 1)
+    printfln("(one)");
+  else if (i == 2)
+    printfln("(two)");
+  else
+    printfln("(...)");
+  i++;
+} while (5 > i);
 
-printfln("%d: a > b", a > b);
-printfln("%d: b > a", b > a);
+while (i > 0)
+{
+  printf("[while] i = %d ", i);
+  switch (i)
+  {
+    case 5:
+    case 4:
+      printfln("(4 or 5)");
+      break;
+    case 3:
+      printfln("(3)");
+      break;
+    default:
+      printfln("(etc)");
+      break;
+  }
+  i--;
+}
 
-<call name="printfln">
-  <string>%d: a > b > c</string>
-  <greater>a, b, c</greater>
-</call>
-
-<call name="printfln">
-  <string>%d: c > b > a</string>
-  <greater>c, b, a</greater>
-</call>
-
-<call name="printfln">
-  <string>%d: b > 0 > a</string>
-  <greater>b, 0, a</greater>
-</call>
-
-<!-- greater equal -->
-
-printfln("%d: a >= b", a >= b);
-printfln("%d: b >= a", b >= a);
-
-<call name="printfln">
-  <string>%d: a >= b >= c</string>
-  <greater-equal>a, b, c</greater-equal>
-</call>
-
-<call name="printfln">
-  <string>%d: c >= b >= a</string>
-  <greater-equal>c, b, a</greater-equal>
-</call>
-
-<call name="printfln">
-  <string>%d: b >= 0 >= a</string>
-  <greater-equal>b, 0, a</greater-equal>
-</call>
-
-<!-- less -->
-
-printfln("%d: a &lt; b", a lt b);
-printfln("%d: b &lt; a", b lt a);
-
-<call name="printfln">
-  <string>%d: a &lt; b &lt; c</string>
-  <less>a, b, c</less>
-</call>
-
-<call name="printfln">
-  <string>%d: c &lt; b &lt; a</string>
-  <less>c, b, a</less>
-</call>
-
-<call name="printfln">
-  <string>%d: a &lt; 0 &lt; b</string>
-  <less>a, 0, b</less>
-</call>
-
-<!-- less equal -->
-
-printfln("%d: a &lt;= b", a le b);
-printfln("%d: b &lt;= a", b le a);
-
-<call name="printfln">
-  <string>%d: a &lt;= b &lt;= c</string>
-  <less-equal>a, b, c</less-equal>
-</call>
-
-<call name="printfln">
-  <string>%d: c &lt;= b &lt;= a</string>
-  <less-equal>c, b, a</less-equal>
-</call>
-
-<call name="printfln">
-  <string>%d: a &lt;= 0 &lt;= b</string>
-  <less-equal>a, 0, b</less-equal>
-</call>
+for (var i = 0; ; i++)
+{
+  printfln("[for] i = %d", i);
+  if (i == 2) break;
+}
+?>
 
 </llpml>

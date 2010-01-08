@@ -40,7 +40,7 @@ namespace Girl.LLPML.Struct
                 var bst = st.GetBaseStruct();
                 if (bst == null)
                     throw Abort("base: has no base type: {0}", st.Name);
-                type = new TypeReference(bst.Type);
+                type = new TypeReference(parent, bst.Type);
                 return type;
             }
         }

@@ -1,37 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <llpml version="0.11.20080314">
 
-<title>構造体</title>
+<title>計算</title>
 
 <include src="finish.xml" />
 
 <?llp
-struct Point { var x, y; }
+var a = 4;
 
-// global
-Point p1 = { 1, 2 };
-vprintfln("p1(x, y) = (%d, %d)", p1);
+printfln("a = %d", a);
+printfln("1 + 2 + a - 5: %d", 1 + 2 + a - 5);
 
-{
-  // stack
-  Point p2 = { 3, 4 };
-  vprintfln("p2(x, y) = (%d, %d)", p2);
+printfln("++a: %d", ++a);
+printfln("a = %d", a);
 
-  {
-    // lexical scope
-    p2.x = 5;
-    p2.y = 6;
-  }
+printfln("a++: %d", a++);
+printfln("a = %d", a);
 
-  printfln("p1 = %p, p2 = %p", p1, p2);
-  printfln("p2(x, y) = (%d, %d)", p2.x, p2.y);
+printfln("--a: %d", --a);
+printfln("a = %d", a);
 
-  // lexical scope
-  p1.x++;
-  p1.y--;
-}
+printfln("a--: %d", a--);
+printfln("a = %d", a);
 
-printfln("p1(x, y) = (%d, %d)", p1.x, p1.y);
+printfln("a += 2: %d", a += 2);
+printfln("a -= 2: %d", a -= 2);
+printfln("a *= 2: %d", a *= 2);
+printfln("a /= 2: %d", a /= 2);
+printfln("a |= 8: %d", a |= 8);
+printfln("a &= 7: %d", a &= 7);
+printfln("a <<= 5: %d", a <<= 5);
+printfln("a >>= 5: %d", a >>= 5);
+printfln("a <<= a: %d", a <<= a);
+printfln("a = %d", a);
 ?>
 
 </llpml>

@@ -221,10 +221,10 @@ namespace Girl.LLPML
             {
                 bool ret = false;
                 ForEachMembers((p, pos) =>
-                    {
-                        ret = true;
-                        return true;
-                    }, null);
+                {
+                    ret = true;
+                    return true;
+                }, null);
                 return ret;
             }
         }
@@ -292,7 +292,15 @@ namespace Girl.LLPML
             foreach (NodeBase child in sentences)
                 child.AddCodes(codes);
             if (!IsTerminated)
-                AddDestructors(codes, GetMembers<Var.Declare>());
+            {
+                var mems = new List<Var.Declare>();
+                ForEachMembers((p, pos) =>
+                {
+                    mems.Add(p);
+                    return false;
+                }, null);
+                AddDestructors(codes, mems);
+            }
             codes.Add(destruct);
             AfterAddCodes(codes);
             foreach (Function func in GetMembers<Function>())
@@ -462,7 +470,7 @@ namespace Girl.LLPML
                     return true;
                 return false;
             }
-            returnType = Types.Cast(t, Types.ConvertVarType(vt));
+            returnType = Types.Cast(t, Types.ConvertVarType(this, vt));
             return returnType != null;
         }
 

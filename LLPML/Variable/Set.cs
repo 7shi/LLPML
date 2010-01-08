@@ -50,8 +50,9 @@ namespace Girl.LLPML
             dest.Type.AddSetCodes(codes, ad);
             if (cleanup)
             {
-                codes.Add(I386.Pop(Reg32.EAX));
-                values[0].Type.AddDestructor(codes, null);
+                codes.Add(I386.Push(Reg32.ESP));
+                values[0].Type.AddDestructor(codes);
+                codes.Add(I386.Add(Reg32.ESP, 8));
             }
         }
 

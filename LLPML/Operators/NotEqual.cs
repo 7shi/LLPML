@@ -31,7 +31,7 @@ namespace Girl.LLPML
                 for (int j = i + 1; j < values.Count; j++)
                 {
                     f(codes, ad, values[j]);
-                    if (i < values.Count - 1)
+                    if (i < values.Count - 2)
                         codes.Add(I386.Jcc(c.NotCondition, last.Address));
                 }
             }
