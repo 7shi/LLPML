@@ -1,47 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- struct -->
 
 <include src="finish.xml" />
 
-<struct-define name="Point">
-	<var-declare name="x" />
-	<var-declare name="y" />
-</struct-define>
+struct Point { var x, y; }
 
-<!-- global -->
-<struct-declare name="p1" type="Point">
-	1, 2
-</struct-declare>
-
+// global
+Point p1 = { 1, 2 };
 vprintfln("p1(x, y) = (%d, %d)", p1);
 
-<block>
-	<!-- stack -->
-	<struct-declare name="p2" type="Point">
-		3, 4
-	</struct-declare>
-	vprintfln("p2(x, y) = (%d, %d)", p2);
-	
-	<block>
-		<!-- lexical scope -->
-		p2.x = 5;
-		p2.y = 6;
-	</block>
-	
-	<call name="printfln">
-		"&amp;p1 = %p, &amp;p2 = %p"
-		<ptr name="p1" />
-		<ptr name="p2" />
-	</call>
+{
+  // stack
+  Point p2 = { 3, 4 };
+  vprintfln("p2(x, y) = (%d, %d)", p2);
 
-	printfln("p2(x, y) = (%d, %d)", p2.x, p2.y);
-	
-	<!-- lexical scope -->
-	p1.x++;
-	p1.y--;
-</block>
+  {
+    // lexical scope
+    p2.x = 5;
+    p2.y = 6;
+  }
+
+  printfln("p1 = %p, p2 = %p", p1, p2);
+  printfln("p2(x, y) = (%d, %d)", p2.x, p2.y);
+
+  // lexical scope
+  p1.x++;
+  p1.y--;
+}
 
 printfln("p1(x, y) = (%d, %d)", p1.x, p1.y);
 

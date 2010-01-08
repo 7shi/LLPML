@@ -11,8 +11,21 @@ namespace Girl.LLPML
     public class Return : BreakBase
     {
         public bool IsLast = false;
-        private IIntValue value;
 
+        private IIntValue value;
+        public IIntValue Value
+        {
+            get { return value; }
+            set
+            {
+                this.value = value;
+                BlockBase f = parent.GetFunction();
+                Var.Declare retval = f.GetVar("__retval");
+                if (retval == null) new Var.Declare(f, "__retval");
+            }
+        }
+
+        public Return(BlockBase parent, IIntValue value) : base(parent) { Value = value; }
         public Return(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -24,10 +37,7 @@ namespace Girl.LLPML
                 {
                     if (v.Length > 1 || value != null)
                         throw Abort(xr, "multiple values");
-                    value = v[0];
-                    BlockBase f = parent.GetFunction();
-                    Var.Declare retval = f.GetVar("__retval");
-                    if (retval == null) new Var.Declare(f, "__retval");
+                    Value = v[0];
                 }
             });
 
@@ -44,7 +54,7 @@ namespace Girl.LLPML
             }
             BlockBase f = parent.GetFunction();
             BlockBase b = parent;
-            Pointer.Declare[] ptrs = usingPointers;
+            Pointer.Declare[] ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 b.AddDestructors(codes, m, ptrs);

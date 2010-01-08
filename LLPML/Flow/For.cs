@@ -10,14 +10,15 @@ namespace Girl.LLPML
 {
     public partial class For : BlockBase
     {
-        private Init init;
-        private Cond cond;
-        private Block loop, block;
+        public Block Init;
+        public Cond Cond;
+        public Block Loop, Block;
 
         public override bool AcceptsBreak { get { return true; } }
         public override bool AcceptsContinue { get { return true; } }
-        public override Val32 Continue { get { return block.Last; } }
+        public override Val32 Continue { get { return Block.Last; } }
 
+        public For(BlockBase parent) : base(parent) { }
         public For(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -31,24 +32,27 @@ namespace Girl.LLPML
                         switch (xr.Name)
                         {
                             case "init":
-                                if (init != null)
+                                if (Init != null)
                                     throw Abort(xr, "multiple initializers");
-                                init = new Init(this, xr);
+                                Init = new Block(this);
+                                Init.Target = this;
+                                Init.SetLine(xr);
+                                Init.Read(xr);
                                 break;
                             case "cond":
-                                if (cond != null)
+                                if (Cond != null)
                                     throw Abort(xr, "multiple conditions");
-                                cond = new Cond(this, xr);
+                                Cond = new Cond(this, xr);
                                 break;
                             case "loop":
-                                if (loop != null)
+                                if (Loop != null)
                                     throw Abort(xr, "multiple loops");
-                                loop = new Block(this, xr);
+                                Loop = new Block(this, xr);
                                 break;
                             case "block":
-                                if (block != null)
+                                if (Block != null)
                                     throw Abort(xr, "multiple blocks");
-                                block = new Block(this, xr);
+                                Block = new Block(this, xr);
                                 break;
                             default:
                                 throw Abort(xr);
@@ -63,28 +67,28 @@ namespace Girl.LLPML
                         throw Abort(xr, "element required");
                 }
             });
-            if (block == null) throw Abort(xr, "block required");
+            if (Block == null) throw Abort(xr, "block required");
         }
 
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             base.BeforeAddCodes(codes, m);
-            if (init != null) init.AddCodes(codes, m);
-            if (loop != null)
-                codes.Add(I386.Jmp(loop.Last));
+            if (Init != null) Init.AddCodes(codes, m);
+            if (Loop != null)
+                codes.Add(I386.Jmp(Loop.Last));
             else
-                codes.Add(I386.Jmp(block.Last));
+                codes.Add(I386.Jmp(Block.Last));
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             sentences.Clear();
-            sentences.Add(block);
-            if (loop != null) sentences.Add(loop);
-            if (cond == null)
-                cond = new Cond(this, new IntValue(1));
-            cond.First = block.First;
-            sentences.Add(cond);
+            sentences.Add(Block);
+            if (Loop != null) sentences.Add(Loop);
+            if (Cond == null)
+                Cond = new Cond(this, new IntValue(1));
+            Cond.First = Block.First;
+            sentences.Add(Cond);
             base.AddCodes(codes, m);
         }
     }

@@ -29,7 +29,7 @@ namespace Girl.LLPML
         {
             codes.Add(first);
             string n = alias != null ? alias : name;
-            codes.Add(I386.Jmp(m.GetFunction(type, module, n).Address));
+            codes.Add(I386.Jmp(m.GetFunction(CallType, module, n).Address));
         }
     }
 }

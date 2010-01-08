@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- stdio functions -->
 
@@ -9,72 +9,52 @@
 <extern name="lstrlen" alias="lstrlenW" module="kernel32.dll" type="std" />
 <extern name="wvsprintf" alias="wvsprintfW" module="user32.dll" type="std" />
 
-<int-declare name="STD_OUTPUT_HANDLE">-11</int-declare>
-<int-declare name="STD_INPUT_HANDLE">-10</int-declare>
+const int STD_OUTPUT_HANDLE = -11;
+const int STD_INPUT_HANDLE  = -10;
 
-<var-declare name="stdout">
-	GetStdHandle(STD_OUTPUT_HANDLE)
-</var-declare>
-<var-declare name="stdin">
-	GetStdHandle(STD_INPUT_HANDLE)
-</var-declare>
+var stdout = GetStdHandle(STD_OUTPUT_HANDLE);
+var stdin  = GetStdHandle(STD_INPUT_HANDLE);
 
-<function name="print">
-	<arg name="text" />
-	<var-declare name="dummy" />
-	<call name="WriteConsole">
-		stdout, text, lstrlen(text)
-		<ptr name="dummy" />
-		null
-	</call>
-</function>
+function print(text)
+{
+  var dummy;
+  WriteConsole(stdout, text, lstrlen(text), addrof(dummy), null);
+}
 
 <function name="vprintf">
-	<arg name="format" />
-	<arg name="args" />
-	<ptr-declare name="buffer" type="char" length="1025" />
-	wvsprintf(buffer, format, args);
-	print(buffer);
+  <arg name="format" />
+  <arg name="args" />
+  <ptr-declare name="buffer" type="char" length="1025" />
+  wvsprintf(buffer, format, args);
+  print(buffer);
 </function>
 
-<function name="vprintfln">
-	<arg name="format" />
-	<arg name="args" />
-	vprintf(format, args);
-	println();
-</function>
+function vprintfln(format, args)
+{
+  vprintf(format, args);
+  println();
+}
 
-<function name="printf">
-	<arg name="format" />
-	<arg-ptr name="args" />
-	vprintf(format, args);
-</function>
+function printf(format, args : params)
+{
+  vprintf(format, args);
+}
 
-<function name="println">
-	print("\r\n");
-</function>
+function println()
+{
+  print("\r\n");
+}
 
-<function name="printfln">
-	<arg name="format" />
-	<arg-ptr name="args" />
-	vprintf(format, args);
-	println();
-</function>
+function printfln(format, args : params)
+{
+  vprintf(format, args);
+  println();
+}
 
 <function name="pause">
-	<var-declare name="dummy" />
-	<ptr-declare name="buffer" type="char" length="16" />
-	<call name="ReadConsole">
-		stdin, buffer, 2
-		<ptr name="dummy" />
-		null
-	</call>
-</function>
-
-<function name="finish">
-	println();
-	printfln("Press [Enter] to exit.");
-	pause();
+  var dummy;
+  <ptr-declare name="buffer" type="char" length="16" />
+  ReadConsole(stdin, buffer, 2, addrof(dummy));
 </function>
 
 </llpml>

@@ -1,30 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- struct in struct -->
 
 <include src="finish.xml" />
 
-<struct-define name="Point">
-	<var-declare name="x" />
-	<var-declare name="y" />
-</struct-define>
+struct Point { var x, y; }
+struct Points { Point p1, p2; }
 
-<struct-define name="Points">
-	<struct-declare name="p1" type="Point" />
-	<struct-declare name="p2" type="Point" />
-</struct-define>
-
-<struct-declare name="p" type="Points">
-	<struct-declare>1, 2</struct-declare>
-	<struct-declare>3, 4</struct-declare>
-</struct-declare>
-
+Points p = { { 1, 2 }, { 3, 4 } };
 vprintfln("p = ((%d, %d), (%d, %d))", p);
 
 p.p1.x = 9;
 p.p2.y = 8;
-
 vprintfln("p = ((%d, %d), (%d, %d))", p);
 
 </llpml>

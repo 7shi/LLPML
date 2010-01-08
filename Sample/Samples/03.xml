@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <include src="finish.xml" />
 
-<string-declare name="hello">こんにちは、世界！</string-declare>
-
+const string hello = "こんにちは、世界！";
 printfln(hello);
 
-<block>
-	printfln(hello);
-	<string-declare name="hello">スコープのテスト</string-declare>
-	printfln(hello);
-</block>
+{
+  printfln(hello);
+  const string hello = "スコープのテスト";
+  printfln(hello);
+}
 
 printfln(hello);
 

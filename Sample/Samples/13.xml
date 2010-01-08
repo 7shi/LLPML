@@ -1,92 +1,93 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- boolean operation 1 -->
 
 <include src="finish.xml" />
 
-<var-declare name="a">1</var-declare>
-<var-declare name="b">2</var-declare>
-<var-declare name="c">1</var-declare>
-
+var a = 1, b = 2, c = 1;
 printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
 
-<!-- equal -->
+// equal
 
 printfln("%d: a == 1", a == 1);
 printfln("%d: a == 2", a == 2);
 printfln("%d: a == b", a == b);
 
 <call name="printfln">
-	"%d: a == b == 1"
-	<equal>a, b, 1</equal>
+  "%d: a == b == 1"
+  <equal>a, b, 1</equal>
 </call>
 
 <call name="printfln">
-	"%d: a == c == 1"
-	<equal>a, c, 1</equal>
+  "%d: a == c == 1"
+  <equal>a, c, 1</equal>
 </call>
 
 <call name="printfln">
-	"%d: a == c == 2"
-	<equal>a, c, 2</equal>
+  "%d: a == c == 2"
+  <equal>a, c, 2</equal>
 </call>
 
-<!-- not equal -->
+// not equal
 
 printfln("%d: a != 1", a != 1);
 printfln("%d: a != 2", a != 2);
 printfln("%d: a != b", a != b);
 
 <call name="printfln">
-	"%d: a != b != 1"
-	<not-equal>a, b, 1</not-equal>
+  "%d: a != b != 1"
+  <not-equal>a, b, 1</not-equal>
 </call>
 
 <call name="printfln">
-	"%d: a != b != 3"
-	<not-equal>a, b, 3</not-equal>
+  "%d: a != b != 3"
+  <not-equal>a, b, 3</not-equal>
 </call>
 
 <call name="printfln">
-	"%d: a != c != 1"
-	<not-equal>a, c, 1</not-equal>
+  "%d: a != c != 1"
+  <not-equal>a, c, 1</not-equal>
 </call>
 
-<!-- and also -->
+// or else -->
 
 printfln(
-	"%d: a == 1 &amp;&amp; b == 1",
-	a == 1 andalso b == 1);
+  "%d: a == 1 || b == 1",
+  a == 1 || b == 1);
 printfln(
-	"%d: a == 1 &amp;&amp; b == 2",
-	a == 1 andalso b == 2);
+  "%d: a == 1 || b == 2",
+  a == 1 || b == 2);
 printfln(
-	"%d: a == 2 &amp;&amp; b == 2",
-	a == 2 andalso b == 2);
+  "%d: a == 2 || b == 2",
+  a == 2 || b == 2);
 printfln(
-	"%d: a == 3 &amp;&amp; b == 3",
-	a == 3 andalso b == 3);
+  "%d: a == 3 || b == 3",
+  a == 3 || b == 3);
 
-<!-- or else -->
+<script><!--
 
-printfln(
-	"%d: a == 1 || b == 1",
-	a == 1 || b == 1);
-printfln(
-	"%d: a == 1 || b == 2",
-	a == 1 || b == 2);
-printfln(
-	"%d: a == 2 || b == 2",
-	a == 2 || b == 2);
-printfln(
-	"%d: a == 3 || b == 3",
-	a == 3 || b == 3);
-
-<!-- not -->
+// and also
 
 printfln(
-	"%d: !(a == 2) &amp;&amp; b == 2",
-	!(a == 2) andalso b == 2);
+  "%d: a == 1 && b == 1",
+  a == 1 && b == 1);
+printfln(
+  "%d: a == 1 && b == 2",
+  a == 1 && b == 2);
+printfln(
+  "%d: a == 2 && b == 2",
+  a == 2 && b == 2);
+printfln(
+  "%d: a == 3 && b == 3",
+  a == 3 && b == 3);
+
+// not
+
+printfln(
+  "%d: !(a == 2) && b == 2",
+  !(a == 2) && b == 2);
+
+--></script>
 
 </llpml>

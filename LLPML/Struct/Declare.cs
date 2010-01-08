@@ -15,9 +15,15 @@ namespace Girl.LLPML.Struct
         public string Type { get { return type; } }
 
         private List<object> values = new List<object>();
+        public List<object> Values { get { return values; } }
+
         private bool isRoot = true;
 
-        public Declare() { }
+        public Declare(Declare parent)
+        {
+            this.parent = parent.parent;
+            isRoot = false;
+        }
 
         public Declare(BlockBase parent, string name, string type)
             : base(parent, name)
@@ -31,9 +37,8 @@ namespace Girl.LLPML.Struct
         }
 
         public Declare(Declare parent, XmlTextReader xr)
+            : this(parent)
         {
-            this.parent = parent.parent;
-            isRoot = false;
             SetLine(xr);
             Read(xr);
         }

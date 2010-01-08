@@ -1,31 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- struct member function -->
 
 <include src="finish.xml" />
 
-<struct-define name="Point">
-	<var-declare name="x" />
-	<var-declare name="y" />
-	
-	<function name="Show">
-		printfln("[%s] %d, %d", __FUNCTION__, x, y);
-	</function>
-</struct-define>
+struct Point
+{
+  var x, y;
 
-<struct-declare name="p" type="Point">
-	2, 3
-</struct-declare>
+  function Show()
+  {
+    printfln("[%s] %d, %d", __FUNCTION__, x, y);
+  }
+}
 
-<var-declare name="pp" type="Point">
-	p
-</var-declare>
-
-<!-- by instance -->
+// instance
+Point p = { 2, 3 };
 p.Show();
 
-<!-- by pointer -->
+// pointer
+var pp : Point = p;
 pp.Show();
 
 </llpml>

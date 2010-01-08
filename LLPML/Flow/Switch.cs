@@ -14,7 +14,16 @@ namespace Girl.LLPML
         {
             private IIntValue value;
 
-            public Expression(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+            public Expression(BlockBase parent, IIntValue value)
+                : base(parent)
+            {
+                this.value = value;
+            }
+
+            public Expression(BlockBase parent, XmlTextReader xr)
+                : base(parent, xr)
+            {
+            }
 
             public override void Read(XmlTextReader xr)
             {
@@ -40,9 +49,11 @@ namespace Girl.LLPML
             }
         }
 
-        private class Case : NodeBase
+        public class Case : NodeBase
         {
             private List<IIntValue> values = new List<IIntValue>();
+            public List<IIntValue> Values { get { return values; } }
+
             public Block Block;
             public bool IsLast;
 
@@ -88,27 +99,29 @@ namespace Girl.LLPML
             }
         }
 
-        private class CaseBlock
+        public class CaseBlock
         {
-            public Case Case;
-            public Block Block;
-
-            public CaseBlock(Case c) : this(c, null) { }
-            public CaseBlock(Block block) : this(null, block) { }
-
-            public CaseBlock(Case c, Block block)
-            {
-                Case = c;
-                Block = block;
-            }
+            public Case Case { get; set; }
+            public Block Block { get; set; }
         }
 
         private Expression expr;
+
         private List<CaseBlock> blocks = new List<CaseBlock>();
+        public List<CaseBlock> Blocks { get { return blocks; } }
 
         public override bool AcceptsBreak { get { return true; } }
 
-        public Switch(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Switch(BlockBase parent, IIntValue expr)
+            : base(parent)
+        {
+            this.expr = new Expression(this, expr);
+        }
+
+        public Switch(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
@@ -134,7 +147,7 @@ namespace Girl.LLPML
                                     throw Abort(xr, "block terminated");
                                 else if (cb != null)
                                     throw Abort(xr, "multiple cases");
-                                cb = new CaseBlock(new Case(this, xr));
+                                cb = new CaseBlock { Case = new Case(this, xr) };
                                 break;
                             case "block":
                                 if (expr == null)
@@ -143,8 +156,11 @@ namespace Girl.LLPML
                                     throw Abort(xr, "block terminated");
                                 else if (cb == null)
                                 {
-                                    blocks.Add(new CaseBlock(
-                                        new Case(this), new Block(this, xr)));
+                                    blocks.Add(new CaseBlock
+                                    {
+                                        Case = new Case(this),
+                                        Block = new Block(this, xr)
+                                    });
                                     stop = true;
                                 }
                                 else

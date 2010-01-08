@@ -110,7 +110,7 @@ namespace Girl.LLPML
 
         public static void AddCodes(List<OpCode> codes, Module m, Function f, List<IIntValue> args)
         {
-            AddCodes(codes, m, args, f.Type, delegate
+            AddCodes(codes, m, args, f.CallType, delegate
             {
                 codes.Add(I386.Call(f.First));
             });

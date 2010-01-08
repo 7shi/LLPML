@@ -10,11 +10,11 @@ namespace Girl.LLPML
 {
     public class If : BlockBase
     {
-        private class CondBlock : NodeBase
+        public class CondBlock : NodeBase
         {
-            public Cond Cond;
-            public Block Block;
-            public CondBlock Next;
+            public Cond Cond { get; set; }
+            public Block Block { get; set; }
+            public CondBlock Next { get; set; }
 
             private OpCode first = new OpCode();
             public Val32 First { get { return first.Address; } }
@@ -47,7 +47,9 @@ namespace Girl.LLPML
         }
 
         private List<CondBlock> blocks = new List<CondBlock>();
+        public List<CondBlock> Blocks { get { return blocks; } }
 
+        public If(BlockBase parent) : base(parent) { }
         public If(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)

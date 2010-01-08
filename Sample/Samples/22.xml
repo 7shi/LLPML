@@ -1,111 +1,90 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- constructor and destructor -->
 
 <include src="finish.xml" />
 
-<struct-define name="Name">
-	printfln("%p [%s]", this, __FUNCTION__);
-	<var-declare name="name" />
-	
-	<!-- constructor -->
-	<function name="ctor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		this.Show();
-	</function>
-	
-	<!-- destructor -->
-	<function name="dtor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		this.Show();
-	</function>
-	
-	<function name="Show">
-		printfln("%p [%s] %s", this, __FUNCTION__, name);
-	</function>
-</struct-define>
+struct Name
+{
+  printfln("%p [%s]", this, __FUNCTION__);
+  var name;
 
-<struct-define name="Test">
-	printfln("%p [%s]", this, __FUNCTION__);
-	<struct-declare name="name" type="Name" />
-	
-	<!-- constructor -->
-	<function name="ctor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		name.Show();
-	</function>
-	
-	<!-- destructor -->
-	<function name="dtor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		name.Show();
-	</function>
-</struct-define>
+  // constructor
+  function ctor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    this.Show();
+  }
 
-<block>
-	<struct-declare name="a" type="Name">"a"</struct-declare>
-	<struct-declare name="b" type="Test">
-		<struct-declare>"b"</struct-declare>
-	</struct-declare>
-</block>
+  // destructor
+  function dtor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    this.Show();
+  }
 
-<!--
-<struct-declare name="a" type="Name">"a"</struct-declare>
-<struct-declare name="b" type="Name">"b"</struct-declare>
+  function Show()
+  {
+    printfln("%p [%s] %s", this, __FUNCTION__, name);
+  }
+}
 
-println();
+struct Test
+{
+  printfln("%p [%s]", this, __FUNCTION__);
+  Name name;
 
-<for>
-	<init>
-		<var-declare name="i">0</var-declare>
-	</init>
-	<loop>i++;</loop>
-	<block>
-		printfln("i = %d", i);
-		<struct-declare name="c" type="Name">"c"</struct-declare>
-		<if>
-			<cond>i == 0</cond>
-			<block>
-				<continue />
-			</block>
-		</if>
-		<struct-declare name="d" type="Name">"d"</struct-declare>
-		<if>
-			<cond>i == 2</cond>
-			<block>
-				<break />
-			</block>
-		</if>
-		<struct-declare name="e" type="Test">
-			<struct-declare>"e"</struct-declare>
-		</struct-declare>
-	</block>
-</for>
+  // constructor
+  function ctor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    name.Show();
+  }
 
-<function name="test">
-	<arg name="a" />
-	<struct-declare name="f" type="Name">"f"</struct-declare>
-	<if>
-		<cond>a == 0</cond>
-		<block>
-			<struct-declare name="g" type="Test">
-				<struct-declare>"g"</struct-declare>
-			</struct-declare>
-			<return>"stop"</return>
-		</block>
-	</if>
-	<struct-declare name="h" type="Name">"h"</struct-declare>
-	<return>"normal"</return>
-</function>
+  // destructor
+  function dtor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    name.Show();
+  }
+}
+
+{
+  Name a = { "a" };
+  Test b = { { "b" } };
+}
+
+Name a = { "a" }, b = { "b" };
 
 println();
-printfln("ret = \"%s\"", test(0));
+
+for (var i = 0; ; i++)
+{
+  printfln("i = %d", i);
+  Name c = { "c" };
+  if (i == 0) continue;
+  Name d = { "d" };
+  if (i == 2) break;
+  Test e = { { "e" } };
+}
 
 println();
-printfln("ret = \"%s\"", test(1));
+printfln("test(0) = \"%s\"", test(0));
 
 println();
--->
+printfln("test(1) = \"%s\"", test(1));
+
+function test(a)
+{
+  Name f = { "f" };
+  if (a == 0)
+  {
+    Test g = { { "g" } };
+    return "stop";
+  }
+  Name h = { "h" };
+  return "normal";
+}
 
 </llpml>

@@ -9,10 +9,23 @@ namespace Girl.LLPML.Struct
 {
     public class Cast : Pointer
     {
-        private IIntValue source;
-        private string type;
+        public IIntValue Source { get; private set; }
 
-        public Cast(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        private string type;
+        public override string Type { get { return type; } }
+
+        public Cast(BlockBase parent, string type, IIntValue source)
+        {
+            this.parent = parent;
+            name = "__cast";
+            this.type = type;
+            Source = source;
+        }
+
+        public Cast(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
@@ -27,27 +40,19 @@ namespace Girl.LLPML.Struct
                 IIntValue[] v = IntValue.Read(parent, xr);
                 if (v != null)
                 {
-                    if (v.Length > 1 || source != null)
+                    if (v.Length > 1 || Source != null)
                         throw Abort(xr, "too many sources");
-                    source = v[0];
+                    Source = v[0];
                 }
             });
 
-            if (source == null)
+            if (Source == null)
                 throw Abort(xr, "requires a source");
-        }
-
-        public override string Type
-        {
-            get
-            {
-                return type;
-            }
         }
 
         public override void GetValue(List<OpCode> codes, Module m)
         {
-            source.AddCodes(codes, m, "mov", null);
+            Source.AddCodes(codes, m, "mov", null);
         }
     }
 }

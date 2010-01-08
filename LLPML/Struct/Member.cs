@@ -31,14 +31,13 @@ namespace Girl.LLPML.Struct
         }
 
         private bool isRoot = true;
-        private Member member;
+        public Member Child { get; set; }
 
-        public Member(BlockBase parent, string name, Member member)
+        public Member(BlockBase parent, string name)
             : base(parent)
         {
             isRoot = false;
             this.name = name;
-            this.member = member;
         }
 
         public Member(BlockBase parent, XmlTextReader xr)
@@ -85,9 +84,9 @@ namespace Girl.LLPML.Struct
                         switch (xr.Name)
                         {
                             case "struct-member":
-                                if (member != null)
+                                if (Child != null)
                                     throw Abort(xr, "multiple members");
-                                member = new Member(this, xr);
+                                Child = new Member(this, xr);
                                 break;
                             default:
                                 throw Abort(xr);
@@ -125,8 +124,8 @@ namespace Girl.LLPML.Struct
         {
             int ret = st.GetOffset(name);
             if (ret < 0) throw Abort("undefined member: " + name);
-            if (member == null) return ret;
-            return ret + member.GetOffset(st.GetStruct(st.GetMember(name)));
+            if (Child == null) return ret;
+            return ret + Child.GetOffset(st.GetStruct(st.GetMember(name)));
         }
 
         public override Addr32 GetAddress(List<OpCode> codes, Module m)
@@ -154,6 +153,14 @@ namespace Girl.LLPML.Struct
                     st = var.GetStruct();
                 return st.GetStruct(st.GetMember(name)).Name;
             }
+        }
+
+        public void Append(Struct.Member mem)
+        {
+            if (Child == null)
+                Child = mem;
+            else
+                Child.Append(mem);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -23,7 +24,7 @@ namespace Girl.LLPML
             codes.AddRange(new OpCode[]
             {
                 I386.Test(Reg32.EAX, Reg32.EAX),
-                I386.Mov(Reg32.EAX, (uint)0),
+                I386.Mov(Reg32.EAX, (Val32)0),
                 I386.Setcc(Cc.Z, Reg8.AL)
             });
             IntValue.AddCodes(codes, op, dest);

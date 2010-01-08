@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Pointer : VarBase, IIntValue
     {
-        private Declare reference;
+        public Declare Reference { get; private set; }
 
         private int length = 0;
         public int Length { get { return length; } }
@@ -20,14 +20,14 @@ namespace Girl.LLPML
         public Pointer(BlockBase parent, Declare ptr)
             : base(parent, ptr.Name)
         {
-            reference = ptr;
+            Reference = ptr;
         }
 
         public Pointer(BlockBase parent, string name)
             : base(parent, name)
         {
-            reference = parent.GetPointer(name);
-            if (reference == null)
+            Reference = parent.GetPointer(name);
+            if (Reference == null)
                 throw Abort("undefined pointer: " + name);
         }
 
@@ -41,8 +41,8 @@ namespace Girl.LLPML
             NoChild(xr);
             RequiresName(xr);
 
-            reference = parent.GetPointer(name);
-            if (reference == null)
+            Reference = parent.GetPointer(name);
+            if (Reference == null)
                 throw Abort(xr, "undefined pointer: " + name);
         }
 
@@ -50,14 +50,14 @@ namespace Girl.LLPML
         {
             get
             {
-                Struct.Declare st = reference as Struct.Declare;
+                Struct.Declare st = Reference as Struct.Declare;
                 return st == null ? null : st.Type;
             }
         }
 
         public virtual void GetValue(List<OpCode> codes, Module m)
         {
-            codes.Add(I386.Lea(Reg32.EAX, reference.GetAddress(codes, m, parent)));
+            codes.Add(I386.Lea(Reg32.EAX, Reference.GetAddress(codes, m, parent)));
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

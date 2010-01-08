@@ -1,13 +1,19 @@
+[済]
+- Visual C# 2008に移行
 - 簡略記法
--- Rewindの徹底
--- キャスト
--- センテンスの機能強化
---- 制御構文(if, while, ...)
--- エラー位置
---- ソース統一形式？
--- メンバ関数のthis省略
+-- エラー（位置も）
+-- script
+-- var-declare, int-declare, string-declare
+-- struct-define, struct-declare
+-- return, continue, break
+-- sizeof, addrof
 -- コメント
+-- 日本語名
+-- キャスト
 
+[未]
+- 簡略記法
+-- メンバ関数のthis省略
 - ツリービュー
 - 型指定とunsignedの自動化
 - callの型チェック
@@ -17,3 +23,6 @@
 [自己記述後]
 - switchのテーブル化
 - インタプリタとASTを共用
+
+[メモ]
+- #region -> partial

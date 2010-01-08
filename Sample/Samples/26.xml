@@ -1,51 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- struct -->
 
 <include src="finish.xml" />
 
-<struct-define name="Test">
-	<var-declare name="a">1</var-declare>
-	<var-declare name="b">2</var-declare>
-	
-	<!-- define constructor to initialize members -->
-	<function name="ctor" />
-	
-	<function name="Show">
-		printfln("this, a, b = %p, %d, %d", this, a, b);
-	</function>
-	
-	<function name="Add">
-		<return>a + b</return>
-	</function>
-</struct-define>
+struct Test
+{
+  var a = 1, b = 2;
 
-<call name="printfln">
-	"sizeof(Test) = %d"
-	<struct-size name="Test" />
-</call>
+  // define constructor to initialize members
+  function ctor() { }
+
+  function Show()
+  {
+    printfln("this, a, b = %p, %d, %d", this, a, b);
+  }
+
+  function Add()
+  {
+    return a + b;
+  }
+}
+
+printfln("sizeof(Test) = %d", sizeof(Test));
 println();
 
-<struct-declare name="t1" type="Test" />
-printfln("&amp;t1 = %p", t1);
+// use initializers
+Test t1;
+printfln("t1 = %p", t1);
 show(t1);
 println();
 
-<!-- ignore initializers -->
-<struct-declare name="t2" type="Test">3, 4</struct-declare>
-printfln("&amp;t2 = %p", t2);
+// ignore initializers
+Test t2 = { 3, 4 };
+printfln("t2 = %p", t2);
 show(t2);
 t2.a = 5;
 t2.b = 6;
 show(t2);
 
-<function name="show">
-	<arg name="p" type="Test" />
-	println();
-	printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
-	printfln("p.Add() = %d", p.Add());
-	p.Show();
-</function>
+function show(p : Test)
+{
+  println();
+  printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
+  printfln("p.Add() = %d", p.Add());
+  p.Show();
+}
 
 </llpml>

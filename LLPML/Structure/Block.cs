@@ -15,120 +15,133 @@ namespace Girl.LLPML
         public Block(BlockBase parent) : base(parent) { }
         public Block(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
+        public BlockBase Target { get; set; }
+
         protected virtual void ReadBlock(XmlTextReader xr)
         {
+            var target = Target;
+            if (target == null) target = this;
+            ReadBlock(target, xr);
+        }
+
+        protected void ReadBlock(BlockBase target, XmlTextReader xr)
+        {
+            NodeBase nb = null;
             switch (xr.NodeType)
             {
                 case XmlNodeType.Element:
                     switch (xr.Name)
                     {
                         case "int-declare":
-                            ReadIntDefine(xr);
+                            target.ReadIntDefine(xr);
                             break;
                         case "string-declare":
-                            ReadStringDefine(xr);
+                            target.ReadStringDefine(xr);
                             break;
                         case "function":
-                            new Function(this, xr);
+                            new Function(target, xr);
                             break;
                         case "extern":
-                            new Extern(this, xr);
+                            new Extern(target, xr);
                             break;
                         case "return":
-                            sentences.Add(new Return(this, xr));
+                            nb = new Return(target, xr);
                             return;
                         case "block":
-                            sentences.Add(new Block(this, xr));
+                            nb = new Block(target, xr);
                             break;
                         case "call":
-                            sentences.Add(new Call(this, xr));
+                            nb = new Call(target, xr);
                             break;
                         case "invoke":
-                            sentences.Add(new Struct.Invoke(this, xr));
+                            nb = new Struct.Invoke(target, xr);
                             break;
                         case "if":
-                            sentences.Add(new If(this, xr));
+                            nb = new If(target, xr);
                             break;
                         case "switch":
-                            sentences.Add(new Switch(this, xr));
+                            nb = new Switch(target, xr);
                             break;
                         case "for":
-                            sentences.Add(new For(this, xr));
+                            nb = new For(target, xr);
                             break;
                         case "do":
-                            sentences.Add(new Do(this, xr));
+                            nb = new Do(target, xr);
                             break;
                         case "while":
-                            sentences.Add(new While(this, xr));
+                            nb = new While(target, xr);
                             break;
                         case "break":
-                            sentences.Add(new Break(this, xr));
+                            nb = new Break(target, xr);
                             break;
                         case "continue":
-                            sentences.Add(new Continue(this, xr));
+                            nb = new Continue(target, xr);
                             break;
                         case "let":
-                            sentences.Add(new Let(this, xr));
+                            nb = new Let(target, xr);
                             break;
                         case "var-declare":
-                            sentences.Add(new Var.Declare(this, xr));
+                            nb = new Var.Declare(target, xr);
                             break;
                         case "inc":
-                            sentences.Add(new Inc(this, xr));
+                            nb = new Inc(target, xr);
                             break;
                         case "dec":
-                            sentences.Add(new Dec(this, xr));
+                            nb = new Dec(target, xr);
                             break;
                         case "post-inc":
-                            sentences.Add(new PostInc(this, xr));
+                            nb = new PostInc(target, xr);
                             break;
                         case "post-dec":
-                            sentences.Add(new PostDec(this, xr));
+                            nb = new PostDec(target, xr);
                             break;
                         case "var-add":
-                            sentences.Add(new Var.Add(this, xr));
+                            nb = new Var.Add(target, xr);
                             break;
                         case "var-sub":
-                            sentences.Add(new Var.Sub(this, xr));
+                            nb = new Var.Sub(target, xr);
                             break;
                         case "var-mul":
-                            sentences.Add(new Var.Mul(this, xr));
+                            nb = new Var.Mul(target, xr);
                             break;
                         case "var-unsigned-mul":
-                            sentences.Add(new Var.UnsignedMul(this, xr));
+                            nb = new Var.UnsignedMul(target, xr);
                             break;
                         case "var-div":
-                            sentences.Add(new Var.Div(this, xr));
+                            nb = new Var.Div(target, xr);
                             break;
                         case "var-unsigned-div":
-                            sentences.Add(new Var.UnsignedDiv(this, xr));
+                            nb = new Var.UnsignedDiv(target, xr);
                             break;
                         case "var-and":
-                            sentences.Add(new Var.And(this, xr));
+                            nb = new Var.And(target, xr);
                             break;
                         case "var-or":
-                            sentences.Add(new Var.Or(this, xr));
+                            nb = new Var.Or(target, xr);
                             break;
                         case "var-shift-left":
-                            sentences.Add(new Var.ShiftLeft(this, xr));
+                            nb = new Var.ShiftLeft(target, xr);
                             break;
                         case "var-shift-right":
-                            sentences.Add(new Var.ShiftRight(this, xr));
+                            nb = new Var.ShiftRight(target, xr);
                             break;
                         case "var-unsigned-shift-left":
-                            sentences.Add(new Var.UnsignedShiftLeft(this, xr));
+                            nb = new Var.UnsignedShiftLeft(target, xr);
                             break;
                         case "var-unsigned-shift-right":
-                            sentences.Add(new Var.UnsignedShiftRight(this, xr));
+                            nb = new Var.UnsignedShiftRight(target, xr);
                             break;
                         case "ptr-declare":
-                            sentences.Add(new Pointer.Declare(this, xr));
+                            nb = new Pointer.Declare(target, xr);
                             break;
                         case "struct-define":
-                            new Struct.Define(this, xr);
+                            new Struct.Define(target, xr);
                             break;
                         case "struct-declare":
-                            sentences.Add(new Struct.Declare(this, xr));
+                            nb = new Struct.Declare(target, xr);
+                            break;
+                        case "script":
+                            new Script(target, xr);
                             break;
                         default:
                             throw Abort(xr);
@@ -141,22 +154,20 @@ namespace Girl.LLPML
 
                 case XmlNodeType.Text:
                     {
-                        string src = xr.Value.Trim();
-                        NodeBase[] sents = ReadText(this, src);
-                        if (sents == null)
-                            throw Abort(xr, "invalid sentence: " + src);
-                        sentences.AddRange(sents);
+                        NodeBase[] sents = ReadText(target,
+                            new Tokenizer(target.Root.Source, xr));
+                        if (sents != null) Sentences.AddRange(sents);
                         break;
                     }
 
                 default:
                     throw Abort(xr, "element required");
             }
+            if (nb != null) Sentences.Add(nb);
         }
 
-        public static NodeBase[] ReadText(BlockBase parent, string src)
+        public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)
         {
-            Tokenizer token = new Tokenizer(src);
             Parser parser = new Parser(token, parent);
             NodeBase[] ret = parser.Parse();
             if (token.CanRead) ret = null;

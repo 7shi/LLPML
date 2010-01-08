@@ -1,51 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- struct type -->
 
 <include src="finish.xml" />
 
-<struct-define name="Point">
-	<var-declare name="x" />
-	<var-declare name="y" />
-</struct-define>
+struct Point { var x, y; }
 
-<struct-declare name="p" type="Point">
-	3, 7
-</struct-declare>
-
+Point p = { 3, 7 };
 vprintfln("p = (%d, %d)", p);
 
-printfln("pp = &amp;p");
-<var-declare name="pp" type="Point">
-	p
-</var-declare>
-
-vprintfln("*pp = (%d, %d)", pp);
+printfln("pp = p");
+var pp : Point = p;
+vprintfln("pp = (%d, %d)", pp);
 
 printfln("pp->y -= 5");
 pp.y -= 5;
-
 vprintfln("p = (%d, %d)", p);
 
 printfln("p.x += 5");
 p.x += 5;
-
-vprintfln("*pp = (%d, %d)", pp);
+vprintfln("pp = (%d, %d)", pp);
 
 printfln("offset(pp, 3, 4)");
 offset(pp, 3, 4);
-
-vprintfln("*pp = (%d, %d)", pp);
+vprintfln("pp = (%d, %d)", pp);
 
 vprintfln("p = (%d, %d)", p);
 
-<function name="offset">
-	<arg name="p" type="Point" />
-	<arg name="x" />
-	<arg name="y" />
-	p.x += x;
-	p.y += y;
-</function>
+function offset(p : Point, x, y)
+{
+  p.x += x;
+  p.y += y;
+}
 
 </llpml>

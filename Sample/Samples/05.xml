@@ -1,21 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <include src="finish.xml" />
 
-<var-declare name="result">0</var-declare>
-
-<for>
-	<init>
-		<var-declare name="i">1</var-declare>
-	</init>
-	<cond>10000 >= i</cond>
-	<loop>i++;</loop>
-	<block>
-		result += i;
-	</block>
-</for>
-
+var result = 0;
+for (var i = 1; 10000 >= i; i++) result += i;
 printfln("1 + 2 + ... + 10000 = %d", result);
 
 </llpml>

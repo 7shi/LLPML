@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <include src="finish.xml" />
 
-<var-declare name="i">1</var-declare>
+var i = 1;
 
 test();
 test();
@@ -11,9 +11,10 @@ test();
 test();
 test();
 
-<function name="test">
-	printfln("i = %d", i);
-	i++;
-</function>
+function test()
+{
+  printfln("i = %d", i);
+  i++;
+}
 
 </llpml>

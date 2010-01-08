@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <extern name="GetModuleHandle" alias="GetModuleHandleW" module="kernel32.dll" type="std" />
 <extern name="Sleep" module="kernel32.dll" type="std" />
@@ -15,61 +15,61 @@
 <extern name="DispatchMessage" alias="DispatchMessageW" module="user32.dll" type="std" />
 <extern name="PostQuitMessage" module="user32.dll" type="std" />
 
-<int-declare name="CS_VREDRAW">1</int-declare>
-<int-declare name="CS_HREDRAW">2</int-declare>
-<int-declare name="COLOR_WINDOW">5</int-declare>
-<int-declare name="IDC_ARROW">32512</int-declare>
-<int-declare name="CW_USEDEFAULT">0x80000000</int-declare>
-<int-declare name="WS_OVERLAPPED">0</int-declare>
-<int-declare name="WS_CAPTION">0xc00000</int-declare>
-<int-declare name="WS_SYSMENU">0x80000</int-declare>
-<int-declare name="WS_THICKFRAME">0x40000</int-declare>
-<int-declare name="WS_MINIMIZEBOX">0x20000</int-declare>
-<int-declare name="WS_MAXIMIZEBOX">0x10000</int-declare>
+const int CS_VREDRAW     = 1;
+const int CS_HREDRAW     = 2;
+const int COLOR_WINDOW   = 5;
+const int IDC_ARROW      = 32512;
+const int CW_USEDEFAULT  = 0x80000000;
+const int WS_OVERLAPPED  = 0;
+const int WS_CAPTION     = 0xc00000;
+const int WS_SYSMENU     = 0x80000;
+const int WS_THICKFRAME  = 0x40000;
+const int WS_MINIMIZEBOX = 0x20000;
+const int WS_MAXIMIZEBOX = 0x10000;
 <var-declare name="WS_OVERLAPPEDWINDOW">
-	<or>
-		WS_OVERLAPPED,
-		WS_CAPTION,
-		WS_SYSMENU,
-		WS_THICKFRAME,
-		WS_MINIMIZEBOX,
-		WS_MAXIMIZEBOX,
-	</or>
+  <or>
+    WS_OVERLAPPED,
+    WS_CAPTION,
+    WS_SYSMENU,
+    WS_THICKFRAME,
+    WS_MINIMIZEBOX,
+    WS_MAXIMIZEBOX,
+  </or>
 </var-declare>
-<int-declare name="SW_SHOWNORMAL">1</int-declare>
-<int-declare name="WM_DESTROY">2</int-declare>
+const int SW_SHOWNORMAL = 1;
+const int WM_DESTROY = 2;
 
-<var-declare name="hInstance">
-	GetModuleHandle()
-</var-declare>
+var hInstance = GetModuleHandle();
 
-<struct-define name="WNDCLASSEX">
-	<var-declare name="cbSize" />
-	<var-declare name="style" />
-	<var-declare name="lpfnWndProc" />
-	<var-declare name="cbClsExtra" />
-	<var-declare name="cbWndExtra" />
-	<var-declare name="hInstance" />
-	<var-declare name="hIcon" />
-	<var-declare name="hCursor" />
-	<var-declare name="hbrBackground" />
-	<var-declare name="lpszMenuName" />
-	<var-declare name="lpszClassName" />
-	<var-declare name="hIconSm" />
-</struct-define>
+struct WNDCLASSEX
+{
+  var cbSize;
+  var style;
+  var lpfnWndProc;
+  var cbClsExtra;
+  var cbWndExtra;
+  var hInstance;
+  var hIcon;
+  var hCursor;
+  var hbrBackground;
+  var lpszMenuName;
+  var lpszClassName;
+  var hIconSm;
+}
 
-<struct-define name="POINT">
-	<var-declare name="x" />
-	<var-declare name="y" />
-</struct-define>
+struct POINT
+{
+  var x, y;
+}
 
-<struct-define name="MSG">
-	<var-declare name="hwnd" />
-	<var-declare name="message" />
-	<var-declare name="wParam" />
-	<var-declare name="lParam" />
-	<var-declare name="time" />
-	<var-declare name="pt" type="POINT" />
-</struct-define>
+struct MSG
+{
+  var hwnd;
+  var message;
+  var wParam;
+  var lParam;
+  var time;
+  var pt : POINT;
+}
 
 </llpml>

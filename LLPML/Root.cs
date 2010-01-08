@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.9.20071021";
+        public string Version = "0.9.20080123";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
@@ -123,7 +123,7 @@ namespace Girl.LLPML
                 retval.AddCodes(codes, m, "push", null);
             }
             else
-                codes.Add(I386.Push((uint)0));
+                codes.Add(I386.Push((Val32)0));
             codes.Add(I386.Call(m.GetFunction(
                 CallType.Std, "kernel32.dll", "ExitProcess").Address));
         }

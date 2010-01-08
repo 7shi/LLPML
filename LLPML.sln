@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C# Express 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerLib", "CompilerLib\CompilerLib.csproj", "{526CD5A4-092E-4FA1-BD4E-8D33D13D39B4}"
@@ -13,6 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{526CD5A4-092E-4FA1-BD4E-8D33D13D39B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{526CD5A4-092E-4FA1-BD4E-8D33D13D39B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{526CD5A4-092E-4FA1-BD4E-8D33D13D39B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -21,10 +25,6 @@ Global
 		{62E95A12-AE8E-4165-92DE-A8DFF09498FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62E95A12-AE8E-4165-92DE-A8DFF09498FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62E95A12-AE8E-4165-92DE-A8DFF09498FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEADB091-2254-49D7-8AB5-9EBF369B6EA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

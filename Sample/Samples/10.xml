@@ -1,20 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- variable pointer -->
 
 <include src="finish.xml" />
 
-<var-declare name="a" />
+var a;
 
-<block>
-	<var-declare name="b" />
+{
+  var b;
 
-	<call name="printfln">
-		"&amp;a = %p, &amp;b = %p"
-		<ptr name="a" />
-		<ptr name="b" />
-	</call>
-</block>
+  printfln("addrof(a) = %p [global]", addrof(a));
+  printfln("addrof(b) = %p [stack]", addrof(b));
+}
 
 </llpml>

@@ -1,14 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- boolean operation 2 -->
 
 <include src="finish.xml" />
 
-<var-declare name="a">-1</var-declare>
-<var-declare name="b">0</var-declare>
-<var-declare name="c">1</var-declare>
-
+var a = -1, b = 0, c = 1;
 printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
 
 <!-- greater -->
@@ -17,18 +14,18 @@ printfln("%d: a > b", a > b);
 printfln("%d: b > a", b > a);
 
 <call name="printfln">
-	<string>%d: a > b > c</string>
-	<greater>a, b, c</greater>
+  <string>%d: a > b > c</string>
+  <greater>a, b, c</greater>
 </call>
 
 <call name="printfln">
-	<string>%d: c > b > a</string>
-	<greater>c, b, a</greater>
+  <string>%d: c > b > a</string>
+  <greater>c, b, a</greater>
 </call>
 
 <call name="printfln">
-	<string>%d: b > 0 > a</string>
-	<greater>b, 0, a</greater>
+  <string>%d: b > 0 > a</string>
+  <greater>b, 0, a</greater>
 </call>
 
 <!-- greater equal -->
@@ -37,18 +34,18 @@ printfln("%d: a >= b", a >= b);
 printfln("%d: b >= a", b >= a);
 
 <call name="printfln">
-	<string>%d: a >= b >= c</string>
-	<greater-equal>a, b, c</greater-equal>
+  <string>%d: a >= b >= c</string>
+  <greater-equal>a, b, c</greater-equal>
 </call>
 
 <call name="printfln">
-	<string>%d: c >= b >= a</string>
-	<greater-equal>c, b, a</greater-equal>
+  <string>%d: c >= b >= a</string>
+  <greater-equal>c, b, a</greater-equal>
 </call>
 
 <call name="printfln">
-	<string>%d: b >= 0 >= a</string>
-	<greater-equal>b, 0, a</greater-equal>
+  <string>%d: b >= 0 >= a</string>
+  <greater-equal>b, 0, a</greater-equal>
 </call>
 
 <!-- less -->
@@ -57,18 +54,18 @@ printfln("%d: a &lt; b", a lt b);
 printfln("%d: b &lt; a", b lt a);
 
 <call name="printfln">
-	<string>%d: a &lt; b &lt; c</string>
-	<less>a, b, c</less>
+  <string>%d: a &lt; b &lt; c</string>
+  <less>a, b, c</less>
 </call>
 
 <call name="printfln">
-	<string>%d: c &lt; b &lt; a</string>
-	<less>c, b, a</less>
+  <string>%d: c &lt; b &lt; a</string>
+  <less>c, b, a</less>
 </call>
 
 <call name="printfln">
-	<string>%d: a &lt; 0 &lt; b</string>
-	<less>a, 0, b</less>
+  <string>%d: a &lt; 0 &lt; b</string>
+  <less>a, 0, b</less>
 </call>
 
 <!-- less equal -->
@@ -77,18 +74,18 @@ printfln("%d: a &lt;= b", a le b);
 printfln("%d: b &lt;= a", b le a);
 
 <call name="printfln">
-	<string>%d: a &lt;= b &lt;= c</string>
-	<less-equal>a, b, c</less-equal>
+  <string>%d: a &lt;= b &lt;= c</string>
+  <less-equal>a, b, c</less-equal>
 </call>
 
 <call name="printfln">
-	<string>%d: c &lt;= b &lt;= a</string>
-	<less-equal>c, b, a</less-equal>
+  <string>%d: c &lt;= b &lt;= a</string>
+  <less-equal>c, b, a</less-equal>
 </call>
 
 <call name="printfln">
-	<string>%d: a &lt;= 0 &lt;= b</string>
-	<less-equal>a, 0, b</less-equal>
+  <string>%d: a &lt;= 0 &lt;= b</string>
+  <less-equal>a, 0, b</less-equal>
 </call>
 
 </llpml>

@@ -10,17 +10,36 @@ namespace Girl.LLPML
 {
     public partial class Function : Block
     {
-        protected CallType type;
-        public CallType Type { get { return type; } }
+        public CallType CallType { get; set; }
 
         protected List<DeclareBase> args
             = new List<DeclareBase>();
+        public List<DeclareBase> Args { get { return args; } }
         public virtual DeclareBase[] GetArgs() { return args.ToArray(); }
 
         private Var thisptr;
 
-        public Function() { }
-        public Function(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Function()
+        {
+        }
+
+        public Function(BlockBase parent, string name)
+            : base(parent)
+        {
+            this.name = name;
+            CallType = CallType.CDecl;
+
+            if (parent is Struct.Define)
+            {
+                args.Add(new Arg(this, "this", parent.Name));
+                thisptr = new Struct.This(this);
+            }
+        }
+
+        public Function(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         protected override void ReadBlock(XmlTextReader xr)
         {
@@ -49,8 +68,8 @@ namespace Girl.LLPML
                 thisptr = new Struct.This(this);
             }
 
-            type = CallType.CDecl;
-            if (xr["type"] == "std") type = CallType.Std;
+            CallType = CallType.CDecl;
+            if (xr["type"] == "std") CallType = CallType.Std;
 
             if (!parent.AddFunction(this))
                 throw Abort(xr, "multiple definitions: " + name);
@@ -102,7 +121,7 @@ namespace Girl.LLPML
                 retval.AddCodes(codes, m, "mov", null);
             }
             base.AddExitCodes(codes, m);
-            if (type == CallType.Std && argStack > 0)
+            if (CallType == CallType.Std && argStack > 0)
                 codes.Add(I386.Ret(argStack));
             else
                 codes.Add(I386.Ret());

@@ -1,81 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021" subsystem="WINDOWS_GUI">
+<llpml version="0.9.20080123" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
 <include src="win32.xml" />
 
-<string-declare name="className">LLPML Test Window</string-declare>
+const string className = "LLPML Test Window";
 
-<struct-declare name="wcex" type="WNDCLASSEX">
-	<!-- cbSize        --> <struct-size name="WNDCLASSEX" />
-	<!-- style         --> CS_VREDRAW | CS_HREDRAW
-	<!-- lpfnWndProc   --> <function-ptr name="WndProc" />
-	<!-- cbClsExtra    --> 0
-	<!-- cbWndExtra    --> 0
-	<!-- hInstance     --> hInstance
-	<!-- hIcon         --> null
-	<!-- hCursor       --> LoadCursor(null, IDC_ARROW)
-	<!-- hbrBackground --> COLOR_WINDOW + 1
-	<!-- lpszMenuName  --> null
-	<!-- lpszClassName --> className
-	<!-- hIconSm       --> null
-</struct-declare>
-
+WNDCLASSEX wcex =
+{
+  /* cbSize        */ sizeof(WNDCLASSEX),
+  /* style         */ CS_VREDRAW | CS_HREDRAW,
+  /* lpfnWndProc   */ addrof(WndProc),
+  /* cbClsExtra    */ 0,
+  /* cbWndExtra    */ 0,
+  /* hInstance     */ hInstance,
+  /* hIcon         */ null,
+  /* hCursor       */ LoadCursor(null, IDC_ARROW),
+  /* hbrBackground */ COLOR_WINDOW + 1,
+  /* lpszMenuName  */ null,
+  /* lpszClassName */ className,
+  /* hIconSm       */ null
+};
 RegisterClassEx(wcex);
 
-<var-declare name="hWnd">
-	<call name="CreateWindowEx">
-		<!-- dwExStyle    --> 0
-		<!-- lpClassName  --> className
-		<!-- lpWindowName --> "テスト"
-		<!-- dwStyle      --> WS_OVERLAPPEDWINDOW
-		<!-- X            --> CW_USEDEFAULT
-		<!-- Y            --> 0
-		<!-- nWidth       --> 256
-		<!-- nHeight      --> 256
-		<!-- hWndParent   --> null
-		<!-- hMenu        --> null
-		<!-- hInstance    --> hInstance
-		<!-- lpParam      --> null
-	</call>
-</var-declare>
-
+var hWnd = CreateWindowEx(
+  /* dwExStyle    */ 0,
+  /* lpClassName  */ className,
+  /* lpWindowName */ "テスト",
+  /* dwStyle      */ WS_OVERLAPPEDWINDOW,
+  /* X            */ CW_USEDEFAULT,
+  /* Y            */ 0,
+  /* nWidth       */ 256,
+  /* nHeight      */ 256,
+  /* hWndParent   */ null,
+  /* hMenu        */ null,
+  /* hInstance    */ hInstance,
+  /* lpParam      */ null
+);
 ShowWindow(hWnd, SW_SHOWNORMAL);
 UpdateWindow(hWnd);
 
-<struct-declare name="msg" type="MSG" />
-<while>
-	<cond>
-		GetMessage(msg, null, 0, 0)
-	</cond>
-	<block>
-		TranslateMessage(msg);
-		DispatchMessage(msg);
-	</block>
-</while>
+MSG msg;
+while (GetMessage(msg, null, 0, 0))
+{
+  TranslateMessage(msg);
+  DispatchMessage(msg);
+}
 
 DestroyWindow(hWnd);
 
-<function name="WndProc" type="std">
-	<arg name="hWnd" />
-	<arg name="msg" />
-	<arg name="wParam" />
-	<arg name="lParam" />
-	<switch>
-		<expr>msg</expr>
-		<case>WM_DESTROY</case>
-		<block>
-			PostQuitMessage(0);
-			<break />
-		</block>
-		<block>
-			<return>
-				DefWindowProc(hWnd, msg, wParam, lParam)
-			</return>
-		</block>
-	</switch>
-	<return>0</return>
-</function>
+function __stdcall WndProc(hWnd, msg, wParam, lParam)
+{
+  switch (msg)
+  {
+    case WM_DESTROY:
+      PostQuitMessage(0);
+      return 0;
+  }
+  return DefWindowProc(hWnd, msg, wParam, lParam);
+}
 
 </llpml>

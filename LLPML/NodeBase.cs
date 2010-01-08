@@ -42,10 +42,16 @@ namespace Girl.LLPML
             Read(xr);
         }
 
-        protected void SetLine(XmlTextReader xr)
+        public void SetLine(XmlTextReader xr)
         {
             lineNumber = xr.LineNumber;
             linePosition = xr.LinePosition;
+        }
+
+        public void SetLine(int lineNumber, int linePosition)
+        {
+            this.lineNumber = lineNumber;
+            this.linePosition = linePosition;
         }
 
         public static void Parse(XmlTextReader xr, VoidDelegate delg)
@@ -67,28 +73,28 @@ namespace Girl.LLPML
             Parse(xr, null);
         }
 
-        public Exception Abort(string msg)
+        public Exception Abort(string format, params object[] args)
         {
-            return Abort(lineNumber, linePosition, msg);
+            return Abort(lineNumber, linePosition, format, args);
         }
 
-        public Exception Abort(int lineNumber, int linePosition, string msg)
+        public Exception Abort(int lineNumber, int linePosition, string format, params object[] args)
         {
             string s1 = "", s2 = "", src = root.Source;
             if (src != null) s1 = src + ": ";
             if (lineNumber > 0)
                 s2 = string.Format("[{0}:{1}] ", lineNumber, linePosition);
-            return new Exception(s1 + s2 + msg);
+            return new Exception(s1 + s2 + string.Format(format, args));
         }
 
-        public Exception Abort(XmlTextReader xr, string msg)
+        public Exception Abort(XmlTextReader xr, string format, params object[] args)
         {
-            return Abort(xr.LineNumber, xr.LinePosition, msg);
+            return Abort(xr.LineNumber, xr.LinePosition, format, args);
         }
 
         public Exception Abort(XmlTextReader xr)
         {
-            return Abort(xr, "invalid element: " + xr.Name);
+            return Abort(xr, "”FŽ¯‚Å‚«‚Ü‚¹‚ñ: {0}", xr.Name);
         }
 
         public virtual void AddCodes(List<OpCode> codes, Module m) { }

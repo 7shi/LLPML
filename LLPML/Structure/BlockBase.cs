@@ -11,6 +11,7 @@ namespace Girl.LLPML
     public abstract class BlockBase : BreakBase
     {
         protected List<NodeBase> sentences = new List<NodeBase>();
+        public List<NodeBase> Sentences { get { return sentences; } }
 
         protected OpCode first = new OpCode();
         public Val32 First { get { return first.Address; } }

@@ -10,6 +10,7 @@ namespace Girl.LLPML
 {
     public class Break : BreakBase
     {
+        public Break(BlockBase parent) : base(parent) { }
         public Break(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -33,7 +34,7 @@ namespace Girl.LLPML
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             BlockBase b = parent;
-            Pointer.Declare[] ptrs = usingPointers;
+            Pointer.Declare[] ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)

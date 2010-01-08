@@ -10,17 +10,28 @@ namespace Girl.LLPML
 {
     public abstract class BreakBase : NodeBase
     {
-        protected Pointer.Declare[] usingPointers;
-        public Pointer.Declare[] UsingPointers { get { return usingPointers; } }
+        public Pointer.Declare[] UsingPointers { get; protected set; }
 
-        public BreakBase() { }
-        public BreakBase(BlockBase parent) : base(parent) { }
-        public BreakBase(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public BreakBase()
+        {
+        }
+
+        public BreakBase(BlockBase parent)
+            : base(parent)
+        {
+            if (parent != null)
+                UsingPointers = parent.GetMembers<Pointer.Declare>();
+        }
+
+        public BreakBase(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
             if (parent != null)
-                usingPointers = parent.GetMembers<Pointer.Declare>();
+                UsingPointers = parent.GetMembers<Pointer.Declare>();
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Girl.LLPML
         public Val32 First, Next;
 
         public Cond(BlockBase parent) : base(parent) { }
-        public Cond(BlockBase parent, IntValue values)
-            : base(parent, new IntValue[] { values }) { }
+        public Cond(BlockBase parent, IIntValue values)
+            : base(parent, new IIntValue[] { values }) { }
         public Cond(BlockBase parent, XmlTextReader xr)
             : base(parent, xr) { }
 

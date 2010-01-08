@@ -12,19 +12,34 @@ namespace Girl.LLPML.Struct
         public const string Constructor = "ctor";
         public const string Destructor = "dtor";
 
-        private string baseType;
-        public string BaseType { get { return baseType; } }
+        public string BaseType { get; set; }
 
         private Arg thisptr;
 
-        public Define(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Define(BlockBase parent, string name)
+            : base(parent)
+        {
+            this.name = name;
+            thisptr = new Arg(this, "this", name);
+        }
+
+        public Define(BlockBase parent, string name, string baseType)
+            : this(parent, name)
+        {
+            BaseType = baseType;
+        }
+
+        public Define(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
             RequiresName(xr);
 
-            baseType = xr["base"];
-            if (name == baseType)
+            BaseType = xr["base"];
+            if (name == BaseType)
                 throw Abort(xr, "can not define recursive base type: " + name);
 
             thisptr = new Arg(this, "this", name);
@@ -45,10 +60,10 @@ namespace Girl.LLPML.Struct
 
         public Define GetBaseStruct()
         {
-            if (baseType == null) return null;
-            Define st = parent.GetStruct(baseType);
+            if (BaseType == null) return null;
+            Define st = parent.GetStruct(BaseType);
             if (st != null) return st;
-            throw Abort("undefined struct: " + baseType);
+            throw Abort("undefined struct: " + BaseType);
         }
 
         public int GetSize()
@@ -192,7 +207,7 @@ namespace Girl.LLPML.Struct
             if (f == null) return;
 
             CallBlock(codes, m, ad, f);
-            if (f.Type == CallType.CDecl)
+            if (f.CallType == CallType.CDecl)
                 codes.Add(I386.Add(Reg32.ESP, Var.Size));
         }
 
@@ -202,7 +217,7 @@ namespace Girl.LLPML.Struct
             if (f == null) return;
 
             CallBlock(codes, m, ad, f);
-            if (f.Type == CallType.CDecl)
+            if (f.CallType == CallType.CDecl)
                 codes.Add(I386.Add(Reg32.ESP, Var.Size));
         }
 

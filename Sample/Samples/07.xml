@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- function -->
 
@@ -7,13 +7,10 @@
 
 test(2, 4);
 
-<function name="test">
-	<arg name="a" />
-	<arg name="b" />
-	<var-declare name="c">
-		a + b
-	</var-declare>
-	printfln("%d + %d = %d", a, b, c);
-</function>
+function test(a, b)
+{
+  var c = a + b;
+  printfln("%d + %d = %d", a, b, c);
+}
 
 </llpml>

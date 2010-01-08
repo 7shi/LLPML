@@ -1,72 +1,69 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- inheritance -->
 
 <include src="finish.xml" />
 
-<struct-define name="Test1">
-	<var-declare name="a" />
-	
-	<function name="ctor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		this.Show();
-	</function>
-	
-	<function name="dtor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		this.Show();
-	</function>
-	
-	<function name="Show">
-		printfln("%p [%s] a = %d", this, __FUNCTION__, a);
-	</function>
-</struct-define>
+struct Test1
+{
+  var a;
 
-<struct-define name="Test2" base="Test1">
-	<var-declare name="b" />
-	<struct-declare name="c" type="Test1" />
-	
-	<function name="ctor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		this.Show();
-	</function>
-	
-	<function name="dtor">
-		printf("%p [%s] -> ", this, __FUNCTION__);
-		this.Show();
-	</function>
-	
-	<function name="Show">
-		<!-- <invoke name="Show"><base /></invoke> -->
-		printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
-		c.Show();
-	</function>
-</struct-define>
+  function ctor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    this.Show();
+  }
 
-<struct-declare name="test1" type="Test1">
-	1
-</struct-declare>
-<block>
-	<struct-declare name="test2" type="Test2">
-		2, 3
-		<struct-declare>4</struct-declare>
-	</struct-declare>
-	<block>
-		<var-declare name="test2a" type="Test1">
-			test2
-		</var-declare>
-		test2a.Show();
-		<invoke name="Show">
-			<cast type="Test1">test2</cast>
-		</invoke>
-		<invoke name="Show">
-			<cast type="Test2">test2a</cast>
-		</invoke>
-	</block>
-	test1.Show();
-	test2.Show();
-	vprintfln("test2: a, b, c = %d, %d, %d", test2);
-</block>
+  function dtor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    this.Show();
+  }
+
+  function Show()
+  {
+    printfln("%p [%s] a = %d", this, __FUNCTION__, a);
+  }
+}
+
+struct Test2 : Test1
+{
+  var b;
+  Test1 c;
+
+  function ctor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    this.Show();
+  }
+
+  function dtor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    this.Show();
+  }
+
+  function Show()
+  {
+    // base.Show();
+    printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
+    c.Show();
+  }
+}
+
+Test1 test1 = { 1 };
+{
+  Test2 test2 = { 2, 3, { 4 } };
+  {
+    var test2a : Test1 = test2;
+    test2a.Show();
+    ((Test1)test2).Show();
+    ((Test2)test2a).Show();
+  }
+  test1.Show();
+  test2.Show();
+  vprintfln("test2: a, b, c = %d, %d, %d", test2);
+}
 
 </llpml>

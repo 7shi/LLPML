@@ -1,15 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <include src="stdio.xml" />
 
-<struct-define name="_Finish">
-	<!-- destructor -->
-	<function name="dtor">
-		finish();
-	</function>
-</struct-define>
+struct _Finish
+{
+  // destructor
+  function dtor()
+  {
+    println();
+    printfln("Press [Enter] to exit.");
+    pause();
+  }
+}
 
-<struct-declare name="_finish" type="_Finish" />
+_Finish _finish;
 
 </llpml>

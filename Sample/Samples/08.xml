@@ -1,21 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- function returns value -->
 
 <include src="finish.xml" />
 
-<var-declare name="a">3</var-declare>
-<var-declare name="b">4</var-declare>
-
+var a = 3, b = 4;
 printfln("%d + %d = %d", a, b, add(a, b));
 
-<function name="add">
-	<arg name="a" />
-	<arg name="b" />
-	<return>
-		a + b
-	</return>
-</function>
+function add(a, b)
+{
+  return a + b;
+}
 
 </llpml>

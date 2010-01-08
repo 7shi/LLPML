@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public class Declare : Pointer.Declare
         {
-            private IIntValue value;
+            public IIntValue Value { get; set; }
 
             public string Type { get { return type; } }
             public override int Length { get { return Var.Size; } }
@@ -26,7 +26,7 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name, IIntValue value)
                 : this(parent, name)
             {
-                this.value = value;
+                Value = value;
             }
 
             public Declare(BlockBase parent, string name, int value)
@@ -55,9 +55,9 @@ namespace Girl.LLPML
                     IIntValue[] v = IntValue.Read(parent, xr);
                     if (v != null)
                     {
-                        if (v.Length > 1 || value != null)
+                        if (v.Length > 1 || Value != null)
                             throw Abort(xr, "multiple values");
-                        value = v[0];
+                        Value = v[0];
                     }
                 });
 
@@ -81,16 +81,16 @@ namespace Girl.LLPML
 
             public override void AddCodes(List<OpCode> codes, Module m)
             {
-                if (value == null) return;
+                if (Value == null) return;
 
                 if (HasThis)
                 {
-                    value.AddCodes(codes, m, "mov", null);
+                    Value.AddCodes(codes, m, "mov", null);
                     codes.Add(I386.Mov(GetAddress(codes, m, null), Reg32.EAX));
                 }
                 else
                 {
-                    value.AddCodes(codes, m, "mov", address);
+                    Value.AddCodes(codes, m, "mov", address);
                 }
             }
         }

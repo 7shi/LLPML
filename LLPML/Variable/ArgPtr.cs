@@ -9,7 +9,7 @@ namespace Girl.LLPML
 {
     public class ArgPtr : Pointer.Declare
     {
-        public ArgPtr() { }
+        public ArgPtr(BlockBase parent, string name) : base(parent, name) { }
         public ArgPtr(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)

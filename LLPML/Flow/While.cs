@@ -9,12 +9,13 @@ namespace Girl.LLPML
 {
     public class While : Do
     {
+        public While(BlockBase parent) : base(parent) { }
         public While(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             base.BeforeAddCodes(codes, m);
-            codes.Add(I386.Jmp(block.Last));
+            codes.Add(I386.Jmp(Block.Last));
         }
     }
 }

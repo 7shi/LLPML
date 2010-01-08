@@ -170,10 +170,10 @@ namespace Girl.LLPML
 
                 case XmlNodeType.Text:
                     {
-                        string src = xr.Value.Trim();
-                        IIntValue[] ret = ReadText(parent, src);
+                        IIntValue[] ret = ReadText(parent,
+                            new Tokenizer(parent.Root.Source, xr));
                         if (ret == null)
-                            throw parent.Abort(xr, "invalid expression: " + src);
+                            throw parent.Abort(xr, "invalid expression");
                         return ret;
                     }
 
@@ -184,9 +184,8 @@ namespace Girl.LLPML
             throw parent.Abort(xr, "value required");
         }
 
-        public static IIntValue[] ReadText(BlockBase parent, string src)
+        public static IIntValue[] ReadText(BlockBase parent, Tokenizer token)
         {
-            Tokenizer token = new Tokenizer(src);
             Parser parser = new Parser(token, parent);
             IIntValue[] ret = parser.ParseExpressions();
             if (token.CanRead) ret = null;

@@ -1,95 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20071021">
+<llpml version="0.9.20080123">
 
 <!-- flow -->
 
 <include src="finish.xml" />
 
-<for>
-	<init>
-		<var-declare name="i">0</var-declare>
-	</init>
-	<cond>5 > i</cond>
-	<loop>i++;</loop>
-	<block>
-		<if>
-			<cond>i == 2</cond>
-			<block>
-				printfln("skip...");
-				<continue />
-			</block>
-		</if>
-		printfln("[for] i = %d", i);
-	</block>
-</for>
+for (var i = 0; 5 > i; i++)
+{
+  if (i == 2)
+  {
+    printfln("skip...");
+    continue;
+  }
+  printfln("[for] i = %d", i);
+}
 
-<var-declare name="i">0</var-declare>
-<do>
-	<block>
-		printf("[do] i = %d ", i);
-		<if>
-			<cond>i == 0</cond>
-			<block>
-				printfln("(zero)");
-			</block>
-			<cond>i == 1</cond>
-			<block>
-				printfln("(one)");
-			</block>
-			<cond>i == 2</cond>
-			<block>
-				printfln("(two)");
-			</block>
-			<!-- else -->
-			<block>
-				printfln("(...)");
-			</block>
-		</if>
-		i++;
-	</block>
-	<cond>5 > i</cond>
-</do>
+var i = 0;
+do
+{
+  printf("[do] i = %d ", i);
+  if (i == 0)
+    printfln("(zero)");
+  else if (i == 1)
+    printfln("(one)");
+  else if (i == 2)
+    printfln("(two)");
+  else
+    printfln("(...)");
+  i++;
+} while (5 > i);
 
-<while>
-	<cond>i > 0</cond>
-	<block>
-		printf("[while] i = %d ", i);
-		<switch>
-			<expr>i</expr>
-			<case>5, 4</case>
-			<block>
-				printfln("(4 or 5)");
-				<break />
-			</block>
-			<case>3</case>
-			<block>
-				printfln("(3)");
-				<break />
-			</block>
-			<!-- default -->
-			<block>
-				printfln("(etc)");
-				<break />
-			</block>
-		</switch>
-		i--;
-	</block>
-</while>
+while (i > 0)
+{
+  printf("[while] i = %d ", i);
+  switch (i)
+  {
+    case 5:
+    case 4:
+      printfln("(4 or 5)");
+      break;
+    case 3:
+      printfln("(3)");
+      break;
+    default:
+      printfln("(etc)");
+      break;
+  }
+  i--;
+}
 
-<for>
-	<init>
-		<var-declare name="i">0</var-declare>
-	</init>
-	<loop>i++;</loop>
-	<block>
-		printfln("[for] i = %d", i);
-		<if>
-			<cond>i == 2</cond>
-			<block>
-				<break />
-			</block>
-		</if>
-	</block>
-</for>
+for (var i = 0; ; i++)
+{
+  printfln("[for] i = %d", i);
+  if (i == 2) break;
+}
 
 </llpml>

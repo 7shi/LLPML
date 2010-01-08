@@ -9,10 +9,6 @@ namespace Girl.LLPML
 {
     public class Arg : Var.Declare
     {
-        public Arg()
-        {
-        }
-
         public Arg(BlockBase parent, string name, string type)
             : base(parent, name)
         {
