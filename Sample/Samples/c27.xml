@@ -1,134 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080211">
+<llpml version="0.11.20080314">
 
-<!-- array -->
+<title>整数型</title>
 
 <include src="finish.xml" />
+<include src="string.xml" />
 
 <?llp
-var a[16];
-printfln("var a[16]");
-printfln("sizeof(a) = %d", sizeof(a));
-printfln("a = %p", a);
-printfln("addrof(a[ 0]) = %p", addrof(a[ 0]));
-printfln("addrof(a[ 1]) = %p", addrof(a[ 1]));
-printfln("addrof(a[14]) = %p", addrof(a[14]));
-printfln("addrof(a[15]) = %p", addrof(a[15]));
-for (var i = 0; i < 4; i++) a[i] = i * i;
-vprintfln("a = { %d, %d, %d, %d, ... }", a);
-println();
+test();
 
-byte b[16];
-printfln("byte b[16]");
-printfln("sizeof(b) = %d", sizeof(b));
-printfln("b = %p", b);
-printfln("addrof(b[ 0]) = %p", addrof(b[ 0]));
-printfln("addrof(b[ 1]) = %p", addrof(b[ 1]));
-printfln("addrof(b[14]) = %p", addrof(b[14]));
-printfln("addrof(b[15]) = %p", addrof(b[15]));
-println();
-
-char c[16];
-printfln("char c[16]");
-printfln("sizeof(c) = %d", sizeof(c));
-printfln("c = %p", c);
-printfln("addrof(c[ 0]) = %p", addrof(c[ 0]));
-printfln("addrof(c[ 1]) = %p", addrof(c[ 1]));
-printfln("addrof(c[14]) = %p", addrof(c[14]));
-printfln("addrof(c[15]) = %p", addrof(c[15]));
-println();
-
-struct Test1
+function test()
 {
-  var a, b;
+  // スタック使用状況
+  var a;
+  byte b, c;
+  var d;
+  byte e, f;
+  short g;
+  var h;
+  show("a", addrof a, sizeof a, typeof a);
+  show("b", addrof b, sizeof b, typeof b);
+  show("c", addrof c, sizeof c, typeof c);
+  show("d", addrof d, sizeof d, typeof d);
+  show("e", addrof e, sizeof e, typeof e);
+  show("f", addrof f, sizeof f, typeof f);
+  show("g", addrof g, sizeof g, typeof g);
+  println();
   
-  function Show(n)
+  function show(name, p, size, type)
   {
-    printfln("%d: %p [%s] a = %d, b = %d",
-      n, this, __FUNCTION__, a, b);
+    printfln(
+      "%s: addrof = %p (+ %02d), sizeof = %d, typeof = %s",
+      name, p, p - addrof(a), size, type);
+  }
+  
+  // 代入
+  h = 0xcafebabe;
+  g = 0x5678;
+  f = 0x34;
+  e = 0x12;
+  printfln("e = %x, f = %x, g = %x, h = %x", e, f, g, h);
+  println();
+}
+
+// 構造体メンバ代入
+struct Bytes
+{
+  byte a, b, c, d;
+  
+  function Show()
+  {
+    printfln("a = %x, b = %x, c = %x, d = %x", a, b, c, d);
+    vprintfln("int: %x", this);
   }
 }
-printfln("struct Test1 { var a, b; }");
-Test1 t1[16];
-printfln("Test1 t1[16]");
-printfln("sizeof(Test1) = %d", sizeof(Test1));
-printfln("sizeof(t1) = %d", sizeof(t1));
-printfln("t1 = %p", t1);
-printfln("addrof(t1[ 0]  ) = %p", addrof(t1[ 0]  ));
-printfln("addrof(t1[ 0].a) = %p", addrof(t1[ 0].a));
-printfln("addrof(t1[ 0].b) = %p", addrof(t1[ 0].b));
-printfln("addrof(t1[ 1]  ) = %p", addrof(t1[ 1]  ));
-printfln("addrof(t1[ 1].a) = %p", addrof(t1[ 1].a));
-printfln("addrof(t1[ 1].b) = %p", addrof(t1[ 1].b));
-printfln("addrof(t1[14]  ) = %p", addrof(t1[14]  ));
-printfln("addrof(t1[14].a) = %p", addrof(t1[14].a));
-printfln("addrof(t1[14].b) = %p", addrof(t1[14].b));
-printfln("addrof(t1[15]  ) = %p", addrof(t1[15]  ));
-printfln("addrof(t1[15].a) = %p", addrof(t1[15].a));
-printfln("addrof(t1[15].b) = %p", addrof(t1[15].b));
-for (var i = 0; i < 4; i++)
-{
-  t1[i].a = i * 10;
-  t1[i].b = i * 10 + 1;
-  t1[i].Show(i);
-}
-vprintfln("t1 = { { %d, %d }, { %d, %d }, ... }", t1);
+Bytes b1 = { 0x12, 0x34, 0x56, 0x78 };
+b1.Show();
+b1.d = 0x12;
+b1.c = 0x34;
+b1.b = 0x56;
+b1.a = 0x78;
+b1.Show();
 println();
 
-//var p : Test1[] = t1;
-var p = t1; // 型推論
-printfln("p = %p", p);
-p[1].Show(1);
-p[1].a = 5;
-p[1].b = 7;
-p[1].Show(1);
-println();
-
-struct Test2
+// 構造体メンバ配列代入
+struct ByteArray
 {
-  var a[2];
+  byte b[4];
   
-  function Show(n)
+  function Show()
   {
-    printfln("%d: %p [%s] a = { %d, %d }",
-      n, this, __FUNCTION__, a[0], a[1]);
+    printfln(
+      "b[0] = %x, b[1] = %x, b[2] = %x, b[3] = %x",
+      b[0], b[1], b[2], b[3]);
+    vprintfln("int: %x", this);
   }
 }
-printfln("struct Test2 { var a[2]; }");
-Test2 t2[16];
-printfln("Test2 t2[16]");
-printfln("sizeof(Test2) = %d", sizeof(Test2));
-printfln("sizeof(t2) = %d", sizeof(t2));
-printfln("t2 = %p", t2);
-printfln("addrof(t2[ 0]     ) = %p", addrof(t2[ 0]     ));
-printfln("addrof(t2[ 0].a   ) = %p", addrof(t2[ 0].a   ));
-printfln("addrof(t2[ 0].a[0]) = %p", addrof(t2[ 0].a[0]));
-printfln("addrof(t2[ 0].a[1]) = %p", addrof(t2[ 0].a[1]));
-printfln("addrof(t2[ 1]     ) = %p", addrof(t2[ 1]     ));
-printfln("addrof(t2[ 1].a   ) = %p", addrof(t2[ 1].a   ));
-printfln("addrof(t2[ 1].a[0]) = %p", addrof(t2[ 1].a[0]));
-printfln("addrof(t2[ 1].a[1]) = %p", addrof(t2[ 1].a[1]));
-printfln("addrof(t2[14]     ) = %p", addrof(t2[14]     ));
-printfln("addrof(t2[14].a   ) = %p", addrof(t2[14].a   ));
-printfln("addrof(t2[14].a[0]) = %p", addrof(t2[14].a[0]));
-printfln("addrof(t2[14].a[1]) = %p", addrof(t2[14].a[1]));
-printfln("addrof(t2[15]     ) = %p", addrof(t2[15]     ));
-printfln("addrof(t2[15].a   ) = %p", addrof(t2[15].a   ));
-printfln("addrof(t2[15].a[0]) = %p", addrof(t2[15].a[0]));
-printfln("addrof(t2[15].a[1]) = %p", addrof(t2[15].a[1]));
-for (var i = 0; i < 16; i++)
-{
-  t2[i].a[0] = i * 100;
-  t2[i].a[1] = i * 100 + 10;
-}
-test(t2, 16);
-vprintfln("t2 = { { %d, %d }, { %d, %d }, ... }", t2);
+ByteArray b2;
+b2.b[3] = 0x12;
+b2.b[2] = 0x34;
+b2.b[1] = 0x56;
+b2.b[0] = 0x78;
+b2.Show();
+println();
 
-function test(array : Test2[], count)
-{
-  for (var i = 0; i < count; i++)
-    array[i].Show(i);
-}
+// キャスト
+var b3 : byte[] = b1;
+printfln(
+  "b3[0] = %x, b3[1] = %x, b3[2] = %x, b3[3] = %x",
+  b3[0], b3[1], b3[2], b3[3]);
+var i : int[] = b1;
+printfln("i[0] = %x", i[0]);
+memset(i, 0xff, 2);
+printfln("i[0] = %x", i[0]);
+memset(i, 0x77, 3);
+printfln("i[0] = %x", i[0]);
+println();
+
+// 構造体キャスト
+struct Int32 { int Value; }
+b1.Show();
+((Int32)b1).Value = 0xcafebabe;
+b1.Show();
+b2.Show();
+((Int32)b2).Value = 0xdeadbeef;
+b2.Show();
+println();
+
+// 型推論
+b1.a = 255;
+var b4 = b1.a;
+b4++;
+int i1 = b1.a;
+i1++;
+printfln(
+  "b1.a : %s = %d, b4 : %s = %d, i1 : %s = %d",
+  typeof b1.a, b1.a, typeof b4, b4, typeof i1, i1);
+b1.Show();
+b1.a++;
+b1.Show();
+b1.a -= 16;
+b1.Show();
 ?>
 
 </llpml>

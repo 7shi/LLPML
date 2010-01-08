@@ -97,13 +97,7 @@ namespace Girl.LLPML
             return Abort(xr, "”FŽ¯‚Å‚«‚Ü‚¹‚ñ: {0}", xr.Name);
         }
 
-        public virtual void AddCodes(List<OpCode> codes, Module m) { }
-
-        public void Set(NodeBase src)
-        {
-            parent = src.parent;
-            root = src.root;
-        }
+        public virtual void AddCodes(OpCodes codes) { }
 
         protected void NoChild(XmlTextReader xr)
         {

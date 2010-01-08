@@ -51,7 +51,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "order required");
         }
 
-        public override Addr32 GetAddress(List<OpCode> codes, Module m)
+        public override Addr32 GetAddress(OpCodes codes)
         {
             var ts = target.TypeSize;
             if (ts == 0
@@ -63,7 +63,7 @@ namespace Girl.LLPML
                 if (oi.Value < 0)
                     throw Abort("{0}[{1}]: over flow: < 0",
                         target.Name, oi.Value);
-                var ret = target.GetAddress(codes, m);
+                var ret = target.GetAddress(codes);
                 Pointer.Declare pd = null;
                 if (target is Pointer)
                     pd = (target as Pointer).Reference;
@@ -84,7 +84,7 @@ namespace Girl.LLPML
                 return ret;
             }
             codes.Add(I386.Push(Reg32.EAX));
-            order.AddCodes(codes, m, "mov", null);
+            order.AddCodes(codes, "mov", null);
             codes.AddRange(new OpCode[]
                 {
                     I386.Mov(Reg32.EDX, (uint)ts),
@@ -92,9 +92,9 @@ namespace Girl.LLPML
                     I386.Push(Reg32.EAX),
                 });
             if (target is Pointer)
-                (target as Pointer).GetValue(codes, m);
+                (target as Pointer).GetValue(codes);
             else
-                (target as IIntValue).AddCodes(codes, m, "mov", null);
+                (target as IIntValue).AddCodes(codes, "mov", null);
             codes.AddRange(new OpCode[]
                 {
                     I386.Pop(Reg32.EDX),
@@ -105,7 +105,7 @@ namespace Girl.LLPML
         }
 
         public override bool IsArray { get { return false; } }
-        public override string Type { get { return target.Type; } }
+        public override string TypeName { get { return target.TypeName; } }
 
         public override Struct.Define GetStruct()
         {

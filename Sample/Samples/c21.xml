@@ -1,71 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080211">
+<llpml version="0.11.20080314">
 
-<!-- inheritance -->
+<title>計算</title>
 
 <include src="finish.xml" />
 
+printf("-0.1 => ");
+Float(-1, -1);
+
+printf("3.14159265 => ");
+Float(314159265, -8);
+
 <?llp
-struct Test1
+const int INT_MAX    = 0x7fffffff;
+const int EXP_DIGIT  = 8;
+const int EXP_MAX    = 0xff;
+const int SIGN_DIGIT = 23;
+const int SIGN_MAX   = 0x7fffff;
+
+function Float(s, e10)
 {
-  var a;
-
-  function ctor()
+  var sign = 0, e2 = 0, ss;
+  if (s == 0) e10 = 0;
+  if (s < 0) sign = 1, s = -s;
+  while (s % 10 == 0) e10++, s /= 10;
+  while (e10 != 0)
   {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
+    if (e10 < 0)
+    {
+      e2--, s *= 2;
+      ss = s % 10;
+      if (ss == 0 || s > INT_MAX / 2)
+      {
+        e10++, s /= 10;
+        if (ss >= 5) s++;
+      }
+    }
+    else if (e10 > 0)
+    {
+      if (s & 1 == 1 && s <= INT_MAX / 10) e10--, s *= 10;
+      e2++, s = s / 2 + (s & 1);
+    }
   }
-
-  function dtor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
-
-  function Show()
-  {
-    printfln("%p [%s] a = %d", this, __FUNCTION__, a);
-  }
-}
-
-struct Test2 : Test1
-{
-  var b;
-  Test1 c;
-
-  function ctor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
-
-  function dtor()
-  {
-    printf("%p [%s] -> ", this, __FUNCTION__);
-    Show();
-  }
-
-  function Show()
-  {
-    // base.Show();
-    printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
-    c.Show();
-  }
-}
-
-Test1 test1 = { 1 };
-{
-  Test2 test2 = { 2, 3, { 4 } };
-  {
-    //var test2a : Test1 = test2;
-    var test2a = (Test1)test2; // 型推論
-    test2a.Show();
-    ((Test1)test2).Show();
-    ((Test2)test2a).Show();
-  }
-  test1.Show();
-  test2.Show();
-  vprintfln("test2: a, b, c = %d, %d, %d", test2);
+  while (0 < s && s <= SIGN_MAX) e2--, s *= 2;
+  while (s > SIGN_MAX * 2 + 1) e2++, s = s / 2 + (s & 1);
+  printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s & SIGN_MAX);
 }
 ?>
 

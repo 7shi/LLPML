@@ -12,7 +12,8 @@ namespace Girl.LLPML
     {
         public class Declare : DeclareBase
         {
-            public virtual string Type { get; set; }
+            public virtual TypeBase Type { get { return Types.GetType(TypeName); } }
+            public virtual string TypeName { get; set; }
             public int TypeSize { get; private set; }
             public int Count { get; private set; }
 
@@ -30,7 +31,7 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name, string type, int count)
                 : this(parent, name)
             {
-                this.Type = type;
+                this.TypeName = type;
                 TypeSize = SizeOf.GetTypeSize(parent, type);
                 Count = count;
                 this.length = TypeSize * count;
@@ -51,11 +52,12 @@ namespace Girl.LLPML
                 NoChild(xr);
                 RequiresName(xr);
 
-                Type = xr["type"];
-                if (Type == null) Type = "byte";
+                var type = xr["type"];
+                if (type == null) type = "byte";
+                TypeName = type;
 
-                TypeSize = SizeOf.GetTypeSize(parent, Type);
-                if (TypeSize == 0) throw Abort(xr, "unknown type: " + Type);
+                TypeSize = SizeOf.GetTypeSize(parent, TypeName);
+                if (TypeSize == 0) throw Abort(xr, "unknown type: " + TypeName);
 
                 string slen = xr["length"];
                 if (slen == null) throw Abort(xr, "length required");

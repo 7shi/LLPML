@@ -19,7 +19,9 @@ namespace Girl.LLPML
             RequiresName(xr);
         }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public TypeBase Type { get { return TypeInt.Instance; } }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
             int size = 0;
             var pd = parent.GetPointer(name);
@@ -28,7 +30,7 @@ namespace Girl.LLPML
             else
                 size = GetTypeSize(parent, name);
             if (size == 0) throw Abort("undefined type: " + name);
-            IntValue.AddCodes(codes, op, dest, (uint)size);
+            codes.AddCodes(op, dest, (uint)size);
         }
 
         public static int GetTypeSize(BlockBase parent, string type)

@@ -1,94 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.11.20080314">
 
-<!-- expression -->
+<title>構造体型引数</title>
 
 <include src="finish.xml" />
 
-var a = 2;
-const int b = 3;
-const string fmt = "a = %d, b = %d";
-
-<!-- simple -->
-printfln(fmt, a, b);
-<!-- complex -->
-<call name="printfln">
-  <string name="fmt" />
-  <var name="a" />
-  <int name="b" />
-</call>
-
-<!-- simple -->
-printfln("add(a * b, 4) = %d", add(a * b, 4));
-<!-- complex -->
-<call name="printfln">
-  <string>add(a * b, 4) = %d</string>
-  <call name="add">
-    <mul>
-      <var name="a" />
-      <int name="b" />
-    </mul>
-    <int>4</int>
-  </call>
-</call>
-
-test t = { 9, 6 };
-
-<!-- simple -->
-printfln("sub(%d, %d) = %d", t.a, t.b, t.sub());
-<!-- complex -->
-<call name="printfln">
-  <string>sub(%d, %d) = %d</string>
-  <struct-member name="a">
-    <ptr name="t" />
-  </struct-member>
-  <struct-member name="b">
-    <ptr name="t" />
-  </struct-member>
-  <invoke name="sub">
-    <ptr name="t" />
-  </invoke>
-</call>
-
-test2 t2 = { { 11, 3 } };
-
-<!-- simple -->
-printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
-<!-- complex -->
-<call name="printfln">
-  <string>sub(%d, %d) = %d</string>
-  <struct-member name="t">
-    <ptr name="t2" />
-    <struct-member name="a" />
-  </struct-member>
-  <struct-member name="t">
-    <ptr name="t2" />
-    <struct-member name="b" />
-  </struct-member>
-  <invoke name="sub">
-    <struct-member name="t">
-      <ptr name="t2" />
-    </struct-member>
-  </invoke>
-</call>
-
-<!-- -->
-
-function add(a, b)
+<?llp
+struct Test
 {
-  return a + b;
-}
+  var a = 1, b = 2;
 
-struct test
-{
-  var a, b;
+  // define constructor to initialize members
+  function ctor() { }
 
-  function sub()
+  function Show()
   {
-    return a - b;
+    printfln("this, a, b = %p, %d, %d", this, a, b);
+  }
+
+  function Add()
+  {
+    return a + b;
   }
 }
 
-struct test2 { test t; }
+printfln("sizeof(Test) = %d", sizeof(Test));
+println();
+
+Test t1;
+printfln("t1 = %p", t1);
+show(t1);
+println();
+
+// ignore initializers
+Test t2 = { 3, 4 };
+printfln("t2 = %p", t2);
+show(t2);
+t2.a = 5;
+t2.b = 6;
+show(t2);
+
+function show(p : Test)
+{
+  println();
+  printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
+  printfln("p.Add() = %d", p.Add());
+  p.Show();
+}
+?>
 
 </llpml>

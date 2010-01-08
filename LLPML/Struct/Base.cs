@@ -26,7 +26,7 @@ namespace Girl.LLPML.Struct
             return target.GetBaseStruct();
         }
 
-        public override string Type
+        public override string TypeName
         {
             get
             {

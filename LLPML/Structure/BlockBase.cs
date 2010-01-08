@@ -261,7 +261,7 @@ namespace Girl.LLPML
             if (delg2 != null) delg2(pos);
         }
 
-        protected virtual void BeforeAddCodes(List<OpCode> codes, Module m)
+        protected virtual void BeforeAddCodes(OpCodes codes)
         {
             if (HasStackFrame)
             {
@@ -276,30 +276,30 @@ namespace Girl.LLPML
             }
             string n = GetName();
             if (!string.IsNullOrEmpty(n))
-                codes.Add(I386.Mov(Reg32.EAX, m.GetString(n)));
+                codes.Add(I386.Mov(Reg32.EAX, codes.Module.GetString(n)));
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             CheckStructs();
             codes.Add(first);
-            BeforeAddCodes(codes, m);
+            BeforeAddCodes(codes);
             codes.Add(construct);
             foreach (NodeBase child in sentences)
             {
-                child.AddCodes(codes, m);
+                child.AddCodes(codes);
             }
             if (!IsTerminated)
-                AddDestructors(codes, m, GetMembers<Pointer.Declare>());
+                AddDestructors(codes, GetMembers<Pointer.Declare>());
             codes.Add(destruct);
-            AfterAddCodes(codes, m);
+            AfterAddCodes(codes);
             foreach (Function func in GetMembers<Function>())
             {
-                func.AddCodes(codes, m);
+                func.AddCodes(codes);
             }
             foreach (Struct.Define st in GetMembers<Struct.Define>())
             {
-                st.AddCodes(codes, m);
+                st.AddCodes(codes);
             }
             codes.Add(last);
         }
@@ -312,10 +312,10 @@ namespace Girl.LLPML
             }
         }
 
-        protected virtual void AfterAddCodes(List<OpCode> codes, Module m)
+        protected virtual void AfterAddCodes(OpCodes codes)
         {
             if (IsTerminated) return;
-            AddExitCodes(codes, m);
+            AddExitCodes(codes);
             if (GetMembers<Function>().Length > 0
                 || GetMembers<Struct.Define>().Length > 0)
             {
@@ -335,7 +335,7 @@ namespace Girl.LLPML
         }
 
         public virtual void AddDestructors(
-            List<OpCode> codes, Module m, IEnumerable<Pointer.Declare> ptrs)
+            OpCodes codes, IEnumerable<Pointer.Declare> ptrs)
         {
             if (ptrs == null) return;
 
@@ -345,12 +345,12 @@ namespace Girl.LLPML
                 Struct.Declare st = ptrs2.Pop() as Struct.Declare;
                 if (st == null) continue;
 
-                st.GetStruct().AddDestructor(codes, m,
-                    GetPointer(st.Name).GetAddress(codes, m, this));
+                st.GetStruct().AddDestructor(codes,
+                    GetPointer(st.Name).GetAddress(codes, this));
             }
         }
 
-        public virtual void AddExitCodes(List<OpCode> codes, Module m)
+        public virtual void AddExitCodes(OpCodes codes)
         {
             if (HasStackFrame) codes.Add(I386.Leave());
         }

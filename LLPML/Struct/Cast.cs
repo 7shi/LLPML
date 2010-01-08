@@ -12,7 +12,7 @@ namespace Girl.LLPML.Struct
         public IIntValue Source { get; private set; }
 
         private string type;
-        public override string Type { get { return type; } }
+        public override string TypeName { get { return type; } }
 
         public override bool IsArray { get { return false; } }
 
@@ -52,9 +52,19 @@ namespace Girl.LLPML.Struct
                 throw Abort(xr, "requires a source");
         }
 
-        public override void GetValue(List<OpCode> codes, Module m)
+        public override Addr32 GetAddress(OpCodes codes)
         {
-            Source.AddCodes(codes, m, "mov", null);
+            if (Source is Pointer)
+                return (Source as Pointer).GetAddress(codes);
+
+            Source.AddCodes(codes, "mov", null);
+            codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
+            return new Addr32(Reg32.EDX);
+        }
+
+        public override void GetValue(OpCodes codes)
+        {
+            Source.AddCodes(codes, "mov", null);
         }
     }
 }

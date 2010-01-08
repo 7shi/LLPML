@@ -75,9 +75,18 @@ namespace Sample
         {
             for (int i = 1; ; i++)
             {
-                string xml = string.Format("{0}{1:00}.xml", prefix, i);
+                var xml = string.Format("{0}{1:00}.xml", prefix, i);
                 if (!File.Exists(GetSampleFileName(xml))) break;
-                parent.Nodes.Add(CreateItem(xml));
+
+                var node = CreateItem(xml);
+                var td = (node.Tag) as TextData;
+                var sr = new StringReader(td.Text);
+                var xr = new XmlTextReader(sr);
+                var title = Root.ReadTitle(xr);
+                if (title != "") node.Text += "(" + title + ")";
+                xr.Close();
+                sr.Close();
+                parent.Nodes.Add(node);
             }
         }
 
@@ -85,40 +94,38 @@ namespace Sample
         {
             if (selectedData == null) return;
 
-            Cursor cur = Cursor.Current;
+            var cur = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
 #if !DEBUG
             try
             {
 #endif
-                StringReader sr = new StringReader(textBox1.Text);
-                XmlTextReader xr = new XmlTextReader(sr);
-                Root root = new Root();
+                var sr = new StringReader(textBox1.Text);
+                var xr = new XmlTextReader(sr);
+                var root = new Root();
                 root.StreamDelegate = name =>
-                    {
-                        var n = console.Nodes[name];
-                        if (n == null) n = window.Nodes[name];
-                        if (n == null) return null;
-                        var td = n.Tag as TextData;
-                        if (td == null) return null;
-                        return new StringReader(td.Text);
-                    };
-                if (selectedData.Output != null)
                 {
+                    var n = console.Nodes[name];
+                    if (n == null) n = window.Nodes[name];
+                    if (n == null) return null;
+                    var td = n.Tag as TextData;
+                    if (td == null) return null;
+                    return new StringReader(td.Text);
+                };
+                if (selectedData.Output != null)
                     root.Output = Path.GetFileNameWithoutExtension(selectedData.Output) + ".exe";
-                }
                 root.Read(selectedData.Name, xr);
                 xr.Close();
                 sr.Close();
 
-                Module module = new Module();
+                var module = new Module();
                 module.Specific.SubSystem = root.Subsystem;
 
-                List<OpCode> codes = new List<OpCode>();
-                root.AddCodes(codes, module);
+                var codes = new OpCodes(module);
+                root.AddCodes(codes);
                 module.Text.OpCodes = codes.ToArray();
 
-                string exe = GetFullName(root.Output);
+                var exe = GetFullName(root.Output);
                 module.Link(exe);
                 textBox2.AppendText("èoóÕ: " + exe + "\r\n");
                 Process.Start(exe);

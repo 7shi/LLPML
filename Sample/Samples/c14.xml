@@ -1,163 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.11.20080314">
 
-<!-- sign -->
+<title>制御構造</title>
 
 <include src="finish.xml" />
 
-var a = -333, b = 100, c = 5;
-printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
+<?llp
+for (var i = 0; 5 > i; i++)
+{
+  if (i == 2)
+  {
+    printfln("skip...");
+    continue;
+  }
+  printfln("[for] i = %d", i);
+}
 
-<!-- signed -->
+var i = 0;
+do
+{
+  printf("[do] i = %d ", i);
+  if (i == 0)
+    printfln("(zero)");
+  else if (i == 1)
+    printfln("(one)");
+  else if (i == 2)
+    printfln("(two)");
+  else
+    printfln("(...)");
+  i++;
+} while (5 > i);
 
-println();
+while (i > 0)
+{
+  printf("[while] i = %d ", i);
+  switch (i)
+  {
+    case 5:
+    case 4:
+      printfln("(4 or 5)");
+      break;
+    case 3:
+      printfln("(3)");
+      break;
+    default:
+      printfln("(etc)");
+      break;
+  }
+  i--;
+}
 
-<call name="printfln">
-  <string>%d: a > b (signed)</string>
-  <greater>
-    <var name="a" />
-    <var name="b" />
-  </greater>
-</call>
-
-<call name="printfln">
-  <string>%d: a &lt; b (signed)</string>
-  <less>
-    <var name="a" />
-    <var name="b" />
-  </less>
-</call>
-
-<call name="printfln">
-  <string>a * b = %d (signed)</string>
-  <mul>
-    <var name="a" />
-    <var name="b" />
-  </mul>
-</call>
-
-<call name="printfln">
-  <string>a / b = %d (signed)</string>
-  <div>
-    <var name="a" />
-    <var name="b" />
-  </div>
-</call>
-
-<call name="printfln">
-  <string>a %% b = %d (signed)</string>
-  <mod>
-    <var name="a" />
-    <var name="b" />
-  </mod>
-</call>
-
-<call name="printfln">
-  <string>a &lt;&lt; 5 = %d (signed)</string>
-  <shift-left>
-    <var name="a" />
-    <int>5</int>
-  </shift-left>
-</call>
-
-<call name="printfln">
-  <string>a >> 5 = %d (signed)</string>
-  <shift-right>
-    <var name="a" />
-    <int>5</int>
-  </shift-right>
-</call>
-
-<call name="printfln">
-  <string>a &lt;&lt; c = %d (signed)</string>
-  <shift-left>
-    <var name="a" />
-    <var name="c" />
-  </shift-left>
-</call>
-
-<call name="printfln">
-  <string>a >> c = %d (signed)</string>
-  <shift-right>
-    <var name="a" />
-    <var name="c" />
-  </shift-right>
-</call>
-
-<!-- unsigned -->
-
-<call name="println" />
-
-<call name="printfln">
-  <string>%d: a > b (unsigned)</string>
-  <unsigned-greater>
-    <var name="a" />
-    <var name="b" />
-  </unsigned-greater>
-</call>
-
-<call name="printfln">
-  <string>%d: a &lt; b (unsigned)</string>
-  <unsigned-less>
-    <var name="a" />
-    <var name="b" />
-  </unsigned-less>
-</call>
-
-<call name="printfln">
-  <string>a * b = %u (unsigned)</string>
-  <unsigned-mul>
-    <var name="a" />
-    <var name="b" />
-  </unsigned-mul>
-</call>
-
-<call name="printfln">
-  <string>a / b = %u (unsigned)</string>
-  <unsigned-div>
-    <var name="a" />
-    <var name="b" />
-  </unsigned-div>
-</call>
-
-<call name="printfln">
-  <string>a %% b = %u (unsigned)</string>
-  <unsigned-mod>
-    <var name="a" />
-    <var name="b" />
-  </unsigned-mod>
-</call>
-
-<call name="printfln">
-  <string>a &lt;&lt; 5 = %u (unsigned)</string>
-  <unsigned-shift-left>
-    <var name="a" />
-    <int>5</int>
-  </unsigned-shift-left>
-</call>
-
-<call name="printfln">
-  <string>a >> 5 = %u (unsigned)</string>
-  <unsigned-shift-right>
-    <var name="a" />
-    <int>5</int>
-  </unsigned-shift-right>
-</call>
-
-<call name="printfln">
-  <string>a &lt;&lt; c = %u (unsigned)</string>
-  <unsigned-shift-left>
-    <var name="a" />
-    <var name="c" />
-  </unsigned-shift-left>
-</call>
-
-<call name="printfln">
-  <string>a >> c = %u (unsigned)</string>
-  <unsigned-shift-right>
-    <var name="a" />
-    <var name="c" />
-  </unsigned-shift-right>
-</call>
+for (var i = 0; ; i++)
+{
+  printfln("[for] i = %d", i);
+  if (i == 2) break;
+}
+?>
 
 </llpml>

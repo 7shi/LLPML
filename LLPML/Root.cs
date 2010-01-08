@@ -11,7 +11,7 @@ namespace Girl.LLPML
 {
     public class Root : Block
     {
-        public string Version = "0.11.20080307";
+        public string Version = "0.11.20080314";
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
@@ -65,6 +65,9 @@ namespace Girl.LLPML
                             }
                             return;
                         }
+                    case "title":
+                        Parse(xr, null);
+                        return;
                 }
             }
             base.ReadBlock(xr);
@@ -91,32 +94,46 @@ namespace Girl.LLPML
             base.Read(xr);
         }
 
-        protected override void BeforeAddCodes(List<OpCode> codes, Module m)
+        protected override void BeforeAddCodes(OpCodes codes)
         {
             ForEachMembers((p, pos) =>
                 {
-                    p.Address = new Addr32(m.GetBuffer(p.Name, p.Length));
+                    p.Address = new Addr32(codes.Module.GetBuffer(p.Name, p.Length));
                     return false;
                 }, null);
         }
 
-        protected override void AfterAddCodes(List<OpCode> codes, Module m)
+        protected override void AfterAddCodes(OpCodes codes)
         {
-            AddExitCodes(codes, m);
+            AddExitCodes(codes);
             codes.Add(I386.Ret());
         }
 
-        public override void AddExitCodes(List<OpCode> codes, Module m)
+        public override void AddExitCodes(OpCodes codes)
         {
             if (members.ContainsKey("__retval"))
             {
-                IIntValue retval = new Var(this, "__retval") as IIntValue;
-                retval.AddCodes(codes, m, "push", null);
+                var retval = new Var(this, "__retval");
+                retval.AddCodes(codes, "push", null);
             }
             else
                 codes.Add(I386.Push((Val32)0));
-            codes.Add(I386.Call(m.GetFunction(
+            codes.Add(I386.Call(codes.Module.GetFunction(
                 CallType.Std, "kernel32.dll", "ExitProcess").Address));
+        }
+
+        public static string ReadTitle(XmlTextReader xr)
+        {
+            while (xr.Read())
+            {
+                if (xr.Name == "title")
+                {
+                    if (xr.Read() && xr.NodeType == XmlNodeType.Text)
+                        return xr.Value;
+                    return "";
+                }
+            }
+            return "";
         }
     }
 }

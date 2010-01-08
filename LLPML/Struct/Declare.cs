@@ -26,7 +26,7 @@ namespace Girl.LLPML.Struct
         public Declare(BlockBase parent, string name, string type)
             : base(parent, name)
         {
-            this.Type = type;
+            this.TypeName = type;
         }
 
         public Declare(BlockBase parent, XmlTextReader xr)
@@ -46,8 +46,8 @@ namespace Girl.LLPML.Struct
             if (isRoot)
             {
                 RequiresName(xr);
-                Type = xr["type"];
-                if (Type == null) throw Abort(xr, "type required");
+                TypeName = xr["type"];
+                if (TypeName == null) throw Abort(xr, "type required");
             }
 
             Parse(xr, delegate
@@ -69,21 +69,21 @@ namespace Girl.LLPML.Struct
 
         public Define GetStruct()
         {
-            Define st = parent.GetStruct(Type);
+            Define st = parent.GetStruct(TypeName);
             if (st != null) return st;
-            throw Abort("undefined struct: " + Type);
+            throw Abort("undefined struct: " + TypeName);
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             Define st = GetStruct();
-            Addr32 ad = GetAddress(codes, m, parent);
-            if (AddInitValues(codes, m, st, ad))
-                ad = GetAddress(codes, m, parent);
-            st.AddConstructor(codes, m, ad);
+            Addr32 ad = GetAddress(codes, parent);
+            if (AddInitValues(codes, st, ad))
+                ad = GetAddress(codes, parent);
+            st.AddConstructor(codes, ad);
         }
 
-        private bool AddInitValues(List<OpCode> codes, Module m, Define st, Addr32 ad)
+        private bool AddInitValues(OpCodes codes, Define st, Addr32 ad)
         {
             if (values.Count == 0) return false;
 
@@ -100,13 +100,13 @@ namespace Girl.LLPML.Struct
                     Define memst = st.GetStruct(mem);
                     if (!(mem is Declare) || memst == null)
                         throw Abort("struct required: " + mem.Name);
-                    (obj as Declare).AddInitValues(codes, m, memst, ad);
+                    (obj as Declare).AddInitValues(codes, memst, ad);
                 }
                 else if (obj is IIntValue)
                 {
                     if (!(mem is Var.Declare))
                         throw Abort("value required: " + mem.Name);
-                    (obj as IIntValue).AddCodes(codes, m, "mov", new Addr32(ad));
+                    (obj as IIntValue).AddCodes(codes, "mov", new Addr32(ad));
                     ad.Add(mem.Length);
                 }
                 else

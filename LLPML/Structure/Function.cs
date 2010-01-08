@@ -80,7 +80,7 @@ namespace Girl.LLPML
         private ushort argStack;
         public override bool HasStackFrame { get { return true; } }
 
-        protected override void BeforeAddCodes(List<OpCode> codes, Module m)
+        protected override void BeforeAddCodes(OpCodes codes)
         {
             argStack = 0;
             foreach (DeclareBase arg in args)
@@ -96,31 +96,29 @@ namespace Girl.LLPML
                     (n as Return).IsLast = i == sentences.Count - 1;
             }
 
-            base.BeforeAddCodes(codes, m);
+            base.BeforeAddCodes(codes);
 
             if (thisptr != null && name == "ctor")
-                ThisStruct.AddBeforeCtor(codes, m, thisptr);
+                ThisStruct.AddBeforeCtor(codes, thisptr);
         }
 
-        protected override void AfterAddCodes(List<OpCode> codes, Module m)
+        protected override void AfterAddCodes(OpCodes codes)
         {
             if (thisptr != null && name == "dtor")
-                ThisStruct.AddAfterDtor(codes, m, thisptr);
-            AddExitCodes(codes, m);
+                ThisStruct.AddAfterDtor(codes, thisptr);
+            AddExitCodes(codes);
         }
 
-        public override void AddExitCodes(List<OpCode> codes, Module m)
+        public override void AddExitCodes(OpCodes codes)
         {
             if (thisptr != null && name == "ctor")
-            {
-                (thisptr as IIntValue).AddCodes(codes, m, "mov", null);
-            }
+                thisptr.AddCodes(codes, "mov", null);
             else if (members.ContainsKey("__retval"))
             {
-                IIntValue retval = new Var(this, "__retval") as IIntValue;
-                retval.AddCodes(codes, m, "mov", null);
+                var retval = new Var(this, "__retval");
+                retval.AddCodes(codes, "mov", null);
             }
-            base.AddExitCodes(codes, m);
+            base.AddExitCodes(codes);
             if (CallType == CallType.Std && argStack > 0)
                 codes.Add(I386.Ret(argStack));
             else

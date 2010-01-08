@@ -114,7 +114,7 @@ namespace Girl.LLPML
             }
             else if (target is VarBase)
             {
-                type = (target as VarBase).Type;
+                type = (target as VarBase).TypeName;
                 st = (target as VarBase).GetStruct();
                 args.Add(target);
             }
@@ -138,7 +138,7 @@ namespace Girl.LLPML
             return ret;
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             if (name != null)
             {
@@ -150,39 +150,41 @@ namespace Girl.LLPML
                 int len = fargs.Length;
                 if (!((len > 0 && fargs[len - 1] is ArgPtr && args.Count >= len - 1) || args.Count == len))
                     throw Abort("argument mismatched: " + name);
-                AddCodes(codes, m, f, args);
+                AddCodes(codes, f, args);
             }
             else
             {
-                AddCodes(codes, m, args, type, delegate
+                AddCodes(codes, args, type, delegate
                 {
-                    codes.Add(I386.Call(var.GetAddress(codes, m)));
+                    codes.Add(I386.Call(var.GetAddress(codes)));
                 });
             }
         }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public TypeBase Type { get { return TypeInt.Instance; } }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            AddCodes(codes, m);
-            IntValue.AddCodes(codes, op, dest);
+            AddCodes(codes);
+            codes.AddCodes(op, dest);
         }
 
-        public static void AddCodes(List<OpCode> codes, Module m, Function f, List<IIntValue> args)
+        public static void AddCodes(OpCodes codes, Function f, List<IIntValue> args)
         {
-            AddCodes(codes, m, args, f.CallType, delegate
+            AddCodes(codes, args, f.CallType, delegate
             {
                 codes.Add(I386.Call(f.First));
             });
         }
 
         public static void AddCodes(
-            List<OpCode> codes, Module m, List<IIntValue> args, CallType type, Action delg)
+            OpCodes codes, List<IIntValue> args, CallType type, Action delg)
         {
             object[] args2 = args.ToArray();
             Array.Reverse(args2);
             foreach (IIntValue arg in args2)
             {
-                arg.AddCodes(codes, m, "push", null);
+                arg.AddCodes(codes, "push", null);
             }
             delg();
             if (type == CallType.CDecl && args2.Length > 0)

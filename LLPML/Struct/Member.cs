@@ -83,9 +83,9 @@ namespace Girl.LLPML.Struct
                 target = new Var(parent, "this");
         }
 
-        private Addr32 GetStructAddress(List<OpCode> codes, Module m)
+        private Addr32 GetStructAddress(OpCodes codes)
         {
-            var ad = target.GetAddress(codes, m);
+            var ad = target.GetAddress(codes);
             if (target is Pointer || target is Index) return ad;
             codes.Add(I386.Mov(Reg32.EDX, ad));
             return new Addr32(Reg32.EDX);
@@ -99,9 +99,9 @@ namespace Girl.LLPML.Struct
             return ret + Child.GetOffset(st.GetStruct(st.GetMember(name)));
         }
 
-        public override Addr32 GetAddress(List<OpCode> codes, Module m)
+        public override Addr32 GetAddress(OpCodes codes)
         {
-            var ret = new Addr32(GetStructAddress(codes, m));
+            var ret = new Addr32(GetStructAddress(codes));
             var st = target.GetStruct();
             ret.Add(GetOffset(st));
             return ret;
@@ -129,23 +129,18 @@ namespace Girl.LLPML.Struct
             }
         }
 
-        public override string Type
+        public override TypeBase Type { get { return GetPointer().Type; } }
+        public override int TypeSize { get { return GetPointer().TypeSize; } }
+
+        public override string TypeName
         {
             get
             {
                 var p = GetPointer();
-                if (p is Var.Declare) return p.Type;
+                if (p is Var.Declare) return p.TypeName;
                 var st = GetStruct();
                 if (st == null) return null;
                 return st.Name;
-            }
-        }
-
-        public override int TypeSize
-        {
-            get
-            {
-                return GetPointer().TypeSize;
             }
         }
 

@@ -1,45 +1,92 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.11.20080314">
 
-<!-- method in struct in struct -->
+<title>コンストラクタ</title>
 
 <include src="finish.xml" />
 
 <?llp
-struct Point
+struct Name
 {
-  var x, y;
+  printfln("%p [%s]", this, __FUNCTION__);
+  var name;
+
+  // constructor
+  function ctor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    Show();
+  }
+
+  // destructor
+  function dtor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    Show();
+  }
 
   function Show()
   {
-    printfln("%p [%s] %d, %d", this, __FUNCTION__, x, y);
+    printfln("%p [%s] %s", this, __FUNCTION__, name);
   }
 }
 
-struct DoublePoint
+struct Test
 {
-  Point a, b;
+  printfln("%p [%s]", this, __FUNCTION__);
+  Name name;
 
-  function Show()
+  // constructor
+  function ctor()
   {
-    printfln("%p [%s] a: %p", this, __FUNCTION__, a);
-    a.Show();
-    printfln("%p [%s] b: %p", this, __FUNCTION__, b);
-    b.Show();
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    name.Show();
+  }
+
+  // destructor
+  function dtor()
+  {
+    printf("%p [%s] -> ", this, __FUNCTION__);
+    name.Show();
   }
 }
 
-DoublePoint p = { { 1, 2 }, { 3, 4 } };
+{
+  Name a = { "a" };
+  Test b = { { "b" } };
+}
 
-printfln("p = %p", p);
-printfln("addrof(p.a) = %p", addrof(p.a));
-printfln("addrof(p.b) = %p", addrof(p.b));
-printfln("addrof(p.b.y) = %p", addrof(p.b.y));
+Name a = { "a" }, b = { "b" };
 
-vprintfln("p = ((%d, %d), (%d, %d))", p);
-p.Show();
-p.a.Show();
-p.b.Show();
+println();
+
+for (var i = 0; ; i++)
+{
+  printfln("i = %d", i);
+  Name c = { "c" };
+  if (i == 0) continue;
+  Name d = { "d" };
+  if (i == 2) break;
+  Test e = { { "e" } };
+}
+
+println();
+printfln("test(0) = \"%s\"", test(0));
+
+println();
+printfln("test(1) = \"%s\"", test(1));
+
+function test(a)
+{
+  Name f = { "f" };
+  if (a == 0)
+  {
+    Test g = { { "g" } };
+    return "stop";
+  }
+  Name h = { "h" };
+  return "normal";
+}
 ?>
 
 </llpml>

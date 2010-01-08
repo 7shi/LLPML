@@ -7,25 +7,25 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class AndAlso : Operator, IIntValue
+    public class AndAlso : Operator
     {
-        public AndAlso() { }
-        public AndAlso(BlockBase parent) : base(parent) { }
+        public override string Tag { get { return "and-also"; } }
+
         public AndAlso(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public AndAlso(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
             OpCode last = new OpCode();
             foreach (IIntValue v in values)
             {
-                v.AddCodes(codes, m, "mov", null);
+                v.AddCodes(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.Z, last.Address));
             }
             codes.Add(I386.Mov(Reg32.EAX, 1));
             codes.Add(last);
-            IntValue.AddCodes(codes, op, dest);
+            codes.AddCodes(op, dest);
         }
     }
 }

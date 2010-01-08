@@ -1,24 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.11.20080314">
 
-<!-- constructor and destructor -->
+<title>継承</title>
 
 <include src="finish.xml" />
 
 <?llp
-struct Name
+struct Test1
 {
-  printfln("%p [%s]", this, __FUNCTION__);
-  var name;
+  var a;
 
-  // constructor
   function ctor()
   {
     printf("%p [%s] -> ", this, __FUNCTION__);
     Show();
   }
 
-  // destructor
   function dtor()
   {
     printf("%p [%s] -> ", this, __FUNCTION__);
@@ -27,65 +24,48 @@ struct Name
 
   function Show()
   {
-    printfln("%p [%s] %s", this, __FUNCTION__, name);
+    printfln("%p [%s] a = %d", this, __FUNCTION__, a);
   }
 }
 
-struct Test
+struct Test2 : Test1
 {
-  printfln("%p [%s]", this, __FUNCTION__);
-  Name name;
+  var b;
+  Test1 c;
 
-  // constructor
   function ctor()
   {
     printf("%p [%s] -> ", this, __FUNCTION__);
-    name.Show();
+    Show();
   }
 
-  // destructor
   function dtor()
   {
     printf("%p [%s] -> ", this, __FUNCTION__);
-    name.Show();
+    Show();
   }
-}
 
-{
-  Name a = { "a" };
-  Test b = { { "b" } };
-}
-
-Name a = { "a" }, b = { "b" };
-
-println();
-
-for (var i = 0; ; i++)
-{
-  printfln("i = %d", i);
-  Name c = { "c" };
-  if (i == 0) continue;
-  Name d = { "d" };
-  if (i == 2) break;
-  Test e = { { "e" } };
-}
-
-println();
-printfln("test(0) = \"%s\"", test(0));
-
-println();
-printfln("test(1) = \"%s\"", test(1));
-
-function test(a)
-{
-  Name f = { "f" };
-  if (a == 0)
+  function Show()
   {
-    Test g = { { "g" } };
-    return "stop";
+    // base.Show();
+    printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
+    c.Show();
   }
-  Name h = { "h" };
-  return "normal";
+}
+
+Test1 test1 = { 1 };
+{
+  Test2 test2 = { 2, 3, { 4 } };
+  {
+    //var test2a : Test1 = test2;
+    var test2a = (Test1)test2; // 型推論
+    test2a.Show();
+    ((Test1)test2).Show();
+    ((Test2)test2a).Show();
+  }
+  test1.Show();
+  test2.Show();
+  vprintfln("test2: a, b, c = %d, %d, %d", test2);
 }
 ?>
 

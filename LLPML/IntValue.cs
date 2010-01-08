@@ -17,9 +17,11 @@ namespace Girl.LLPML
         public IntValue(int value) { this.value = value; }
         public IntValue(string value) : this(Parse(value)) { }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public TypeBase Type { get { return TypeInt.Instance; } }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            AddCodes(codes, op, dest, (uint)value);
+            codes.AddCodes(op, dest, (uint)value);
         }
 
         private static IIntValue ReadElement(BlockBase parent, XmlTextReader xr)
@@ -65,8 +67,8 @@ namespace Girl.LLPML
                     return new StringValue(parent.Root.Source);
                 case "get-line":
                     return new IntValue(xr.LineNumber);
-                case "let":
-                    return new Let(parent, xr);
+                case "set":
+                    return new Set(parent, xr);
                 case "inc":
                     return new Inc(parent, xr);
                 case "dec":
@@ -81,12 +83,8 @@ namespace Girl.LLPML
                     return new Var.Sub(parent, xr);
                 case "var-mul":
                     return new Var.Mul(parent, xr);
-                case "var-unsigned-mul":
-                    return new Var.UnsignedMul(parent, xr);
                 case "var-div":
                     return new Var.Div(parent, xr);
-                case "var-unsigned-div":
-                    return new Var.UnsignedDiv(parent, xr);
                 case "var-and":
                     return new Var.And(parent, xr);
                 case "var-or":
@@ -95,10 +93,6 @@ namespace Girl.LLPML
                     return new Var.ShiftLeft(parent, xr);
                 case "var-shift-right":
                     return new Var.ShiftRight(parent, xr);
-                case "var-unsigned-shift-left":
-                    return new Var.UnsignedShiftLeft(parent, xr);
-                case "var-unsigned-shift-right":
-                    return new Var.UnsignedShiftRight(parent, xr);
                 case "add":
                     return new Add(parent, xr);
                 case "sub":
@@ -111,24 +105,14 @@ namespace Girl.LLPML
                     return new Xor(parent, xr);
                 case "mul":
                     return new Mul(parent, xr);
-                case "unsigned-mul":
-                    return new UnsignedMul(parent, xr);
                 case "div":
                     return new Div(parent, xr);
-                case "unsigned-div":
-                    return new UnsignedDiv(parent, xr);
                 case "mod":
                     return new Mod(parent, xr);
-                case "unsigned-mod":
-                    return new UnsignedMod(parent, xr);
                 case "shift-left":
                     return new ShiftLeft(parent, xr);
                 case "shift-right":
                     return new ShiftRight(parent, xr);
-                case "unsigned-shift-left":
-                    return new UnsignedShiftLeft(parent, xr);
-                case "unsigned-shift-right":
-                    return new UnsignedShiftRight(parent, xr);
                 case "and-also":
                     return new AndAlso(parent, xr);
                 case "or-else":
@@ -151,14 +135,6 @@ namespace Girl.LLPML
                     return new Less(parent, xr);
                 case "less-equal":
                     return new LessEqual(parent, xr);
-                case "unsigned-greater":
-                    return new UnsignedGreater(parent, xr);
-                case "unsigned-greater-equal":
-                    return new UnsignedGreaterEqual(parent, xr);
-                case "unsigned-less":
-                    return new UnsignedLess(parent, xr);
-                case "unsigned-less-equal":
-                    return new UnsignedLessEqual(parent, xr);
                 default:
                     throw parent.Abort(xr);
             }
@@ -202,105 +178,6 @@ namespace Girl.LLPML
             if (value.Length > 1 && value.StartsWith("0"))
                 return Convert.ToInt32(value.Substring(1), 8);
             return int.Parse(value);
-        }
-
-        public static void AddCodes(List<OpCode> codes, string op, Addr32 dest, Val32 v)
-        {
-            switch (op)
-            {
-                case "push":
-                    codes.Add(I386.Push(v));
-                    break;
-                default:
-                    if (dest != null)
-                        codes.Add(I386.FromName(op, dest, v));
-                    else
-                        codes.Add(I386.FromName(op, Reg32.EAX, v));
-                    break;
-            }
-        }
-
-        public static void AddCodes(List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
-        {
-            switch (op)
-            {
-                case "push":
-                    codes.Add(I386.Push(ad));
-                    break;
-                default:
-                    codes.Add(I386.Mov(Reg32.EAX, ad));
-                    if (dest != null) codes.Add(I386.FromName(op, dest, Reg32.EAX));
-                    break;
-            }
-        }
-
-        public static void AddCodes(List<OpCode> codes, string op, Addr32 dest)
-        {
-            switch (op)
-            {
-                case "push":
-                    codes.Add(I386.Push(Reg32.EAX));
-                    break;
-                default:
-                    if (dest != null) codes.Add(I386.FromName(op, dest, Reg32.EAX));
-                    break;
-            }
-        }
-
-        public static void AddCodesW(List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
-        {
-            switch (op)
-            {
-                case "push":
-                    codes.AddRange(new OpCode[] {
-                        I386.MovsxW(Reg32.EAX, ad),
-                        I386.Push(Reg32.EAX)
-                    });
-                    break;
-                default:
-                    codes.Add(I386.MovW(Reg16.AX, ad));
-                    if (dest != null)
-                        codes.Add(I386.FromNameW(op, dest, Reg16.AX));
-                    else
-                        codes.Add(I386.MovsxW(Reg32.EAX, Reg16.AX));
-                    break;
-            }
-        }
-
-        public static void AddCodesB(List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
-        {
-            switch (op)
-            {
-                case "push":
-                    codes.AddRange(new OpCode[] {
-                        I386.MovzxB(Reg32.EAX, ad),
-                        I386.Push(Reg32.EAX)
-                    });
-                    break;
-                default:
-                    codes.Add(I386.MovB(Reg8.AL, ad));
-                    if (dest != null)
-                        codes.Add(I386.FromNameB(op, dest, Reg8.AL));
-                    else
-                        codes.Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
-                    break;
-            }
-        }
-
-        public static void AddCodes(int size, List<OpCode> codes, string op, Addr32 dest, Addr32 ad)
-        {
-            switch (size)
-            {
-                case 2:
-                    IntValue.AddCodesW(codes, op, dest, ad);
-                    break;
-                case 1:
-                    IntValue.AddCodesB(codes, op, dest, ad);
-                    break;
-                default:
-                    IntValue.AddCodes(codes, op, dest, ad);
-                    break;
-            }
         }
     }
 }

@@ -9,8 +9,10 @@ namespace Girl.LLPML
 {
     public partial class Var
     {
-        public class Operator : NodeBase
+        public abstract class Operator : NodeBase, IIntValue
         {
+            public abstract string Tag { get; }
+
             protected Var dest;
             protected List<IIntValue> values = new List<IIntValue>();
             public IIntValue[] GetValues() { return values.ToArray(); }
@@ -65,6 +67,18 @@ namespace Girl.LLPML
                 else if (values.Count < Min)
                     throw Abort(xr, "too few operands");
             }
+
+            protected TypeBase.Func GetFunc()
+            {
+                var t = Type;
+                TypeBase.Func f;
+                if (!t.TryGetFunc(Tag, out f))
+                    throw new Exception(Tag + ": " + t.Name + ": not supported");
+                return f;
+            }
+
+            public TypeBase Type { get { return dest.Type; } }
+            public abstract void AddCodes(OpCodes codes, string op, Addr32 dest);
         }
     }
 }

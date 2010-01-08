@@ -31,7 +31,7 @@ namespace Girl.LLPML
             return false;
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             BlockBase b = parent;
             Pointer.Declare[] ptrs = UsingPointers;
@@ -39,9 +39,9 @@ namespace Girl.LLPML
             {
                 if (b == null || b is Function)
                     throw Abort("invalid continue");
-                b.AddDestructors(codes, m, ptrs);
+                b.AddDestructors(codes, ptrs);
                 if (b.AcceptsContinue) break;
-                b.AddExitCodes(codes, m);
+                b.AddExitCodes(codes);
             }
             codes.Add(I386.Jmp(b.Continue));
         }

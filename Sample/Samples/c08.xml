@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080211">
+<llpml version="0.11.20080314">
 
-<!-- callback -->
+<title>関数ポインタ</title>
 
 <include src="finish.xml" />
 

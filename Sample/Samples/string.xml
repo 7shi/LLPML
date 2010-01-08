@@ -8,10 +8,8 @@ function memset(dest : byte[], c, count)
 {
   var end = dest + count;
   if (dest < end)
-  {
     for (var p = dest; p < end; p++)
       p[0] = c;
-  }
   return dest;
 }
 ?>

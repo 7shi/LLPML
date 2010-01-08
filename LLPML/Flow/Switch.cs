@@ -42,9 +42,9 @@ namespace Girl.LLPML
                     throw Abort(xr, "expression required");
             }
 
-            public override void AddCodes(List<OpCode> codes, Module m)
+            public override void AddCodes(OpCodes codes)
             {
-                value.AddCodes(codes, m, "mov", null);
+                value.AddCodes(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
             }
         }
@@ -77,7 +77,7 @@ namespace Girl.LLPML
                     throw Abort(xr, "value(s) required");
             }
 
-            public override void AddCodes(List<OpCode> codes, Module m)
+            public override void AddCodes(OpCodes codes)
             {
                 int len = values.Count;
                 if (len == 0)
@@ -88,7 +88,7 @@ namespace Girl.LLPML
                 {
                     for (int i = 0; i < len; i++)
                     {
-                        values[i].AddCodes(codes, m, "mov", null);
+                        values[i].AddCodes(codes, "mov", null);
                         codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
                         codes.Add(I386.Jcc(Cc.E, Block.First));
                     }
@@ -189,7 +189,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "case and block required");
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             sentences.Clear();
             sentences.Add(expr);
@@ -205,7 +205,7 @@ namespace Girl.LLPML
             {
                 sentences.Add(cb.Block);
             }
-            base.AddCodes(codes, m);
+            base.AddCodes(codes);
         }
     }
 }

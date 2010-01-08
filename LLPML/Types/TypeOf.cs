@@ -34,11 +34,13 @@ namespace Girl.LLPML
                 throw Abort(xr, "target required");
         }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public TypeBase Type { get { return TypeInt.Instance; } }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            var t = Target.Type;
+            var t = Target.TypeName;
             if (t == null) t = "var";
-            IntValue.AddCodes(codes, op, dest, m.GetString(t));
+            codes.AddCodes(op, dest, codes.Module.GetString(t));
         }
     }
 }

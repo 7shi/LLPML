@@ -8,39 +8,40 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class NotEqual : Operator, IIntValue
+    public class NotEqual : Operator
     {
-        public NotEqual() { }
-        public NotEqual(BlockBase parent) : base(parent) { }
+        public override string Tag { get { return "not-equal"; } }
+
         public NotEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            OpCode last = new OpCode();
-            Addr32 ad = new Addr32(Reg32.ESP);
+            var last = new OpCode();
+            var ad = new Addr32(Reg32.ESP);
+            var f = GetFunc();
+            var c = GetCond();
             for (int i = 0; i < values.Count - 1; i++)
             {
                 if (i == 0)
-                    values[i].AddCodes(codes, m, "push", null);
+                    values[i].AddCodes(codes, "push", null);
                 else
-                    values[i].AddCodes(codes, m, "mov", ad);
+                    values[i].AddCodes(codes, "mov", ad);
                 for (int j = i + 1; j < values.Count; j++)
                 {
-                    values[j].AddCodes(codes, m, "mov", null);
-                    codes.Add(I386.Cmp(ad, Reg32.EAX));
+                    f(codes, ad, values[j]);
                     if (i < values.Count - 1)
-                        codes.Add(I386.Jcc(Cc.E, last.Address));
+                        codes.Add(I386.Jcc(c.NotCondition, last.Address));
                 }
             }
             codes.AddRange(new OpCode[]
             {
                 last,
                 I386.Mov(Reg32.EAX, (Val32)0),
-                I386.Setcc(Cc.NE, Reg8.AL),
+                I386.Setcc(c.Condition, Reg8.AL),
                 I386.Add(Reg32.ESP, 4)
             });
-            IntValue.AddCodes(codes, op, dest);
+            codes.AddCodes(op, dest);
         }
     }
 }

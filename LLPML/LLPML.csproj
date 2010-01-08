@@ -7,7 +7,7 @@
     <ProjectGuid>{62E95A12-AE8E-4165-92DE-A8DFF09498FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LLPML</RootNamespace>
+    <RootNamespace>Girl.LLPML</RootNamespace>
     <AssemblyName>LLPML</AssemblyName>
     <StartupObject>
     </StartupObject>
@@ -47,17 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Operators\Neg.cs" />
-    <Compile Include="Operators\Rev.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Parsing\Tokenizer.cs" />
     <Compile Include="Parsing\Parser.Expression.cs" />
     <Compile Include="Parsing\Parser.Operator.cs" />
     <Compile Include="Parsing\Parser.Sentence.cs" />
-    <Compile Include="Parsing\Parser.Sentence.Declare.cs" />
+    <Compile Include="Parsing\Parser.Declare.cs" />
     <Compile Include="Struct\Declare.cs" />
     <Compile Include="Struct\Define.cs" />
     <Compile Include="Struct\Member.cs" />
+    <Compile Include="Types\CondPair.cs" />
+    <Compile Include="Types\TypeBase.cs" />
+    <Compile Include="Types\TypeInt.cs" />
+    <Compile Include="Types\TypeIntBase.cs" />
+    <Compile Include="Types\TypePointer.cs" />
+    <Compile Include="Types\Types.cs" />
+    <Compile Include="Types\TypeUInt.cs" />
     <Compile Include="Value\SizeOf.cs" />
     <Compile Include="Struct\This.cs" />
     <Compile Include="Structure\Extern.cs" />
@@ -70,60 +75,28 @@
     <Compile Include="Flow\BreakBase.cs" />
     <Compile Include="Structure\Function.cs" />
     <Compile Include="NodeBase.cs" />
-    <Compile Include="Operators\Comparers\UnsignedGreaterEqual.cs" />
-    <Compile Include="Operators\Comparers\UnsignedLess.cs" />
-    <Compile Include="Operators\Comparers\UnsignedLessEqual.cs" />
-    <Compile Include="Operators\ShiftLeft.cs" />
-    <Compile Include="Operators\ShiftRight.cs" />
-    <Compile Include="Operators\UnsignedShiftLeft.cs" />
-    <Compile Include="Operators\UnsignedShiftRight.cs" />
     <Compile Include="Struct\Base.cs" />
     <Compile Include="Struct\Cast.cs" />
     <Compile Include="Value\Null.cs" />
     <Compile Include="Value\AddrOf.cs" />
-    <Compile Include="Value\TypeOf.cs" />
+    <Compile Include="Types\TypeOf.cs" />
     <Compile Include="Variable\Index.cs" />
-    <Compile Include="Variable\Operators\Var.Sub.cs" />
-    <Compile Include="Operators\Add.cs" />
-    <Compile Include="Variable\Operators\Dec.cs" />
-    <Compile Include="Operators\Sub.cs" />
-    <Compile Include="Operators\And.cs" />
-    <Compile Include="Operators\Or.cs" />
-    <Compile Include="Operators\Xor.cs" />
+    <Compile Include="Operators\Operators.2.cs" />
     <Compile Include="Operators\AndAlso.cs" />
     <Compile Include="Operators\OrElse.cs" />
-    <Compile Include="Operators\Not.cs" />
-    <Compile Include="Operators\Comparers\Equal.cs" />
-    <Compile Include="Operators\Comparers\NotEqual.cs" />
-    <Compile Include="Operators\Comparers\Greater.cs" />
-    <Compile Include="Operators\Comparers\GreaterEqual.cs" />
-    <Compile Include="Operators\Comparers\LessEqual.cs" />
-    <Compile Include="Operators\Comparers\Less.cs" />
-    <Compile Include="Operators\Comparers\UnsignedGreater.cs" />
-    <Compile Include="Operators\Mul.cs" />
-    <Compile Include="Operators\UnsignedMul.cs" />
-    <Compile Include="Operators\Div.cs" />
-    <Compile Include="Operators\UnsignedDiv.cs" />
-    <Compile Include="Operators\Mod.cs" />
-    <Compile Include="Operators\UnsignedMod.cs" />
+    <Compile Include="Operators\Operators.1.cs" />
+    <Compile Include="Operators\Comparers.cs" />
+    <Compile Include="Operators\NotEqual.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Structure\Call.cs" />
     <Compile Include="Structure\Block.cs" />
     <Compile Include="Value\IIntValue.cs" />
-    <Compile Include="Variable\Operators\Var.And.cs" />
-    <Compile Include="Variable\Operators\Var.Or.cs" />
-    <Compile Include="Variable\Operators\Var.ShiftLeft.cs" />
-    <Compile Include="Variable\Operators\Var.ShiftRight.cs" />
-    <Compile Include="Variable\Operators\Var.UnsignedShiftRight.cs" />
-    <Compile Include="Variable\Operators\Var.UnsignedShiftLeft.cs" />
-    <Compile Include="Variable\Operators\Var.Mod.cs" />
-    <Compile Include="Variable\Operators\Var.Xor.cs" />
     <Compile Include="Variable\Var.cs" />
     <Compile Include="Variable\Pointer.Declare.cs" />
     <Compile Include="Flow\For.cs" />
     <Compile Include="Flow\Break.cs" />
     <Compile Include="Variable\Arg.cs" />
-    <Compile Include="Variable\Operators\Inc.cs" />
+    <Compile Include="Variable\Var.Operators.0.cs" />
     <Compile Include="Variable\ArgPtr.cs" />
     <Compile Include="Variable\VarBase.cs" />
     <Compile Include="Flow\Return.cs" />
@@ -131,18 +104,12 @@
     <Compile Include="Structure\Function.Ptr.cs" />
     <Compile Include="IntValue.cs" />
     <Compile Include="Variable\Var.Declare.cs" />
-    <Compile Include="Variable\Operators\Let.cs" />
+    <Compile Include="Variable\Set.cs" />
     <Compile Include="Variable\DeclareBase.cs" />
-    <Compile Include="Variable\Operators\Var.Add.cs" />
+    <Compile Include="Variable\Var.Operators.1.cs" />
     <Compile Include="Operators\Operator.cs" />
     <Compile Include="Value\StringValue.cs" />
-    <Compile Include="Variable\Operators\Var.Operator.cs" />
-    <Compile Include="Variable\Operators\PostDec.cs" />
-    <Compile Include="Variable\Operators\PostInc.cs" />
-    <Compile Include="Variable\Operators\Var.Mul.cs" />
-    <Compile Include="Variable\Operators\Var.UnsignedMul.cs" />
-    <Compile Include="Variable\Operators\Var.Div.cs" />
-    <Compile Include="Variable\Operators\Var.UnsignedDiv.cs" />
+    <Compile Include="Variable\Var.Operator.cs" />
     <Compile Include="Structure\BlockBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

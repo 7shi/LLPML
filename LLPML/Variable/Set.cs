@@ -7,34 +7,41 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Let : Var.Operator, IIntValue
+    public class Set : Var.Operator
     {
+        public override string Tag { get { return "set"; } }
+
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
-        public Let() { }
-        public Let(BlockBase parent, Var dest) : base(parent, dest) { }
+        public Set(BlockBase parent, Var dest) : base(parent, dest) { }
 
-        public Let(BlockBase parent, Var dest, IIntValue value)
+        public Set(BlockBase parent, Var dest, IIntValue value)
             : base(parent, dest)
         {
             this.values.Add(value);
         }
 
-        public Let(BlockBase parent, Var dest, int value)
+        public Set(BlockBase parent, Var dest, int value)
             : this(parent, dest, new IntValue(value))
         {
         }
 
-        public Let(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Set(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
-            values[0].AddCodes(codes, m, "mov", null);
-            AddCodes(dest.Size, codes, m, dest.GetAddress(codes, m));
+            values[0].AddCodes(codes, "mov", null);
+            AddCodes(dest.Size, codes, dest.GetAddress(codes));
         }
 
-        public static void AddCodes(int size, List<OpCode> codes, Module m, Addr32 ad)
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest)
+        {
+            AddCodes(codes);
+            codes.AddCodes(op, dest);
+        }
+
+        public static void AddCodes(int size, OpCodes codes, Addr32 ad)
         {
             switch (size)
             {
@@ -48,12 +55,6 @@ namespace Girl.LLPML
                     codes.Add(I386.Mov(ad, Reg32.EAX));
                     break;
             }
-        }
-
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
-        {
-            AddCodes(codes, m);
-            IntValue.AddCodes(codes, op, dest);
         }
     }
 }

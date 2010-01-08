@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080211">
+<llpml version="0.11.20080314">
 
-<!-- struct member function -->
+<title>メンバ関数 2</title>
 
 <include src="finish.xml" />
 
@@ -12,18 +12,34 @@ struct Point
 
   function Show()
   {
-    printfln("[%s] %d, %d", __FUNCTION__, x, y);
+    printfln("%p [%s] %d, %d", this, __FUNCTION__, x, y);
   }
 }
 
-// instance
-Point p = { 2, 3 };
-p.Show();
+struct DoublePoint
+{
+  Point a, b;
 
-// pointer
-//var pp : Point = p;
-var pp = p; // 型推論
-pp.Show();
+  function Show()
+  {
+    printfln("%p [%s] a: %p", this, __FUNCTION__, a);
+    a.Show();
+    printfln("%p [%s] b: %p", this, __FUNCTION__, b);
+    b.Show();
+  }
+}
+
+DoublePoint p = { { 1, 2 }, { 3, 4 } };
+
+printfln("p = %p", p);
+printfln("addrof(p.a) = %p", addrof(p.a));
+printfln("addrof(p.b) = %p", addrof(p.b));
+printfln("addrof(p.b.y) = %p", addrof(p.b.y));
+
+vprintfln("p = ((%d, %d), (%d, %d))", p);
+p.Show();
+p.a.Show();
+p.b.Show();
 ?>
 
 </llpml>

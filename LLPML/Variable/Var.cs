@@ -44,13 +44,14 @@ namespace Girl.LLPML
         }
 
         public override bool IsArray { get { return Reference.IsArray; } }
-        public override string Type { get { return Reference.Type; } }
+        public override TypeBase Type { get { return Reference.Type; } }
+        public override string TypeName { get { return Reference.TypeName; } }
 
         public override int TypeSize
         {
             get
             {
-                int vsz = SizeOf.GetValueSize(Type);
+                int vsz = SizeOf.GetValueSize(TypeName);
                 if (vsz > 0) return vsz;
 
                 var st = GetStruct();
@@ -60,14 +61,14 @@ namespace Girl.LLPML
             }
         }
 
-        public override Addr32 GetAddress(List<OpCode> codes, Module m)
+        public override Addr32 GetAddress(OpCodes codes)
         {
-            return reference.GetAddress(codes, m, parent);
+            return reference.GetAddress(codes, parent);
         }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            IntValue.AddCodes(Size, codes, op, dest, GetAddress(codes, m));
+            codes.AddCodes(Size, op, dest, GetAddress(codes));
         }
     }
 }

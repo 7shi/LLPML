@@ -1,40 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.10.20080211">
+<llpml version="0.11.20080314">
 
-<!-- struct type -->
+<title>メンバ関数 1</title>
 
 <include src="finish.xml" />
 
 <?llp
-struct Point { var x, y; }
+struct Point
+{
+  var x, y;
 
-Point p = { 3, 7 };
-vprintfln("p = (%d, %d)", p);
+  function Show()
+  {
+    printfln("[%s] %d, %d", __FUNCTION__, x, y);
+  }
+}
 
-printfln("pp = p");
+// instance
+Point p = { 2, 3 };
+p.Show();
+
+// pointer
 //var pp : Point = p;
 var pp = p; // 型推論
-vprintfln("pp = (%d, %d)", pp);
-
-printfln("pp->y -= 5");
-pp.y -= 5;
-vprintfln("p = (%d, %d)", p);
-
-printfln("p.x += 5");
-p.x += 5;
-vprintfln("pp = (%d, %d)", pp);
-
-printfln("offset(pp, 3, 4)");
-offset(pp, 3, 4);
-vprintfln("pp = (%d, %d)", pp);
-
-vprintfln("p = (%d, %d)", p);
-
-function offset(p : Point, x, y)
-{
-  p.x += x;
-  p.y += y;
-}
+pp.Show();
 ?>
 
 </llpml>

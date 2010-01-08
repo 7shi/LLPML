@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.11.20080307" subsystem="WINDOWS_GUI">
+<llpml version="0.11.20080314" subsystem="WINDOWS_GUI">
 
-<!-- window -->
+<title>ビットマップ</title>
 
 <include src="stdio.xml" />
 <include src="string.xml" />
@@ -77,25 +77,23 @@ while (DoEvents())
   ClearBuffer(0xffffffff);
   var bx = (count & 63) - 64;
   for (var i = 0; i < 4; i++)
-  {
     for (var j = 0; j < 5; j++)
-    {
-      FillRectangle(bx + j * 64,  8 + i * 64, 48, 48, 0xa00000ff);
-      FillRectangle( 8 + i * 64, bx + j * 64, 48, 48, 0xa0ff0000);
-    }
-  }
+      FillRectangle(bx + j * 64, 8 + i * 64, 48, 48, 0xa00000ff);
+  for (var i = 0; i < 4; i++)
+    for (var j = 0; j < 5; j++)
+      FillRectangle(8 + i * 64, bx + j * 64, 48, 48, 0xa0ff0000);
   count++;
-  InvalidateRect(hWnd, null, false);
+  hWnd.InvalidateRect(null, false);
   
   // fps
   fps++;
-  var t = GetTickCount();
-  if (tick > t)
+  var t = GetTickCount(), d = t - tick;
+  if (d > 1200)
   {
     fps = 0;
     tick = t;
   }
-  else if (t - tick > 1000)
+  else if (d > 1000)
   {
     fpsBufLen = wsprintf(fpsBuf, "%d fps", fps);
     fps = 0;
@@ -114,7 +112,7 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
     {
       PAINTSTRUCT ps;
       var hdc = hWnd.BeginPaint(ps);
-      SetDIBitsToDevice(hdc, 0, 0, width, height, 0, 0, 0, height,
+      hdc.SetDIBitsToDevice(0, 0, width, height, 0, 0, 0, height,
         buffer, bmpInfo, DIB_RGB_COLORS);
       if (fpsBufLen > 0) hdc.TextOut(8, 8, fpsBuf, fpsBufLen);
       hWnd.EndPaint(ps);
@@ -132,17 +130,15 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
 
 function ClearBuffer(color)
 {
-  var end = buffer + pixelCount * sizeof(int);
+  var end = buffer + pixelCount;
   if (buffer < end)
-  {
-    for (var p = buffer; p < end; p += sizeof(int))
+    for (var p = buffer; p < end; p++)
       p[0] = color;
-  }
 }
 
 function FillRectangle(x, y, w, h, color)
 {
-  var c : Color = addrof(color);
+  var c : Color = addrof color;
   int a = c.A;
   if (a > 127) a++;
   var aa = 256 - a;
@@ -159,13 +155,13 @@ function FillRectangle(x, y, w, h, color)
   
   for (var yy = y1; yy < y2; yy++)
   {
-    var p : Color = addrof(buffer[x1 + yy * width]);
+    var p : Color = addrof buffer[x1 + yy * width];
     for (var xx = x1; xx < x2; xx++)
     {
       p.B = (b + p.B * aa) >> 8;
       p.G = (g + p.G * aa) >> 8;
       p.R = (r + p.R * aa) >> 8;
-      p += sizeof(Color);
+      p++;
     }
   }
 }

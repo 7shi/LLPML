@@ -1,52 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.11.20080314">
 
-<!-- struct -->
+<title>相互参照</title>
 
 <include src="finish.xml" />
 
 <?llp
-struct Test
+struct Test1
 {
-  var a = 1, b = 2;
-
-  // define constructor to initialize members
-  function ctor() { }
-
+  // 前方参照
+  var test2 : Test2;
+  
   function Show()
   {
-    printfln("this, a, b = %p, %d, %d", this, a, b);
+    printfln(__FUNCTION__);
   }
-
-  function Add()
+  
+  function Show2()
   {
-    return a + b;
+    printfln(__FUNCTION__);
+    test2.Show();
   }
 }
 
-printfln("sizeof(Test) = %d", sizeof(Test));
-println();
-
-Test t1;
-printfln("t1 = %p", t1);
-show(t1);
-println();
-
-// ignore initializers
-Test t2 = { 3, 4 };
-printfln("t2 = %p", t2);
-show(t2);
-t2.a = 5;
-t2.b = 6;
-show(t2);
-
-function show(p : Test)
+struct Test2
 {
-  println();
-  printfln("p, p.a, p.b = %p, %d, %d", p, p.a, p.b);
-  printfln("p.Add() = %d", p.Add());
-  p.Show();
+  // 後方参照
+  var test1 : Test1;
+  
+  function Show()
+  {
+    printfln(__FUNCTION__);
+  }
+  
+  function Show1()
+  {
+    printfln(__FUNCTION__);
+    test1.Show();
+  }
 }
+
+Test1 test1;
+Test2 test2;
+
+test1.Show();
+test2.Show();
+
+test1.test2 = test2;
+test1.Show2();
+
+test2.test1 = test1;
+test2.Show1();
 ?>
 
 </llpml>

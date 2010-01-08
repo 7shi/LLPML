@@ -10,6 +10,8 @@ namespace Girl.LLPML
 {
     public class Cond : Operator
     {
+        public override string Tag { get { return "cond"; } }
+
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
         public Val32 First, Next;
@@ -20,39 +22,21 @@ namespace Girl.LLPML
         public Cond(BlockBase parent, XmlTextReader xr)
             : base(parent, xr) { }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes, string op, Addr32 dest) { }
+
+        public override void AddCodes(OpCodes codes)
         {
             if (Next != null)
             {
-                values[0].AddCodes(codes, m, "mov", null);
+                values[0].AddCodes(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.Z, Next));
             }
             else if (First != null)
             {
-                values[0].AddCodes(codes, m, "mov", null);
+                values[0].AddCodes(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.NZ, First));
-            }
-        }
-
-        public bool IsAlwaysFalse
-        {
-            get
-            {
-                IntValue v = values[0] as IntValue;
-                if (v == null) return false;
-                return v.Value == 0;
-            }
-        }
-
-        public bool IsAlwaysTrue
-        {
-            get
-            {
-                IntValue v = values[0] as IntValue;
-                if (v == null) return false;
-                return v.Value != 0;
             }
         }
     }

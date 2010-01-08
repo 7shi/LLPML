@@ -18,22 +18,30 @@ namespace Girl.LLPML
             private int length = Var.DefaultSize;
             public override int Length { get { return length; } }
 
-            public override string Type
+            private TypeBase type;
+            public override TypeBase Type { get { return type; } }
+
+            public override string TypeName
             {
                 set
                 {
                     if (value != null && value.EndsWith("[]"))
                     {
-                        base.Type = value.Substring(0, value.Length - 2).TrimEnd();
+                        var t = value.Substring(0, value.Length - 2).TrimEnd();
+                        base.TypeName = t;
                         length = Var.DefaultSize;
                         IsArray = true;
+                        type = new TypePointer(t, SizeOf.GetTypeSize(parent, t));
                     }
                     else
                     {
-                        base.Type = value;
+                        base.TypeName = value;
                         length = SizeOf.GetValueSize(value);
                         if (length == 0) length = Var.DefaultSize;
                         IsArray = false;
+                        type = Types.GetType(value);
+                        if (type == null)
+                            type = new TypePointer(value, length);
                     }
                 }
             }
@@ -59,7 +67,7 @@ namespace Girl.LLPML
             public Declare(BlockBase parent, string name, string type)
                 : this(parent, name)
             {
-                this.Type = type;
+                this.TypeName = type;
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)
@@ -70,7 +78,7 @@ namespace Girl.LLPML
             public override void Read(XmlTextReader xr)
             {
                 RequiresName(xr);
-                Type = xr["type"];
+                TypeName = xr["type"];
 
                 Parse(xr, delegate
                 {
@@ -94,22 +102,22 @@ namespace Girl.LLPML
 
             public Struct.Define GetStruct()
             {
-                if (Type == null) return null;
+                if (TypeName == null) return null;
 
-                Struct.Define st = parent.GetStruct(Type);
+                Struct.Define st = parent.GetStruct(TypeName);
                 if (st != null) return st;
-                throw Abort("undefined struct: " + Type);
+                throw Abort("undefined struct: " + TypeName);
             }
 
-            public override void AddCodes(List<OpCode> codes, Module m)
+            public override void AddCodes(OpCodes codes)
             {
                 if (Value == null) return;
 
-                Value.AddCodes(codes, m, "mov", null);
+                Value.AddCodes(codes, "mov", null);
                 if (HasThis)
-                    Let.AddCodes(length, codes, m, GetAddress(codes, m, null));
+                    Set.AddCodes(length, codes, GetAddress(codes, null));
                 else
-                    Let.AddCodes(length, codes, m, address);
+                    Set.AddCodes(length, codes, address);
             }
         }
     }

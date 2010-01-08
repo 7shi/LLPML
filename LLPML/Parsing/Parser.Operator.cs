@@ -15,7 +15,7 @@ namespace Girl.LLPML.Parsing
             {
                 new Operator[]
                 {
-                    new VarOperator(this, "="  , 0, (dest, arg) => new Let(parent, dest, arg)),
+                    new VarOperator(this, "="  , 0, (dest, arg) => new Set(parent, dest, arg)),
                     new VarOperator(this, "+=" , 0, (dest, arg) => new Var.Add(parent, dest, arg)),
                     new VarOperator(this, "-=" , 0, (dest, arg) => new Var.Sub(parent, dest, arg)),
                     new VarOperator(this, "*=" , 0, (dest, arg) => new Var.Mul(parent, dest, arg)),

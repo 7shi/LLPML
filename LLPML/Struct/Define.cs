@@ -178,7 +178,7 @@ namespace Girl.LLPML.Struct
 
         public override Struct.Define ThisStruct { get { return this; } }
 
-        private void CallBlock(List<OpCode> codes, Module m, Addr32 ad, Block b)
+        private void CallBlock(OpCodes codes, Addr32 ad, Block b)
         {
             codes.AddRange(new OpCode[]
             {
@@ -188,48 +188,48 @@ namespace Girl.LLPML.Struct
             });
         }
 
-        public void AddInit(List<OpCode> codes, Module m, Addr32 ad)
+        public void AddInit(OpCodes codes, Addr32 ad)
         {
-            CallBlock(codes, m, ad, this);
+            CallBlock(codes, ad, this);
             codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
         }
 
-        public void AddConstructor(List<OpCode> codes, Module m, Addr32 ad)
+        public void AddConstructor(OpCodes codes, Addr32 ad)
         {
             Function f = GetFunction(Constructor);
             if (f == null) return;
 
-            CallBlock(codes, m, ad, f);
+            CallBlock(codes, ad, f);
             if (f.CallType == CallType.CDecl)
                 codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
         }
 
-        public void AddDestructor(List<OpCode> codes, Module m, Addr32 ad)
+        public void AddDestructor(OpCodes codes, Addr32 ad)
         {
             Function f = GetFunction(Destructor);
             if (f == null) return;
 
-            CallBlock(codes, m, ad, f);
+            CallBlock(codes, ad, f);
             if (f.CallType == CallType.CDecl)
                 codes.Add(I386.Add(Reg32.ESP, Var.DefaultSize));
         }
 
-        public void AddBeforeCtor(List<OpCode> codes, Module m, Var th)
+        public void AddBeforeCtor(OpCodes codes, Var th)
         {
-            codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
-            AddInit(codes, m, new Addr32(Reg32.EAX));
+            codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
+            AddInit(codes, new Addr32(Reg32.EAX));
 
             Define st = GetBaseStruct();
             int pos = 0;
             if (st != null)
             {
-                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
-                st.AddConstructor(codes, m, new Addr32(Reg32.EAX));
+                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
+                st.AddConstructor(codes, new Addr32(Reg32.EAX));
                 pos = st.GetSize();
             }
         }
 
-        public void AddAfterDtor(List<OpCode> codes, Module m, Var th)
+        public void AddAfterDtor(OpCodes codes, Var th)
         {
             var list = new List<Pointer.Declare>();
             var poslist = new Dictionary<Pointer.Declare, int>();
@@ -245,20 +245,20 @@ namespace Girl.LLPML.Struct
                 Define memst = GetStruct(p);
                 if (memst == null) continue;
 
-                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
-                memst.AddDestructor(codes, m, new Addr32(Reg32.EAX, poslist[p]));
+                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
+                memst.AddDestructor(codes, new Addr32(Reg32.EAX, poslist[p]));
             }
             Define st = GetBaseStruct();
             if (st != null)
             {
-                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes, m)));
-                st.AddDestructor(codes, m, new Addr32(Reg32.EAX));
+                codes.Add(I386.Mov(Reg32.EAX, th.GetAddress(codes)));
+                st.AddDestructor(codes, new Addr32(Reg32.EAX));
             }
         }
 
         public override bool HasStackFrame { get { return false; } }
 
-        protected override void BeforeAddCodes(List<OpCode> codes, Module m)
+        protected override void BeforeAddCodes(OpCodes codes)
         {
             Define st = GetBaseStruct();
             int offset = 0;
@@ -271,22 +271,22 @@ namespace Girl.LLPML.Struct
             }, null);
             int lv = Level + 1;
             codes.Add(I386.Enter((ushort)(lv * 4), (byte)lv));
-            if (st != null) st.AddInit(codes, m, thisptr.Address);
+            if (st != null) st.AddInit(codes, thisptr.Address);
         }
 
-        protected override void AfterAddCodes(List<OpCode> codes, Module m)
+        protected override void AfterAddCodes(OpCodes codes)
         {
-            AddExitCodes(codes, m);
+            AddExitCodes(codes);
         }
 
-        public override void AddExitCodes(List<OpCode> codes, Module m)
+        public override void AddExitCodes(OpCodes codes)
         {
             codes.Add(I386.Leave());
             codes.Add(I386.Ret());
         }
 
         public override void AddDestructors(
-            List<OpCode> codes, Module m, IEnumerable<Pointer.Declare> ptrs)
+            OpCodes codes, IEnumerable<Pointer.Declare> ptrs)
         {
         }
     }

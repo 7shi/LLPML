@@ -172,7 +172,7 @@ namespace Girl.LLPML.Parsing
                     {
                         var ln = tokenizer.LineNumber;
                         var lp = tokenizer.LinePosition;
-                        var target = Primary() as Var;
+                        var target = Member() as Var;
                         if (target == null)
                             throw parent.Abort(ln, lp, "++: ‘ÎÛ‚ª•Ï”‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
                         return new Inc(parent, target);
@@ -181,7 +181,7 @@ namespace Girl.LLPML.Parsing
                     {
                         var ln = tokenizer.LineNumber;
                         var lp = tokenizer.LinePosition;
-                        var target = Primary() as Var;
+                        var target = Member() as Var;
                         if (target == null)
                             throw parent.Abort(ln, lp, "--: ‘ÎÛ‚ª•Ï”‚Å‚Í‚ ‚è‚Ü‚¹‚ñB");
                         return new Dec(parent, target);

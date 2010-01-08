@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LLPML.Properties {
+namespace Girl.LLPML.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

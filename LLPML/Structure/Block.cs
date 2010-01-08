@@ -75,8 +75,8 @@ namespace Girl.LLPML
                         case "continue":
                             nb = new Continue(target, xr);
                             break;
-                        case "let":
-                            nb = new Let(target, xr);
+                        case "set":
+                            nb = new Set(target, xr);
                             break;
                         case "var-declare":
                             nb = new Var.Declare(target, xr);
@@ -102,14 +102,8 @@ namespace Girl.LLPML
                         case "var-mul":
                             nb = new Var.Mul(target, xr);
                             break;
-                        case "var-unsigned-mul":
-                            nb = new Var.UnsignedMul(target, xr);
-                            break;
                         case "var-div":
                             nb = new Var.Div(target, xr);
-                            break;
-                        case "var-unsigned-div":
-                            nb = new Var.UnsignedDiv(target, xr);
                             break;
                         case "var-and":
                             nb = new Var.And(target, xr);
@@ -122,12 +116,6 @@ namespace Girl.LLPML
                             break;
                         case "var-shift-right":
                             nb = new Var.ShiftRight(target, xr);
-                            break;
-                        case "var-unsigned-shift-left":
-                            nb = new Var.UnsignedShiftLeft(target, xr);
-                            break;
-                        case "var-unsigned-shift-right":
-                            nb = new Var.UnsignedShiftRight(target, xr);
                             break;
                         case "ptr-declare":
                             nb = new Pointer.Declare(target, xr);

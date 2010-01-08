@@ -44,22 +44,22 @@ namespace Girl.LLPML
             base.Read(xr);
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             if (value != null)
             {
-                value.AddCodes(codes, m, "mov", null);
+                value.AddCodes(codes, "mov", null);
                 Var retval = new Var(parent, "__retval");
-                codes.Add(I386.Mov(retval.GetAddress(codes, m), Reg32.EAX));
+                codes.Add(I386.Mov(retval.GetAddress(codes), Reg32.EAX));
             }
             BlockBase f = parent.GetFunction();
             BlockBase b = parent;
             Pointer.Declare[] ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
-                b.AddDestructors(codes, m, ptrs);
+                b.AddDestructors(codes, ptrs);
                 if (b == f) break;
-                b.AddExitCodes(codes, m);
+                b.AddExitCodes(codes);
             }
             if (!IsLast) codes.Add(I386.Jmp(b.Destruct));
         }

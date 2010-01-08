@@ -17,9 +17,11 @@ namespace Girl.LLPML
             Value = value;
         }
 
-        void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)
+        public TypeBase Type { get { return TypeInt.Instance; } }
+
+        public void AddCodes(OpCodes codes, string op, Addr32 dest)
         {
-            IntValue.AddCodes(codes, op, dest, m.GetString(Value));
+            codes.AddCodes(op, dest, codes.Module.GetString(Value));
         }
     }
 }

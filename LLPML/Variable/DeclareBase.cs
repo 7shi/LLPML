@@ -36,13 +36,13 @@ namespace Girl.LLPML
             }
         }
 
-        public Addr32 GetAddress(List<OpCode> codes, Module m, BlockBase scope)
+        public Addr32 GetAddress(OpCodes codes, BlockBase scope)
         {
             const Reg32 dest = Reg32.EDX;
 
             if (HasThis)
             {
-                codes.Add(I386.Mov(dest, thisptr.GetAddress(codes, m)));
+                codes.Add(I386.Mov(dest, thisptr.GetAddress(codes)));
                 return new Addr32(address);
             }
 

@@ -70,17 +70,17 @@ namespace Girl.LLPML
             if (Block == null) throw Abort(xr, "block required");
         }
 
-        protected override void BeforeAddCodes(List<OpCode> codes, Module m)
+        protected override void BeforeAddCodes(OpCodes codes)
         {
-            base.BeforeAddCodes(codes, m);
-            if (Init != null) Init.AddCodes(codes, m);
+            base.BeforeAddCodes(codes);
+            if (Init != null) Init.AddCodes(codes);
             if (Loop != null)
                 codes.Add(I386.Jmp(Loop.Last));
             else
                 codes.Add(I386.Jmp(Block.Last));
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             sentences.Clear();
             sentences.Add(Block);
@@ -89,7 +89,7 @@ namespace Girl.LLPML
                 Cond = new Cond(this, new IntValue(1));
             Cond.First = Block.First;
             sentences.Add(Cond);
-            base.AddCodes(codes, m);
+            base.AddCodes(codes);
         }
     }
 }

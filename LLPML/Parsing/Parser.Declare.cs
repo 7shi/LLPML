@@ -184,12 +184,12 @@ namespace Girl.LLPML.Parsing
                                 if (ex is VarBase)
                                 {
                                     var vb = ex as VarBase;
-                                    if (vb.Type != null)
+                                    if (vb.TypeName != null)
                                     {
                                         if (vb.IsArray)
-                                            vd.Type = vb.Type + "[]";
+                                            vd.TypeName = vb.TypeName + "[]";
                                         else
-                                            vd.Type = vb.Type;
+                                            vd.TypeName = vb.TypeName;
                                     }
                                 }
                             }

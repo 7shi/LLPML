@@ -12,7 +12,7 @@ namespace Girl.LLPML
         public Arg(BlockBase parent, string name, string type)
             : base(parent, name)
         {
-            this.Type = type;
+            this.TypeName = type;
         }
 
         public Arg(BlockBase parent, XmlTextReader xr)
@@ -39,7 +39,7 @@ namespace Girl.LLPML
             NoChild(xr);
             RequiresName(xr);
 
-            Type = xr["type"];
+            TypeName = xr["type"];
             AddToParent();
         }
     }

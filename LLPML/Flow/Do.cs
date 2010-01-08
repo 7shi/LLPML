@@ -61,13 +61,13 @@ namespace Girl.LLPML
                 throw Abort(xr, "block required");
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             sentences.Clear();
             Cond.First = Block.First;
             sentences.Add(Block);
             sentences.Add(Cond);
-            base.AddCodes(codes, m);
+            base.AddCodes(codes);
         }
     }
 }

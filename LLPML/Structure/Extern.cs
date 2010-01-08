@@ -69,11 +69,11 @@ namespace Girl.LLPML
             }
         }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override void AddCodes(OpCodes codes)
         {
             codes.Add(first);
             string n = alias != null ? alias : name;
-            codes.Add(I386.Jmp(m.GetFunction(CallType, module, n).Address));
+            codes.Add(I386.Jmp(codes.Module.GetFunction(CallType, module, n).Address));
         }
     }
 }

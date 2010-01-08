@@ -1,51 +1,94 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.11.20080314">
 
-<!-- IEEE 754 single precision floating point -->
+<title>表記</title>
 
 <include src="finish.xml" />
 
-printf("-0.1 => ");
-Float(-1, -1);
+var a = 2;
+const int b = 3;
+const string fmt = "a = %d, b = %d";
 
-printf("3.14159265 => ");
-Float(314159265, -8);
+<!-- simple -->
+printfln(fmt, a, b);
+<!-- complex -->
+<call name="printfln">
+  <string name="fmt" />
+  <var name="a" />
+  <int name="b" />
+</call>
 
-<?llp
-const int INT_MAX    = 0x7fffffff;
-const int EXP_DIGIT  = 8;
-const int EXP_MAX    = 0xff;
-const int SIGN_DIGIT = 23;
-const int SIGN_MAX   = 0x7fffff;
+<!-- simple -->
+printfln("add(a * b, 4) = %d", add(a * b, 4));
+<!-- complex -->
+<call name="printfln">
+  <string>add(a * b, 4) = %d</string>
+  <call name="add">
+    <mul>
+      <var name="a" />
+      <int name="b" />
+    </mul>
+    <int>4</int>
+  </call>
+</call>
 
-function Float(s, e10)
+test t = { 9, 6 };
+
+<!-- simple -->
+printfln("sub(%d, %d) = %d", t.a, t.b, t.sub());
+<!-- complex -->
+<call name="printfln">
+  <string>sub(%d, %d) = %d</string>
+  <struct-member name="a">
+    <ptr name="t" />
+  </struct-member>
+  <struct-member name="b">
+    <ptr name="t" />
+  </struct-member>
+  <invoke name="sub">
+    <ptr name="t" />
+  </invoke>
+</call>
+
+test2 t2 = { { 11, 3 } };
+
+<!-- simple -->
+printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
+<!-- complex -->
+<call name="printfln">
+  <string>sub(%d, %d) = %d</string>
+  <struct-member name="t">
+    <ptr name="t2" />
+    <struct-member name="a" />
+  </struct-member>
+  <struct-member name="t">
+    <ptr name="t2" />
+    <struct-member name="b" />
+  </struct-member>
+  <invoke name="sub">
+    <struct-member name="t">
+      <ptr name="t2" />
+    </struct-member>
+  </invoke>
+</call>
+
+<!-- -->
+
+function add(a, b)
 {
-  var sign = 0, e2 = 0, ss;
-  if (s == 0) e10 = 0;
-  if (s < 0) sign = 1, s = -s;
-  while (s % 10 == 0) e10++, s /= 10;
-  while (e10 != 0)
-  {
-    if (e10 < 0)
-    {
-      e2--, s *= 2;
-      ss = s % 10;
-      if (ss == 0 || s > INT_MAX / 2)
-      {
-        e10++, s /= 10;
-        if (ss >= 5) s++;
-      }
-    }
-    else if (e10 > 0)
-    {
-      if (s & 1 == 1 && s <= INT_MAX / 10) e10--, s *= 10;
-      e2++, s = s / 2 + (s & 1);
-    }
-  }
-  while (0 < s && s <= SIGN_MAX) e2--, s *= 2;
-  while (s > SIGN_MAX * 2 + 1) e2++, s = s / 2 + (s & 1);
-  printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s & SIGN_MAX);
+  return a + b;
 }
-?>
+
+struct test
+{
+  var a, b;
+
+  function sub()
+  {
+    return a - b;
+  }
+}
+
+struct test2 { test t; }
 
 </llpml>

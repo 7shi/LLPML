@@ -7,19 +7,18 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Operator : NodeBase
+    public abstract class Operator : NodeBase, IIntValue
     {
+        public abstract string Tag { get; }
+
         protected List<IIntValue> values = new List<IIntValue>();
         public IIntValue[] GetValues() { return values.ToArray(); }
 
         public virtual int Min { get { return 2; } }
         public virtual int Max { get { return int.MaxValue; } }
 
-        public Operator() { }
-        public Operator(BlockBase parent) : base(parent) { }
-
         public Operator(BlockBase parent, params IIntValue[] values)
-            : this(parent)
+            : base(parent)
         {
             if (values.Length < Min)
                 throw Abort("too few operands");
@@ -48,5 +47,34 @@ namespace Girl.LLPML
             else if (values.Count < Min)
                 throw Abort(xr, "too few operands");
         }
+
+        protected TypeBase.Func GetFunc()
+        {
+            var t = Type;
+            TypeBase.Func f;
+            if (!t.TryGetFunc(Tag, out f))
+                throw new Exception(Tag + ": " + t.Name + ": not supported");
+            return f;
+        }
+
+        protected CondPair GetCond()
+        {
+            var t = Type;
+            CondPair c;
+            if (!t.TryGetCond(Tag, out c))
+                throw new Exception(Tag + ": " + t.Name + ": no conditions");
+            return c;
+        }
+
+        public TypeBase Type
+        {
+            get
+            {
+                if (values.Count == 0) throw new Exception(Tag + ": no arguments");
+                return values[0].Type;
+            }
+        }
+
+        public abstract void AddCodes(OpCodes codes, string op, Addr32 dest);
     }
 }
