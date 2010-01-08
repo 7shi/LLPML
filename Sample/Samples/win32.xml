@@ -1,19 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127">
+<llpml version="0.10.20080203">
 
-<extern module="kernel32.dll" type="std" name="GetModuleHandle" alias="GetModuleHandleW" />
 <extern module="kernel32.dll" type="std" name="Sleep" />
-<extern module="user32.dll" type="std" name="DefWindowProc" alias="DefWindowProcW" />
-<extern module="user32.dll" type="std" name="LoadCursor" alias="LoadCursorW" />
-<extern module="user32.dll" type="std" name="RegisterClassEx" alias="RegisterClassExW" />
-<extern module="user32.dll" type="std" name="CreateWindowEx" alias="CreateWindowExW" />
+<extern module="kernel32.dll" type="std" suffix="W" name="GetModuleHandle" />
 <extern module="user32.dll" type="std" name="ShowWindow" />
 <extern module="user32.dll" type="std" name="UpdateWindow" />
 <extern module="user32.dll" type="std" name="DestroyWindow" />
-<extern module="user32.dll" type="std" name="GetMessage" alias="GetMessageW" />
 <extern module="user32.dll" type="std" name="TranslateMessage" />
-<extern module="user32.dll" type="std" name="DispatchMessage" alias="DispatchMessageW" />
 <extern module="user32.dll" type="std" name="PostQuitMessage" />
+<extern module="user32.dll" type="std" name="BeginPaint" />
+<extern module="user32.dll" type="std" name="EndPaint" />
+<extern module="user32.dll" type="std" name="GetDC" />
+<extern module="user32.dll" type="std" name="GetSysColorBrush" />
+<extern module="user32.dll" type="std" name="InvalidateRect" />
+<extern module="user32.dll" type="std" name="FillRect" />
+<extern module="user32.dll" type="std" suffix="W" name="DefWindowProc" />
+<extern module="user32.dll" type="std" suffix="W" name="LoadCursor" />
+<extern module="user32.dll" type="std" suffix="W" name="RegisterClassEx" />
+<extern module="user32.dll" type="std" suffix="W" name="CreateWindowEx" />
+<extern module="user32.dll" type="std" suffix="W" name="GetMessage" />
+<extern module="user32.dll" type="std" suffix="W" name="DispatchMessage" />
+<extern module="gdi32.dll" type="std" suffix="W" name="TextOut" />
 
 <?llpml
 const int CS_VREDRAW     = 1;
@@ -31,7 +38,34 @@ var WS_OVERLAPPEDWINDOW =
   WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
   WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 const int SW_SHOWNORMAL = 1;
-const int WM_DESTROY = 2;
+const int COLOR_WINDOWTEXT = 8;
+
+const int MK_LBUTTON  = 0x01;
+const int MK_RBUTTON  = 0x02;
+const int MK_SHIFT    = 0x04;
+const int MK_CONTROL  = 0x08;
+const int MK_MBUTTON  = 0x10;
+const int MK_XBUTTON1 = 0x20;
+const int MK_XBUTTON2 = 0x40;
+
+const int WM_DESTROY       = 0x002;
+const int WM_PAINT         = 0x00f;
+const int WM_MOUSEFIRST    = 0x200;
+const int WM_MOUSEMOVE     = 0x200;
+const int WM_LBUTTONDOWN   = 0x201;
+const int WM_LBUTTONUP     = 0x202;
+const int WM_LBUTTONDBLCLK = 0x203;
+const int WM_RBUTTONDOWN   = 0x204;
+const int WM_RBUTTONUP     = 0x205;
+const int WM_RBUTTONDBLCLK = 0x206;
+const int WM_MBUTTONDOWN   = 0x207;
+const int WM_MBUTTONUP     = 0x208;
+const int WM_MBUTTONDBLCLK = 0x209;
+const int WM_MOUSEWHEEL    = 0x20a;
+const int WM_XBUTTONDOWN   = 0x20b;
+const int WM_XBUTTONUP     = 0x20c;
+const int WM_XBUTTONDBLCLK = 0x20e;
+const int WM_MOUSELAST     = 0x20e;
 
 struct WNDCLASSEX
 {
@@ -54,6 +88,11 @@ struct POINT
   var x, y;
 }
 
+struct RECT
+{
+  var left, top, right, bottom;
+}
+
 struct MSG
 {
   var hwnd;
@@ -61,7 +100,37 @@ struct MSG
   var wParam;
   var lParam;
   var time;
-  var pt : POINT;
+  POINT pt;
+}
+
+struct PAINTSTRUCT
+{
+  var hdc;
+  var fErase;
+  RECT rcPaint;
+  var fRestore;
+  var fIncUpdate;
+  byte rgbReserved[32];
+}
+
+function LOWORD(l)
+{
+  return l & 0xffff;
+}
+
+function HIWORD(l)
+{
+  return (l >> 16) & 0xffff;
+}
+
+function GET_X_LPARAM(l)
+{
+  return l & 0xffff;
+}
+
+function GET_Y_LPARAM(l)
+{
+  return (l >> 16) & 0xffff;
 }
 ?>
 

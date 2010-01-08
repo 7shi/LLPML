@@ -37,6 +37,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -56,7 +59,7 @@
     <Compile Include="Struct\Define.cs" />
     <Compile Include="Struct\Invoke.cs" />
     <Compile Include="Struct\Member.cs" />
-    <Compile Include="Struct\Size.cs" />
+    <Compile Include="Value\Size.cs" />
     <Compile Include="Struct\This.cs" />
     <Compile Include="Structure\Extern.cs" />
     <Compile Include="Flow\Cond.cs" />
@@ -139,7 +142,6 @@
     <Compile Include="Variable\Operators\Var.UnsignedMul.cs" />
     <Compile Include="Variable\Operators\Var.Div.cs" />
     <Compile Include="Variable\Operators\Var.UnsignedDiv.cs" />
-    <Compile Include="Delegates.cs" />
     <Compile Include="Structure\BlockBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

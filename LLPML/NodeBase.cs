@@ -54,7 +54,7 @@ namespace Girl.LLPML
             this.linePosition = linePosition;
         }
 
-        public static void Parse(XmlTextReader xr, VoidDelegate delg)
+        public static void Parse(XmlTextReader xr, Action delg)
         {
             string self = xr.Name;
             bool empty = xr.IsEmptyElement;

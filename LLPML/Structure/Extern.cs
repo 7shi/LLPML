@@ -23,6 +23,15 @@ namespace Girl.LLPML
             module = xr["module"];
             alias = xr["alias"];
             base.Read(xr);
+
+            var suffix = xr["suffix"];
+            if (suffix != null)
+            {
+                if (alias == null)
+                    alias = name + suffix;
+                else
+                    alias += suffix;
+            }
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)

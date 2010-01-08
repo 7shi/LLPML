@@ -55,7 +55,7 @@ namespace Girl.LLPML
                 case "struct-member-ptr":
                     return new Struct.MemberPtr(parent, xr);
                 case "struct-size":
-                    return new Struct.Size(parent, xr);
+                    return new Size(parent, xr);
                 case "get-function":
                     return new StringValue(parent.GetName());
                 case "get-file":

@@ -117,7 +117,7 @@ namespace Girl.LLPML
         }
 
         public static void AddCodes(
-            List<OpCode> codes, Module m, List<IIntValue> args, CallType type, VoidDelegate delg)
+            List<OpCode> codes, Module m, List<IIntValue> args, CallType type, Action delg)
         {
             object[] args2 = args.ToArray();
             Array.Reverse(args2);

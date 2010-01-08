@@ -177,7 +177,7 @@ namespace Girl.LLPML.Parsing
             if (t != text)
             {
                 if (t != null) Rewind();
-                var escaped = text.Replace("{", "{{{{").Replace("}", "}}}}");
+                var escaped = text.Replace("{", "{{").Replace("}", "}}");
                 throw Abort("{0}: {1} Ç™ïKóvÇ≈Ç∑ÅB", type, escaped);
             }
         }

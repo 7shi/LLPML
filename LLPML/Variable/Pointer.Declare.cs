@@ -12,6 +12,8 @@ namespace Girl.LLPML
     {
         public class Declare : DeclareBase
         {
+            public int TypeSize { get; private set; }
+
             private int length = 0;
             public virtual int Length { get { return length; } }
 
@@ -25,10 +27,17 @@ namespace Girl.LLPML
                 AddToParent();
             }
 
-            public Declare(BlockBase parent, string name, int length)
+            public Declare(BlockBase parent, string name, string type, int length)
                 : this(parent, name)
             {
-                this.length = length;
+                this.type = type;
+                TypeSize = Size.GetTypeSize(parent, type);
+                this.length = TypeSize * length;
+            }
+
+            public Declare(BlockBase parent, string name, int length)
+                : this(parent, name, "byte", length)
+            {
             }
 
             public Declare(BlockBase parent, XmlTextReader xr)
@@ -46,29 +55,9 @@ namespace Girl.LLPML
                 string slen = xr["length"];
                 if (slen == null) throw Abort(xr, "length required");
                 int len = IntValue.Parse(slen);
-
-                switch (type)
-                {
-                    case "byte":
-                        length = len;
-                        break;
-
-                    case "char":
-                    case "short":
-                        length = len * 2;
-                        break;
-
-                    case "int":
-                        length = len * 4;
-                        break;
-
-                    case "long":
-                        length = len * 8;
-                        break;
-
-                    default:
-                        throw Abort(xr, "unknown type: " + type);
-                }
+                TypeSize = Size.GetTypeSize(parent, type);
+                if (TypeSize == 0) throw Abort(xr, "unknown type: " + type);
+                length = TypeSize * len;
 
                 AddToParent();
             }

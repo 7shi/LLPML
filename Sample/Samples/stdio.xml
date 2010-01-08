@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080123">
+<llpml version="0.10.20080203">
 
 <!-- stdio functions -->
 
 <extern module="kernel32.dll" type="std" name="GetStdHandle" />
-<extern module="kernel32.dll" type="std" name="ReadConsole" alias="ReadConsoleW" />
-<extern module="kernel32.dll" type="std" name="WriteConsole" alias="WriteConsoleW" />
-<extern module="kernel32.dll" type="std" name="lstrlen" alias="lstrlenW" />
-<extern module="user32.dll" type="std" name="wvsprintf" alias="wvsprintfW" />
+<extern module="kernel32.dll" type="std" suffix="W" name="ReadConsole" />
+<extern module="kernel32.dll" type="std" suffix="W" name="WriteConsole" />
+<extern module="kernel32.dll" type="std" suffix="W" name="lstrlen" />
+<extern module="user32.dll" type="std" suffix="W" name="wvsprintf" />
 
+<?llpml
 const int STD_OUTPUT_HANDLE = -11;
 const int STD_INPUT_HANDLE  = -10;
 
@@ -17,17 +18,16 @@ var stdin  = GetStdHandle(STD_INPUT_HANDLE);
 
 function print(text)
 {
-  var dummy;
-  WriteConsole(stdout, text, lstrlen(text), addrof(dummy), null);
+  var length;
+  WriteConsole(stdout, text, lstrlen(text), addrof(length), null);
 }
 
-<function name="vprintf">
-  <arg name="format" />
-  <arg name="args" />
-  <ptr-declare name="buffer" type="char" length="1025" />
+function vprintf(format, args)
+{
+  char buffer[1025];
   wvsprintf(buffer, format, args);
   print(buffer);
-</function>
+}
 
 function vprintfln(format, args)
 {
@@ -51,10 +51,12 @@ function printfln(format, args : params)
   println();
 }
 
-<function name="pause">
-  var dummy;
-  <ptr-declare name="buffer" type="char" length="16" />
-  ReadConsole(stdin, buffer, 2, addrof(dummy));
-</function>
+function pause()
+{
+  var length;
+  char buffer[16];
+  ReadConsole(stdin, buffer, 2, addrof(length), null);
+}
+?>
 
 </llpml>

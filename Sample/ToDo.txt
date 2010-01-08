@@ -1,16 +1,3 @@
-[済]
-- Visual C# 2008に移行
-- 簡略記法
--- エラー（位置も）
--- script
--- var-declare, int-declare, string-declare
--- struct-define, struct-declare
--- return, continue, break
--- sizeof, addrof
--- コメント
--- 日本語名
--- キャスト
-
 [未]
 - 簡略記法
 -- メンバ関数のthis省略
@@ -23,6 +10,3 @@
 [自己記述後]
 - switchのテーブル化
 - インタプリタとASTを共用
-
-[メモ]
-- #region -> partial

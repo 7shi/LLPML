@@ -209,6 +209,10 @@ namespace Girl.LLPML.Parsing
             {
                 case "null":
                     return new Null(parent);
+                case "true":
+                    return new IntValue(1);
+                case "false":
+                    return new IntValue(0);
                 case "__FUNCTION__":
                     return new StringValue(parent.GetName());
                 case "__FILE__":
@@ -220,7 +224,7 @@ namespace Girl.LLPML.Parsing
                         if (arg == null)
                             throw Abort("sizeof: à¯êîÇ™ïKóvÇ≈Ç∑ÅB");
                         Check("sizeof", ")");
-                        return new Struct.Size(parent, arg);
+                        return new Size(parent, arg);
                     }
                 case "addrof":
                     return AddrOf();

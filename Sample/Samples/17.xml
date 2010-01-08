@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20080127" subsystem="WINDOWS_GUI">
+<llpml version="0.10.20080203" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
+<include src="stdio.xml" />
 <include src="win32.xml" />
 
 <?llpml
 const string className = "LLPML Test Window";
-
 var hInstance = GetModuleHandle();
 
 WNDCLASSEX wcex =
@@ -57,11 +57,41 @@ function __stdcall WndProc(hWnd, msg, wParam, lParam)
 {
   switch (msg)
   {
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      var hdc = BeginPaint(hWnd, ps);
+      TextOut(hdc, 8, 8, className, lstrlen(className));
+      EndPaint(hWnd, ps);
+      break;
+    }
+    case WM_LBUTTONDOWN:
+      MyFillRect();
+      break;
+    case WM_RBUTTONDOWN:
+      InvalidateRect(hWnd, null, true);
+      break;
+    case WM_MOUSEMOVE:
+      if (wParam & MK_LBUTTON) MyFillRect();
+      break;
     case WM_DESTROY:
       PostQuitMessage(0);
-      return 0;
+      break;
+    default:
+      return DefWindowProc(hWnd, msg, wParam, lParam);
   }
-  return DefWindowProc(hWnd, msg, wParam, lParam);
+  return 0;
+  
+  // 関数内関数
+  function MyFillRect()
+  {
+    var hdc = GetDC(hWnd);
+    var brush = GetSysColorBrush(COLOR_WINDOWTEXT);
+    var x = GET_X_LPARAM(lParam);
+    var y = GET_Y_LPARAM(lParam);
+    RECT rect = { x - 2, y - 2, x + 2, y + 2 };
+    FillRect(hdc, rect, brush);
+  }
 }
 ?>
 

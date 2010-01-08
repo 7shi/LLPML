@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.10.20080203">
+
+<!-- array -->
+
+<include src="finish.xml" />
+
+<?llpml
+var a[16];
+printfln("var a[16]");
+printfln("a = %p", a);
+printfln("sizeof(a) = %d", sizeof(a));
+println();
+
+byte b[16];
+printfln("byte b[16]");
+printfln("b = %p", b);
+printfln("sizeof(b) = %d", sizeof(b));
+println();
+
+char c[16];
+printfln("char c[16]");
+printfln("c = %p", c);
+printfln("sizeof(c) = %d", sizeof(c));
+?>
+
+</llpml>

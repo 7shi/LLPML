@@ -154,16 +154,26 @@ namespace Girl.LLPML.Parsing
 
         public static bool IsWord(string s)
         {
+            return CheckString(s, char.IsDigit, IsWordChar);
+        }
+
+        public static bool IsDigit(string s)
+        {
+            return CheckString(s, null, char.IsDigit);
+        }
+
+        public static bool CheckString(string s, Func<char, bool> func1, Func<char, bool> func2)
+        {
             if (string.IsNullOrEmpty(s)) return false;
             bool first = true;
             foreach (var ch in s)
             {
                 if (first)
                 {
-                    if (char.IsDigit(ch)) return false;
+                    if (func1 != null && func1(ch)) return false;
                     first = false;
                 }
-                if (!IsWordChar(ch)) return false;
+                if (!func2(ch)) return false;
             }
             return true;
         }

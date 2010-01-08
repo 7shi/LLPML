@@ -23,6 +23,7 @@ namespace Girl.LLPML.Parsing
                         case ",":
                         case ";":
                         case "=":
+                        case "[":
                             Rewind();
                             return StructDeclare(t);
                     }
@@ -53,9 +54,9 @@ namespace Girl.LLPML.Parsing
             throw Abort("const: 型が指定されていません。");
         }
 
-        private delegate void DeclareHandler(string name, bool eq, int ln, int lp);
+        private delegate void DeclareHandler(string name, bool eq, int ln, int lp, int? array);
 
-        private void ReadDeclare(string category, VoidDelegate delg1, DeclareHandler delg2)
+        private void ReadDeclare(string category, Action delg1, DeclareHandler delg2)
         {
             if (!CanRead) throw Abort("{0}: 名前が必要です。", category);
 
@@ -68,15 +69,31 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0}: 名前が不適切です: {1}", category, name);
             }
 
+            int? array = null;
+            var br1 = Read();
+            if (br1 == "[")
+            {
+                var len = Read();
+                if (!Tokenizer.IsDigit(len))
+                {
+                    Rewind();
+                    throw Abort("{0}: 配列のサイズが必要です。", category);
+                }
+                array = int.Parse(len);
+                Check(category, "]");
+            }
+            else
+                Rewind();
+
             if (delg1 != null) delg1();
 
             var eq = Read();
             if (eq == "=")
-                delg2(name, true, ln, lp);
+                delg2(name, true, ln, lp, array);
             else
             {
                 if (eq != null) Rewind();
-                delg2(name, false, ln, lp);
+                delg2(name, false, ln, lp, array);
             }
 
             var sep = Read();
@@ -89,8 +106,10 @@ namespace Girl.LLPML.Parsing
         private void IntDeclare()
         {
             ReadDeclare("const int", null,
-                (name, eq, ln, lp) =>
+                (name, eq, ln, lp, array) =>
                 {
+                    if (array != null)
+                        throw parent.Abort(ln, lp, "const int: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const int: 等号がありません。");
                     var v = Expression() as IntValue;
@@ -103,8 +122,10 @@ namespace Girl.LLPML.Parsing
         private void StringDeclare()
         {
             ReadDeclare("const string", null,
-                (name, eq, ln, lp) =>
+                (name, eq, ln, lp, array) =>
                 {
+                    if (array != null)
+                        throw parent.Abort(ln, lp, "const string: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const string: 等号がありません。");
                     var v = String();
@@ -114,9 +135,9 @@ namespace Girl.LLPML.Parsing
                 });
         }
 
-        private Var.Declare[] VarDeclare()
+        private Pointer.Declare[] VarDeclare()
         {
-            var list = new List<Var.Declare>();
+            var list = new List<Pointer.Declare>();
             string type = null;
             ReadDeclare("var",
                 () =>
@@ -139,26 +160,47 @@ namespace Girl.LLPML.Parsing
                         throw Abort("var: 型が必要です。");
                     }
                 },
-                (name, eq, ln, lp) =>
+                (name, eq, ln, lp, array) =>
                 {
-                    var v = new Var.Declare(parent, name, type);
-                    v.SetLine(ln, lp);
-                    if (eq) v.Value = Expression();
-                    list.Add(v);
+                    Pointer.Declare p;
+                    if (array == null)
+                    {
+                        p = new Var.Declare(parent, name, type);
+                        if (eq) (p as Var.Declare).Value = Expression();
+                    }
+                    else
+                    {
+                        if (eq)
+                            throw parent.Abort(ln, lp, "var: 配列を初期化できません。");
+                        var type2 = type == null ? "var" : "var:" + type;
+                        p = new Pointer.Declare(parent, name, type2, (int)array);
+                    }
+                    p.SetLine(ln, lp);
+                    list.Add(p);
                 });
             return list.ToArray();
         }
 
-        private Struct.Declare[] StructDeclare(string type)
+        private Pointer.Declare[] StructDeclare(string type)
         {
-            var list = new List<Struct.Declare>();
+            var list = new List<Pointer.Declare>();
             ReadDeclare(type, null,
-                (name, eq, ln, lp) =>
+                (name, eq, ln, lp, array) =>
                 {
-                    var st = new Struct.Declare(parent, name, type);
-                    st.SetLine(ln, lp);
-                    if (eq) ReadInitializers(st, type);
-                    list.Add(st);
+                    Pointer.Declare p;
+                    if (array == null)
+                    {
+                        p = new Struct.Declare(parent, name, type);
+                        if (eq) ReadInitializers(p as Struct.Declare, type);
+                    }
+                    else
+                    {
+                        if (eq)
+                            throw parent.Abort(ln, lp, "var: 配列を初期化できません。");
+                        p = new Pointer.Declare(parent, name, type, (int)array);
+                    }
+                    p.SetLine(ln, lp);
+                    list.Add(p);
                 });
             return list.ToArray();
         }
@@ -166,12 +208,7 @@ namespace Girl.LLPML.Parsing
         private void ReadInitializers(Struct.Declare st, string type)
         {
             var ret = new List<object>();
-            var br = Read();
-            if (br != "{")
-            {
-                if (br != null) Rewind();
-                throw Abort("{0}: {{{{ が必要です。", type);
-            }
+            Check(type, "{");
             for (; ; )
             {
                 if (Peek() == "{")
