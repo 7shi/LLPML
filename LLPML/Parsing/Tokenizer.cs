@@ -27,7 +27,6 @@ namespace Girl.LLPML.Parsing
         private Stack<int> linePositions = new Stack<int>();
         private Stack<Data> tokens = new Stack<Data>();
         private Stack<Data> results = new Stack<Data>();
-        private Stack<int> saveData = new Stack<int>();
 
         private string[] reserved;
         public string[] Reserved { set { reserved = value; } }
@@ -194,7 +193,7 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private char? PeekChar()
+        public char? PeekChar()
         {
             if (!CanReadChar) return null;
             return Source[pos];
@@ -297,17 +296,6 @@ namespace Girl.LLPML.Parsing
         {
             return new Exception(string.Format(
                 "{0}: [{1}:{2}] {3}", file, lineNumber, linePosition, msg));
-        }
-
-        public void Save()
-        {
-            saveData.Push(tokens.Count);
-        }
-
-        public void Load()
-        {
-            var c = saveData.Pop();
-            while (tokens.Count > c) Rewind();
         }
     }
 }

@@ -59,7 +59,6 @@ namespace Girl.X86
             if (op2 is Addr32) data = Util.Concat(data, (op2 as Addr32).GetCodes());
             if (op1 == null) return data;
 
-            int len = data.Length;
             if (op1 is byte)
                 data = Util.GetBytes(data, (byte)op1);
             else if (op1 is ushort)

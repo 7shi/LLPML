@@ -119,30 +119,30 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ArrayList" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\arraylist.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/ArrayList.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="Binary" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\binary.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/Binary.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="CriticalSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\criticalsection.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/CriticalSection.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="GCList" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GCList.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/GCList.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="IO" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\IO.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/IO.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="JIT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\JIT.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/JIT.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="Memory" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Memory.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/Memory.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="String" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\String.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/String.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="Type" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Type.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>../Resources/Type.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
 </root>

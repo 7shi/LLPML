@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -53,10 +53,10 @@ namespace Sample
             InitializeComponent();
             treeView1.Nodes.AddRange(new TreeNode[]
             {
-                workArea = new TreeNode("ƒ[ƒNƒGƒŠƒA"),
-                library = new TreeNode("ƒ‰ƒCƒuƒ‰ƒŠ"),
-                window = new TreeNode("ƒEƒBƒ“ƒhƒE"),
-                console = new TreeNode("ƒRƒ“ƒ\[ƒ‹"),
+                workArea = new TreeNode("ãƒ¯ãƒ¼ã‚¯ã‚¨ãƒªã‚¢"),
+                library = new TreeNode("ãƒ©ã‚¤ãƒ–ãƒ©ãƒª"),
+                window = new TreeNode("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦"),
+                console = new TreeNode("ã‚³ãƒ³ã‚½ãƒ¼ãƒ«"),
             });
             treeView1.ExpandAll();
             var dir = new DirectoryInfo(GetFullName("Samples"));
@@ -126,8 +126,8 @@ namespace Sample
             var exe = GetFullName(root.Output);
             module.Link(exe);
             var time = (DateTime.Now - start).TotalMilliseconds;
-            textBox2.AppendText("o—Í: " + exe + "\r\n");
-            textBox2.AppendText("Š—vŠÔ: " + time + "ms\r\n");
+            textBox2.AppendText("å‡ºåŠ›: " + exe + "\r\n");
+            textBox2.AppendText("æ‰€è¦æ™‚é–“: " + time + "ms\r\n");
             switch (root.Subsystem)
             {
                 case IMAGE_SUBSYSTEM.WINDOWS_CUI:

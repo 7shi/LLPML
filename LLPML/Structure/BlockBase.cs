@@ -40,8 +40,7 @@ namespace Girl.LLPML
             return new Var(parent, retVal);
         }
 
-        protected Dictionary<string, object> members
-            = new Dictionary<string, object>();
+        protected ListDictionary members = new ListDictionary();
 
         #region Member
 
@@ -318,7 +317,6 @@ namespace Girl.LLPML
             AfterAddCodes(codes);
             foreach (Function func in GetMembers<Function>())
                 func.AddCodes(codes);
-            var s = GetMembers<Struct.Define>();
             foreach (Struct.Define st in GetMembers<Struct.Define>())
                 st.AddCodes(codes);
             codes.Add(last);
@@ -523,6 +521,33 @@ namespace Girl.LLPML
         public void AddSentences(IEnumerable<NodeBase> nbs)
         {
             foreach (var nb in nbs) AddSentence(nb);
+        }
+
+        public class ListDictionary
+        {
+            private Dictionary<string, object> dict = new Dictionary<string, object>();
+            private List<object> list = new List<object>();
+
+            public void Add(string key, object value)
+            {
+                dict.Add(key, value);
+                list.Add(value);
+            }
+
+            public Object[] Values
+            {
+                get { return list.ToArray(); }
+            }
+
+            public bool TryGetValue(string name, out object obj)
+            {
+                return dict.TryGetValue(name, out obj);
+            }
+
+            public bool ContainsKey(string name)
+            {
+                return dict.ContainsKey(name);
+            }
         }
     }
 }

@@ -238,7 +238,6 @@ namespace Girl.LLPML.Parsing
 
         private void ReadInitializers(Struct.Declare st, string type)
         {
-            var ret = new List<object>();
             Check(type, "{");
             for (; ; )
             {

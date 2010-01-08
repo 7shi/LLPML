@@ -158,7 +158,7 @@ namespace Girl.LLPML
                 case XmlNodeType.ProcessingInstruction:
                     if (xr.Name == "llp")
                     {
-                        var rs = xr.ReadString();
+                        xr.ReadString();
                         var t = new Tokenizer(target.Root.Source,
                             xr.Value, xr.LineNumber + 1, 1);
                         var sents = Block.ReadText(target, t);
