@@ -7,6 +7,9 @@ namespace Girl.X86
 {
     public class Addr32
     {
+        private bool isInitialized = true;
+        public bool IsInitialized { get { return isInitialized; } }
+
         private Reg32 reg;
         public Reg32 Register { get { return reg; } }
 
@@ -19,9 +22,18 @@ namespace Girl.X86
 
         public byte MiddleBits = 0;
 
+        public Addr32() { isInitialized = false; }
         public Addr32(Reg32 r) { reg = r; }
         public Addr32(Reg32 r, int os) { reg = r; disp = os; }
         public Addr32(Ref<uint> ad) { address = ad; }
+
+        public void Set(Addr32 src)
+        {
+            isInitialized = src.isInitialized;
+            reg = src.reg;
+            disp = src.disp;
+            address = src.address;
+        }
 
         private byte[] GetModRM()
         {

@@ -42,7 +42,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="LLPML\Parser.cs" />
+    <Compile Include="LLPML\Extern.cs" />
+    <Compile Include="LLPML\NodeBase.cs" />
+    <Compile Include="LLPML\Root.cs" />
+    <Compile Include="LLPML\Call.cs" />
+    <Compile Include="LLPML\Block.cs" />
+    <Compile Include="LLPML\VarInt.cs" />
+    <Compile Include="LLPML\Pointer.cs" />
+    <Compile Include="LLPML\Loop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

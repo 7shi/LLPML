@@ -38,6 +38,14 @@ namespace Girl.X86
             relative = rel;
         }
 
+        public void Set(OpCode src)
+        {
+            data = src.data;
+            operand = src.operand;
+            memory = src.memory;
+            relative = src.relative;
+        }
+
         public byte[] GetCodes()
         {
             byte[] data = this.data;
