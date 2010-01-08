@@ -15,25 +15,37 @@ namespace Girl.LLPML
             switch (name)
             {
                 case "__emms":
-                    if (args.Count != 0)
-                        throw Abort("{0}: argument mismatched", name);
-                    __emms(codes);
+                    if (codes != null)
+                    {
+                        if (args.Count != 0)
+                            throw Abort("{0}: argument mismatched", name);
+                        __emms(codes);
+                    }
                     return true;
                 case "__movd":
-                    if (args.Count != 2)
-                        throw Abort("{0}: argument mismatched", name);
-                    __movd(codes, args[0], args[1]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 2)
+                            throw Abort("{0}: argument mismatched", name);
+                        __movd(codes, args[0], args[1]);
+                    }
                     return true;
                 case "__movq":
-                    if (args.Count != 2)
-                        throw Abort("{0}: argument mismatched", name);
-                    __movq(codes, args[0], args[1]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 2)
+                            throw Abort("{0}: argument mismatched", name);
+                        __movq(codes, args[0], args[1]);
+                    }
                     return true;
                 case "__movdqa":
                 case "__movdqu":
-                    if (args.Count != 2)
-                        throw Abort("{0}: argument mismatched", name);
-                    __movdq(codes, name, args[0], args[1]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 2)
+                            throw Abort("{0}: argument mismatched", name);
+                        __movdq(codes, name, args[0], args[1]);
+                    }
                     return true;
                 case "__paddb":
                 case "__paddw":
@@ -54,9 +66,12 @@ namespace Girl.LLPML
                 case "__packsswb":
                 case "__packssdw":
                 case "__packuswb":
-                    if (args.Count != 2)
-                        throw Abort("{0}: argument mismatched", name);
-                    __simd(codes, name, args[0], args[1]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 2)
+                            throw Abort("{0}: argument mismatched", name);
+                        __simd(codes, name, args[0], args[1]);
+                    }
                     return true;
                 case "__psllw":
                 case "__pslld":
@@ -66,9 +81,12 @@ namespace Girl.LLPML
                 case "__psrlq":
                 case "__psraw":
                 case "__psrad":
-                    if (args.Count != 2)
-                        throw Abort("{0}: argument mismatched", name);
-                    __simd_shift(codes, name, args[0], args[1]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 2)
+                            throw Abort("{0}: argument mismatched", name);
+                        __simd_shift(codes, name, args[0], args[1]);
+                    }
                     return true;
             }
             return false;

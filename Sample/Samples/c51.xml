@@ -1,25 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.23.20080819">
+<llpml version="0.23.20080822">
 
 <title>文字列</title>
 
 <include src="finish.xml" />
 
 <?llp
-printfln("typeof \"abc\" = %s", typeof "abc");
-printfln("\"abc\".Length = %d", "abc".Length);
+printfln("typeof \"abc\": %s", typeof "abc");
+printfln("\"abc\".Length: %d", "abc".Length);
 println();
 
 var s1 = "abc";
-s1.test();
-printfln("typeof s1 = %s", typeof s1);
-printfln("s1.Length = %d", s1.Length);
+printfln("typeof s1: %s", typeof s1);
+printfln("s1.Length: %d", s1.Length);
+printfln("s1[1]: '%c'", s1[1]);
+printfln("typeof s1[1]: %s", typeof s1[1]);
 println();
 
-var s2 : string = "abc";
-s2.test();
-printfln("typeof s2 = %s", typeof s2);
-printfln("s2.Length = %d", s2.Length);
+var s2 : string = "def";
+printfln("typeof s2: %s", typeof s2);
+printfln("s2.Length: %d", s2.Length);
+println();
+
+printfln("s1.StartsWith(\"ab\"): %d", s1.StartsWith("ab"));
+printfln("s2.EndsWith(\"ef\"): %d", s2.EndsWith("ef"));
+println();
+
+printfln("s1.Substring(0, 2): %s", s1.Substring(0, 2));
+printfln("s1.Substring(1, 2): %s", s1.Substring(1, 2));
+printfln("s1.Substring(2, 2): %s", s1.Substring(2, 2));
+printfln("s1.Substring(3, 2): %s", s1.Substring(3, 2));
+println();
+
+printfln("s1 == s2: %d", s1 == s2);
+printfln("s1 != s2: %d", s1 != s2);
+printfln("s1.Substring(0, 2) == \"ab\": %d", s1.Substring(0, 2) == "ab");
+printfln("s1.Substring(1, 2) != \"ab\": %d", s1.Substring(1, 2) != "ab");
+println();
+
+printfln("s1 + s2: %s", s1 + s2);
+printfln("s1.Substring(0, 2) + s2.Substring(0, 2): %s",
+  s1.Substring(0, 2) + s2.Substring(0, 2));
+println();
+
+printfln("s1 += s2");
+s1 += s2;
+printfln("s1: %s", s1);
+printfln("s2: %s", s2);
 println();
 
 var ss = new string[3];
@@ -30,6 +57,19 @@ printfln("typeof ss = %s", typeof ss);
 printfln("ss.Length = %d", ss.Length);
 for (int i = 0; i < ss.Length; i++)
   printfln("ss[%d] = %s", i, ss[i]);
+println();
+
+function test()
+{
+  return "test";
+}
+printfln("test(): %s", test());
+printfln("typeof test(): %s", typeof test());
+printfln("typeof test: %s", typeof test);
+println();
+
+var f = string.Format("s1 = \"%s\"", s1);
+printfln("f: %s", f);
 ?>
 
 </llpml>

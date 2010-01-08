@@ -76,6 +76,8 @@ namespace Girl.LLPML
             }
             else if (t is TypeArray)
                 return new TypePointer(t.Type);
+            else if (t is TypeConstString)
+                return TypeString.Instance;
             else
                 return t;
         }

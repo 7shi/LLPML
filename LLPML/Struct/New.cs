@@ -16,7 +16,6 @@ namespace Girl.LLPML.Struct
         public IIntValue Length { get; protected set; }
         public bool IsArray { get { return !(Length is IntValue && (Length as IntValue).Value == -1); } }
         public TypeBase Type { get; protected set; }
-        public bool NoSet { get; set; }
 
         public New(BlockBase parent, string type)
             : base(parent)
@@ -58,20 +57,7 @@ namespace Girl.LLPML.Struct
 
         public override void AddCodes(OpModule codes)
         {
-            if (!NoSet)
-                AddCodes(codes, "mov", null);
-            else
-            {
-                AddCodes(codes, "push", null);
-                codes.AddRange(new[]
-                {
-                    I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                    I386.Inc(new Addr32(Reg32.EAX, -12)),
-                    I386.Push(Reg32.ESP),
-                });
-                Type.AddDestructor(codes);
-                codes.Add(I386.Add(Reg32.ESP, 8));
-            }
+            AddCodes(codes, "mov", null);
         }
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
@@ -87,13 +73,17 @@ namespace Girl.LLPML.Struct
             if (tts != null)
             {
                 var st = tts.GetStruct();
-                izer = st.GetFunction(Define.Initializer).GetAddress(codes.Module);
-                ctor = st.GetFunction(Define.Constructor).GetAddress(codes.Module);
-                dtor = st.GetFunction(Define.Destructor).GetAddress(codes.Module);
+                izer = codes.GetAddress(st.GetFunction(Define.Initializer));
+                ctor = codes.GetAddress(st.GetFunction(Define.Constructor));
+                dtor = codes.GetAddress(st.GetFunction(Define.Destructor));
             }
             else if (IsArray)
             {
-                dtor = Parent.GetFunction(DereferencePtr).GetAddress(codes.Module);
+                var t = Type.Type;
+                if (t is TypeReference)
+                    dtor = codes.GetAddress(Parent.GetFunction(DereferencePtr));
+                else if (t is TypeStruct)
+                    dtor = codes.GetAddress((t as TypeStruct).GetStruct().GetFunction(Define.Destructor));
             }
             codes.AddRange(new[]
             {

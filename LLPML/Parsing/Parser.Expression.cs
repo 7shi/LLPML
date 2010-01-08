@@ -122,6 +122,9 @@ namespace Girl.LLPML.Parsing
             var sv = String();
             if (sv != null) return sv;
 
+            var cv = Char();
+            if (cv != null) return cv;
+
             var r = Reserved();
             if (r != null) return r;
 
@@ -181,7 +184,20 @@ namespace Girl.LLPML.Parsing
                 Rewind();
                 return null;
             }
-            return new StringValue(GetString(t.Substring(1, t.Length - 2)));
+            return new StringValue(GetString(t.Substring(1, t.Length - 2))) { SrcInfo = si };
+        }
+
+        private IntValue Char()
+        {
+            var si = SrcInfo;
+            var t = Read();
+            if (t == null) return null;
+            if (t.Length < 2 || !t.StartsWith("'") || !t.EndsWith("'"))
+            {
+                Rewind();
+                return null;
+            }
+            return new IntValue(t[1]) { SrcInfo = si };
         }
 
         private Cast Cast()

@@ -10,10 +10,10 @@ namespace Girl.LLPML
     public class TypePointer : TypeVarBase
     {
         // type name
-        public override string Name { get { return Type.Name + "*"; } }
+        public override string Name { get { return "var:" + Type.Name + "*"; } }
 
         // type size
-        public override int Size { get { return Type.Size; } }
+        //public override int Size { get { return Type.Size; } }
 
         // check array
         public override bool IsArray { get { return true; } }
@@ -30,61 +30,37 @@ namespace Girl.LLPML
         {
             Type = type;
 
-            funcs["inc"] = funcs["post-inc"] = (codes, dest, arg) =>
+            funcs["inc"] = funcs["post-inc"] = (codes, dest) =>
             {
-                if (Size == 1)
+                if (Type.Size == 1)
                     codes.Add(I386.Inc(dest));
                 else
-                    codes.Add(I386.Add(dest, (uint)Size));
+                    codes.Add(I386.Add(dest, (uint)Type.Size));
             };
-            funcs["dec"] = funcs["post-dec"] = (codes, dest, arg) =>
+            funcs["dec"] = funcs["post-dec"] = (codes, dest) =>
             {
-                if (Size == 1)
+                if (Type.Size == 1)
                     codes.Add(I386.Dec(dest));
                 else
-                    codes.Add(I386.Sub(dest, (uint)Size));
+                    codes.Add(I386.Sub(dest, (uint)Type.Size));
             };
-            funcs["add"] = (codes, dest, arg) =>
+            funcs["add"] = (codes, dest) =>
             {
-                if (arg is IntValue)
+                codes.AddRange(new[]
                 {
-                    var v = (arg as IntValue).Value * Size;
-                    if (v == 1)
-                        codes.Add(I386.Inc(dest));
-                    else
-                        codes.Add(I386.Add(dest, (uint)v));
-                }
-                else
-                {
-                    arg.AddCodes(codes, "mov", null);
-                    codes.AddRange(new[]
-                    {
-                        I386.Mov(Reg32.EDX, (uint)Size),
-                        I386.Mul(Reg32.EDX),
-                        I386.Add(dest, Reg32.EAX)
-                    });
-                }
+                    I386.Mov(Reg32.EDX, (uint)Type.Size),
+                    I386.Mul(Reg32.EDX),
+                    I386.Add(dest, Reg32.EAX)
+                });
             };
-            funcs["sub"] = (codes, dest, arg) =>
+            funcs["sub"] = (codes, dest) =>
             {
-                if (arg is IntValue)
+                codes.AddRange(new[]
                 {
-                    var v = (arg as IntValue).Value * Size;
-                    if (v == 1)
-                        codes.Add(I386.Dec(dest));
-                    else
-                        codes.Add(I386.Sub(dest, (uint)v));
-                }
-                else
-                {
-                    arg.AddCodes(codes, "mov", null);
-                    codes.AddRange(new[]
-                    {
-                        I386.Mov(Reg32.EDX, (uint)Size),
-                        I386.Mul(Reg32.EDX),
-                        I386.Sub(dest, Reg32.EAX)
-                    });
-                }
+                    I386.Mov(Reg32.EDX, (uint)Type.Size),
+                    I386.Mul(Reg32.EDX),
+                    I386.Sub(dest, Reg32.EAX)
+                });
             };
 
             // partial inheritance

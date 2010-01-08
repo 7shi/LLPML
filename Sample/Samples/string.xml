@@ -3,6 +3,7 @@
 
 <!-- string functions -->
 
+<include src="stdio.xml" />
 <include src="malloc.xml" />
 
 <?llp
@@ -21,11 +22,74 @@ function memset(dest, c, count)
   return dest;
 }
 
+function __string_equal(a : string, b : string)
+{
+  //printfln("%s([%d]\"%s\", [%d]\"%s\")", __FUNCTION__, a.Length, a, b.Length, b);
+  var pa : char* = a;
+  var pb : char* = b;
+  if (pa == pb) return true;
+  if (pa == null || pb == null || a.Length != b.Length) return false;
+  
+  for (int i = 0; i < a.Length; i++)
+  {
+    //printfln("%d: [%p]'%c', [%p]'%c'", i, pa, pa[0], pb, pb[0]);
+    if (pa[0] != pb[0]) return false;
+    pa++;
+    pb++;
+  }
+  return true;
+}
+
+function __string_add(a : string, b : string) : string
+{
+  var ret = new char[a.Length + b.Length];
+  if (a.Length > 0) __movsw(ret, a, a.Length);
+  if (b.Length > 0) __movsw(addrof ret[a.Length], b, b.Length);
+  //printfln("%s(%s, %s): %s", __FUNCTION__, a, b, ret);
+  return ret;
+}
+
 class string
 {
-  function test()
+  function Substring(start, length) : string
   {
-    printfln("%d: %s", this.Length, this);
+    if (start < 0) return null;
+    int maxlen = this.Length - start;
+    if (length > maxlen) length = maxlen;
+    if (length < 0) length = 0;
+    var ret = new char[length];
+    //printfln("%s(%d, %d): %p, %p", __FUNCTION__, start, length, this, addrof this[start]);
+    if (length > 0)
+      __movsw(ret, addrof this[start], length);
+    return ret;
+  }
+  
+  function SubstringFrom(start) : string
+  {
+    if (start < 0) return null;
+    return Substring(start, this.Length);
+  }
+  
+  function StartsWith(s : string)
+  {
+    if (s == null) return false;
+    return Substring(0, s.Length) == s;
+  }
+  
+  function EndsWith(s : string)
+  {
+    if (s == null) return false;
+    if (this.Length < s.Length) return false;
+    return SubstringFrom(this.Length - s.Length) == s;
+  }
+  
+  static function Format(format : string, args : params)
+  {
+    char buffer[1025];
+    int len = wvsprintf(buffer, format, args);
+    var ret = new char[len];
+    if (len > 0) __movsw(ret, buffer, len);
+    return ret;
   }
 }
 ?>

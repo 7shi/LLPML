@@ -17,9 +17,12 @@ namespace Girl.LLPML
                 case "__stosb":
                 case "__stosw":
                 case "__stosd":
-                    if (args.Count != 3)
-                        throw Abort("{0}: argument mismatched", name);
-                    Stos(codes, name.Substring(2), args[0], args[1], args[2]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 3)
+                            throw Abort("{0}: argument mismatched", name);
+                        Stos(codes, name.Substring(2), args[0], args[1], args[2]);
+                    }
                     return true;
                 case "__movsb":
                 case "__movsw":
@@ -27,24 +30,36 @@ namespace Girl.LLPML
                 case "__movsb_rev":
                 case "__movsw_rev":
                 case "__movsd_rev":
-                    if (args.Count != 3)
-                        throw Abort("{0}: argument mismatched", name);
-                    Movs(codes, name.Substring(2), args[0], args[1], args[2]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 3)
+                            throw Abort("{0}: argument mismatched", name);
+                        Movs(codes, name.Substring(2), args[0], args[1], args[2]);
+                    }
                     return true;
                 case "__memcpy":
-                    if (args.Count != 3)
-                        throw Abort("{0}: argument mismatched", name);
-                    Memcpy(codes, args[0], args[1], args[2]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 3)
+                            throw Abort("{0}: argument mismatched", name);
+                        Memcpy(codes, args[0], args[1], args[2]);
+                    }
                     return true;
                 case "__memcpy_rev":
-                    if (args.Count != 3)
-                        throw Abort("{0}: argument mismatched", name);
-                    MemcpyRev(codes, args[0], args[1], args[2]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 3)
+                            throw Abort("{0}: argument mismatched", name);
+                        MemcpyRev(codes, args[0], args[1], args[2]);
+                    }
                     return true;
                 case "__cpuid":
-                    if (args.Count != 2)
-                        throw Abort("{0}: argument mismatched", name);
-                    Cpuid(codes, args[0], args[1]);
+                    if (codes != null)
+                    {
+                        if (args.Count != 2)
+                            throw Abort("{0}: argument mismatched", name);
+                        Cpuid(codes, args[0], args[1]);
+                    }
                     return true;
             }
             return false;

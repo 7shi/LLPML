@@ -20,8 +20,7 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            values[0].AddCodes(codes, "mov", null);
-            GetFunc()(codes, dest, values[0]);
+            codes.AddOperatorCodes(GetFunc(), dest, values[0], false);
             codes.AddCodes(op, dest);
         }
     }

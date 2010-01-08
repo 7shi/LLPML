@@ -62,9 +62,12 @@ namespace Girl.LLPML.Parsing
                     nb = Switch();
                     break;
                 case "new":
-                    nb = New();
-                    (nb as Struct.New).NoSet = true;
-                    break;
+                    {
+                        var n = New();
+                        n.SrcInfo = si;
+                        nb = new Expression(parent, n);
+                        break;
+                    }
             }
             if (nb != null)
             {
@@ -129,11 +132,7 @@ namespace Girl.LLPML.Parsing
         {
             var si = SrcInfo;
             var v = Expression();
-            var e = v as NodeBase;
-            if (e == null) return null;
-
-            e.SrcInfo = si;
-            if (e is Call) (e as Call).NoSet = true;
+            var e = new Expression(parent, v) { SrcInfo = si };
             return new NodeBase[] { e };
         }
 

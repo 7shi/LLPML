@@ -80,6 +80,9 @@ namespace Girl.LLPML
                         case "var-declare":
                             nb = new Var.Declare(target, xr);
                             break;
+                        case "expression":
+                            nb = new Expression(target, xr);
+                            break;
                         case "inc":
                             nb = new Inc(target, xr);
                             break;

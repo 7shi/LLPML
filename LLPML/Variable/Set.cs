@@ -31,6 +31,9 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
+            var dt = dest.Type;
+            if (dt is TypeConstChar)
+                throw Abort("set: can not change constants");
             if (dest is Struct.Member)
             {
                 var mem = dest as Struct.Member;
@@ -40,20 +43,21 @@ namespace Girl.LLPML
                     return;
                 }
             }
-            values[0].AddCodes(codes, "push", null);
-            bool cleanup = Call.NeedsDtor(values[0]);
+
+            var v = values[0];
+            v.AddCodes(codes, "push", null);
+            var cleanup = OpModule.NeedsDtor(v);
             var ad = dest.GetAddress(codes);
             if (!cleanup)
                 codes.Add(I386.Pop(Reg32.EAX));
             else
-                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)));
-            dest.Type.AddSetCodes(codes, ad);
-            if (cleanup)
             {
-                codes.Add(I386.Push(Reg32.ESP));
-                values[0].Type.AddDestructor(codes);
-                codes.Add(I386.Add(Reg32.ESP, 8));
+                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)));
+                if (OpModule.NeedsCtor(v)) codes.AddCtorCodes();
             }
+            dt.AddSetCodes(codes, ad);
+            if (cleanup)
+                codes.AddDtorCodes(v.Type);
         }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)

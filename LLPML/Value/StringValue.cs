@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class StringValue : IIntValue
+    public class StringValue : NodeBase, IIntValue
     {
         public string Value { get; private set; }
 

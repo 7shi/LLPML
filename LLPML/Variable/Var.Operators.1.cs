@@ -29,7 +29,7 @@ namespace Girl.LLPML
                     ad = new Addr32(Reg32.ESP);
                 }
                 foreach (IIntValue v in values)
-                    f(codes, ad, v);
+                    codes.AddOperatorCodes(f, ad, v, false);
                 if (indirect)
                 {
                     codes.Add(I386.Pop(Reg32.EAX));

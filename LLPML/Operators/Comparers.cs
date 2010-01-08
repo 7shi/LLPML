@@ -8,6 +8,8 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
+    // operator_X(a, b, c) => a X b && b X c
+
     public class Equal : Operator
     {
         public override string Tag { get { return "equal"; } }
@@ -22,30 +24,53 @@ namespace Girl.LLPML
             Addr32 ad = new Addr32(Reg32.ESP);
             var f = GetFunc();
             var c = GetCond();
-            for (int i = 0; i < values.Count; i++)
+            var v = values[0];
+            var cleanup = OpModule.NeedsDtor(v);
+            if (!cleanup)
+                v.AddCodes(codes, "push", null);
+            else
             {
-                if (i == 0)
-                    values[i].AddCodes(codes, "push", null);
-                else
-                {
-                    f(codes, ad, values[i]);
-                    if (i < values.Count - 1)
-                        codes.AddRange(new[]
-                        {
-                            I386.Jcc(c.NotCondition, last.Address),
-                            I386.Mov(ad, Reg32.EAX)
-                        });
-                }
+                v.AddCodes(codes, "mov", null);
+                codes.Add(I386.Push(Reg32.EAX));
+                if (OpModule.NeedsCtor(v)) codes.AddCtorCodes();
+            }
+            for (int i = 1; i < values.Count; i++)
+            {
+                codes.AddOperatorCodes(f, ad, values[i], true);
+                if (i < values.Count - 1)
+                    codes.AddRange(new[]
+                    {
+                        I386.Jcc(c.NotCondition, last.Address),
+                        I386.Mov(ad, Reg32.EAX)
+                    });
             }
             codes.AddRange(new[]
             {
                 last,
                 I386.Mov(Reg32.EAX, (Val32)0),
                 I386.Setcc(c.Condition, Reg8.AL),
-                I386.Add(Reg32.ESP, 4)
             });
+            if (!cleanup)
+                codes.Add(I386.Add(Reg32.ESP, 4));
+            else
+            {
+                codes.AddRange(new[]
+                {
+                    I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
+                    I386.Push(Reg32.EAX),
+                });
+                codes.AddDtorCodes(v.Type);
+                codes.Add(I386.Pop(Reg32.EAX));
+            }
             codes.AddCodes(op, dest);
         }
+    }
+
+    public class NotEqual : Equal
+    {
+        public override string Tag { get { return "not-equal"; } }
+        public NotEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
+        public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class Less : Equal

@@ -17,7 +17,7 @@ namespace Girl.LLPML
         public virtual int Size { get { return Var.DefaultSize; } }
 
         // functions
-        public delegate void Func(OpModule codes, Addr32 dest, IIntValue arg);
+        public delegate void Func(OpModule codes, Addr32 dest);
         protected Dictionary<string, Func> funcs = new Dictionary<string, Func>();
         public virtual Func GetFunc(string key)
         {
@@ -131,8 +131,9 @@ namespace Girl.LLPML
         }
 
         // others
-        protected OpCode GetCall(Root root, string tag, string name)
+        protected OpCode GetCall(string tag, string name)
         {
+            var root = TypeString.Root;
             var f = root.GetFunction(name);
             if (f == null)
                 throw root.Abort("{0}: can not find: {1}", tag, name);

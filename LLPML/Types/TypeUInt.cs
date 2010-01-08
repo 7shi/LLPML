@@ -29,21 +29,19 @@ namespace Girl.LLPML
             AddOperators(funcs);
             AddComparers(funcs, conds);
 
-            funcs["shift-left"] = (codes, dest, arg) => Shift("shl", codes, dest, arg);
-            funcs["shift-right"] = (codes, dest, arg) => Shift("shr", codes, dest, arg);
+            funcs["shift-left"] = (codes, dest) => Shift("shl", codes, dest);
+            funcs["shift-right"] = (codes, dest) => Shift("shr", codes, dest);
 
-            funcs["mul"] = (codes, dest, arg) =>
+            funcs["mul"] = (codes, dest) =>
             {
-                arg.AddCodes(codes, "mov", null);
                 codes.AddRange(new[]
                 {
                     I386.Mul(dest),
                     I386.Mov(dest, Reg32.EAX)
                 });
             };
-            funcs["div"] = (codes, dest, arg) =>
+            funcs["div"] = (codes, dest) =>
             {
-                arg.AddCodes(codes, "mov", null);
                 codes.AddRange(new[]
                 {
                     I386.Xchg(Reg32.EAX, dest),
@@ -52,9 +50,8 @@ namespace Girl.LLPML
                     I386.Mov(dest, Reg32.EAX)
                 });
             };
-            funcs["mod"] = (codes, dest, arg) =>
+            funcs["mod"] = (codes, dest) =>
             {
-                arg.AddCodes(codes, "mov", null);
                 codes.AddRange(new[]
                 {
                     I386.Xchg(Reg32.EAX, dest),

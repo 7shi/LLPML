@@ -17,11 +17,17 @@ namespace Girl.LLPML
         {
             var ad = new Addr32(Reg32.ESP);
             var f = GetFunc();
-            for (int i = 0; i < values.Count; i++)
-                if (i == 0)
-                    values[i].AddCodes(codes, "push", null);
-                else
-                    f(codes, ad, values[i]);
+            var v = values[0];
+            if (!OpModule.NeedsDtor(v))
+                v.AddCodes(codes, "push", null);
+            else
+            {
+                v.AddCodes(codes, "mov", null);
+                codes.Add(I386.Push(Reg32.EAX));
+                if (OpModule.NeedsCtor(v)) codes.AddCtorCodes();
+            }
+            for (int i = 1; i < values.Count; i++)
+                codes.AddOperatorCodes(f, ad, values[i], false);
             if (op != "push")
             {
                 codes.Add(I386.Pop(Reg32.EAX));

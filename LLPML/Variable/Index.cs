@@ -54,9 +54,13 @@ namespace Girl.LLPML
         public override Addr32 GetAddress(OpModule codes)
         {
             var t = target.Type;
-            if (!t.IsArray)
+            int ts;
+            if (t is TypeString)
+                ts = TypeChar.Instance.Size;
+            else if (!t.IsArray)
                 throw Abort("{0} is not array", target.Name);
-            var ts = t.Type.Size;
+            else
+                ts = t.Type.Size;
             var oi = order as IntValue;
             if (oi != null)
             {
@@ -96,7 +100,17 @@ namespace Girl.LLPML
             return new Addr32(Var.DestRegister);
         }
 
-        public override TypeBase Type { get { return target.Type.Type; } }
+        public override TypeBase Type
+        {
+            get
+            {
+                var t = target.Type;
+                if (t is TypeString)
+                    return TypeConstChar.Instance;
+                else
+                    return t.Type;
+            }
+        }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {

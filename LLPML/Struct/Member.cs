@@ -199,7 +199,9 @@ namespace Girl.LLPML.Struct
             }
         }
         public override TypeBase Type
-        { get { return Child != null ? Child.Type : TypeInternal; } }
+        {
+            get { return Child != null ? Child.Type : TypeInternal; }
+        }
 
         public void Append(Member mem)
         {
@@ -236,8 +238,10 @@ namespace Girl.LLPML.Struct
         private bool flgDelg;
         private Delegate delg;
 
-        private Delegate GetDelegate()
+        public Delegate GetDelegate()
         {
+            if (Child != null) return Child.GetDelegate();
+
             if (flgDelg) return delg;
             flgDelg = true;
 
@@ -256,16 +260,14 @@ namespace Girl.LLPML.Struct
 
         public Function GetFunction()
         {
-            if (Child == null)
-            {
-                var t = GetTargetStruct();
-                if (t == null) return null;
-                var ret = t.GetFunction(name);
-                if (target is Base && ret.IsVirtual)
-                    ret = t.GetFunction("override_" + name);
-                return ret;
-            }
-            return Child.GetFunction();
+            if (Child != null) return Child.GetFunction();
+
+            var t = GetTargetStruct();
+            if (t == null) return null;
+            var ret = t.GetFunction(name);
+            if (target is Base && ret.IsVirtual)
+                ret = t.GetFunction("override_" + name);
+            return ret;
         }
 
         protected Function GetFunction(string prefix)

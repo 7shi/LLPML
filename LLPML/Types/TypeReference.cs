@@ -27,23 +27,17 @@ namespace Girl.LLPML
         // functions
         public override Func GetFunc(string key)
         {
-            var ret = Type.GetFunc(key);
-            if (ret != null) return ret;
-
-            if (key == "equal" || key == "not-equal")
-                return TypeInt.Instance.GetFunc(key);
-            return null;
+            var ret = base.GetFunc(key);
+            if (ret == null) ret = Type.GetFunc(key);
+            return ret;
         }
 
         // conditions
         public override CondPair GetCond(string key)
         {
-            var ret = Type.GetCond(key);
-            if (ret != null) return ret;
-
-            if (key == "equal" || key == "not-equal")
-                return TypeInt.Instance.GetCond(key);
-            return null;
+            var ret = base.GetCond(key);
+            if (ret == null) ret = Type.GetCond(key);
+            return ret;
         }
 
         // cast
@@ -73,18 +67,18 @@ namespace Girl.LLPML
                 codes.AddRange(new[]
                 {
                     I386.Push(Reg32.EAX),
-                    I386.Push(ad),
-                    GetCall(codes.Root, "var", Dereference),
-                    I386.Add(Reg32.ESP, 4),
-                    I386.Pop(Reg32.EAX),
+                    I386.Mov(Reg32.EAX, ad),
                     I386.Test(Reg32.EAX, Reg32.EAX),
                     I386.Jcc(Cc.Z, label.Address),
-                    I386.Mov(Reg32.EDX, new Addr32(Reg32.EAX, -12)),
-                    I386.Test(Reg32.EDX, Reg32.EDX),
-                    I386.Jcc(Cc.Z, label.Address),
-                    I386.Inc(new Addr32(Reg32.EAX, -12)),
+                    I386.Dec(new Addr32(Reg32.EAX, -12)),
+                    I386.Jcc(Cc.NZ, label.Address),
+                    I386.Push(Reg32.EAX),
+                    GetCall("var", Delete),
+                    I386.Add(Reg32.ESP, 4),
                     label,
+                    I386.Pop(Reg32.EAX),
                 });
+                codes.AddCtorCodes();
                 if (flag) codes.Add(I386.Pop(ad.Register));
             }
             base.AddSetCodes(codes, ad);
@@ -126,12 +120,19 @@ namespace Girl.LLPML
         public override void AddDestructor(OpModule codes)
         {
             if (!NeedsDtor) return;
+            var label = new OpCode();
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Push(new Addr32(Reg32.EAX)),
-                GetCall(codes.Root, "var", Dereference),
+                I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX)),
+                I386.Test(Reg32.EAX, Reg32.EAX),
+                I386.Jcc(Cc.Z, label.Address),
+                I386.Dec(new Addr32(Reg32.EAX, -12)),
+                I386.Jcc(Cc.NZ, label.Address),
+                I386.Push(Reg32.EAX),
+                GetCall("var", Delete),
                 I386.Add(Reg32.ESP, 4),
+                label,
             });
         }
 
@@ -155,6 +156,7 @@ namespace Girl.LLPML
 
         public TypeReference(TypeBase type, bool isArray)
         {
+            TypeIntBase.AddComparers(funcs, conds);
             Type = type;
             this.isArray = isArray;
         }

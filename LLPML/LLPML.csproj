@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Operators\Expression.cs" />
     <Compile Include="OpModule.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Parsing\SrcInfo.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="Operators\OrElse.cs" />
     <Compile Include="Operators\Operators.1.cs" />
     <Compile Include="Operators\Comparers.cs" />
-    <Compile Include="Operators\NotEqual.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Structure\Call.cs" />
     <Compile Include="Structure\Block.cs" />

@@ -39,28 +39,6 @@ namespace Girl.LLPML
             return sb.ToString();
         }
 
-        // functions
-        public override Func GetFunc(string key)
-        {
-            var ret = Type.GetFunc(key);
-            if (ret != null) return ret;
-
-            if (key == "equal" || key == "not-equal")
-                return TypeInt.Instance.GetFunc(key);
-            return null;
-        }
-
-        // conditions
-        public override CondPair GetCond(string key)
-        {
-            var ret = Type.GetCond(key);
-            if (ret != null) return ret;
-
-            if (key == "equal" || key == "not-equal")
-                return TypeInt.Instance.GetCond(key);
-            return null;
-        }
-
         public void CheckArgs(NodeBase target, IIntValue[] args)
         {
             if (!(args.Length == Args.Length
@@ -84,6 +62,7 @@ namespace Girl.LLPML
 
         public TypeFunction(CallType callType, TypeBase retType, IEnumerable<Var.Declare> args)
         {
+            TypeIntBase.AddComparers(funcs, conds);
             CallType = callType;
             RetType = retType;
             var Args = new List<Var.Declare>();
@@ -121,9 +100,9 @@ namespace Girl.LLPML
             {
                 I386.Push(Reg32.EAX),
                 I386.Push(ad),
-                GetCall(codes.Root, "delegate", Delegate.Free),
+                GetCall("delegate", Delegate.Free),
                 I386.Add(Reg32.ESP, 4),
-                GetCall(codes.Root, "delegate", Delegate.Duplicate),
+                GetCall("delegate", Delegate.Duplicate),
                 I386.Add(Reg32.ESP, 4),
             });
 
@@ -150,7 +129,7 @@ namespace Girl.LLPML
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(new Addr32(Reg32.EAX)),
-                GetCall(codes.Root, "delegate", Delegate.Free),
+                GetCall("delegate", Delegate.Free),
                 I386.Add(Reg32.ESP, 4),
             });
         }
