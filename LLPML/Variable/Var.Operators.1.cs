@@ -19,22 +19,25 @@ namespace Girl.LLPML
             private Addr32 Calculate(OpModule codes)
             {
                 var ad = dest.GetAddress(codes);
+                var ad2 = ad;
                 var f = GetFunc();
                 var size = dest.Type.Size;
+                var cleanup = OpModule.NeedsDtor(dest);
                 var indirect = (dest.Reference != null && dest.Reference.Parent != Parent)
-                    || size < Var.DefaultSize;
+                    || size < Var.DefaultSize || cleanup;
                 if (indirect)
                 {
+                    if (ad.Register != Reg32.EBP) codes.Add(I386.Push(ad.Register));
                     dest.Type.AddGetCodes(codes, "push", null, ad);
-                    ad = new Addr32(Reg32.ESP);
+                    ad2 = new Addr32(Reg32.ESP);
                 }
                 foreach (IIntValue v in values)
-                    codes.AddOperatorCodes(f, ad, v, false);
+                    codes.AddOperatorCodes(f, ad2, v, false);
                 if (indirect)
                 {
                     codes.Add(I386.Pop(Reg32.EAX));
-                    ad = dest.GetAddress(codes);
-                    dest.Type.AddSetCodes(codes, ad);
+                    if (ad.Register != Reg32.EBP) codes.Add(I386.Pop(ad.Register));
+                    codes.Add(I386.Mov(ad, Reg32.EAX));
                 }
                 return ad;
             }

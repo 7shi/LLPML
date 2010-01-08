@@ -31,16 +31,15 @@ namespace Girl.LLPML
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var v = values[0];
-            if (!OpModule.NeedsDtor(v) || v is Var || v is Var.Operator)
-            {
+            if (!OpModule.NeedsDtor(v))
                 v.AddCodes(codes, op, dest);
-                return;
+            else
+            {
+                v.AddCodes(codes, "mov", null);
+                codes.Add(I386.Push(Reg32.EAX));
+                codes.AddCodes(op, dest);
+                codes.AddDtorCodes(v.Type);
             }
-
-            v.AddCodes(codes, "mov", null);
-            codes.Add(I386.Push(Reg32.EAX));
-            codes.AddCodes(op, dest);
-            codes.AddDtorCodes(v.Type);
         }
     }
 }

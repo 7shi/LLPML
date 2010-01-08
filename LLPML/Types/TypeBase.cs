@@ -131,7 +131,7 @@ namespace Girl.LLPML
         }
 
         // others
-        protected OpCode GetCall(string tag, string name)
+        protected static OpCode GetCall(string tag, string name)
         {
             var root = TypeString.Root;
             var f = root.GetFunction(name);

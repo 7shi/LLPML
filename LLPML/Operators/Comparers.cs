@@ -25,15 +25,7 @@ namespace Girl.LLPML
             var f = GetFunc();
             var c = GetCond();
             var v = values[0];
-            var cleanup = OpModule.NeedsDtor(v);
-            if (!cleanup)
-                v.AddCodes(codes, "push", null);
-            else
-            {
-                v.AddCodes(codes, "mov", null);
-                codes.Add(I386.Push(Reg32.EAX));
-                if (OpModule.NeedsCtor(v)) codes.AddCtorCodes();
-            }
+            v.AddCodes(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
             {
                 codes.AddOperatorCodes(f, ad, values[i], true);
@@ -50,7 +42,7 @@ namespace Girl.LLPML
                 I386.Mov(Reg32.EAX, (Val32)0),
                 I386.Setcc(c.Condition, Reg8.AL),
             });
-            if (!cleanup)
+            if (!OpModule.NeedsDtor(v))
                 codes.Add(I386.Add(Reg32.ESP, 4));
             else
             {

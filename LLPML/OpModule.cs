@@ -46,40 +46,17 @@ namespace Girl.LLPML
             return f.GetAddress(Module);
         }
 
-        public static bool NeedsCtor(IIntValue v)
-        {
-            if (!(v is Var)) return false;
-
-            var vt = v.Type;
-            return vt is TypeReference && vt.NeedsCtor;
-        }
-
         public static bool NeedsDtor(IIntValue v)
         {
             var vt = v.Type;
+            if (vt == null) return false;
 
             var vsm = v as Struct.Member;
             if (vsm != null && vt is TypeDelegate && vsm.GetDelegate() != null)
                 return true;
 
-            if (v is Var && (vt is TypeStruct || vt is TypeDelegate))
-                return false;
-            else if (v is Set || vt == null || !vt.NeedsDtor)
-                return false;
-            else
-                return true;
-        }
-
-        public void AddCtorCodes()
-        {
-            var label = new OpCode();
-            AddRange(new[]
-            {
-                I386.Test(Reg32.EAX, Reg32.EAX),
-                I386.Jcc(Cc.Z, label.Address),
-                I386.Inc(new Addr32(Reg32.EAX, -12)),
-                label,
-            });
+            return vt.NeedsDtor
+                && (v is Call || v is Struct.New || v is Delegate || v is Operator);
         }
 
         public void AddDtorCodes(TypeBase t)
@@ -99,7 +76,6 @@ namespace Girl.LLPML
                 if (dest.Register == Reg32.ESP)
                     dest = new Addr32(dest.Register, dest.Disp + 4);
             }
-            if (NeedsCtor(arg)) AddCtorCodes();
             f(this, dest);
             if (cleanup)
             {

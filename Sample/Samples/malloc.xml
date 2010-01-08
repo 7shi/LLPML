@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.21.20080817">
+<llpml version="0.23.20080824">
 
 <!-- heap functions -->
 
@@ -91,7 +91,7 @@ function __reference(ptr)
   if (ptr == null) return;
 
   var h = (var*)(ptr - 16);
-  //printfln("%s: %p, %d", __FUNCTION__, ptr, h[1]);
+  //printfln("%s: %p, %d => %d", __FUNCTION__, ptr, h[1], h[1] + 1);
   h[1]++;
 }
 
@@ -100,7 +100,8 @@ function __dereference(ptr)
   if (ptr == null) return;
 
   var h = (var*)(ptr - 16);
-  //printfln("%s: %p, %d", __FUNCTION__, ptr, h[1]);
+  //printfln("%s: %p, %d => %d", __FUNCTION__, ptr, h[1], h[1] - 1);
+  if (h[1] == 0) { printfln("INVALID!"); return; }
   h[1]--;
   if (h[1] == 0) __operator_delete(ptr);
 }

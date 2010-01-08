@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define INLINE_REFCOUNT
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +12,7 @@ namespace Girl.LLPML
     public class TypeReference : TypeVarBase
     {
         public const string Delete = "__operator_delete";
+        public const string Reference = "__reference";
         public const string Dereference = "__dereference";
 
         // type name
@@ -63,22 +66,15 @@ namespace Girl.LLPML
             {
                 var flag = !ad.IsAddress && ad.Register == Var.DestRegister;
                 if (flag) codes.Add(I386.Push(ad.Register));
-                var label = new OpCode();
                 codes.AddRange(new[]
                 {
                     I386.Push(Reg32.EAX),
                     I386.Mov(Reg32.EAX, ad),
-                    I386.Test(Reg32.EAX, Reg32.EAX),
-                    I386.Jcc(Cc.Z, label.Address),
-                    I386.Dec(new Addr32(Reg32.EAX, -12)),
-                    I386.Jcc(Cc.NZ, label.Address),
-                    I386.Push(Reg32.EAX),
-                    GetCall("var", Delete),
-                    I386.Add(Reg32.ESP, 4),
-                    label,
-                    I386.Pop(Reg32.EAX),
                 });
-                codes.AddCtorCodes();
+                AddDereferenceCodes(codes);
+                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)));
+                AddReferenceCodes(codes);
+                codes.Add(I386.Pop(Reg32.EAX));
                 if (flag) codes.Add(I386.Pop(ad.Register));
             }
             base.AddSetCodes(codes, ad);
@@ -120,11 +116,41 @@ namespace Girl.LLPML
         public override void AddDestructor(OpModule codes)
         {
             if (!NeedsDtor) return;
-            var label = new OpCode();
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX)),
+            });
+            AddDereferenceCodes(codes);
+        }
+
+        public static void AddReferenceCodes(OpModule codes)
+        {
+#if INLINE_REFCOUNT
+            var label = new OpCode();
+            codes.AddRange(new[]
+            {
+                I386.Test(Reg32.EAX, Reg32.EAX),
+                I386.Jcc(Cc.Z, label.Address),
+                I386.Inc(new Addr32(Reg32.EAX, -12)),
+                label,
+            });
+#else
+            codes.AddRange(new[]
+            {
+                I386.Push(Reg32.EAX),
+                GetCall("var", Reference),
+                I386.Pop(Reg32.EAX),
+            });
+#endif
+        }
+
+        public static void AddDereferenceCodes(OpModule codes)
+        {
+#if INLINE_REFCOUNT
+            var label = new OpCode();
+            codes.AddRange(new[]
+            {
                 I386.Test(Reg32.EAX, Reg32.EAX),
                 I386.Jcc(Cc.Z, label.Address),
                 I386.Dec(new Addr32(Reg32.EAX, -12)),
@@ -134,6 +160,14 @@ namespace Girl.LLPML
                 I386.Add(Reg32.ESP, 4),
                 label,
             });
+#else
+            codes.AddRange(new[]
+            {
+                I386.Push(Reg32.EAX),
+                GetCall("var", Dereference),
+                I386.Pop(Reg32.EAX),
+            });
+#endif
         }
 
         public virtual bool UseGC

@@ -247,16 +247,7 @@ namespace Girl.LLPML
             var args2 = args.Clone() as IIntValue[];
             Array.Reverse(args2);
             foreach (IIntValue arg in args2)
-            {
-                if (!OpModule.NeedsCtor(arg))
-                {
-                    arg.AddCodes(codes, "push", null);
-                    continue;
-                }
-                arg.AddCodes(codes, "mov", null);
-                codes.AddCtorCodes();
-                codes.Add(I386.Push(Reg32.EAX));
-            }
+                arg.AddCodes(codes, "push", null);
             delg();
             if (type == CallType.CDecl && args2.Length > 0)
             {

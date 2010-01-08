@@ -18,14 +18,15 @@ namespace Girl.LLPML
             var ad = new Addr32(Reg32.ESP);
             var f = GetFunc();
             var v = values[0];
-            if (!OpModule.NeedsDtor(v))
-                v.AddCodes(codes, "push", null);
-            else
+            var tr = v.Type as TypeReference;
+            if (tr != null && tr.UseGC && !OpModule.NeedsDtor(v))
             {
                 v.AddCodes(codes, "mov", null);
                 codes.Add(I386.Push(Reg32.EAX));
-                if (OpModule.NeedsCtor(v)) codes.AddCtorCodes();
+                TypeReference.AddReferenceCodes(codes);
             }
+            else
+                v.AddCodes(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
                 codes.AddOperatorCodes(f, ad, values[i], false);
             if (op != "push")

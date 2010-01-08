@@ -50,12 +50,18 @@ namespace Girl.LLPML
             if (value != null)
             {
                 value.AddCodes(codes, "mov", null);
-                if (OpModule.NeedsCtor(value))
-                    codes.AddCtorCodes();
                 var retval = f.GetRetVal(Parent);
                 var dest = retval.GetAddress(codes);
                 if (!OpModule.NeedsDtor(value))
+                {
                     codes.Add(I386.Mov(dest, Reg32.EAX));
+                    if (value is Var)
+                    {
+                        var tr = value.Type as TypeReference;
+                        if (tr != null && tr.UseGC)
+                            TypeReference.AddReferenceCodes(codes);
+                    }
+                }
                 else
                 {
                     codes.Add(I386.Push(Reg32.EAX));

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.16.20080410">
+<llpml version="0.23.20080824">
 
 <!-- string functions -->
 
@@ -45,7 +45,7 @@ function __string_add(a : string, b : string) : string
   var ret = new char[a.Length + b.Length];
   if (a.Length > 0) __movsw(ret, a, a.Length);
   if (b.Length > 0) __movsw(addrof ret[a.Length], b, b.Length);
-  //printfln("%s(%s, %s): %s", __FUNCTION__, a, b, ret);
+  //printfln("%s(%p:%s, %p:%s): %p:%s", __FUNCTION__, a, a, b, b, ret, ret);
   return ret;
 }
 
