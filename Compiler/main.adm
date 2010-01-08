@@ -1,0 +1,5 @@
+﻿function main
+{
+  printfln("こんにちは、世界！");
+  pause();
+}

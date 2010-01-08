@@ -23,6 +23,15 @@ namespace Girl.LLPML
             codes.AddOperatorCodes(GetFunc(), dest, values[0], false);
             codes.AddCodes(op, dest);
         }
+
+        public override IntValue GetConst()
+        {
+            var v = GetValue(values[0]);
+            if (v == null) return null;
+            return new IntValue(Calculate(v.Value));
+        }
+
+        protected virtual int Calculate(int v) { return -v; }
     }
 
     public class Rev : Neg
@@ -30,6 +39,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "rev"; } }
         public Rev(BlockBase parent, IIntValue value) : base(parent, value) { }
         public Rev(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int v) { return ~v; }
     }
 
     public class Not : Neg
@@ -38,5 +48,6 @@ namespace Girl.LLPML
         public override TypeBase Type { get { return TypeBool.Instance; } }
         public Not(BlockBase parent, IIntValue value) : base(parent, value) { }
         public Not(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int v) { return v != 0 ? 0 : 1; }
     }
 }

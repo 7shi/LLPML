@@ -5,4 +5,6 @@ rd /s /q ..\LLPML\bin
 rd /s /q ..\LLPML\obj
 rd /s /q ..\Sample\bin
 rd /s /q ..\Sample\obj
+rd /s /q ..\Compiler\bin
+rd /s /q ..\Compiler\obj
 pause

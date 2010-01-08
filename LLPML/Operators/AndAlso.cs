@@ -28,5 +28,22 @@ namespace Girl.LLPML
             codes.Add(last);
             codes.AddCodes(op, dest);
         }
+
+        public override IntValue GetConst()
+        {
+            var v = GetValue(values[0]);
+            if (v == null) return null;
+
+            var ret = v.Value == 0 ? false : true;
+            for (int i = 1; i < values.Count; i++)
+            {
+                var iv = GetValue(values[i]);
+                if (iv == null) return null;
+                ret = Calculate(ret, iv.Value == 0 ? false : true);
+            }
+            return new IntValue(ret ? 1 : 0);
+        }
+
+        protected bool Calculate(bool a, bool b) { return a && b; }
     }
 }

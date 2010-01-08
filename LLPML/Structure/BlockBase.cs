@@ -32,6 +32,7 @@ namespace Girl.LLPML
         public virtual Val32 Continue { get { return null; } }
 
         protected Var.Declare retVal;
+        public bool HasRetVal { get { return retVal != null; } }
         public Var GetRetVal(BlockBase parent)
         {
             if (retVal == null)

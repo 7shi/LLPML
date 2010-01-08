@@ -41,5 +41,10 @@ namespace Girl.LLPML
                 codes.AddDtorCodes(v.Type);
             }
         }
+
+        public override IntValue GetConst()
+        {
+            return GetValue(values[0]);
+        }
     }
 }

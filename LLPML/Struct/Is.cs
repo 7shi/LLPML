@@ -37,5 +37,10 @@ namespace Girl.LLPML.Struct
         {
             get { return TypeBool.Instance; }
         }
+
+        public override IntValue GetConst()
+        {
+            return null;
+        }
     }
 }

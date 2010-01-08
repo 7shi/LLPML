@@ -1,0 +1,32 @@
+class GCList : ArrayList
+{
+  function dtor
+  {
+    Clear();
+  }
+  
+  function Clear
+  {
+    ForEachRev(\obj => __dereference(obj));
+    base.Clear();
+  }
+  
+  function Add(obj)
+  {
+    __reference(obj);
+    base.Add(obj);
+  }
+  
+  function Remove(obj)
+  {
+    __dereference(obj);
+    return base.Remove(obj);
+  }
+  
+  function RemoveAt(order)
+  {
+    var ret = base.RemoveAt(order);
+    __reference(ret);
+    return ret;
+  }
+}

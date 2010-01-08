@@ -1,0 +1,143 @@
+extern "kernel32.dll" __stdcall
+{
+  GetProcessHeap();
+  HeapAlloc(hHeap, dwFlags, dwBytes);
+  HeapReAlloc(hHeap, dwFlags, lpMem, dwBytes);
+  HeapFree(hHeap, dwFlags, lpMem);
+  HeapSize(hHeap, dwFlags, lpMem);
+}
+
+function __operator_new(type : Type, size, len, izer, ctor)
+{
+  var ptr;
+  if (len == -1)
+    ptr = calloc(1, size + 16);
+  else
+    ptr = calloc(1, (len + 1) * size + 16);
+  if (ptr == null) return null;
+  
+  var ret = ptr + 16;
+  var h = (var*)ptr;
+  h[0] = type;
+  h[1] = 1;
+  h[2] = size;
+  h[3] = len;
+  if (izer != null)
+  {
+    if (len == -1)
+    {
+      izer(ret);
+      ctor(ret);
+    }
+    else
+    {
+      var p = ret;
+      for (var i = 0; i < len; i++)
+      {
+        izer(p);
+        ctor(p);
+        p += size;
+      }
+    }
+  }
+  //printfln("%s(%p{%s}, %d, %d, %p, %p): %p", __FUNCTION__, type, type.Name, size, len, izer, ctor, ret);
+  return ret;
+}
+
+function __operator_delete(ptr)
+{
+  if (ptr == null) return;
+
+  var h = (var*)(ptr - 16);
+  var type : var* = h[0];
+  var dtor = type[1], size = h[2], len = h[3];
+  //printfln("%s(%p): type = %p{%s}, size = %d, len = %d", __FUNCTION__, ptr, type, type[0], size, len);
+  if (dtor != null)
+  {
+    h[1] = 1;
+    if (len == -1)
+    {
+      dtor(ptr);
+    }
+    else
+    {
+      var p = ptr + (len - 1) * size;
+      for (int i = 0; i < len; i++)
+      {
+        dtor(p);
+        p -= size;
+      }
+    }
+  }
+  free(h);
+}
+
+function __get_refcount(ptr)
+{
+  if (ptr == null) return -1;
+  
+  var h = (var*)(ptr - 16);
+  //printfln("%s: %p, %d", __FUNCTION__, ptr, h[1]);
+  return h[1];
+}
+
+function __reference(ptr)
+{
+  if (ptr == null) return;
+
+  var h = (var*)(ptr - 16);
+  //printfln("%s: %p, %d => %d", __FUNCTION__, ptr, h[1], h[1] + 1);
+  h[1]++;
+}
+
+function __dereference(ptr)
+{
+  if (ptr == null) return;
+
+  var h = (var*)(ptr - 16);
+  //printfln("%s: %p, %d => %d", __FUNCTION__, ptr, h[1], h[1] - 1);
+  //if (h[1] == 0) { printfln("INVALID!"); return; }
+  h[1]--;
+  if (h[1] == 0) __operator_delete(ptr);
+}
+
+function __dereference_ptr(ptr)
+{
+  var p = (var*)ptr;
+  //printfln("%s(%p): %p", __FUNCTION__, ptr, p[0]);
+  __dereference(p[0]);
+}
+
+// ŽÀ‘•
+
+var g_hProcessHeap = GetProcessHeap();
+
+function malloc(size) : var
+{
+  return HeapAlloc(g_hProcessHeap, 0, size);
+}
+
+function calloc(n, size) : var
+{
+  var len = n * size;
+  var ret = malloc(len);
+  if (ret != null) __stosb(ret, 0, len);
+  //printfln("%s(%d, %d): %p", __FUNCTION__, n, size, ret);
+  return ret;
+}
+
+function realloc(ptr, size) : var
+{
+  return HeapReAlloc(g_hProcessHeap, 0, ptr, size);
+}
+
+function free(ptr)
+{
+  if (ptr != null)
+    HeapFree(g_hProcessHeap, 0, ptr);
+}
+
+function __get_heap_size(ptr) : int
+{
+  return HeapSize(g_hProcessHeap, 0, ptr);
+}

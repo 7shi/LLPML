@@ -30,6 +30,11 @@ namespace Girl.LLPML.Parsing
                     break;
                 }
                 ret = op.Read(ret, order);
+                if (ret is LLPML.Operator)
+                {
+                    var v = (ret as LLPML.Operator).GetConst();
+                    if (v != null) ret = v;
+                }
                 if (ret is NodeBase)
                     (ret as NodeBase).SrcInfo = si;
                 si = SrcInfo;
@@ -74,6 +79,7 @@ namespace Girl.LLPML.Parsing
             // 前置演算子
             var si = SrcInfo;
             var t = Read();
+            int order = operators.Length - 1;
             switch (t)
             {
                 case "+":
@@ -85,26 +91,26 @@ namespace Girl.LLPML.Parsing
                             if (t == "-") return new IntValue(-v.Value) { SrcInfo = si };
                             return v;
                         }
-                        var n = Expression();
+                        var n = Expression(order);
                         if (t == "-") return new Neg(parent, n) { SrcInfo = si };
                         return n;
                     }
                 case "!":
-                    return new Not(parent, Expression()) { SrcInfo = si };
+                    return new Not(parent, Expression(order)) { SrcInfo = si };
                 case "~":
-                    return new Rev(parent, Expression()) { SrcInfo = si };
+                    return new Rev(parent, Expression(order)) { SrcInfo = si };
                 case "++":
                     {
-                        var target = Expression() as Var;
+                        var target = Expression(order) as Var;
                         if (target == null)
                             throw parent.Abort(si, "++: 対象が変数ではありません。");
                         return new Inc(parent, target) { SrcInfo = si };
                     }
                 case "--":
                     {
-                        var target = Expression() as Var;
+                        var target = Expression(order) as Var;
                         if (target == null)
-                            throw parent.Abort(si, "--: 対象が変数ではありません。");
+                            throw parent.Abort(si, "++: 対象が変数ではありません。");
                         return new Dec(parent, target) { SrcInfo = si };
                     }
             }

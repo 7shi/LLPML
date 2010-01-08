@@ -35,6 +35,23 @@ namespace Girl.LLPML
                 codes.AddCodes(op, dest);
             }
         }
+
+        public override IntValue GetConst()
+        {
+            var v = GetValue(values[0]);
+            if (v == null) return null;
+
+            var ret = v.Value;
+            for (int i = 1; i < values.Count; i++)
+            {
+                var iv = GetValue(values[i]);
+                if (iv == null) return null;
+                ret = Calculate(ret, iv.Value);
+            }
+            return new IntValue(ret);
+        }
+
+        protected virtual int Calculate(int a, int b) { return a + b; }
     }
 
     public class Sub : Add
@@ -42,6 +59,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "sub"; } }
         public Sub(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Sub(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a - b; }
     }
 
     public class And : Add
@@ -49,6 +67,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "and"; } }
         public And(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public And(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a & b; }
     }
 
     public class Or : Add
@@ -56,6 +75,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "or"; } }
         public Or(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Or(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a | b; }
     }
 
     public class Xor : Add
@@ -63,6 +83,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "xor"; } }
         public Xor(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Xor(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a ^ b; }
     }
 
     public class ShiftLeft : Add
@@ -70,6 +91,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "shift-left"; } }
         public ShiftLeft(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public ShiftLeft(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a << b; }
     }
 
     public class ShiftRight : Add
@@ -77,6 +99,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "shift-right"; } }
         public ShiftRight(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public ShiftRight(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a >> b; }
     }
 
     public class Mul : Add
@@ -84,6 +107,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "mul"; } }
         public Mul(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Mul(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a * b; }
     }
 
     public class Div : Add
@@ -91,6 +115,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "div"; } }
         public Div(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Div(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a / b; }
     }
 
     public class Mod : Add
@@ -98,5 +123,6 @@ namespace Girl.LLPML
         public override string Tag { get { return "mod"; } }
         public Mod(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Mod(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override int Calculate(int a, int b) { return a % b; }
     }
 }

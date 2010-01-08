@@ -44,5 +44,10 @@ namespace Girl.LLPML.Struct
                     return ret;
             }
         }
+
+        public override IntValue GetConst()
+        {
+            return null;
+        }
     }
 }

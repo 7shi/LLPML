@@ -39,5 +39,10 @@ namespace Girl.LLPML
                 codes.Add(I386.Jcc(Cc.NZ, First));
             }
         }
+
+        public override IntValue GetConst()
+        {
+            return GetValue(values[0]);
+        }
     }
 }

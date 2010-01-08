@@ -19,9 +19,7 @@ namespace Girl.LLPML
 
         protected virtual void ReadBlock(XmlTextReader xr)
         {
-            var target = Target;
-            if (target == null) target = this;
-            ReadBlock(target, xr);
+            ReadBlock(Target ?? this, xr);
         }
 
         protected void ReadBlock(BlockBase target, XmlTextReader xr)
@@ -160,7 +158,6 @@ namespace Girl.LLPML
                 case XmlNodeType.ProcessingInstruction:
                     if (xr.Name == "llp")
                     {
-                        char[] data = new char[1024];
                         var rs = xr.ReadString();
                         var t = new Tokenizer(target.Root.Source,
                             xr.Value, xr.LineNumber + 1, 1);
@@ -192,6 +189,13 @@ namespace Girl.LLPML
             {
                 ReadBlock(xr);
             });
+        }
+
+        public void ReadText(string file, string src)
+        {
+            var t = new Tokenizer(file, src);
+            var sents = Block.ReadText(Target ?? this, t);
+            if (sents != null) AddSentences(sents);
         }
     }
 }

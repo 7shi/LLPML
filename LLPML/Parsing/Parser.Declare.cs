@@ -75,13 +75,10 @@ namespace Girl.LLPML.Parsing
             var br1 = Read();
             if (br1 == "[")
             {
-                var len = Read();
-                if (!Tokenizer.IsDigit(len))
-                {
-                    Rewind();
+                var len = Expression() as IntValue;
+                if (len == null)
                     throw Abort("{0}: 配列のサイズが必要です。", category);
-                }
-                array = int.Parse(len);
+                array = len.Value;
                 Check(category, "]");
             }
             else

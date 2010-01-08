@@ -56,6 +56,20 @@ namespace Girl.LLPML
             }
             codes.AddCodes(op, dest);
         }
+
+        public override IntValue GetConst()
+        {
+            for (int i = 0; i < values.Count - 1; i++)
+            {
+                var a = GetValue(values[i]);
+                var b = GetValue(values[i + 1]);
+                if (a == null || b == null) return null;
+                if (!Calculate(a.Value, b.Value)) return new IntValue(0);
+            }
+            return new IntValue(1);
+        }
+
+        protected virtual bool Calculate(int a, int b) { return a == b; }
     }
 
     public class NotEqual : Equal
@@ -63,6 +77,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "not-equal"; } }
         public NotEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override bool Calculate(int a, int b) { return a != b; }
     }
 
     public class Less : Equal
@@ -70,6 +85,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "less"; } }
         public Less(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Less(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override bool Calculate(int a, int b) { return a < b; }
     }
 
     public class Greater : Equal
@@ -77,6 +93,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "greater"; } }
         public Greater(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Greater(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override bool Calculate(int a, int b) { return a > b; }
     }
 
     public class LessEqual : Equal
@@ -84,6 +101,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "less-equal"; } }
         public LessEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public LessEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override bool Calculate(int a, int b) { return a <= b; }
     }
 
     public class GreaterEqual : Equal
@@ -91,5 +109,6 @@ namespace Girl.LLPML
         public override string Tag { get { return "greater-equal"; } }
         public GreaterEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public GreaterEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        protected override bool Calculate(int a, int b) { return a >= b; }
     }
 }
