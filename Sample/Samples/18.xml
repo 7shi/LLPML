@@ -1,55 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- struct in struct -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <struct-define name="Point">
-	<member name="x" />
-	<member name="y" />
+	<var-declare name="x" />
+	<var-declare name="y" />
 </struct-define>
 
 <struct-define name="Points">
-	<member name="p1" type="Point" />
-	<member name="p2" type="Point" />
+	<struct-declare name="p1" type="Point" />
+	<struct-declare name="p2" type="Point" />
 </struct-define>
 
 <struct-declare name="p" type="Points">
-	<struct-declare>
-		<int>1</int>
-		<int>2</int>
-	</struct-declare>
-	<struct-declare>
-		<int>3</int>
-		<int>4</int>
-	</struct-declare>
+	<struct-declare>1, 2</struct-declare>
+	<struct-declare>3, 4</struct-declare>
 </struct-declare>
 
-<call name="vprintfln">
-	<string>p = ((%d, %d), (%d, %d))</string>
-	<ptr name="p" />
-</call>
+vprintfln("p = ((%d, %d), (%d, %d))", p);
 
-<let>
-	<struct-member ptr="p" name="p1">
-		<struct-member name="x" />
-	</struct-member>
-	<int>9</int>
-</let>
+p.p1.x = 9;
+p.p2.y = 8;
 
-<let>
-	<struct-member ptr="p" name="p2">
-		<struct-member name="y" />
-	</struct-member>
-	<int>8</int>
-</let>
-
-<call name="vprintfln">
-	<string>p = ((%d, %d), (%d, %d))</string>
-	<ptr name="p" />
-</call>
-
-<call name="finish" />
+vprintfln("p = ((%d, %d), (%d, %d))", p);
 
 </llpml>

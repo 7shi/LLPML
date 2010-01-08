@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20071021">
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <var-declare name="result">0</var-declare>
 
@@ -9,30 +9,13 @@
 	<init>
 		<var-declare name="i">1</var-declare>
 	</init>
-	<cond>
-		<less-equal>
-			<var name="i" />
-			<int>10000</int>
-		</less-equal>
-	</cond>
-	<loop>
-		<inc>
-			<var name="i" />
-		</inc>
-	</loop>
+	<cond>10000 >= i</cond>
+	<loop>i++;</loop>
 	<block>
-		<var-add>
-			<var name="result" />
-			<var name="i" />
-		</var-add>
+		result += i;
 	</block>
 </for>
 
-<call name="printfln">
-	<string>1 + 2 + ... + 10000 = %d</string>
-	<var name="result" />
-</call>
-
-<call name="finish" />
+printfln("1 + 2 + ... + 10000 = %d", result);
 
 </llpml>

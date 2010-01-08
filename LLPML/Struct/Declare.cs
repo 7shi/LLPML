@@ -10,17 +10,8 @@ namespace Girl.LLPML.Struct
 {
     public class Declare : Pointer.Declare
     {
-        public override int Length
-        {
-            get
-            {
-                Define st = parent.GetStruct(type);
-                if (st == null) throw Abort("undefined struct: " + type);
-                return st.GetSize();
-            }
-        }
+        public override int Length { get { return GetStruct().GetSize(); } }
 
-        private string type;
         public string Type { get { return type; } }
 
         private List<object> values = new List<object>();
@@ -83,41 +74,44 @@ namespace Girl.LLPML.Struct
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             Define st = GetStruct();
-            AddCodes(codes, m, st, new Addr32(address));
-            st.AddConstructor(codes, m, address);
+            Addr32 ad = GetAddress(codes, m, parent);
+            if (AddInitValues(codes, m, st, ad))
+                ad = GetAddress(codes, m, parent);
+            st.AddConstructor(codes, m, ad);
         }
 
-        public void AddCodes(List<OpCode> codes, Module m, Define st, Addr32 ad)
+        private bool AddInitValues(List<OpCode> codes, Module m, Define st, Addr32 ad)
         {
-            if (values.Count == 0) return;
+            if (values.Count == 0) return false;
 
-            Define.Member[] members = st.GetMembers();
+            Pointer.Declare[] members = st.GetMembers();
             if (members.Length != values.Count)
-                throw Abort("can not initialize: " + st.Name);
+                throw Abort("initializers mismatched: " + st.Name);
 
             for (int i = 0; i < values.Count; i++)
             {
-                Define.Member mem = members[i];
-                Define memst = mem.GetStruct();
+                Pointer.Declare mem = members[i];
                 object obj = values[i];
                 if (obj is Declare)
                 {
-                    if (memst == null)
-                        throw Abort("value required: " + mem.Name);
-                    (obj as Declare).AddCodes(codes, m, memst, ad);
+                    Define memst = st.GetStruct(mem);
+                    if (!(mem is Declare) || memst == null)
+                        throw Abort("struct required: " + mem.Name);
+                    (obj as Declare).AddInitValues(codes, m, memst, ad);
                 }
                 else if (obj is IIntValue)
                 {
-                    if (memst != null)
-                        throw Abort("struct required: " + mem.Name);
+                    if (!(mem is Var.Declare))
+                        throw Abort("value required: " + mem.Name);
                     (obj as IIntValue).AddCodes(codes, m, "mov", new Addr32(ad));
-                    ad.Add(mem.GetSize());
+                    ad.Add(mem.Length);
                 }
                 else
                 {
                     throw Abort("invalid parameter: " + mem.Name);
                 }
             }
+            return true;
         }
     }
 }

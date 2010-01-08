@@ -1,31 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20071021">
 
 <!-- function -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
-<call name="test">
-	<int>2</int>
-	<int>4</int>
-</call>
-
-<call name="finish" />
+test(2, 4);
 
 <function name="test">
 	<arg name="a" />
 	<arg name="b" />
-	<var-declare name="c"><var name="a" /></var-declare>
-	<var-add>
-		<var name="c" />
-		<var name="b" />
-	</var-add>
-	<call name="printfln">
-		<string>%d + %d = %d</string>
-		<var name="a" />
-		<var name="b" />
-		<var name="c" />
-	</call>
+	<var-declare name="c">
+		a + b
+	</var-declare>
+	printfln("%d + %d = %d", a, b, c);
 </function>
 
 </llpml>

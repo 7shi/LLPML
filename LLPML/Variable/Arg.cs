@@ -24,15 +24,19 @@ namespace Girl.LLPML
         {
         }
 
+        protected override void Init()
+        {
+        }
+
         public override void Read(XmlTextReader xr)
         {
             if (!(parent is Function))
                 throw Abort(xr, "arg must be in function root");
-            else if (parent is Struct.Method)
+            else if (parent.ThisStruct != null)
             {
-                if (parent.Name.EndsWith("::this"))
+                if (parent.Name == Struct.Define.Constructor)
                     throw Abort(xr, "constructor can not have any arguments");
-                else if (parent.Name.EndsWith("::~this"))
+                else if (parent.Name == Struct.Define.Destructor)
                     throw Abort(xr, "destructor can not have any arguments");
             }
 

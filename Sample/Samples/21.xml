@@ -1,68 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- method in struct in struct -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <struct-define name="Point">
-	<member name="x" />
-	<member name="y" />
+	<var-declare name="x" />
+	<var-declare name="y" />
 	
-	<method name="Show">
-		<call name="vprintfln">
-			<string>Show: (%d, %d)</string>
-			<this />
-		</call>
-	</method>
+	<function name="Show">
+		printfln("[%s] %d, %d", __FUNCTION__, x, y);
+	</function>
 </struct-define>
 
 <struct-define name="DoublePoint">
-	<member name="a" type="Point" />
-	<member name="b" type="Point" />
+	<struct-declare name="a" type="Point" />
+	<struct-declare name="b" type="Point" />
+	
+	<function name="Show">
+		printfln("[%s] %p -> a: %p", __FUNCTION__, this, a);
+		a.Show();
+		printfln("[%s] %p -> b: %p", __FUNCTION__, this, b);
+		b.Show();
+	</function>
 </struct-define>
 
 <struct-declare name="p" type="DoublePoint">
-	<struct-declare>
-		<int>1</int>
-		<int>2</int>
-	</struct-declare>
-	<struct-declare>
-		<int>3</int>
-		<int>4</int>
-	</struct-declare>
+	<struct-declare>1, 2</struct-declare>
+	<struct-declare>3, 4</struct-declare>
 </struct-declare>
 
+printfln("&amp;p = %p", p);
 <call name="printfln">
-	<string>&amp;p = %p</string>
-	<ptr name="p" />
-</call>
-<call name="printfln">
-	<string>&amp;p.a = %p</string>
+	"&amp;p.a = %p"
 	<struct-member-ptr ptr="p" name="a" />
 </call>
 <call name="printfln">
-	<string>&amp;p.b = %p</string>
+	"&amp;p.b = %p"
 	<struct-member-ptr ptr="p" name="b" />
 </call>
 <call name="printfln">
-	<string>&amp;p.b.y = %p</string>
+	"&amp;p.b.y = %p"
 	<struct-member-ptr ptr="p" name="b">
 		<struct-member name="y" />
 	</struct-member-ptr>
 </call>
 
-<call name="vprintfln">
-	<string>p = ((%d, %d), (%d, %d))</string>
-	<ptr name="p" />
-</call>
-<invoke name="Show">
-	<struct-member-ptr ptr="p" name="a" />
-</invoke>
-<invoke name="Show">
-	<struct-member-ptr ptr="p" name="b" />
-</invoke>
-
-<call name="finish" />
+vprintfln("p = ((%d, %d), (%d, %d))", p);
+p.Show();
+p.a.Show();
+p.b.Show();
 
 </llpml>

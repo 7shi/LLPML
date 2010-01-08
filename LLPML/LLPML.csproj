@@ -42,12 +42,12 @@
     <Compile Include="Operators\Rev.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Parsing\Tokenizer.cs" />
-    <Compile Include="Struct2\Declare.cs" />
-    <Compile Include="Struct2\Define.cs" />
-    <Compile Include="Struct2\Invoke.cs" />
-    <Compile Include="Struct2\Member.cs" />
-    <Compile Include="Struct2\Size.cs" />
-    <Compile Include="Struct2\This.cs" />
+    <Compile Include="Struct\Declare.cs" />
+    <Compile Include="Struct\Define.cs" />
+    <Compile Include="Struct\Invoke.cs" />
+    <Compile Include="Struct\Member.cs" />
+    <Compile Include="Struct\Size.cs" />
+    <Compile Include="Struct\This.cs" />
     <Compile Include="Structure\Extern.cs" />
     <Compile Include="Flow\Cond.cs" />
     <Compile Include="Flow\While.cs" />
@@ -66,10 +66,7 @@
     <Compile Include="Operators\ShiftRight.cs" />
     <Compile Include="Operators\UnsignedShiftLeft.cs" />
     <Compile Include="Operators\UnsignedShiftRight.cs" />
-    <Compile Include="Struct\Invoke.cs" />
     <Compile Include="Struct\MemberPtr.cs" />
-    <Compile Include="Struct\Method.cs" />
-    <Compile Include="Struct\This.cs" />
     <Compile Include="Struct\Base.cs" />
     <Compile Include="Struct\Cast.cs" />
     <Compile Include="Value\Null.cs" />
@@ -100,7 +97,6 @@
     <Compile Include="Structure\Call.cs" />
     <Compile Include="Structure\Block.cs" />
     <Compile Include="Value\IIntValue.cs" />
-    <Compile Include="Struct\Size.cs" />
     <Compile Include="Variable\Operators\Var.And.cs" />
     <Compile Include="Variable\Operators\Var.Or.cs" />
     <Compile Include="Variable\Operators\Var.ShiftLeft.cs" />
@@ -122,10 +118,6 @@
     <Compile Include="Structure\Function.Ptr.cs" />
     <Compile Include="IntValue.cs" />
     <Compile Include="Variable\Var.Declare.cs" />
-    <Compile Include="Struct\Member.cs" />
-    <Compile Include="Struct\Define.cs" />
-    <Compile Include="Struct\Define.Member.cs" />
-    <Compile Include="Struct\Declare.cs" />
     <Compile Include="Variable\Operators\Let.cs" />
     <Compile Include="Variable\DeclareBase.cs" />
     <Compile Include="Variable\Operators\Var.Add.cs" />
@@ -140,7 +132,6 @@
     <Compile Include="Variable\Operators\Var.UnsignedDiv.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="Structure\BlockBase.cs" />
-    <Compile Include="Structure\BlockName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

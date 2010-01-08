@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.8.20070926">
+<llpml version="0.9.20071021">
 
 <extern name="GetModuleHandle" alias="GetModuleHandleW" module="kernel32.dll" type="std" />
 <extern name="Sleep" module="kernel32.dll" type="std" />
@@ -28,70 +28,48 @@
 <int-declare name="WS_MAXIMIZEBOX">0x10000</int-declare>
 <var-declare name="WS_OVERLAPPEDWINDOW">
 	<or>
-		<int name="WS_OVERLAPPED" />
-		<int name="WS_CAPTION" />
-		<int name="WS_SYSMENU" />
-		<int name="WS_THICKFRAME" />
-		<int name="WS_MINIMIZEBOX" />
-		<int name="WS_MAXIMIZEBOX" />
+		WS_OVERLAPPED,
+		WS_CAPTION,
+		WS_SYSMENU,
+		WS_THICKFRAME,
+		WS_MINIMIZEBOX,
+		WS_MAXIMIZEBOX,
 	</or>
 </var-declare>
 <int-declare name="SW_SHOWNORMAL">1</int-declare>
 <int-declare name="WM_DESTROY">2</int-declare>
 
 <var-declare name="hInstance">
-	<call name="GetModuleHandle" />
+	GetModuleHandle()
 </var-declare>
 
 <struct-define name="WNDCLASSEX">
-	<member name="cbSize" />
-	<member name="style" />
-	<member name="lpfnWndProc" />
-	<member name="cbClsExtra" />
-	<member name="cbWndExtra" />
-	<member name="hInstance" />
-	<member name="hIcon" />
-	<member name="hCursor" />
-	<member name="hbrBackground" />
-	<member name="lpszMenuName" />
-	<member name="lpszClassName" />
-	<member name="hIconSm" />
+	<var-declare name="cbSize" />
+	<var-declare name="style" />
+	<var-declare name="lpfnWndProc" />
+	<var-declare name="cbClsExtra" />
+	<var-declare name="cbWndExtra" />
+	<var-declare name="hInstance" />
+	<var-declare name="hIcon" />
+	<var-declare name="hCursor" />
+	<var-declare name="hbrBackground" />
+	<var-declare name="lpszMenuName" />
+	<var-declare name="lpszClassName" />
+	<var-declare name="hIconSm" />
 </struct-define>
 
 <struct-define name="POINT">
-	<member name="x" />
-	<member name="y" />
+	<var-declare name="x" />
+	<var-declare name="y" />
 </struct-define>
 
 <struct-define name="MSG">
-	<member name="hwnd" />
-	<member name="message" />
-	<member name="wParam" />
-	<member name="lParam" />
-	<member name="time" />
-	<member name="pt" type="POINT" />
+	<var-declare name="hwnd" />
+	<var-declare name="message" />
+	<var-declare name="wParam" />
+	<var-declare name="lParam" />
+	<var-declare name="time" />
+	<var-declare name="pt" type="POINT" />
 </struct-define>
-
-<function name="MainLoop">
-	<struct-declare name="msg" type="MSG" />
-	<while>
-		<cond>
-			<call name="GetMessage">
-				<ptr name="msg" />
-				<null />
-				<int>0</int>
-				<int>0</int>
-			</call>
-		</cond>
-		<block>
-			<call name="TranslateMessage">
-				<ptr name="msg" />
-			</call>
-			<call name="DispatchMessage">
-				<ptr name="msg" />
-			</call>
-		</block>
-	</while>
-</function>
 
 </llpml>

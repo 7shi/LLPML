@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.7.20070917">
+<llpml version="0.9.20071021">
 
 <include src="stdio.xml" />
 
 <struct-define name="_Finish">
 	<!-- destructor -->
-	<method name="~this">
-		<call name="finish" />
-	</method>
+	<function name="dtor">
+		finish();
+	</function>
 </struct-define>
 
 <struct-declare name="_finish" type="_Finish" />

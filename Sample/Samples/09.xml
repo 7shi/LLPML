@@ -1,23 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- callback -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
+<!-- FIX: wrapper(test); -->
 <call name="wrapper">
 	<function-ptr name="test" />
 </call>
 
-<call name="finish" />
-
 <function name="wrapper">
 	<arg name="ptr" />
-	<call var="ptr" />
+	ptr();
 </function>
 
 <function name="test">
-	<call name="printfln">"Hello, World!"</call>
+	printfln("Hello, World!");
 </function>
 
 </llpml>

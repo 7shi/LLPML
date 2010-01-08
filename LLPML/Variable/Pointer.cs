@@ -51,27 +51,13 @@ namespace Girl.LLPML
             get
             {
                 Struct.Declare st = reference as Struct.Declare;
-                if (st != null) return st.Type;
-                Struct2.Declare st2 = reference as Struct2.Declare;
-                return st2 == null ? null : st2.Type;
+                return st == null ? null : st.Type;
             }
         }
 
         public virtual void GetValue(List<OpCode> codes, Module m)
         {
-            Addr32 ad = reference.Address;
-            if (parent.Level == reference.Parent.Level || ad.IsAddress)
-            {
-                codes.Add(I386.Lea(Reg32.EAX, ad));
-                return;
-            }
-            int lv = reference.Parent.Level;
-            if (lv <= 0 || lv >= parent.Level)
-            {
-                throw Abort("Invalid variable scope: " + name);
-            }
-            codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.EBP, -lv * 4)));
-            codes.Add(I386.Sub(Reg32.EAX, (uint)-ad.Disp));
+            codes.Add(I386.Lea(Reg32.EAX, reference.GetAddress(codes, m, parent)));
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

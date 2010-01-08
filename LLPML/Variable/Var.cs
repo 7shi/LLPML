@@ -17,9 +17,9 @@ namespace Girl.LLPML
             get { return reference; }
             set
             {
+                if (value == null)
+                    throw Abort("undefined variable: " + name);
                 reference = value;
-                if (reference == null)
-                    throw Abort("undefined variable: " + value.Name);
             }
         }
 
@@ -42,11 +42,6 @@ namespace Girl.LLPML
             return Reference.GetStruct();
         }
 
-        public virtual Struct2.Define GetStruct2()
-        {
-            return Reference.GetStruct2();
-        }
-
         public virtual string Type
         {
             get
@@ -57,25 +52,7 @@ namespace Girl.LLPML
 
         public virtual Addr32 GetAddress(List<OpCode> codes, Module m)
         {
-            if (reference.HasThis)
-            {
-                return reference.GetAddress(codes, m);
-            }
-            else
-            {
-                Addr32 ad = Reference.Address;
-                if (parent.Level == Reference.Parent.Level || ad.IsAddress)
-                {
-                    return ad;
-                }
-                int lv = Reference.Parent.Level;
-                if (lv <= 0 || lv >= parent.Level)
-                {
-                    throw Abort("Invalid variable scope: " + name);
-                }
-                codes.Add(I386.Mov(Reg32.EDX, new Addr32(Reg32.EBP, -lv * 4)));
-                return new Addr32(Reg32.EDX, ad.Disp);
-            }
+            return reference.GetAddress(codes, m, parent);
         }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

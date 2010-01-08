@@ -15,7 +15,7 @@ namespace Girl.LLPML
             private int length = 0;
             public virtual int Length { get { return length; } }
 
-            private string type;
+            protected string type;
 
             public Declare() { }
 

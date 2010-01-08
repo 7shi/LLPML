@@ -1,88 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- struct type -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <struct-define name="Point">
-	<member name="x" />
-	<member name="y" />
+	<var-declare name="x" />
+	<var-declare name="y" />
 </struct-define>
 
 <struct-declare name="p" type="Point">
-	<int>3</int>
-	<int>7</int>
+	3, 7
 </struct-declare>
 
-<call name="vprintfln">
-	<string>p = (%d, %d)</string>
-	<ptr name="p" />
-</call>
+vprintfln("p = (%d, %d)", p);
 
-<call name="printfln">"pp = &amp;p"</call>
+printfln("pp = &amp;p");
 <var-declare name="pp" type="Point">
-	<ptr name="p" />
+	p
 </var-declare>
 
-<call name="vprintfln">
-	<string>*pp = (%d, %d)</string>
-	<var name="pp" />
-</call>
+vprintfln("*pp = (%d, %d)", pp);
 
-<call name="printfln">"pp->y -= 5"</call>
-<var-sub>
-	<struct-member var="pp" name="y" />
-	<int>5</int>
-</var-sub>
+printfln("pp->y -= 5");
+pp.y -= 5;
 
-<call name="vprintfln">
-	<string>p = (%d, %d)</string>
-	<ptr name="p" />
-</call>
+vprintfln("p = (%d, %d)", p);
 
-<call name="printfln">"p.x += 5"</call>
-<var-add>
-	<struct-member ptr="p" name="x" />
-	<int>5</int>
-</var-add>
+printfln("p.x += 5");
+p.x += 5;
 
-<call name="vprintfln">
-	<string>*pp = (%d, %d)</string>
-	<var name="pp" />
-</call>
+vprintfln("*pp = (%d, %d)", pp);
 
-<call name="printfln">"offset(pp, 3, 4)"</call>
-<call name="offset">
-	<var name="pp" />
-	<int>3</int>
-	<int>4</int>
-</call>
+printfln("offset(pp, 3, 4)");
+offset(pp, 3, 4);
 
-<call name="vprintfln">
-	<string>*pp = (%d, %d)</string>
-	<var name="pp" />
-</call>
+vprintfln("*pp = (%d, %d)", pp);
 
-<call name="vprintfln">
-	<string>p = (%d, %d)</string>
-	<ptr name="p" />
-</call>
-
-<call name="finish" />
+vprintfln("p = (%d, %d)", p);
 
 <function name="offset">
 	<arg name="p" type="Point" />
 	<arg name="x" />
 	<arg name="y" />
-	<var-add>
-		<struct-member var="p" name="x" />
-		<var name="x" />
-	</var-add>
-	<var-add>
-		<struct-member var="p" name="y" />
-		<var name="y" />
-	</var-add>
+	p.x += x;
+	p.y += y;
 </function>
 
 </llpml>

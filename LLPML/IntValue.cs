@@ -48,8 +48,6 @@ namespace Girl.LLPML
                     return new Call(parent, xr);
                 case "invoke":
                     return new Struct.Invoke(parent, xr);
-                case "invoke2":
-                    return new Struct2.Invoke(parent, xr);
                 case "function-ptr":
                     return new Function.Ptr(parent, xr);
                 case "struct-member":
@@ -58,12 +56,12 @@ namespace Girl.LLPML
                     return new Struct.MemberPtr(parent, xr);
                 case "struct-size":
                     return new Struct.Size(parent, xr);
-                case "struct2-size":
-                    return new Struct2.Size(parent, xr);
-                case "struct2-member":
-                    return new Struct2.Member(parent, xr);
-                case "block-name":
-                    return new BlockName(parent);
+                case "get-function":
+                    return new StringValue(parent.GetName());
+                case "get-file":
+                    return new StringValue(parent.Root.Source);
+                case "get-line":
+                    return new IntValue(xr.LineNumber);
                 case "let":
                     return new Let(parent, xr);
                 case "inc":

@@ -1,26 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20071021">
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <var-declare name="i">1</var-declare>
 
-<call name="test" />
-<call name="test" />
-<call name="test" />
-<call name="test" />
-<call name="test" />
-
-<call name="finish" />
+test();
+test();
+test();
+test();
+test();
 
 <function name="test">
-	<call name="printfln">
-		<string>i=%d</string>
-		<var name="i" />
-	</call>
-	<inc>
-		<var name="i" />
-	</inc>
+	printfln("i = %d", i);
+	i++;
 </function>
 
 </llpml>

@@ -1,46 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.6.20070830">
+<llpml version="0.9.20071021">
 
-<!-- method (struct member function) -->
+<!-- struct member function -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <struct-define name="Point">
-	<member name="x" />
-	<member name="y" />
+	<var-declare name="x" />
+	<var-declare name="y" />
 	
-	<method name="Show">
-		<call name="vprintfln">
-			<string>Show: (%d, %d)</string>
-			<this />
-		</call>
-	</method>
+	<function name="Show">
+		printfln("[%s] %d, %d", __FUNCTION__, x, y);
+	</function>
 </struct-define>
 
 <struct-declare name="p" type="Point">
-	<int>2</int>
-	<int>3</int>
+	2, 3
 </struct-declare>
 
 <var-declare name="pp" type="Point">
-	<ptr name="p" />
+	p
 </var-declare>
 
-<!-- direct (not recommended) -->
-<call name="Point::Show">
-	<ptr name="p" />
-</call>
-
 <!-- by instance -->
-<invoke name="Show">
-	<ptr name="p" />
-</invoke>
+p.Show();
 
 <!-- by pointer -->
-<invoke name="Show">
-	<var name="pp" />
-</invoke>
-
-<call name="finish" />
+pp.Show();
 
 </llpml>

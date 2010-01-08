@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- IEEE 754 single precision floating point -->
 
@@ -27,79 +27,73 @@
 	<var-declare name="ss" />
 	<if>
 		<cond>s == 0</cond>
-		<block>
-			<let>e10, 0</let>
-		</block>
+		<block>e10 = 0;</block>
 	</if>
 	<if>
-		<cond>s lt 0</cond>
+		<cond>0 > s</cond>
 		<block>
-			<let>sign, 1</let>
-			<let>s, -s</let>
+			sign = 1;
+			s = -s;
 		</block>
 	</if>
 	<while>
 		<cond>s % 10 == 0</cond>
 		<block>
-			<inc>e10</inc>
-			<var-div>s, 10</var-div>
+			e10++;
+			s /= 10;
 		</block>
 	</while>
 	<while>
 		<cond>e10 != 0</cond>
 		<block>
 			<if>
-				<cond>e10 lt 0</cond>
+				<cond>0 > e10</cond>
 				<block>
-					<dec>e2</dec>
-					<var-mul>s, 2</var-mul>
-					<let>ss, s % 10</let>
+					e2--;
+					s *= 2;
+					ss = s % 10;
 					<if>
-						<cond>ss == 0 orelse s gt INT_MAX / 2</cond>
+						<cond>ss == 0 || s > INT_MAX / 2</cond>
 						<block>
-							<inc>e10</inc>
-							<var-div>s, 10</var-div>
+							e10++;
+							s /= 10;
 							<if>
-								<cond>ss ge 5</cond>
-								<block>
-									<inc>s</inc>
-								</block>
+								<cond>ss >= 5</cond>
+								<block>s++;</block>
 							</if>
 						</block>
 					</if>
 				</block>
-				<cond>e10 gt 0</cond>
+				<cond>e10 > 0</cond>
 				<block>
 					<if>
-						<cond>s and 1 == 1 andalso s le INT_MAX / 10</cond>
+						<cond>s and 1 == 1 andalso INT_MAX / 10 >= s</cond>
 						<block>
-							<dec>e10</dec>
-							<var-mul>s, 10</var-mul>
+							e10--;
+							s *= 10;
 						</block>
 					</if>
-					<inc>e2</inc>
-					<let>s, s / 2 + (s and 1)</let>
+					e2++;
+					s = s / 2 + (s and 1);
 				</block>
 			</if>
 		</block>
 	</while>
 	<while>
-		<cond>s gt 0 andalso s le SIGN_MAX</cond>
+		<cond>s > 0 andalso SIGN_MAX >= s</cond>
 		<block>
-			<dec>e2</dec>
-			<var-mul>s, 2</var-mul>
+			e2--;
+			s *= 2;
 		</block>
 	</while>
 	<while>
-		<cond>s gt SIGN_MAX * 2 + 1</cond>
+		<cond>s > SIGN_MAX * 2 + 1</cond>
 		<block>
-			<inc>e2</inc>
-			<let>s, s / 2 + (s and 1)</let>
+			e2++;
+			s = s / 2 + (s and 1);
 		</block>
 	</while>
-	<call name="printfln">
-		"%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s and SIGN_MAX
-	</call>
+	printfln("%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s and SIGN_MAX);
 </function>
 
 </llpml>

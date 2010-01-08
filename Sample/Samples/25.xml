@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- expression -->
 
@@ -10,7 +10,7 @@
 <string-declare name="fmt">a = %d, b = %d</string-declare>
 
 <!-- simple -->
-<call name="printfln">fmt, a, b</call>
+printfln(fmt, a, b);
 <!-- complex -->
 <call name="printfln">
 	<string name="fmt" />
@@ -19,7 +19,7 @@
 </call>
 
 <!-- simple -->
-<call name="printfln">"add(a * b, 4) = %d", add(a * b, 4)</call>
+printfln("add(a * b, 4) = %d", add(a * b, 4));
 <!-- complex -->
 <call name="printfln">
 	<string>add(a * b, 4) = %d</string>
@@ -37,7 +37,7 @@
 </struct-declare>
 
 <!-- simple -->
-<call name="printfln">"sub(%d, %d) = %d", t.a, t.b, t.sub()</call>
+printfln("sub(%d, %d) = %d", t.a, t.b, t.sub());
 <!-- complex -->
 <call name="printfln">
 	<string>sub(%d, %d) = %d</string>
@@ -53,9 +53,7 @@
 </struct-declare>
 
 <!-- simple -->
-<call name="printfln">
-	"sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub()
-</call>
+printfln("sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub());
 <!-- complex -->
 <call name="printfln">
 	<string>sub(%d, %d) = %d</string>
@@ -79,16 +77,16 @@
 </function>
 
 <struct-define name="test">
-	<member name="a" />
-	<member name="b" />
+	<var-declare name="a" />
+	<var-declare name="b" />
 	
-	<method name="sub">
-		<return>this.a - this.b</return>
-	</method>
+	<function name="sub">
+		<return>a - b</return>
+	</function>
 </struct-define>
 
 <struct-define name="test2">
-	<member name="t" type="test" />
+	<struct-declare name="t" type="test" />
 </struct-define>
 
 </llpml>

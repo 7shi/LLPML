@@ -1,63 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20071021">
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <var-declare name="i">1</var-declare>
 <string-declare name="format">i=%d</string-declare>
 
-<call name="printfln">
-	<string name="format" />
-	<var name="i" />
-</call>
+printfln(format, i);
 
 <block>
-	<call name="printfln">
-		<string name="format" />
-		<var name="i" />
-	</call>
-
+	printfln(format, i);
+	
 	<block>
-		<call name="printfln">
-			<string name="format" />
-			<var name="i" />
-		</call>
+		printfln(format, i);
 	</block>
 
 	<var-declare name="i">2</var-declare>
 	<string-declare name="format">	i=%d</string-declare>
-
-	<call name="printfln">
-		<string name="format" />
-		<var name="i" />
-	</call>
-
+	
+	printfln(format, i);
+	
 	<block>
-		<call name="printfln">
-			<string name="format" />
-			<var name="i" />
-		</call>
+		printfln(format, i);
 
 		<var-declare name="i">3</var-declare>
 		<string-declare name="format">		i=%d</string-declare>
-
-		<call name="printfln">
-			<string name="format" />
-			<var name="i" />
-		</call>
+		
+		printfln(format, i);
 	</block>
-
-	<call name="printfln">
-		<string name="format" />
-		<var name="i" />
-	</call>
+	
+	printfln(format, i);
 </block>
 
-<call name="printfln">
-	<string name="format" />
-	<var name="i" />
-</call>
-
-<call name="finish" />
+printfln(format, i);
 
 </llpml>

@@ -33,11 +33,11 @@ namespace Girl.LLPML
 
         #region Member
 
-        public T GetMember<T>(string name) where T : class
+        public virtual T GetMember<T>(string name) where T : class
         {
             object obj;
-            if (!members.TryGetValue(name, out obj)) return null;
-            return obj as T;
+            if (members.TryGetValue(name, out obj)) return obj as T;
+            return null;
         }
 
         public T GetMemberRecursive<T>(string name) where T : class
@@ -69,10 +69,8 @@ namespace Girl.LLPML
 
         public int? GetInt(string name)
         {
-            object obj;
-            if (members.TryGetValue(name, out obj))
-                if (obj is int)
-                    return (int?)(int)obj;
+            object obj = GetMember<object>(name);
+            if (obj is int) return (int?)(int)obj;
             return parent == null ? null : parent.GetInt(name);
         }
 
@@ -199,9 +197,6 @@ namespace Girl.LLPML
         public Struct.Define GetStruct(string name) { return GetMemberRecursive<Struct.Define>(name); }
         public bool AddStruct(Struct.Define s) { return AddMember(s.Name, s); }
 
-        public Struct2.Define GetStruct2(string name) { return GetMemberRecursive<Struct2.Define>(name); }
-        public bool AddStruct2(Struct2.Define s) { return AddMember(s.Name, s); }
-
         #endregion
 
         public BlockBase() { }
@@ -266,12 +261,14 @@ namespace Girl.LLPML
             {
                 codes.Add(I386.Enter((ushort)stack, (byte)Level));
             }
+            string n = GetName();
+            if (!string.IsNullOrEmpty(n))
+                codes.Add(I386.Mov(Reg32.EAX, m.GetString(n)));
         }
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
             CheckStructs();
-            CheckStructs2();
             codes.Add(first);
             BeforeAddCodes(codes, m);
             codes.Add(construct);
@@ -279,14 +276,15 @@ namespace Girl.LLPML
             {
                 child.AddCodes(codes, m);
             }
-            if (!IsTerminated) AddDestructors(codes, m, GetMembers<Pointer.Declare>());
+            if (!IsTerminated)
+                AddDestructors(codes, m, GetMembers<Pointer.Declare>());
             codes.Add(destruct);
             AfterAddCodes(codes, m);
             foreach (Function func in GetMembers<Function>())
             {
                 func.AddCodes(codes, m);
             }
-            foreach (Struct2.Define st in GetMembers<Struct2.Define>())
+            foreach (Struct.Define st in GetMembers<Struct.Define>())
             {
                 st.AddCodes(codes, m);
             }
@@ -301,20 +299,12 @@ namespace Girl.LLPML
             }
         }
 
-        private void CheckStructs2()
-        {
-            foreach (Struct2.Define st in GetMembers<Struct2.Define>())
-            {
-                st.CheckStruct();
-            }
-        }
-
         protected virtual void AfterAddCodes(List<OpCode> codes, Module m)
         {
             if (IsTerminated) return;
             AddExitCodes(codes, m);
             if (GetMembers<Function>().Length > 0
-                || GetMembers<Struct2.Define>().Length > 0)
+                || GetMembers<Struct.Define>().Length > 0)
             {
                 codes.Add(I386.Jmp(last.Address));
             }
@@ -331,7 +321,7 @@ namespace Girl.LLPML
             }
         }
 
-        public void AddDestructors(
+        public virtual void AddDestructors(
             List<OpCode> codes, Module m, IEnumerable<Pointer.Declare> ptrs)
         {
             if (ptrs == null) return;
@@ -342,7 +332,8 @@ namespace Girl.LLPML
                 Struct.Declare st = ptrs2.Pop() as Struct.Declare;
                 if (st == null) continue;
 
-                st.GetStruct().AddDestructor(codes, m, GetPointer(st.Name).Address);
+                st.GetStruct().AddDestructor(codes, m,
+                    GetPointer(st.Name).GetAddress(codes, m, this));
             }
         }
 
@@ -360,13 +351,31 @@ namespace Girl.LLPML
             return root;
         }
 
-        public virtual Struct2.Define ThisStruct
+        public virtual Struct.Define ThisStruct
         {
             get
             {
                 if (parent == null) return null;
                 return parent.ThisStruct;
             }
+        }
+
+        public string GetName()
+        {
+            if (parent == null) return "(root)";
+
+            string ret = "";
+            for (BlockBase b = this; b != root; b = b.Parent)
+            {
+                if (!string.IsNullOrEmpty(b.Name))
+                {
+                    if (ret == "")
+                        ret = b.Name;
+                    else
+                        ret = b.Name + "::" + ret;
+                }
+            }
+            return ret;
         }
     }
 }

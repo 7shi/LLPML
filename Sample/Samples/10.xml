@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.6.20070904">
+<llpml version="0.9.20071021">
 
 <!-- variable pointer -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <var-declare name="a" />
 
@@ -11,12 +11,10 @@
 	<var-declare name="b" />
 
 	<call name="printfln">
-		<string>&amp;a = %p, &amp;b = %p</string>
+		"&amp;a = %p, &amp;b = %p"
 		<ptr name="a" />
 		<ptr name="b" />
 	</call>
 </block>
-
-<call name="finish" />
 
 </llpml>

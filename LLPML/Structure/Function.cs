@@ -17,7 +17,7 @@ namespace Girl.LLPML
             = new List<DeclareBase>();
         public virtual DeclareBase[] GetArgs() { return args.ToArray(); }
 
-        private Arg thisptr;
+        private Var thisptr;
 
         public Function() { }
         public Function(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
@@ -39,24 +39,21 @@ namespace Girl.LLPML
             base.ReadBlock(xr);
         }
 
-        protected virtual void ReadName(XmlTextReader xr)
+        public override void Read(XmlTextReader xr)
         {
             RequiresName(xr);
 
-            Struct2.Define st = ThisStruct;
-            if (st != null)
-                args.Add(thisptr = new Arg(this, "this", st.Name));
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            ReadName(xr);
+            if (parent is Struct.Define)
+            {
+                args.Add(new Arg(this, "this", parent.Name));
+                thisptr = new Struct.This(this);
+            }
 
             type = CallType.CDecl;
             if (xr["type"] == "std") type = CallType.Std;
 
             if (!parent.AddFunction(this))
-                throw Abort(xr, "multiple definitions: " + Name);
+                throw Abort(xr, "multiple definitions: " + name);
 
             base.Read(xr);
         }
@@ -64,7 +61,7 @@ namespace Girl.LLPML
         private ushort argStack;
         public override bool HasStackFrame { get { return true; } }
 
-        public override void AddCodes(List<OpCode> codes, Module m)
+        protected override void BeforeAddCodes(List<OpCode> codes, Module m)
         {
             argStack = 0;
             foreach (DeclareBase arg in args)
@@ -80,33 +77,35 @@ namespace Girl.LLPML
                     (n as Return).IsLast = i == sentences.Count - 1;
             }
 
-            base.AddCodes(codes, m);
+            base.BeforeAddCodes(codes, m);
 
-            if (thisptr != null)
-                ThisStruct.AddPreCtor(codes, m, thisptr.Address);
+            if (thisptr != null && name == "ctor")
+                ThisStruct.AddBeforeCtor(codes, m, thisptr);
         }
 
         protected override void AfterAddCodes(List<OpCode> codes, Module m)
         {
+            if (thisptr != null && name == "dtor")
+                ThisStruct.AddAfterDtor(codes, m, thisptr);
             AddExitCodes(codes, m);
         }
 
         public override void AddExitCodes(List<OpCode> codes, Module m)
         {
-            if (members.ContainsKey("__retval"))
+            if (thisptr != null && name == "ctor")
+            {
+                (thisptr as IIntValue).AddCodes(codes, m, "mov", null);
+            }
+            else if (members.ContainsKey("__retval"))
             {
                 IIntValue retval = new Var(this, "__retval") as IIntValue;
                 retval.AddCodes(codes, m, "mov", null);
             }
             base.AddExitCodes(codes, m);
             if (type == CallType.Std && argStack > 0)
-            {
                 codes.Add(I386.Ret(argStack));
-            }
             else
-            {
                 codes.Add(I386.Ret());
-            }
         }
     }
 }

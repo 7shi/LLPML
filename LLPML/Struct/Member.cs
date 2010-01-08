@@ -108,18 +108,7 @@ namespace Girl.LLPML.Struct
         {
             if (ptr != null)
             {
-                Addr32 ad = ptr.Address;
-                if (parent.Level == ptr.Parent.Level || ad.IsAddress)
-                {
-                    return ad;
-                }
-                int lv = ptr.Parent.Level;
-                if (lv <= 0 || lv >= parent.Level)
-                {
-                    throw Abort("Invalid variable scope: " + name);
-                }
-                codes.Add(I386.Mov(Reg32.EDX, new Addr32(Reg32.EBP, -lv * 4)));
-                return new Addr32(Reg32.EDX, ad.Disp);
+                return ptr.GetAddress(codes, m, parent);
             }
             else if (var != null)
             {
@@ -127,7 +116,9 @@ namespace Girl.LLPML.Struct
                 return new Addr32(Reg32.EDX);
             }
             else
+            {
                 throw Abort("can not get address");
+            }
         }
 
         public int GetOffset(Define st)
@@ -135,7 +126,7 @@ namespace Girl.LLPML.Struct
             int ret = st.GetOffset(name);
             if (ret < 0) throw Abort("undefined member: " + name);
             if (member == null) return ret;
-            return ret + member.GetOffset(st.GetMember(name).GetStruct());
+            return ret + member.GetOffset(st.GetStruct(st.GetMember(name)));
         }
 
         public override Addr32 GetAddress(List<OpCode> codes, Module m)
@@ -161,7 +152,7 @@ namespace Girl.LLPML.Struct
                     st = ptr.GetStruct();
                 else
                     st = var.GetStruct();
-                return st.GetMember(name).Type;
+                return st.GetStruct(st.GetMember(name)).Name;
             }
         }
     }

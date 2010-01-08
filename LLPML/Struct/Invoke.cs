@@ -31,44 +31,33 @@ namespace Girl.LLPML.Struct
         {
         }
 
-        private bool initialized = false;
-
-        public override void AddCodes(List<OpCode> codes, Module m)
+        public override Function GetFunction()
         {
-            if (!initialized && args.Count > 0)
+            IIntValue v = args[0];
+            string type = null;
+            if (v is Struct.MemberPtr)
             {
-                IIntValue v = args[0];
-                string type = null;
-                if (v is Struct.MemberPtr)
-                {
-                    type = (v as Struct.MemberPtr).Type;
-                }
-                else if (v is Struct.Member)
-                {
-                    Member mem = v as Struct.Member;
-                    type = mem.Type;
-                    args[0] = new MemberPtr(mem);
-                }
-                else if (v is Var)
-                {
-                    type = (v as Var).Type;
-                }
-                else if (v is Pointer)
-                {
-                    type = (v as Pointer).Type;
-                }
-                if (type == null)
-                    throw Abort("struct instance or pointer required: " + name);
-                Define st2 = parent.GetStruct(type);
-                if (st2 == null)
-                    throw Abort("undefined struct: " + type);
-                Method target = st2.GetMethod(name);
-                if (target == null)
-                    throw Abort("undefined method: " + st2.GetMemberName(name));
-                name = target.Name;
-                initialized = true;
+                type = (v as Struct.MemberPtr).Type;
             }
-            base.AddCodes(codes, m);
+            else if (v is Struct.Member)
+            {
+                Member mem = v as Struct.Member;
+                type = mem.Type;
+                args[0] = new MemberPtr(mem);
+            }
+            else if (v is Var)
+                type = (v as Var).Type;
+            else if (v is Pointer)
+                type = (v as Pointer).Type;
+            if (type == null)
+                throw Abort("struct instance or pointer required: " + name);
+            Define st2 = parent.GetStruct(type);
+            if (st2 == null)
+                throw Abort("undefined struct: " + type);
+            Function ret = st2.GetFunction(name);
+            if (ret == null)
+                throw Abort("undefined method: " + st2.GetMemberName(name));
+            return ret;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- stdio functions -->
 
@@ -13,27 +13,19 @@
 <int-declare name="STD_INPUT_HANDLE">-10</int-declare>
 
 <var-declare name="stdout">
-	<call name="GetStdHandle">
-		<int name="STD_OUTPUT_HANDLE" />
-	</call>
+	GetStdHandle(STD_OUTPUT_HANDLE)
 </var-declare>
 <var-declare name="stdin">
-	<call name="GetStdHandle">
-		<int name="STD_INPUT_HANDLE" />
-	</call>
+	GetStdHandle(STD_INPUT_HANDLE)
 </var-declare>
 
 <function name="print">
 	<arg name="text" />
 	<var-declare name="dummy" />
 	<call name="WriteConsole">
-		<var name="stdout" />
-		<var name="text" />
-		<call name="lstrlen">
-			<var name="text" />
-		</call>
+		stdout, text, lstrlen(text)
 		<ptr name="dummy" />
-		<null />
+		null
 	</call>
 </function>
 
@@ -41,65 +33,48 @@
 	<arg name="format" />
 	<arg name="args" />
 	<ptr-declare name="buffer" type="char" length="1025" />
-	<call name="wvsprintf">
-		<ptr name="buffer" />
-		<var name="format" />
-		<var name="args" />
-	</call>
-	<call name="print">
-		<ptr name="buffer" />
-	</call>
+	wvsprintf(buffer, format, args);
+	print(buffer);
 </function>
 
 <function name="vprintfln">
 	<arg name="format" />
 	<arg name="args" />
-	<call name="vprintf">
-		<var name="format" />
-		<var name="args" />
-	</call>
-	<call name="println" />
+	vprintf(format, args);
+	println();
 </function>
 
 <function name="printf">
 	<arg name="format" />
 	<arg-ptr name="args" />
-	<call name="vprintf">
-		<var name="format" />
-		<ptr name="args" />
-	</call>
+	vprintf(format, args);
 </function>
 
 <function name="println">
-	<call name="print">"\r\n"</call>
+	print("\r\n");
 </function>
 
 <function name="printfln">
 	<arg name="format" />
 	<arg-ptr name="args" />
-	<call name="vprintf">
-		<var name="format" />
-		<ptr name="args" />
-	</call>
-	<call name="println" />
+	vprintf(format, args);
+	println();
 </function>
 
 <function name="pause">
 	<var-declare name="dummy" />
 	<ptr-declare name="buffer" type="char" length="16" />
 	<call name="ReadConsole">
-		<var name="stdin" />
-		<ptr name="buffer" />
-		<int>2</int>
+		stdin, buffer, 2
 		<ptr name="dummy" />
-		<null />
+		null
 	</call>
 </function>
 
 <function name="finish">
-	<call name="println" />
-	<call name="printfln">"Press [Enter] to exit."</call>
-	<call name="pause" />
+	println();
+	printfln("Press [Enter] to exit.");
+	pause();
 </function>
 
 </llpml>

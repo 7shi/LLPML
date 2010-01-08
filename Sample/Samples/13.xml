@@ -1,261 +1,92 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20071021">
 
 <!-- boolean operation 1 -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <var-declare name="a">1</var-declare>
 <var-declare name="b">2</var-declare>
 <var-declare name="c">1</var-declare>
 
-<call name="printfln">
-	<string>(a, b, c) = (%d, %d, %d)</string>
-	<var name="a" />
-	<var name="b" />
-	<var name="c" />
-</call>
+printfln("(a, b, c) = (%d, %d, %d)", a, b, c);
 
 <!-- equal -->
 
+printfln("%d: a == 1", a == 1);
+printfln("%d: a == 2", a == 2);
+printfln("%d: a == b", a == b);
+
 <call name="printfln">
-	<string>%d: a == 1</string>
-	<equal>
-		<var name="a" />
-		<int>1</int>
-	</equal>
+	"%d: a == b == 1"
+	<equal>a, b, 1</equal>
 </call>
 
 <call name="printfln">
-	<string>%d: a == 2</string>
-	<equal>
-		<var name="a" />
-		<int>2</int>
-	</equal>
+	"%d: a == c == 1"
+	<equal>a, c, 1</equal>
 </call>
 
 <call name="printfln">
-	<string>%d: a == b</string>
-	<equal>
-		<var name="a" />
-		<var name="b" />
-	</equal>
-</call>
-
-<call name="printfln">
-	<string>%d: a == b == 1</string>
-	<equal>
-		<var name="a" />
-		<var name="b" />
-		<int>1</int>
-	</equal>
-</call>
-
-<call name="printfln">
-	<string>%d: a == c == 1</string>
-	<equal>
-		<var name="a" />
-		<var name="c" />
-		<int>1</int>
-	</equal>
-</call>
-
-<call name="printfln">
-	<string>%d: a == c == 2</string>
-	<equal>
-		<var name="a" />
-		<var name="c" />
-		<int>2</int>
-	</equal>
+	"%d: a == c == 2"
+	<equal>a, c, 2</equal>
 </call>
 
 <!-- not equal -->
 
+printfln("%d: a != 1", a != 1);
+printfln("%d: a != 2", a != 2);
+printfln("%d: a != b", a != b);
+
 <call name="printfln">
-	<string>%d: a != 1</string>
-	<not-equal>
-		<var name="a" />
-		<int>1</int>
-	</not-equal>
+	"%d: a != b != 1"
+	<not-equal>a, b, 1</not-equal>
 </call>
 
 <call name="printfln">
-	<string>%d: a != 2</string>
-	<not-equal>
-		<var name="a" />
-		<int>2</int>
-	</not-equal>
+	"%d: a != b != 3"
+	<not-equal>a, b, 3</not-equal>
 </call>
 
 <call name="printfln">
-	<string>%d: a != b</string>
-	<not-equal>
-		<var name="a" />
-		<var name="b" />
-	</not-equal>
-</call>
-
-<call name="printfln">
-	<string>%d: a != b != 1</string>
-	<not-equal>
-		<var name="a" />
-		<var name="b" />
-		<int>1</int>
-	</not-equal>
-</call>
-
-<call name="printfln">
-	<string>%d: a != b != 3</string>
-	<not-equal>
-		<var name="a" />
-		<var name="b" />
-		<int>3</int>
-	</not-equal>
-</call>
-
-<call name="printfln">
-	<string>%d: a != c != 1</string>
-	<not-equal>
-		<var name="a" />
-		<var name="c" />
-		<int>1</int>
-	</not-equal>
+	"%d: a != c != 1"
+	<not-equal>a, c, 1</not-equal>
 </call>
 
 <!-- and also -->
 
-<call name="printfln">
-	<string>%d: a == 1 &amp;&amp; b == 1</string>
-	<and-also>
-		<equal>
-			<var name="a" />
-			<int>1</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>1</int>
-		</equal>
-	</and-also>
-</call>
-
-<call name="printfln">
-	<string>%d: a == 1 &amp;&amp; b == 2</string>
-	<and-also>
-		<equal>
-			<var name="a" />
-			<int>1</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>2</int>
-		</equal>
-	</and-also>
-</call>
-
-<call name="printfln">
-	<string>%d: a == 2 &amp;&amp; b == 2</string>
-	<and-also>
-		<equal>
-			<var name="a" />
-			<int>2</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>2</int>
-		</equal>
-	</and-also>
-</call>
-
-<call name="printfln">
-	<string>%d: a == 3 &amp;&amp; b == 3</string>
-	<and-also>
-		<equal>
-			<var name="a" />
-			<int>3</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>3</int>
-		</equal>
-	</and-also>
-</call>
+printfln(
+	"%d: a == 1 &amp;&amp; b == 1",
+	a == 1 andalso b == 1);
+printfln(
+	"%d: a == 1 &amp;&amp; b == 2",
+	a == 1 andalso b == 2);
+printfln(
+	"%d: a == 2 &amp;&amp; b == 2",
+	a == 2 andalso b == 2);
+printfln(
+	"%d: a == 3 &amp;&amp; b == 3",
+	a == 3 andalso b == 3);
 
 <!-- or else -->
 
-<call name="printfln">
-	<string>%d: a == 1 || b == 1</string>
-	<or-else>
-		<equal>
-			<var name="a" />
-			<int>1</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>1</int>
-		</equal>
-	</or-else>
-</call>
-
-<call name="printfln">
-	<string>%d: a == 1 || b == 2</string>
-	<or-else>
-		<equal>
-			<var name="a" />
-			<int>1</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>2</int>
-		</equal>
-	</or-else>
-</call>
-
-<call name="printfln">
-	<string>%d: a == 2 || b == 2</string>
-	<or-else>
-		<equal>
-			<var name="a" />
-			<int>2</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>2</int>
-		</equal>
-	</or-else>
-</call>
-
-<call name="printfln">
-	<string>%d: a == 3 || b == 3</string>
-	<or-else>
-		<equal>
-			<var name="a" />
-			<int>3</int>
-		</equal>
-		<equal>
-			<var name="b" />
-			<int>3</int>
-		</equal>
-	</or-else>
-</call>
+printfln(
+	"%d: a == 1 || b == 1",
+	a == 1 || b == 1);
+printfln(
+	"%d: a == 1 || b == 2",
+	a == 1 || b == 2);
+printfln(
+	"%d: a == 2 || b == 2",
+	a == 2 || b == 2);
+printfln(
+	"%d: a == 3 || b == 3",
+	a == 3 || b == 3);
 
 <!-- not -->
 
-<call name="printfln">
-	<string>%d: !(a == 2) &amp;&amp; b == 2</string>
-	<and-also>
-		<not>
-			<equal>
-				<var name="a" />
-				<int>2</int>
-			</equal>
-		</not>
-		<equal>
-			<var name="b" />
-			<int>2</int>
-		</equal>
-	</and-also>
-</call>
-
-<call name="finish" />
+printfln(
+	"%d: !(a == 2) &amp;&amp; b == 2",
+	!(a == 2) andalso b == 2);
 
 </llpml>

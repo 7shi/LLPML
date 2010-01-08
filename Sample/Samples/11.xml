@@ -1,77 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- struct -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <struct-define name="Point">
-	<member name="x" />
-	<member name="y" />
+	<var-declare name="x" />
+	<var-declare name="y" />
 </struct-define>
 
 <!-- global -->
 <struct-declare name="p1" type="Point">
-	<int>1</int>
-	<int>2</int>
+	1, 2
 </struct-declare>
 
-<call name="vprintfln">
-	<string>p1(x, y) = (%d, %d)</string>
-	<ptr name="p1" />
-</call>
+vprintfln("p1(x, y) = (%d, %d)", p1);
 
 <block>
 	<!-- stack -->
 	<struct-declare name="p2" type="Point">
-		<int>3</int>
-		<int>4</int>
+		3, 4
 	</struct-declare>
-
-	<call name="vprintfln">
-		<string>p2(x, y) = (%d, %d)</string>
-		<ptr name="p2" />
-	</call>
+	vprintfln("p2(x, y) = (%d, %d)", p2);
 	
 	<block>
 		<!-- lexical scope -->
-		<let>
-			<struct-member ptr="p2" name="x" />
-			<int>5</int>
-		</let>
-		<let>
-			<struct-member ptr="p2" name="y" />
-			<int>6</int>
-		</let>
+		p2.x = 5;
+		p2.y = 6;
 	</block>
 	
 	<call name="printfln">
-		<string>&amp;p1 = %p, &amp;p2 = %p</string>
+		"&amp;p1 = %p, &amp;p2 = %p"
 		<ptr name="p1" />
 		<ptr name="p2" />
 	</call>
 
-	<call name="printfln">
-		<string>p2(x, y) = (%d, %d)</string>
-		<struct-member ptr="p2" name="x" />
-		<struct-member ptr="p2" name="y" />
-	</call>
+	printfln("p2(x, y) = (%d, %d)", p2.x, p2.y);
 	
 	<!-- lexical scope -->
-	<inc>
-		<struct-member ptr="p1" name="x" />
-	</inc>
-	<dec>
-		<struct-member ptr="p1" name="y" />
-	</dec>
+	p1.x++;
+	p1.y--;
 </block>
 
-<call name="printfln">
-	<string>p1(x, y) = (%d, %d)</string>
-	<struct-member ptr="p1" name="x" />
-	<struct-member ptr="p1" name="y" />
-</call>
-
-<call name="finish" />
+printfln("p1(x, y) = (%d, %d)", p1.x, p1.y);
 
 </llpml>

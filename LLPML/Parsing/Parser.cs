@@ -218,7 +218,7 @@ namespace Girl.LLPML.Parsing
                     }),
                 },
             };
-            reserved = new string[] { "->" };
+            reserved = new string[] { "++", "--" };
             Init();
         }
 
@@ -398,7 +398,7 @@ namespace Girl.LLPML.Parsing
                         }
                         else
                         {
-                            IIntValue n = Primary();
+                            IIntValue n = Expression(0);
                             if (n == null) return null;
                             if (t == "-")
                                 ret = new Neg(parent, n);
@@ -409,14 +409,14 @@ namespace Girl.LLPML.Parsing
                     }
                 case "!":
                     {
-                        IIntValue n = Primary();
+                        IIntValue n = Expression(0);
                         if (n == null) return null;
                         ret = new Not(parent, n);
                         break;
                     }
                 case "~":
                     {
-                        IIntValue n = Primary();
+                        IIntValue n = Expression(0);
                         if (n == null) return null;
                         ret = new Rev(parent, n);
                         break;
@@ -490,9 +490,9 @@ namespace Girl.LLPML.Parsing
                     return null;
                 case "null":
                     return new Null(parent);
-                case "__blockname":
-                    return new BlockName(parent);
-                case "__source":
+                case "__FUNCTION__":
+                    return new StringValue(parent.GetName());
+                case "__FILE__":
                     return new StringValue(parent.Root.Source);
             }
 
@@ -527,28 +527,6 @@ namespace Girl.LLPML.Parsing
                             m.Ptr = st;
                         if (inv == null) return m;
                         return new Struct.Invoke(inv, m);
-                    }
-                case "->":
-                    {
-                        Struct2.Declare st = p as Struct2.Declare;
-                        if (var == null && st == null) return null;
-                        Struct2.Invoke inv;
-                        Struct2.Member m = Member2(out inv);
-                        if (m == null)
-                        {
-                            if (inv == null)
-                                return null;
-                            else if (var != null)
-                                return new Struct2.Invoke(inv, var);
-                            else if (st != null)
-                                return new Struct2.Invoke(inv, ptr);
-                        }
-                        if (var != null)
-                            m.Var = var;
-                        else if (st != null)
-                            m.Ptr = st;
-                        if (inv == null) return m;
-                        return new Struct2.Invoke(inv, m);
                     }
                 case "(":
                     {
@@ -668,34 +646,6 @@ namespace Girl.LLPML.Parsing
                     break;
             }
             return new Struct.Member(parent, name, child);
-        }
-
-        private Struct2.Member Member2(out Struct2.Invoke inv)
-        {
-            inv = null;
-            string name = Read();
-            if (name == null) return null;
-
-            Struct2.Member child = null;
-            switch (Read())
-            {
-                case null:
-                    break;
-                case "->":
-                    child = Member2(out inv);
-                    break;
-                case "(":
-                    {
-                        IIntValue[] args = Arguments(",", ")", false);
-                        if (args != null)
-                            inv = new Struct2.Invoke(parent, name, args);
-                        return null;
-                    }
-                default:
-                    Rewind();
-                    break;
-            }
-            return new Struct2.Member(parent, name, child);
         }
     }
 }

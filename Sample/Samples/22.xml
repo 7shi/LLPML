@@ -1,99 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- constructor and destructor -->
 
 <include src="finish.xml" />
 
 <struct-define name="Name">
-	<member name="name" />
+	printfln("%p [%s]", this, __FUNCTION__);
+	<var-declare name="name" />
 	
 	<!-- constructor -->
-	<method name="this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show"><this /></invoke>
-	</method>
+	<function name="ctor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		this.Show();
+	</function>
 	
 	<!-- destructor -->
-	<method name="~this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show"><this /></invoke>
-	</method>
+	<function name="dtor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		this.Show();
+	</function>
 	
-	<method name="Show">
-		<call name="printfln">
-			<string>"%s"</string>
-			<struct-member name="name" />
-		</call>
-	</method>
+	<function name="Show">
+		printfln("%p [%s] %s", this, __FUNCTION__, name);
+	</function>
 </struct-define>
 
 <struct-define name="Test">
-	<member name="name" type="Name" />
+	printfln("%p [%s]", this, __FUNCTION__);
+	<struct-declare name="name" type="Name" />
 	
 	<!-- constructor -->
-	<method name="this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show">
-			<struct-member name="name" />
-		</invoke>
-	</method>
+	<function name="ctor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		name.Show();
+	</function>
 	
 	<!-- destructor -->
-	<method name="~this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show">
-			<struct-member-ptr name="name" />
-		</invoke>
-	</method>
+	<function name="dtor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		name.Show();
+	</function>
 </struct-define>
 
+<block>
+	<struct-declare name="a" type="Name">"a"</struct-declare>
+	<struct-declare name="b" type="Test">
+		<struct-declare>"b"</struct-declare>
+	</struct-declare>
+</block>
+
+<!--
 <struct-declare name="a" type="Name">"a"</struct-declare>
 <struct-declare name="b" type="Name">"b"</struct-declare>
 
-<call name="println" />
+println();
 
 <for>
 	<init>
 		<var-declare name="i">0</var-declare>
 	</init>
-	<loop>
-		<inc>
-			<var name="i" />
-		</inc>
-	</loop>
+	<loop>i++;</loop>
 	<block>
-		<call name="printfln">"i = %d"<var name="i" /></call>
+		printfln("i = %d", i);
 		<struct-declare name="c" type="Name">"c"</struct-declare>
 		<if>
-			<cond>
-				<equal><var name="i" /><int>0</int></equal>
-			</cond>
+			<cond>i == 0</cond>
 			<block>
 				<continue />
 			</block>
 		</if>
 		<struct-declare name="d" type="Name">"d"</struct-declare>
 		<if>
-			<cond>
-				<equal><var name="i" /><int>2</int></equal>
-			</cond>
+			<cond>i == 2</cond>
 			<block>
 				<break />
 			</block>
@@ -108,9 +87,7 @@
 	<arg name="a" />
 	<struct-declare name="f" type="Name">"f"</struct-declare>
 	<if>
-		<cond>
-			<equal><var name="a" /><int>0</int></equal>
-		</cond>
+		<cond>a == 0</cond>
 		<block>
 			<struct-declare name="g" type="Test">
 				<struct-declare>"g"</struct-declare>
@@ -122,18 +99,13 @@
 	<return>"normal"</return>
 </function>
 
-<call name="println" />
-<call name="printfln">
-	<string>ret = "%s"</string>
-	<call name="test"><int>0</int></call>
-</call>
+println();
+printfln("ret = \"%s\"", test(0));
 
-<call name="println" />
-<call name="printfln">
-	<string>ret = "%s"</string>
-	<call name="test"><int>1</int></call>
-</call>
+println();
+printfln("ret = \"%s\"", test(1));
 
-<call name="println" />
+println();
+-->
 
 </llpml>

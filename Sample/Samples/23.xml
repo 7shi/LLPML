@@ -1,107 +1,72 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.8.20070926">
+<llpml version="0.9.20071021">
 
 <!-- inheritance -->
 
 <include src="finish.xml" />
 
 <struct-define name="Test1">
-	<member name="a" />
+	<var-declare name="a" />
 	
-	<method name="this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show"><this /></invoke>
-	</method>
+	<function name="ctor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		this.Show();
+	</function>
 	
-	<method name="~this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show"><this /></invoke>
-	</method>
+	<function name="dtor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		this.Show();
+	</function>
 	
-	<method name="Show">
-		<call name="printfln">
-			<string>a = %d</string>
-			<struct-member name="a" />
-		</call>
-	</method>
+	<function name="Show">
+		printfln("%p [%s] a = %d", this, __FUNCTION__, a);
+	</function>
 </struct-define>
 
 <struct-define name="Test2" base="Test1">
-	<member name="b" />
-	<member name="c" type="Test1" />
+	<var-declare name="b" />
+	<struct-declare name="c" type="Test1" />
 	
-	<method name="this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show"><this /></invoke>
-	</method>
+	<function name="ctor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		this.Show();
+	</function>
 	
-	<method name="~this">
-		<call name="printf">
-			<string>[%p] %s: </string>
-			<this />
-			<block-name />
-		</call>
-		<invoke name="Show"><this /></invoke>
-	</method>
+	<function name="dtor">
+		printf("%p [%s] -> ", this, __FUNCTION__);
+		this.Show();
+	</function>
 	
-	<method name="Show">
+	<function name="Show">
 		<!-- <invoke name="Show"><base /></invoke> -->
-		<call name="printfln">
-			<string>a, b = %d, %d</string>
-			<struct-member name="a" />
-			<struct-member name="b" />
-		</call>
-	</method>
+		printf("%p [%s] a, b = %d, %d -> ", this, __FUNCTION__, a, b);
+		c.Show();
+	</function>
 </struct-define>
 
 <struct-declare name="test1" type="Test1">
-	<int>1</int>
+	1
 </struct-declare>
 <block>
 	<struct-declare name="test2" type="Test2">
-		<int>2</int>
-		<int>3</int>
-		<struct-declare>
-			<int>4</int>
-		</struct-declare>
+		2, 3
+		<struct-declare>4</struct-declare>
 	</struct-declare>
 	<block>
-		<var-declare name="dummy" />
 		<var-declare name="test2a" type="Test1">
-			<ptr name="test2" />
+			test2
 		</var-declare>
+		test2a.Show();
 		<invoke name="Show">
-			<var name="test2a" />
+			<cast type="Test1">test2</cast>
 		</invoke>
 		<invoke name="Show">
-			<cast type="Test1">
-				<ptr name="test2" />
-			</cast>
-		</invoke>
-		<invoke name="Show">
-			<cast type="Test2">
-				<var name="test2a" />
-			</cast>
+			<cast type="Test2">test2a</cast>
 		</invoke>
 	</block>
-	<invoke name="Show"><ptr name="test1" /></invoke>
-	<invoke name="Show"><ptr name="test2" /></invoke>
-	<call name="vprintfln">
-		<string>test2: a, b, c = %d, %d, %d</string>
-		<ptr name="test2" />
-	</call>
+	test1.Show();
+	test2.Show();
+	vprintfln("test2: a, b, c = %d, %d, %d", test2);
 </block>
 
 </llpml>

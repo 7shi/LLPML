@@ -16,13 +16,7 @@ namespace Girl.LLPML.Struct
             NoChild(xr);
             name = "base";
 
-            Method m = parent as Method;
-            if (m == null || m.IsStatic)
-                throw Abort(xr, "base requires non-static method");
-
-            Reference = parent.GetVar("this");
-
-            target = m.GetStruct();
+            target = parent.ThisStruct;
             if (target.BaseType == null)
                 throw Abort(xr, "has no base type: " + target.Name);
         }

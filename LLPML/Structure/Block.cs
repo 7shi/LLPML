@@ -46,9 +46,6 @@ namespace Girl.LLPML
                         case "invoke":
                             sentences.Add(new Struct.Invoke(this, xr));
                             break;
-                        case "invoke2":
-                            sentences.Add(new Struct2.Invoke(this, xr));
-                            break;
                         case "if":
                             sentences.Add(new If(this, xr));
                             break;
@@ -132,12 +129,6 @@ namespace Girl.LLPML
                             break;
                         case "struct-declare":
                             sentences.Add(new Struct.Declare(this, xr));
-                            break;
-                        case "struct2-define":
-                            new Struct2.Define(this, xr);
-                            break;
-                        case "struct2-declare":
-                            sentences.Add(new Struct2.Declare(this, xr));
                             break;
                         default:
                             throw Abort(xr);

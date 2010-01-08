@@ -1,33 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20071021">
 
 <!-- function returns value -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <var-declare name="a">3</var-declare>
 <var-declare name="b">4</var-declare>
 
-<call name="printfln">
-	<string>%d + %d = %d</string>
-	<var name="a" />
-	<var name="b" />
-	<call name="add">
-		<var name="a" />
-		<var name="b" />
-	</call>
-</call>
-
-<call name="finish" />
+printfln("%d + %d = %d", a, b, add(a, b));
 
 <function name="add">
 	<arg name="a" />
 	<arg name="b" />
 	<return>
-		<add>
-			<var name="a" />
-			<var name="b" />
-		</add>
+		a + b
 	</return>
 </function>
 

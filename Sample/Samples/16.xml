@@ -1,117 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.9.20070930">
+<llpml version="0.9.20071021">
 
 <!-- flow -->
 
-<include src="stdio.xml" />
+<include src="finish.xml" />
 
 <for>
 	<init>
 		<var-declare name="i">0</var-declare>
 	</init>
-	<cond>
-		<less>
-			<var name="i" />
-			<int>5</int>
-		</less>
-	</cond>
-	<loop>
-		<inc>
-			<var name="i" />
-		</inc>
-	</loop>
+	<cond>5 > i</cond>
+	<loop>i++;</loop>
 	<block>
 		<if>
-			<cond><equal><var name="i" /><int>2</int></equal></cond>
+			<cond>i == 2</cond>
 			<block>
-				<call name="printfln">"skip..."</call>
+				printfln("skip...");
 				<continue />
 			</block>
 		</if>
-		<call name="printfln">
-			<string>[for] i = %d</string>
-			<var name="i" />
-		</call>
+		printfln("[for] i = %d", i);
 	</block>
 </for>
 
 <var-declare name="i">0</var-declare>
 <do>
 	<block>
-		<call name="printf">
-			<string>[do] i = %d </string>
-			<var name="i" />
-		</call>
+		printf("[do] i = %d ", i);
 		<if>
-			<cond><equal><var name="i" /><int>0</int></equal></cond>
+			<cond>i == 0</cond>
 			<block>
-				<call name="printfln">"(zero)"</call>
+				printfln("(zero)");
 			</block>
-			<cond><equal><var name="i" /><int>1</int></equal></cond>
+			<cond>i == 1</cond>
 			<block>
-				<call name="printfln">"(one)"</call>
+				printfln("(one)");
 			</block>
-			<cond><equal><var name="i" /><int>2</int></equal></cond>
+			<cond>i == 2</cond>
 			<block>
-				<call name="printfln">"(two)"</call>
+				printfln("(two)");
 			</block>
 			<!-- else -->
 			<block>
-				<call name="printfln">"(...)"</call>
+				printfln("(...)");
 			</block>
 		</if>
-		<inc>
-			<var name="i" />
-		</inc>
+		i++;
 	</block>
-	<cond>
-		<less>
-			<var name="i" />
-			<int>5</int>
-		</less>
-	</cond>
+	<cond>5 > i</cond>
 </do>
 
 <while>
-	<cond>
-		<greater>
-			<var name="i" />
-			<int>0</int>
-		</greater>
-	</cond>
+	<cond>i > 0</cond>
 	<block>
-		<call name="printf">
-			<string>[while] i = %d </string>
-			<var name="i" />
-		</call>
+		printf("[while] i = %d ", i);
 		<switch>
-			<expr>
-				<var name="i" />
-			</expr>
-			<case>
-				<int>5</int>
-				<int>4</int>
-			</case>
+			<expr>i</expr>
+			<case>5, 4</case>
 			<block>
-				<call name="printfln">"(4 or 5)"</call>
+				printfln("(4 or 5)");
 				<break />
 			</block>
-			<case>
-				<int>3</int>
-			</case>
+			<case>3</case>
 			<block>
-				<call name="printfln">"(3)"</call>
+				printfln("(3)");
 				<break />
 			</block>
 			<!-- default -->
 			<block>
-				<call name="printfln">"(etc)"</call>
+				printfln("(etc)");
 				<break />
 			</block>
 		</switch>
-		<dec>
-			<var name="i" />
-		</dec>
+		i--;
 	</block>
 </while>
 
@@ -119,30 +80,16 @@
 	<init>
 		<var-declare name="i">0</var-declare>
 	</init>
-	<loop>
-		<inc>
-			<var name="i" />
-		</inc>
-	</loop>
+	<loop>i++;</loop>
 	<block>
-		<call name="printfln">
-			<string>[for] i = %d</string>
-			<var name="i" />
-		</call>
+		printfln("[for] i = %d", i);
 		<if>
-			<cond>
-				<equal>
-					<var name="i" />
-					<int>2</int>
-				</equal>
-			</cond>
+			<cond>i == 2</cond>
 			<block>
 				<break />
 			</block>
 		</if>
 	</block>
 </for>
-
-<call name="finish" />
 
 </llpml>
