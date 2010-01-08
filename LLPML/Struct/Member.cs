@@ -327,7 +327,7 @@ namespace Girl.LLPML.Struct
             if (t == null) return null;
             var ret = t.GetFunction(name);
             var target = Target;
-            if (target is Base && ret.IsVirtual)
+            if (target is Base && (ret.IsVirtual || ret.IsOverride))
                 ret = t.GetFunction("override_" + name);
             return ret;
         }

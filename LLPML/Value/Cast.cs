@@ -17,7 +17,8 @@ namespace Girl.LLPML
             get
             {
                 var t = Types.GetType(Parent, type);
-                if (!(Source is Call || Source.Type.IsValue))
+                if (!(Source is Call
+                    || (Source.Type != null && Source.Type.IsValue)))
                     return t;
                 return Types.ToVarType(t);
             }

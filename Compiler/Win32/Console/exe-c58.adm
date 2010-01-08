@@ -1,0 +1,37 @@
+﻿/// 多重override
+
+_Finish _finish;
+
+class Test1
+{
+	virtual Test
+	{
+		printfln(__FUNCTION__);
+	}
+}
+
+class Test2 : Test1
+{
+	override Test
+	{
+		printfln(__FUNCTION__);
+		base.Test();
+	}
+}
+
+class Test3 : Test2
+{
+	override Test
+	{
+		printfln(__FUNCTION__);
+		base.Test();
+	}
+}
+
+var t1 = new Test1;
+var t2 = new Test2;
+var t3 = new Test3;
+
+t1.Test();
+t2.Test();
+t3.Test();

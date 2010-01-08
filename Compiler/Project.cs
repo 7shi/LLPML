@@ -68,8 +68,7 @@ namespace Compiler
                 var exet = File.GetLastWriteTime(ret.Exe);
                 foreach (var src in Sources)
                 {
-                    if ((src.FileInfo.Exists && src.FileInfo.LastWriteTime > exet)
-                        || (src.Source != null && src.Source.LastWriteTime > exet))
+                    if (src.NeedsBuild(exet))
                     {
                         ret.NoBuild = false;
                         break;
@@ -83,9 +82,7 @@ namespace Compiler
             {
                 foreach (var src in Sources)
                 {
-                    if (src.Source != null
-                        && (!src.FileInfo.Exists
-                        || src.Source.LastWriteTime > src.FileInfo.LastWriteTime))
+                    if (src.NeedsGenerate())
                     {
                         var p = new Process();
                         p.StartInfo.FileName = src.Generator + ".exe";
@@ -123,7 +120,7 @@ namespace Compiler
                 var codes = new OpModule(module);
                 root.AddCodes(codes);
                 if (ret.Exceptions.Count > 0) return ret;
-                    module.Text.OpCodes = codes.ToArray();
+                module.Text.OpCodes = codes.ToArray();
 
                 if (verbose) Console.WriteLine("リンクしています。");
                 ret.Exe = Path.Combine(BaseDir, root.Output);
@@ -299,6 +296,23 @@ namespace Compiler
         public string SourceName
         {
             get { return Project.Combine(Path, Source.Name); }
+        }
+
+        public bool NeedsBuild(DateTime exet)
+        {
+            if (NeedsGenerate()) return true;
+            return (FileInfo.Exists && FileInfo.LastWriteTime > exet)
+                || (Source != null && Source.LastWriteTime > exet);
+        }
+
+        public bool NeedsGenerate()
+        {
+            if (Source == null) return false;
+            if (!FileInfo.Exists) return true;
+            var last = FileInfo.LastWriteTime;
+            if (Source.LastWriteTime > last) return true;
+            if (File.GetLastWriteTime(Generator + ".exe") > last) return true;
+            return false;
         }
     }
 

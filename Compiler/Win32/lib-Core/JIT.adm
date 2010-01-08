@@ -123,6 +123,14 @@ struct _JIT_Allocator
 			freed.Add(ptr);
 		return true;
 	}
+	
+	function IsManaged(ptr)
+	{
+		if (ptr < buffer || ptr >= end
+			|| (ptr >> _JIT_Alloc_Shift << _JIT_Alloc_Shift) != ptr)
+			return false;
+		return allocated.IndexOf(ptr) >= 0;
+	}
 }
 
 struct _JIT_Manager
@@ -186,11 +194,25 @@ struct _JIT_Manager
 	
 	function Duplicate(ptr)
 	{
-		_lock lock = { _jit_critical_section };
-		if (ptr == null) return null;
+		if (!IsManaged(ptr)) return ptr;
 		
+		_lock lock = { _jit_critical_section };
 		var ret = __jit_alloc(_JIT_Alloc_Size);
 		__memcpy(ret, ptr, _JIT_Alloc_Size);
 		return ret;
+	}
+	
+	function IsManaged(ptr)
+	{
+		if (ptr == null) return false;
+		
+		_lock lock = { _jit_critical_section };
+		var c = allocators.Count;
+		for (int i = c - 1; i >= 0; i--)
+		{
+			var allocator = (_JIT_Allocator)allocators.Get(i);
+			if (allocator.IsManaged(ptr)) return true;
+		}
+		return false;
 	}
 }

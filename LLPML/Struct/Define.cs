@@ -199,7 +199,7 @@ namespace Girl.LLPML.Struct
             if (st != null) offset = st.GetSizeInternal();
             ForEachMembers((p, pos) =>
             {
-                if (p.NeedsDtor)
+                if (!p.IsStatic && p.NeedsDtor)
                 {
                     list.Add(p);
                     poslist[p] = offset + pos;
