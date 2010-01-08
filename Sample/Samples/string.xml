@@ -7,6 +7,16 @@
 <include src="malloc.xml" />
 
 <?llp
+extern "kernel32.dll" __stdcall
+{
+  WideCharToMultiByte(
+    CodePage, dwFlags, lpWideCharStr, cchWideChar,
+    lpMultiByteStr, cchMultiByte, lpDefaultChar, lpUsedDefaultChar);
+  MultiByteToWideChar(
+    CodePage, dwFlags, lpMultiByteStr, cchMultiByte,
+    lpWideCharStr, cchWideChar);
+}
+
 function memcpy(dest, src, count)
 {
   if (dest <= src || dest >= src + count)
@@ -96,6 +106,22 @@ class string
   {
     return __operator_new(typeof(string), sizeof(char), length, 0, 0);
   }
+}
+
+function cstr(s : string)
+{
+  var len = WideCharToMultiByte(0, 0, s, s.Length, null, null, null, null);
+  var ret = new byte[len];
+  WideCharToMultiByte(0, 0, s, s.Length, ret, ret.Length, null, null);
+  return ret;
+}
+
+function wstr(s : byte[])
+{
+  var len = MultiByteToWideChar(0, 0, s, s.Length, null, null);
+  var ret = string.Alloc(len);
+  MultiByteToWideChar(0, 0, s, s.Length, ret, ret.Length);
+  return ret;
 }
 ?>
 

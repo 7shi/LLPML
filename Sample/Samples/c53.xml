@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.24.20080826">
+
+<title>コード変換</title>
+
+<include src="finish.xml" />
+
+<?llp
+extern "kernel32.dll" __stdcall
+{
+  WriteConsoleA(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
+}
+
+var text = cstr("あいうえお");
+var length;
+WriteConsoleA(stdout, text, text.Length, addrof(length), null);
+println();
+
+var text2 = wstr(text);
+WriteConsole(stdout, text2, text2.Length, addrof(length), null);
+println();
+?>
+
+</llpml>
