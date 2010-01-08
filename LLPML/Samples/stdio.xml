@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.8.20070926">
+<llpml version="0.9.20070930">
 
 <!-- stdio functions -->
 
@@ -71,10 +71,7 @@
 </function>
 
 <function name="println">
-	<call name="print">
-		<string>
-</string>
-	</call>
+	<call name="print">"\r\n"</call>
 </function>
 
 <function name="printfln">
@@ -101,9 +98,7 @@
 
 <function name="finish">
 	<call name="println" />
-	<call name="printfln">
-		<string>Press [Enter] to exit.</string>
-	</call>
+	<call name="printfln">"Press [Enter] to exit."</call>
 	<call name="pause" />
 </function>
 

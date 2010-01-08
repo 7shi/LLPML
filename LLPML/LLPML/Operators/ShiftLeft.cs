@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public ShiftLeft() { }
         public ShiftLeft(BlockBase parent) : base(parent) { }
-        public ShiftLeft(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public ShiftLeft(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public ShiftLeft(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected virtual string Shift { get { return "sal"; } }

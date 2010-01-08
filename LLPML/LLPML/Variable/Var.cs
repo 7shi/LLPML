@@ -12,6 +12,13 @@ namespace Girl.LLPML
         protected Declare reference;
 
         public Var() { }
+        public Var(BlockBase parent) : base(parent) { }
+
+        public Var(BlockBase parent, Declare var)
+            : base(parent, var.Name)
+        {
+            reference = var;
+        }
 
         public Var(BlockBase parent, string name)
             : base(parent, name)

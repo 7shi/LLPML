@@ -19,11 +19,12 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                IIntValue v = IntValue.Read(parent, xr, false);
+                IIntValue[] v = IntValue.Read(parent, xr);
                 if (v != null)
                 {
-                    if (value != null) throw Abort(xr, "multiple values");
-                    value = v;
+                    if (v.Length > 1 || value != null)
+                        throw Abort(xr, "multiple values");
+                    value = v[0];
                     BlockBase f = parent.GetFunction();
                     Var.Declare retval = f.GetVar("__retval");
                     if (retval == null) new Var.Declare(f, "__retval");

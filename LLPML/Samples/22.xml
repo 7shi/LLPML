@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.8.20070924">
+<llpml version="0.9.20070930">
 
 <!-- constructor and destructor -->
 
@@ -64,8 +64,8 @@
 	</method>
 </struct-define>
 
-<struct-declare name="a" type="Name">a</struct-declare>
-<struct-declare name="b" type="Name">b</struct-declare>
+<struct-declare name="a" type="Name">"a"</struct-declare>
+<struct-declare name="b" type="Name">"b"</struct-declare>
 
 <call name="println" />
 
@@ -79,8 +79,8 @@
 		</inc>
 	</loop>
 	<block>
-		<call name="printfln">i = %d<var name="i" /></call>
-		<struct-declare name="c" type="Name">c</struct-declare>
+		<call name="printfln">"i = %d"<var name="i" /></call>
+		<struct-declare name="c" type="Name">"c"</struct-declare>
 		<if>
 			<cond>
 				<equal><var name="i" /><int>0</int></equal>
@@ -89,7 +89,7 @@
 				<continue />
 			</block>
 		</if>
-		<struct-declare name="d" type="Name">d</struct-declare>
+		<struct-declare name="d" type="Name">"d"</struct-declare>
 		<if>
 			<cond>
 				<equal><var name="i" /><int>2</int></equal>
@@ -99,27 +99,27 @@
 			</block>
 		</if>
 		<struct-declare name="e" type="Test">
-			<struct-declare>e</struct-declare>
+			<struct-declare>"e"</struct-declare>
 		</struct-declare>
 	</block>
 </for>
 
 <function name="test">
 	<arg name="a" />
-	<struct-declare name="f" type="Name">f</struct-declare>
+	<struct-declare name="f" type="Name">"f"</struct-declare>
 	<if>
 		<cond>
 			<equal><var name="a" /><int>0</int></equal>
 		</cond>
 		<block>
 			<struct-declare name="g" type="Test">
-				<struct-declare>g</struct-declare>
+				<struct-declare>"g"</struct-declare>
 			</struct-declare>
-			<return>stop</return>
+			<return>"stop"</return>
 		</block>
 	</if>
-	<struct-declare name="h" type="Name">h</struct-declare>
-	<return>normal</return>
+	<struct-declare name="h" type="Name">"h"</struct-declare>
+	<return>"normal"</return>
 </function>
 
 <call name="println" />

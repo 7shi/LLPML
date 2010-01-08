@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.8.20070926">
+<llpml version="0.9.20070930">
 
 <!-- IEEE 754 single precision floating point -->
 
 <include src="finish.xml" />
 
-<call name="printf">-0.1 => </call>
-<call name="Float"><int>-1</int><int>-1</int></call>
+<call name="printf">"-0.1 => "</call>
+<call name="Float">-1, -1</call>
 
-<call name="printf">3.14159265 => </call>
-<call name="Float"><int>314159265</int><int>-8</int></call>
+<call name="printf">"3.14159265 => "</call>
+<call name="Float">314159265, -8</call>
 
 <!-- -->
 
@@ -26,162 +26,79 @@
 	<var-declare name="e2">0</var-declare>
 	<var-declare name="ss" />
 	<if>
-		<cond>
-			<equal><var name="s" />0</equal>
-		</cond>
+		<cond>s == 0</cond>
 		<block>
-			<let><var name="e10" />0</let>
+			<let>e10, 0</let>
 		</block>
 	</if>
 	<if>
-		<cond>
-			<less><var name="s" />0</less>
-		</cond>
+		<cond>s lt 0</cond>
 		<block>
-			<let><var name="sign" />1</let>
-			<let>
-				<var name="s" />
-				<sub>0<var name="s" /></sub>
-			</let>
+			<let>sign, 1</let>
+			<let>s, -s</let>
 		</block>
 	</if>
 	<while>
-		<cond>
-			<equal>
-				<mod><var name="s" />10</mod>
-				<int>0</int>
-			</equal>
-		</cond>
+		<cond>s % 10 == 0</cond>
 		<block>
-			<inc><var name="e10" /></inc>
-			<var-div><var name="s" />10</var-div>
+			<inc>e10</inc>
+			<var-div>s, 10</var-div>
 		</block>
 	</while>
 	<while>
-		<cond>
-			<not-equal><var name="e10" />0</not-equal>
-		</cond>
+		<cond>e10 != 0</cond>
 		<block>
 			<if>
-				<cond>
-					<less><var name="e10" />0</less>
-				</cond>
+				<cond>e10 lt 0</cond>
 				<block>
-					<dec><var name="e2" /></dec>
-					<var-mul><var name="s" />2</var-mul>
-					<let>
-						<var name="ss" />
-						<mod><var name="s" />10</mod>
-					</let>
+					<dec>e2</dec>
+					<var-mul>s, 2</var-mul>
+					<let>ss, s % 10</let>
 					<if>
-						<cond>
-							<or>
-								<equal><var name="ss" />0</equal>
-								<greater>
-									<var name="s" />
-									<div><int name="INT_MAX" />2</div>
-								</greater>
-							</or>
-						</cond>
+						<cond>ss == 0 orelse s gt INT_MAX / 2</cond>
 						<block>
-							<inc><var name="e10" /></inc>
-							<var-div><var name="s" />10</var-div>
+							<inc>e10</inc>
+							<var-div>s, 10</var-div>
 							<if>
-								<cond>
-									<greater-equal>
-										<var name="ss" />
-										<int>5</int>
-									</greater-equal>
-								</cond>
+								<cond>ss ge 5</cond>
 								<block>
-									<inc><var name="s" /></inc>
+									<inc>s</inc>
 								</block>
 							</if>
 						</block>
 					</if>
 				</block>
-				<cond>
-					<greater><var name="e10" />0</greater>
-				</cond>
+				<cond>e10 gt 0</cond>
 				<block>
 					<if>
-						<cond>
-							<and>
-								<equal>
-									<and><var name="s" />1</and>
-									<int>1</int>
-								</equal>
-								<less-equal>
-									<var name="s" />
-									<div><int name="INT_MAX" />10</div>
-								</less-equal>
-							</and>
-						</cond>
+						<cond>s and 1 == 1 andalso s le INT_MAX / 10</cond>
 						<block>
-							<dec><var name="e10" /></dec>
-							<var-mul><var name="s" />10</var-mul>
+							<dec>e10</dec>
+							<var-mul>s, 10</var-mul>
 						</block>
 					</if>
-					<inc><var name="e2" /></inc>
-					<let>
-						<var name="s" />
-						<add>
-							<div><var name="s" />2</div>
-							<and><var name="s" />1</and>
-						</add>
-					</let>
+					<inc>e2</inc>
+					<let>s, s / 2 + (s and 1)</let>
 				</block>
 			</if>
 		</block>
 	</while>
 	<while>
-		<cond>
-			<and>
-				<greater><var name="s" />0</greater>
-				<less-equal>
-					<var name="s" />
-					<int name="SIGN_MAX" />
-				</less-equal>
-			</and>
-		</cond>
+		<cond>s gt 0 andalso s le SIGN_MAX</cond>
 		<block>
-			<dec><var name="e2" /></dec>
-			<var-mul><var name="s" />2</var-mul>
+			<dec>e2</dec>
+			<var-mul>s, 2</var-mul>
 		</block>
 	</while>
 	<while>
-		<cond>
-			<greater>
-				<var name="s" />
-				<add>
-					<mul><int name="SIGN_MAX" />2</mul>
-					<int>1</int>
-				</add>
-			</greater>
-		</cond>
+		<cond>s gt SIGN_MAX * 2 + 1</cond>
 		<block>
-			<inc><var name="e2" /></inc>
-			<let>
-				<var name="s" />
-				<add>
-					<div><var name="s" />2</div>
-					<and><var name="s" />1</and>
-				</add>
-			</let>
+			<inc>e2</inc>
+			<let>s, s / 2 + (s and 1)</let>
 		</block>
 	</while>
 	<call name="printfln">
-		<string>%d-%d-%p</string>
-		<var name="sign" />
-		<add>
-			<var name="e2" />
-			<int name="SIGN_DIGIT" />
-			<div><int name="EXP_MAX" />2</div>
-		</add>
-		<and>
-			<var name="s" />
-			<int name="SIGN_MAX" />
-		</and>
+		"%d-%d-%p", sign, e2 + SIGN_DIGIT + EXP_MAX / 2, s and SIGN_MAX
 	</call>
 </function>
 

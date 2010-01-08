@@ -10,10 +10,36 @@ namespace Girl.LLPML.Struct
 {
     public class Member : Var
     {
-        private Struct.Declare src;
+        private Struct.Declare ptr;
+        public Struct.Declare Ptr
+        {
+            set
+            {
+                ptr = value;
+                isRoot = true;
+            }
+        }
+
         private Var var;
+        public Var Var
+        {
+            set
+            {
+                var = value;
+                isRoot = true;
+            }
+        }
+
         private bool isRoot = true;
         private Member member;
+
+        public Member(BlockBase parent, string name, Member member)
+            : base(parent)
+        {
+            isRoot = false;
+            this.name = name;
+            this.member = member;
+        }
 
         public Member(BlockBase parent, XmlTextReader xr)
             : base(parent, xr)
@@ -34,18 +60,18 @@ namespace Girl.LLPML.Struct
 
             if (isRoot)
             {
-                string src = xr["src"];
+                string ptr = xr["ptr"];
                 string var = xr["var"];
-                if (src == null)
+                if (ptr == null)
                 {
                     if (var == null) var = "this";
                     this.var = new Var(parent, var);
                 }
                 else if (var == null)
                 {
-                    this.src = parent.GetPointer(src) as Struct.Declare;
-                    if (this.src == null)
-                        throw Abort(xr, "undefined struct: " + src);
+                    this.ptr = parent.GetPointer(ptr) as Struct.Declare;
+                    if (this.ptr == null)
+                        throw Abort(xr, "undefined struct: " + ptr);
                 }
                 else
                     throw Abort(xr, "either src or var required");
@@ -80,14 +106,14 @@ namespace Girl.LLPML.Struct
 
         private Addr32 GetStructAddress(List<OpCode> codes, Module m)
         {
-            if (src != null)
+            if (ptr != null)
             {
-                Addr32 ad = src.Address;
-                if (parent.Level == src.Parent.Level || ad.IsAddress)
+                Addr32 ad = ptr.Address;
+                if (parent.Level == ptr.Parent.Level || ad.IsAddress)
                 {
                     return ad;
                 }
-                int lv = src.Parent.Level;
+                int lv = ptr.Parent.Level;
                 if (lv <= 0 || lv >= parent.Level)
                 {
                     throw Abort("Invalid variable scope: " + name);
@@ -116,8 +142,8 @@ namespace Girl.LLPML.Struct
         {
             Addr32 ret = new Addr32(GetStructAddress(codes, m));
             Define st;
-            if (src != null)
-                st = src.GetStruct();
+            if (ptr != null)
+                st = ptr.GetStruct();
             else if (var != null)
                 st = var.GetStruct();
             else
@@ -131,8 +157,8 @@ namespace Girl.LLPML.Struct
             get
             {
                 Define st;
-                if (src != null)
-                    st = src.GetStruct();
+                if (ptr != null)
+                    st = ptr.GetStruct();
                 else
                     st = var.GetStruct();
                 return st.GetMember(name).Type;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070826">
+<llpml version="0.9.20070930">
 
 <!-- struct -->
 
@@ -36,11 +36,11 @@
 	<block>
 		<!-- lexical scope -->
 		<let>
-			<struct-member src="p2" name="x" />
+			<struct-member ptr="p2" name="x" />
 			<int>5</int>
 		</let>
 		<let>
-			<struct-member src="p2" name="y" />
+			<struct-member ptr="p2" name="y" />
 			<int>6</int>
 		</let>
 	</block>
@@ -53,23 +53,23 @@
 
 	<call name="printfln">
 		<string>p2(x, y) = (%d, %d)</string>
-		<struct-member src="p2" name="x" />
-		<struct-member src="p2" name="y" />
+		<struct-member ptr="p2" name="x" />
+		<struct-member ptr="p2" name="y" />
 	</call>
 	
 	<!-- lexical scope -->
 	<inc>
-		<struct-member src="p1" name="x" />
+		<struct-member ptr="p1" name="x" />
 	</inc>
 	<dec>
-		<struct-member src="p1" name="y" />
+		<struct-member ptr="p1" name="y" />
 	</dec>
 </block>
 
 <call name="printfln">
 	<string>p1(x, y) = (%d, %d)</string>
-	<struct-member src="p1" name="x" />
-	<struct-member src="p1" name="y" />
+	<struct-member ptr="p1" name="x" />
+	<struct-member ptr="p1" name="y" />
 </call>
 
 <call name="finish" />

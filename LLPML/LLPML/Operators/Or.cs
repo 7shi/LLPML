@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public Or() { }
         public Or(BlockBase parent) : base(parent) { }
-        public Or(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Or(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Or(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)

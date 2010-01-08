@@ -17,6 +17,12 @@ namespace Girl.LLPML
 
         public Pointer() { }
 
+        public Pointer(BlockBase parent, Declare ptr)
+            : base(parent, ptr.Name)
+        {
+            reference = ptr;
+        }
+
         public Pointer(BlockBase parent, string name)
             : base(parent, name)
         {

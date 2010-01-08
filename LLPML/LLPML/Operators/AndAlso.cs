@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public AndAlso() { }
         public AndAlso(BlockBase parent) : base(parent) { }
-        public AndAlso(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public AndAlso(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public AndAlso(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

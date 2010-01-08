@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public Equal() { }
         public Equal(BlockBase parent) : base(parent) { }
-        public Equal(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Equal(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Equal(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

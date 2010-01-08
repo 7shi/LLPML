@@ -65,8 +65,8 @@ namespace Girl.LLPML.Struct
                 }
                 else
                 {
-                    IIntValue v = IntValue.Read(parent, xr, false);
-                    if (v != null) values.Add(v);
+                    IIntValue[] v = IntValue.Read(parent, xr);
+                    if (v != null) values.AddRange(v);
                 }
             });
 

@@ -14,7 +14,7 @@ namespace Girl.LLPML
 
         public LessEqual() { }
         public LessEqual(BlockBase parent) : base(parent) { }
-        public LessEqual(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public LessEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public LessEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

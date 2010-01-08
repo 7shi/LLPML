@@ -14,7 +14,7 @@ namespace Girl.LLPML
 
         public UnsignedLessEqual() { }
         public UnsignedLessEqual(BlockBase parent) : base(parent) { }
-        public UnsignedLessEqual(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public UnsignedLessEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public UnsignedLessEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

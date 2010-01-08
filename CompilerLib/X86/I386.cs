@@ -198,7 +198,7 @@ namespace Girl.X86
 
         #endregion
 
-        #region Push, Pop, Inc, Dec, Mul, Imul, Div, Idiv
+        #region Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
         public static OpCode Push(Val32 op1)
         {
@@ -216,6 +216,12 @@ namespace Girl.X86
         public static OpCode Dec(Reg32 op1) { return FromName("dec", op1); }
         public static OpCode Dec(Addr32 op1) { return FromName("dec", op1); }
 
+        public static OpCode Not(Reg32 op1) { return FromName("not", op1); }
+        public static OpCode Not(Addr32 op1) { return FromName("not", op1); }
+
+        public static OpCode Neg(Reg32 op1) { return FromName("neg", op1); }
+        public static OpCode Neg(Addr32 op1) { return FromName("neg", op1); }
+
         public static OpCode Mul(Reg32 op1) { return FromName("mul", op1); }
         public static OpCode Mul(Addr32 op1) { return FromName("mul", op1); }
 
@@ -232,7 +238,7 @@ namespace Girl.X86
 
         public static bool IsOneOperand(string op)
         {
-            string[] s = { "push", "pop", "inc", "dec", "mul", "imul", "div", "idiv" };
+            string[] s = { "push", "pop", "inc", "dec", "not", "neg", "mul", "imul", "div", "idiv" };
             return Array.IndexOf(s, op) >= 0;
         }
 
@@ -248,6 +254,10 @@ namespace Girl.X86
                     return new OpCode(new byte[] { (byte)(0x40 + op1) });
                 case "dec":
                     return new OpCode(new byte[] { (byte)(0x48 + op1) });
+                case "not":
+                    return new OpCode(new byte[] { 0xf7, (byte)(0xd0 + op1) });
+                case "neg":
+                    return new OpCode(new byte[] { 0xf7, (byte)(0xd8 + op1) });
                 case "mul":
                     return new OpCode(new byte[] { 0xf7, (byte)(0xe0 + op1) });
                 case "imul":
@@ -273,6 +283,10 @@ namespace Girl.X86
                     return new OpCode(new byte[] { 0xff }, null, op1);
                 case "dec":
                     return new OpCode(new byte[] { 0xff }, null, new Addr32(op1, 1));
+                case "not":
+                    return new OpCode(new byte[] { 0xf7 }, null, new Addr32(op1, 2));
+                case "neg":
+                    return new OpCode(new byte[] { 0xf7 }, null, new Addr32(op1, 3));
                 case "mul":
                     return new OpCode(new byte[] { 0xf7 }, null, new Addr32(op1, 4));
                 case "imul":

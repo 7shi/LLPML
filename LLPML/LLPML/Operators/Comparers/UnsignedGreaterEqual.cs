@@ -14,7 +14,7 @@ namespace Girl.LLPML
 
         public UnsignedGreaterEqual() { }
         public UnsignedGreaterEqual(BlockBase parent) : base(parent) { }
-        public UnsignedGreaterEqual(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public UnsignedGreaterEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public UnsignedGreaterEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

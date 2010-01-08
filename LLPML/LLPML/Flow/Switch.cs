@@ -20,13 +20,13 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue v = IntValue.Read(parent, xr, false);
+                    IIntValue[] v = IntValue.Read(parent, xr);
                     if (v != null)
                     {
-                        if (value != null)
+                        if (v.Length > 1 || value != null)
                             throw Abort(xr, "multiple expressions");
                         else
-                            value = v;
+                            value = v[0];
                     }
                 });
                 if (value == null)
@@ -53,12 +53,15 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue v = IntValue.Read(parent, xr, false);
-                    if (v != null)
+                    IIntValue[] vs = IntValue.Read(parent, xr);
+                    if (vs != null)
                     {
-                        if (!(v is IntValue))
-                            throw Abort(xr, "constant required");
-                        values.Add(v);
+                        foreach (IIntValue v in vs)
+                        {
+                            if (!(v is IntValue))
+                                throw Abort(xr, "constant required");
+                            values.Add(v);
+                        }
                     }
                 });
                 if (values.Count == 0)

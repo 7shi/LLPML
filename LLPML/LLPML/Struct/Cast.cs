@@ -24,12 +24,12 @@ namespace Girl.LLPML.Struct
 
             Parse(xr, delegate
             {
-                IIntValue v = IntValue.Read(parent, xr, true);
+                IIntValue[] v = IntValue.Read(parent, xr);
                 if (v != null)
                 {
-                    if (source != null)
+                    if (v.Length > 1 || source != null)
                         throw Abort(xr, "too many sources");
-                    source = v;
+                    source = v[0];
                 }
             });
 

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.9.20070930">
+
+<!-- expression -->
+
+<include src="finish.xml" />
+
+<var-declare name="a">2</var-declare>
+<int-declare name="b">3</int-declare>
+<string-declare name="fmt">a = %d, b = %d</string-declare>
+
+<!-- simple -->
+<call name="printfln">fmt, a, b</call>
+<!-- complex -->
+<call name="printfln">
+	<string name="fmt" />
+	<var name="a" />
+	<int name="b" />
+</call>
+
+<!-- simple -->
+<call name="printfln">"add(a * b, 4) = %d", add(a * b, 4)</call>
+<!-- complex -->
+<call name="printfln">
+	<string>add(a * b, 4) = %d</string>
+	<call name="add">
+		<mul>
+			<var name="a" />
+			<int name="b" />
+		</mul>
+		<int>4</int>
+	</call>
+</call>
+
+<struct-declare name="t" type="test">
+	9, 6
+</struct-declare>
+
+<!-- simple -->
+<call name="printfln">"sub(%d, %d) = %d", t.a, t.b, t.sub()</call>
+<!-- complex -->
+<call name="printfln">
+	<string>sub(%d, %d) = %d</string>
+	<struct-member ptr="t" name="a" />
+	<struct-member ptr="t" name="b" />
+	<invoke name="sub">
+		<ptr name="t" />
+	</invoke>
+</call>
+
+<struct-declare name="t2" type="test2">
+	<struct-declare>11,3</struct-declare>
+</struct-declare>
+
+<!-- simple -->
+<call name="printfln">
+	"sub(%d, %d) = %d", t2.t.a, t2.t.b, t2.t.sub()
+</call>
+<!-- complex -->
+<call name="printfln">
+	<string>sub(%d, %d) = %d</string>
+	<struct-member ptr="t2" name="t">
+		<struct-member name="a" />
+	</struct-member>
+	<struct-member ptr="t2" name="t">
+		<struct-member name="b" />
+	</struct-member>
+	<invoke name="sub">
+		<struct-member ptr="t2" name="t" />
+	</invoke>
+</call>
+
+<!-- -->
+
+<function name="add">
+	<arg name="a" />
+	<arg name="b" />
+	<return>a + b</return>
+</function>
+
+<struct-define name="test">
+	<member name="a" />
+	<member name="b" />
+	
+	<method name="sub">
+		<return>this.a - this.b</return>
+	</method>
+</struct-define>
+
+<struct-define name="test2">
+	<member name="t" type="test" />
+</struct-define>
+
+</llpml>

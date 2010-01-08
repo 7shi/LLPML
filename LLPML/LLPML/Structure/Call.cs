@@ -10,37 +10,65 @@ namespace Girl.LLPML
 {
     public class Call : NodeBase, IIntValue
     {
-        public List<IIntValue> args = new List<IIntValue>();
+        protected List<IIntValue> args = new List<IIntValue>();
 
-        protected Var ptr;
-        protected CallType type;
+        protected Var var;
+        protected CallType type = CallType.CDecl;
 
-        public Call() { }
-        public Call(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Call()
+        {
+        }
+
+        public Call(BlockBase parent, string name)
+            : base(parent, name)
+        {
+        }
+
+        public Call(BlockBase parent, string name, params IIntValue[] args)
+            : this(parent, name)
+        {
+            this.args.AddRange(args);
+        }
+
+        public Call(BlockBase parent, Var var)
+            : base(parent)
+        {
+            this.var = var;
+        }
+
+        public Call(BlockBase parent, Var var, params IIntValue[] args)
+            : this(parent, var)
+        {
+            this.args.AddRange(args);
+        }
+
+        public Call(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         public override void Read(XmlTextReader xr)
         {
             string name = xr["name"];
-            string ptr = xr["ptr"];
-            if (name != null && ptr == null)
+            string var = xr["var"];
+            if (name != null && var == null)
             {
                 this.name = name;
             }
-            else if (name == null && ptr != null)
+            else if (name == null && var != null)
             {
-                this.ptr = new Var(parent, ptr);
-                type = CallType.CDecl;
+                this.var = new Var(parent, var);
                 if (xr["type"] == "std") type = CallType.Std;
             }
             else
             {
-                throw Abort(xr, "either name or ptr required");
+                throw Abort(xr, "either name or var required");
             }
 
             Parse(xr, delegate
             {
-                IIntValue v = IntValue.Read(parent, xr, false);
-                if (v != null) args.Add(v);
+                IIntValue[] v = IntValue.Read(parent, xr);
+                if (v != null) args.AddRange(v);
             });
         }
 
@@ -64,7 +92,7 @@ namespace Girl.LLPML
             {
                 AddCodes(codes, m, args, type, delegate
                 {
-                    codes.Add(I386.Call(ptr.GetAddress(codes, m)));
+                    codes.Add(I386.Call(var.GetAddress(codes, m)));
                 });
             }
         }

@@ -14,7 +14,7 @@ namespace Girl.LLPML
 
         public Not() { }
         public Not(BlockBase parent) : base(parent) { }
-        public Not(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Not(BlockBase parent, IIntValue value) : base(parent, value) { }
         public Not(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

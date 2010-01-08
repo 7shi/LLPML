@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070829">
+<llpml version="0.9.20070930">
 
 <!-- callback -->
 
@@ -13,11 +13,11 @@
 
 <function name="wrapper">
 	<arg name="ptr" />
-	<call ptr="ptr" />
+	<call var="ptr" />
 </function>
 
 <function name="test">
-	<call name="printfln">Hello, World!</call>
+	<call name="printfln">"Hello, World!"</call>
 </function>
 
 </llpml>

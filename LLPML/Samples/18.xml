@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070826">
+<llpml version="0.9.20070930">
 
 <!-- struct in struct -->
 
@@ -32,14 +32,14 @@
 </call>
 
 <let>
-	<struct-member src="p" name="p1">
+	<struct-member ptr="p" name="p1">
 		<struct-member name="x" />
 	</struct-member>
 	<int>9</int>
 </let>
 
 <let>
-	<struct-member src="p" name="p2">
+	<struct-member ptr="p" name="p2">
 		<struct-member name="y" />
 	</struct-member>
 	<int>8</int>

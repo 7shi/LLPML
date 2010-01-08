@@ -318,7 +318,7 @@ namespace Girl.X86
 
             #endregion
 
-            #region Push, Pop, Inc, Dec, Mul, Imul, Div, Idiv
+            #region Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
             #region Push
             Push(Reg32.EAX)
@@ -378,6 +378,36 @@ namespace Girl.X86
                 .Test("dec dword [ebp-4]", "FF-4D-FC");
             Dec(new Addr32(Reg32.ESI, 0x1000))
                 .Test("dec dword [esi+0x1000]", "FF-8E-00-10-00-00");
+            #endregion
+
+            #region Not
+            Not(Reg32.EAX)
+                .Test("not eax", "F7-D0");
+            Not(Reg32.ESP)
+                .Test("not esp", "F7-D4");
+            Not(new Addr32(Reg32.EAX))
+                .Test("not dword [eax]", "F7-10");
+            Not(new Addr32(Reg32.EBP))
+                .Test("not dword [ebp]", "F7-55-00");
+            Not(new Addr32(Reg32.EBP, -4))
+                .Test("not dword [ebp-4]", "F7-55-FC");
+            Not(new Addr32(Reg32.ESI, 0x1000))
+                .Test("not dword [esi+0x1000]", "F7-96-00-10-00-00");
+            #endregion
+
+            #region Neg
+            Neg(Reg32.EAX)
+                .Test("neg eax", "F7-D8");
+            Neg(Reg32.ESP)
+                .Test("neg esp", "F7-DC");
+            Neg(new Addr32(Reg32.EAX))
+                .Test("neg dword [eax]", "F7-18");
+            Neg(new Addr32(Reg32.EBP))
+                .Test("neg dword [ebp]", "F7-5D-00");
+            Neg(new Addr32(Reg32.EBP, -4))
+                .Test("neg dword [ebp-4]", "F7-5D-FC");
+            Neg(new Addr32(Reg32.ESI, 0x1000))
+                .Test("neg dword [esi+0x1000]", "F7-9E-00-10-00-00");
             #endregion
 
             #region Mul

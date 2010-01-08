@@ -18,7 +18,7 @@ namespace Girl.LLPML
         public Operator() { }
         public Operator(BlockBase parent) : base(parent) { }
 
-        public Operator(BlockBase parent, IntValue[] values)
+        public Operator(BlockBase parent, params IIntValue[] values)
             : this(parent)
         {
             if (values.Length < Min)
@@ -34,12 +34,15 @@ namespace Girl.LLPML
         {
             Parse(xr, delegate
             {
-                IIntValue v = IntValue.Read(parent, xr, true);
-                if (v != null)
+                IIntValue[] vs = IntValue.Read(parent, xr);
+                if (vs != null)
                 {
-                    if (values.Count == Max)
-                        throw Abort(xr, "too many operands");
-                    values.Add(v);
+                    foreach (IIntValue v in vs)
+                    {
+                        if (values.Count == Max)
+                            throw Abort(xr, "too many operands");
+                        values.Add(v);
+                    }
                 }
             });
             if (Min > 0 && values.Count == 0)

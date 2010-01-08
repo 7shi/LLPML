@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public Xor() { }
         public Xor(BlockBase parent) : base(parent) { }
-        public Xor(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Xor(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Xor(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)

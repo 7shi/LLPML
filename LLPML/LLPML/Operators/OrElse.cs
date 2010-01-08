@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public OrElse() { }
         public OrElse(BlockBase parent) : base(parent) { }
-        public OrElse(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public OrElse(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public OrElse(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

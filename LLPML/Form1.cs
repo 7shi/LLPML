@@ -184,18 +184,15 @@ namespace Test
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            int id = listBox1.SelectedIndex;
+            TextData sel = null;
+            if (id >= 0) sel = listBox1.Items[id] as TextData;
+            if (sel == selectedData) return;
+
             textBox1.Focus();
             if (selectedData != null) selectedData.From(textBox1);
-            int id = listBox1.SelectedIndex;
-            if (id < 0)
-            {
-                selectedData = null;
-            }
-            else
-            {
-                selectedData = listBox1.Items[id] as TextData;
-                selectedData.To(textBox1);
-            }
+            selectedData = sel;
+            if (selectedData != null) selectedData.To(textBox1);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

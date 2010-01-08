@@ -10,8 +10,26 @@ namespace Girl.LLPML.Struct
 {
     public class Invoke : Call
     {
-        public Invoke() { }
-        public Invoke(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
+        public Invoke()
+        {
+        }
+
+        public Invoke(BlockBase parent, string name, params IIntValue[] args)
+            : base(parent, name, args)
+        {
+        }
+
+        public Invoke(Invoke src, IIntValue target)
+            : base(src.parent, src.name)
+        {
+            this.args.Add(target);
+            this.args.AddRange(src.args);
+        }
+
+        public Invoke(BlockBase parent, XmlTextReader xr)
+            : base(parent, xr)
+        {
+        }
 
         private bool initialized = false;
 

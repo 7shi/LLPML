@@ -52,11 +52,12 @@ namespace Girl.LLPML
 
                 Parse(xr, delegate
                 {
-                    IIntValue v = IntValue.Read(parent, xr, true);
+                    IIntValue[] v = IntValue.Read(parent, xr);
                     if (v != null)
                     {
-                        if (value != null) throw Abort(xr, "multiple values");
-                        value = v;
+                        if (v.Length > 1 || value != null)
+                            throw Abort(xr, "multiple values");
+                        value = v[0];
                     }
                 });
 

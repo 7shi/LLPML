@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public NotEqual() { }
         public NotEqual(BlockBase parent) : base(parent) { }
-        public NotEqual(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public NotEqual(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         void IIntValue.AddCodes(List<OpCode> codes, Module m, string op, Addr32 dest)

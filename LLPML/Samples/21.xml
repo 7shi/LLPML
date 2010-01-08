@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.6.20070904">
+<llpml version="0.9.20070930">
 
 <!-- method in struct in struct -->
 
@@ -39,15 +39,15 @@
 </call>
 <call name="printfln">
 	<string>&amp;p.a = %p</string>
-	<struct-member-ptr src="p" name="a" />
+	<struct-member-ptr ptr="p" name="a" />
 </call>
 <call name="printfln">
 	<string>&amp;p.b = %p</string>
-	<struct-member-ptr src="p" name="b" />
+	<struct-member-ptr ptr="p" name="b" />
 </call>
 <call name="printfln">
 	<string>&amp;p.b.y = %p</string>
-	<struct-member-ptr src="p" name="b">
+	<struct-member-ptr ptr="p" name="b">
 		<struct-member name="y" />
 	</struct-member-ptr>
 </call>
@@ -57,10 +57,10 @@
 	<ptr name="p" />
 </call>
 <invoke name="Show">
-	<struct-member-ptr src="p" name="a" />
+	<struct-member-ptr ptr="p" name="a" />
 </invoke>
 <invoke name="Show">
-	<struct-member-ptr src="p" name="b" />
+	<struct-member-ptr ptr="p" name="b" />
 </invoke>
 
 <call name="finish" />

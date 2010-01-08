@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.4.20070816">
+<llpml version="0.9.20070930">
 
 <include src="stdio.xml" />
 
-<call name="printfln">こんにちは、世界！</call>
+<call name="printfln">"こんにちは、世界！"</call>
 
 <call name="finish" />
 

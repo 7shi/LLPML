@@ -13,7 +13,7 @@ namespace Girl.LLPML
 
         public Div() { }
         public Div(BlockBase parent) : base(parent) { }
-        public Div(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Div(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Div(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)

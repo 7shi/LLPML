@@ -11,7 +11,7 @@ namespace Girl.LLPML
     {
         public Add() { }
         public Add(BlockBase parent) : base(parent) { }
-        public Add(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public Add(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected virtual void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)

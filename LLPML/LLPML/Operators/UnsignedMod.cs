@@ -14,7 +14,7 @@ namespace Girl.LLPML
 
         public UnsignedMod() { }
         public UnsignedMod(BlockBase parent) : base(parent) { }
-        public UnsignedMod(BlockBase parent, IntValue[] values) : base(parent, values) { }
+        public UnsignedMod(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
         public UnsignedMod(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         protected override void Calculate(List<OpCode> codes, Module m, Addr32 ad, IIntValue v)

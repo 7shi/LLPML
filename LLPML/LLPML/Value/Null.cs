@@ -10,6 +10,7 @@ namespace Girl.LLPML
 {
     public class Null : NodeBase, IIntValue
     {
+        public Null(BlockBase parent) : base(parent, "null") { }
         public Null(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
