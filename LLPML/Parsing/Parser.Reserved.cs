@@ -24,22 +24,13 @@ namespace Girl.LLPML.Parsing
                     return new Struct.Base(parent) { SrcInfo = si };
                 case "new":
                     {
-                        var type = Read();
-                        if (type == null)
-                            throw Abort("new: 型が必要です。");
-                        else if (!Tokenizer.IsWord(type))
-                            throw Abort("new: 型が不適切です: {0}", type);
-                        var br = Read();
-                        if (br == "(")
-                            Check("new", ")");
-                        else if (br != null)
-                            Rewind();
-                        return new Struct.New(parent, type) { SrcInfo = si };
+                        var n = New();
+                        n.SrcInfo = si;
+                        return n;
                     }
                 case "function":
                     {
                         var f = Function(t, false);
-                        if (f == null) break;
                         f.SrcInfo = si;
                         return AutoDelegate(f);
                     }
@@ -135,6 +126,37 @@ namespace Girl.LLPML.Parsing
             if (!ret.Parent.AddFunction(ret))
                 throw Abort("{0}: {1}: 定義が重複しています。", type, ret.Name);
             return ret;
+        }
+
+        private Struct.New New()
+        {
+            var type = Read();
+            if (type == null)
+                throw Abort("new: 型が必要です。");
+            else if (!Tokenizer.IsWord(type))
+                throw Abort("new: 型が不適切です: {0}", type);
+            var br = Read();
+            if (br == ":")
+            {
+                var vt = Read();
+                if (vt == null)
+                    throw Abort("new: 型が必要です。");
+                else if (!Tokenizer.IsWord(vt))
+                    throw Abort("new: 型が不適切です: {0}", vt);
+                type += ":" + vt;
+                br = Read();
+            }
+            if (br == "(")
+                Check("new", ")");
+            else if (br == "[")
+            {
+                var len = Expression();
+                Check("new", "]");
+                return new Struct.New(parent, type, len);
+            }
+            else if (br != null)
+                Rewind();
+            return new Struct.New(parent, type);
         }
     }
 }

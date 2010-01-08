@@ -133,23 +133,28 @@ namespace Girl.LLPML
 
         // type constructor
         public override bool NeedsCtor { get { return true; } }
-        public override void AddConstructor(OpCodes codes, Addr32 ad)
+        public override void AddConstructor(OpCodes codes)
         {
-            codes.Add(I386.Mov(ad, (Val32)0));
+            codes.AddRange(new[]
+            {
+                I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
+                I386.Mov(new Addr32(Reg32.EAX), (Val32)0),
+            });
         }
 
         // type destructor
         public override bool NeedsDtor { get { return true; } }
-        public override void AddDestructor(OpCodes codes, Addr32 ad)
+        public override void AddDestructor(OpCodes codes)
         {
             var f = parent.GetFunction(Delegate.Free);
             if (f == null)
                 throw parent.Abort("delegate: can not find: {0}", Delegate.Free);
-            if (ad == null)
-                codes.Add(I386.Push(Reg32.EAX));
-            else
-                codes.Add(I386.Push(ad));
-            codes.Add(I386.Call(f.First));
+            codes.AddRange(new[]
+            {
+                I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
+                I386.Push(new Addr32(Reg32.EAX)),
+                I386.Call(f.First),
+            });
             if (f.CallType == CallType.CDecl)
                 codes.Add(I386.Add(Reg32.ESP, 4));
         }

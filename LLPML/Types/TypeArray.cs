@@ -31,54 +31,48 @@ namespace Girl.LLPML
 
         // type constructor
         public override bool NeedsCtor { get { return Type.NeedsCtor; } }
-        public override void AddConstructor(OpCodes codes, Addr32 ad)
+        public override void AddConstructor(OpCodes codes)
         {
-            codes.Add(I386.Push(Reg32.EDI));
-            if (ad == null)
-                codes.Add(I386.Mov(Reg32.EDI, Reg32.EAX));
-            else
-                codes.Add(I386.Lea(Reg32.EDI, ad));
+            if (Count == 0) return;
+
             var loop = new OpCode();
             codes.AddRange(new[]
             {
-                I386.Mov(Reg32.ECX, (uint)Count),
+                I386.Push((uint)Count),
+                I386.Push(new Addr32(Reg32.ESP, 4)),
                 loop,
-                I386.Push(Reg32.ECX),
             });
-            Type.AddConstructor(codes, new Addr32(Reg32.EDI));
+            Type.AddConstructor(codes);
             codes.AddRange(new[]
             {
-                I386.Add(Reg32.EDI, (uint)Type.Size),
-                I386.Pop(Reg32.ECX),
-                I386.Loop(loop.Address),
-                I386.Pop(Reg32.EDI),
+                I386.Add(new Addr32(Reg32.ESP), (uint)Type.Size),
+                I386.Dec(new Addr32(Reg32.ESP, 4)),
+                I386.Jcc(Cc.NZ, loop.Address),
+                I386.Add(Reg32.ESP, 8),
             });
         }
 
         // type destructor
         public override bool NeedsDtor { get { return Type.NeedsDtor; } }
-        public override void AddDestructor(OpCodes codes, Addr32 ad)
+        public override void AddDestructor(OpCodes codes)
         {
-            codes.Add(I386.Push(Reg32.EDI));
-            if (ad == null)
-                codes.Add(I386.Mov(Reg32.EDI, Reg32.EAX));
-            else
-                codes.Add(I386.Lea(Reg32.EDI, ad));
+            if (Count == 0) return;
+
             var loop = new OpCode();
             codes.AddRange(new[]
             {
-                I386.Add(Reg32.EDI, (uint)Size),
-                I386.Mov(Reg32.ECX, (uint)Count),
+                I386.Push((uint)Count),
+                I386.Push(new Addr32(Reg32.ESP, 4)),
+                I386.Add(new Addr32(Reg32.ESP), (uint)Size),
                 loop,
-                I386.Push(Reg32.ECX),
-                I386.Sub(Reg32.EDI, (uint)Type.Size),
+                I386.Sub(new Addr32(Reg32.ESP), (uint)Type.Size),
             });
-            Type.AddDestructor(codes, new Addr32(Reg32.EDI));
+            Type.AddDestructor(codes);
             codes.AddRange(new[]
             {
-                I386.Pop(Reg32.ECX),
-                I386.Loop(loop.Address),
-                I386.Pop(Reg32.EDI),
+                I386.Dec(new Addr32(Reg32.ESP, 4)),
+                I386.Jcc(Cc.NZ, loop.Address),
+                I386.Add(Reg32.ESP, 8),
             });
         }
 

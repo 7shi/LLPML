@@ -58,33 +58,25 @@ namespace Girl.LLPML
 
         // type constructor
         public override bool NeedsCtor { get { return GetStruct().NeedsCtor; } }
-        public override void AddConstructor(OpCodes codes, Addr32 ad)
+        public override void AddConstructor(OpCodes codes)
         {
-            if (ad != null)
-                codes.Add(I386.Lea(Reg32.EAX, ad));
             var st = GetStruct();
-            codes.Add(I386.Push(Reg32.EAX));
-            st.AddInit(codes, null);
-            codes.Add(I386.Pop(Reg32.EAX));
-            st.AddConstructor(codes, null);
+            var f1 = st.GetFunction(Struct.Define.Initializer);
+            var f2 = st.GetFunction(Struct.Define.Constructor);
+            codes.Add(I386.Call(f1.First));
+            if (f2.CallType != CallType.CDecl)
+                codes.Add(I386.Push(new Addr32(Reg32.ESP)));
+            codes.Add(I386.Call(f2.First));
         }
 
         // type destructor
         public override bool NeedsDtor { get { return GetStruct().NeedsDtor; } }
-        public override void AddDestructor(OpCodes codes, Addr32 ad)
+        public override void AddDestructor(OpCodes codes)
         {
-            if (ad != null)
-                codes.AddRange(new[]
-                {
-                    I386.Lea(Reg32.EAX, ad),
-                    I386.Push(Reg32.EAX),
-                });
-            else
-                codes.Add(I386.Push(Reg32.EAX));
             var dtor = GetStruct().GetFunction(Struct.Define.Destructor);
+            if (dtor.CallType != CallType.CDecl)
+                codes.Add(I386.Push(new Addr32(Reg32.ESP)));
             codes.Add(I386.Call(dtor.First));
-            if (dtor.CallType == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, 4));
         }
 
         public BlockBase Parent { get; protected set; }

@@ -74,11 +74,29 @@ namespace Girl.LLPML
 
         // type constructor
         public virtual bool NeedsCtor { get { return false; } }
-        public virtual void AddConstructor(OpCodes codes, Addr32 ad) { }
+        public virtual void AddConstructor(OpCodes codes) { }
+
+        public void AddConstructor(OpCodes codes, Addr32 ad)
+        {
+            if (ad != null)
+                codes.Add(I386.Lea(Reg32.EAX, ad));
+            codes.Add(I386.Push(Reg32.EAX));
+            AddConstructor(codes);
+            codes.Add(I386.Add(Reg32.ESP, 4));
+        }
 
         // type destructor
         public virtual bool NeedsDtor { get { return false; } }
-        public virtual void AddDestructor(OpCodes codes, Addr32 ad) { }
+        public virtual void AddDestructor(OpCodes codes) { }
+
+        public void AddDestructor(OpCodes codes, Addr32 ad)
+        {
+            if (ad != null)
+                codes.Add(I386.Lea(Reg32.EAX, ad));
+            codes.Add(I386.Push(Reg32.EAX));
+            AddDestructor(codes);
+            codes.Add(I386.Add(Reg32.ESP, 4));
+        }
 
         // operator name
         public static string GetFuncName(string op)

@@ -134,14 +134,6 @@ namespace Girl.LLPML.Struct
             return list.ToArray();
         }
 
-        private Function GetDestructor()
-        {
-            var dtor = GetFunction(Destructor);
-            if (dtor.IsVirtual)
-                return GetFunction("override_" + Destructor);
-            return dtor;
-        }
-
         public override Struct.Define ThisStruct { get { return this; } }
 
         private void CallBlock(OpCodes codes, Addr32 ad, Block b, CallType ct)
@@ -177,7 +169,9 @@ namespace Girl.LLPML.Struct
             if (!NeedsDtor) return;
 
             //AddDebug(codes, "AddDestructor: " + name);
-            var dtor = GetDestructor();
+            var dtor = GetFunction(Destructor);
+            if (dtor.IsVirtual)
+                dtor = GetFunction("override_" + Destructor);
             CallBlock(codes, ad, dtor, dtor.CallType);
         }
 
@@ -287,7 +281,8 @@ namespace Girl.LLPML.Struct
             {
                 var st = GetBaseStruct();
                 if (st != null && st.NeedsDtor) return true;
-                if (GetDestructor().Sentences.Count > 0)
+                var dtor = GetFunction(Destructor);
+                if (dtor.IsVirtual || dtor.Sentences.Count > 0)
                     return true;
                 foreach (object obj in members.Values)
                 {
