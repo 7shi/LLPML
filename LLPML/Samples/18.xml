@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<llpml version="0.5.20070826">
+
+<!-- struct in struct -->
+
+<include src="stdio.xml" />
+
+<struct-define name="Point">
+	<member name="x" />
+	<member name="y" />
+</struct-define>
+
+<struct-define name="Points">
+	<member name="p1" type="Point" />
+	<member name="p2" type="Point" />
+</struct-define>
+
+<struct-declare name="p" type="Points">
+	<struct-declare>
+		<int>1</int>
+		<int>2</int>
+	</struct-declare>
+	<struct-declare>
+		<int>3</int>
+		<int>4</int>
+	</struct-declare>
+</struct-declare>
+
+<call name="vprintfln">
+	<string>p = ((%d, %d), (%d, %d))</string>
+	<ptr name="p" />
+</call>
+
+<let>
+	<struct-member src="p" name="p1">
+		<struct-member name="x" />
+	</struct-member>
+	<int>9</int>
+</let>
+
+<let>
+	<struct-member src="p" name="p2">
+		<struct-member name="y" />
+	</struct-member>
+	<int>8</int>
+</let>
+
+<call name="vprintfln">
+	<string>p = ((%d, %d), (%d, %d))</string>
+	<ptr name="p" />
+</call>
+
+<call name="finish" />
+
+</llpml>

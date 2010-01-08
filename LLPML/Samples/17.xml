@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<llpml version="0.5.20070821" subsystem="WINDOWS_GUI">
+<llpml version="0.5.20070826" subsystem="WINDOWS_GUI">
 
 <!-- window -->
 
@@ -56,14 +56,18 @@
 	<member name="hIconSm" />
 </struct-define>
 
+<struct-define name="POINT">
+	<member name="x" />
+	<member name="y" />
+</struct-define>
+
 <struct-define name="MSG">
 	<member name="hwnd" />
 	<member name="message" />
 	<member name="wParam" />
 	<member name="lParam" />
 	<member name="time" />
-	<member name="pt.x" />
-	<member name="pt.y" />
+	<member name="pt" type="POINT" />
 </struct-define>
 
 <string-declare name="className">LLPML Test Window</string-declare>

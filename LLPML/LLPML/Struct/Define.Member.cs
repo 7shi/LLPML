@@ -9,8 +9,7 @@ namespace Girl.LLPML.Struct
     {
         public class Member : NodeBase
         {
-            protected int size = sizeof(int);
-            public int Size { get { return size; } }
+            protected string type;
 
             public Member() { }
             public Member(Block parent, XmlTextReader xr) : base(parent, xr) { }
@@ -19,6 +18,21 @@ namespace Girl.LLPML.Struct
             {
                 NoChild(xr);
                 RequiresName(xr);
+                type = xr["type"];
+            }
+
+            public int GetSize()
+            {
+                if (type == null) return sizeof(int);
+                return GetStruct().GetSize();
+            }
+
+            public Define GetStruct()
+            {
+                if (type == null) return null;
+                Define st = parent.GetStruct(type);
+                if (st == null) throw new Exception("undefined type: " + type);
+                return st;
             }
         }
     }

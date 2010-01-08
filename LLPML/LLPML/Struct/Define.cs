@@ -8,6 +8,7 @@ namespace Girl.LLPML.Struct
     public partial class Define : NodeBase
     {
         protected List<Member> members = new List<Member>();
+        public List<Member> Members { get { return members; } }
 
         public Define() { }
         public Define(Block parent, XmlTextReader xr) : base(parent, xr) { }
@@ -47,7 +48,7 @@ namespace Girl.LLPML.Struct
             int ret = 0;
             foreach (Member m in members)
             {
-                ret += m.Size;
+                ret += m.GetSize();
             }
             return ret;
         }
@@ -58,9 +59,18 @@ namespace Girl.LLPML.Struct
             foreach (Member m in members)
             {
                 if (m.Name == name) return ret;
-                ret += m.Size;
+                ret += m.GetSize();
             }
             return -1;
+        }
+
+        public Member GetMeber(string name)
+        {
+            foreach (Member m in members)
+            {
+                if (m.Name == name) return m;
+            }
+            return null;
         }
     }
 }

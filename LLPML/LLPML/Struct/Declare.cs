@@ -21,7 +21,8 @@ namespace Girl.LLPML.Struct
         }
 
         private string type;
-        private List<IIntValue> values = new List<IIntValue>();
+        private List<object> values = new List<object>();
+        private bool isRoot = true;
 
         public Declare() { }
 
@@ -36,20 +37,37 @@ namespace Girl.LLPML.Struct
         {
         }
 
+        public Declare(Declare parent, XmlTextReader xr)
+        {
+            this.parent = parent.parent;
+            isRoot = false;
+            Read(xr);
+        }
+
         public override void Read(XmlTextReader xr)
         {
-            RequiresName(xr);
-
-            type = xr["type"];
-            if (type == null) throw Abort(xr, "type required");
+            if (isRoot)
+            {
+                RequiresName(xr);
+                type = xr["type"];
+                if (type == null) throw Abort(xr, "type required");
+            }
 
             Parse(xr, delegate
             {
-                IIntValue v = IntValue.Read(parent, xr, true);
-                if (v != null) values.Add(v);
+                if (xr.NodeType == XmlNodeType.Element && xr.Name == "struct-declare")
+                {
+                    Declare d = new Declare(this, xr);
+                    values.Add(d);
+                }
+                else
+                {
+                    IIntValue v = IntValue.Read(parent, xr, true);
+                    if (v != null) values.Add(v);
+                }
             });
 
-            parent.AddPointer(this);
+            if (isRoot) parent.AddPointer(this);
         }
 
         public Struct.Define GetStruct()
@@ -61,16 +79,37 @@ namespace Girl.LLPML.Struct
 
         public override void AddCodes(List<OpCode> codes, Module m)
         {
-            Struct.Define st = GetStruct();
-            if (values.Count == 0) return;
-            if (st.GetSize() != values.Count * 4)
-                throw new Exception("can not initialize");
+            AddCodes(codes, m, GetStruct(), new Addr32(address));
+        }
 
-            Addr32 ad = new Addr32(address);
-            foreach (IIntValue v in values)
+        public void AddCodes(List<OpCode> codes, Module m, Struct.Define st, Addr32 ad)
+        {
+            if (values.Count == 0) return;
+            if (st.Members.Count != values.Count)
+                throw new Exception("can not initialize: " + st.Name);
+
+            for (int i = 0; i < values.Count; i++)
             {
-                v.AddCodes(codes, m, "mov", new Addr32(ad));
-                ad.Add(4);
+                Define.Member mem = st.Members[i];
+                Define memst = mem.GetStruct();
+                object obj = values[i];
+                if (obj is Declare)
+                {
+                    if (memst == null)
+                        throw new Exception("value required: " + mem.Name);
+                    (obj as Declare).AddCodes(codes, m, memst, ad);
+                }
+                else if (obj is IIntValue)
+                {
+                    if (memst != null)
+                        throw new Exception("struct required: " + mem.Name);
+                    (obj as IIntValue).AddCodes(codes, m, "mov", new Addr32(ad));
+                    ad.Add(mem.GetSize());
+                }
+                else
+                {
+                    throw new Exception("invalid parameter: " + mem.Name);
+                }
             }
         }
     }
