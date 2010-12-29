@@ -42,8 +42,6 @@
     <Compile Include="Binary\Util.cs" />
     <Compile Include="Binary\WriterBase.cs" />
     <Compile Include="Binary\Val32.cs" />
-    <Compile Include="Binary\Val64.cs" />
-    <Compile Include="Binary\Val16.cs" />
     <Compile Include="PE\DOSHeader.cs" />
     <Compile Include="PE\Function.cs" />
     <Compile Include="PE\HeaderBase.cs" />
