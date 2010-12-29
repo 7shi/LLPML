@@ -36,8 +36,8 @@ namespace Girl.X86
             Array.Reverse(args);
             foreach (object arg in args)
             {
-                if (arg is int) ret.Add(Push((uint)(int)arg));
-                else if (arg is uint) ret.Add(Push((uint)arg));
+                if (arg is int) ret.Add(Push(Val32.NewI((int)arg)));
+                else if (arg is uint) ret.Add(Push(Val32.New((uint)arg)));
                 else if (arg is Val32) ret.Add(Push((Val32)arg));
                 else if (arg is Addr32) ret.Add(Push((Addr32)arg));
                 else throw new Exception("Unknown argument.");
@@ -45,7 +45,7 @@ namespace Girl.X86
             ret.Add(Call(func));
             if (call == CallType.CDecl)
             {
-                ret.Add(Add(Reg32.ESP, (byte)(args.Length * 4)));
+                ret.Add(Add(Reg32.ESP, Val32.New((byte)(args.Length * 4))));
             }
             return ret.ToArray();
         }

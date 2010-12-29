@@ -60,7 +60,7 @@ namespace Girl.LLPML
             Val32 v;
             var m = codes.Module;
             if (address != null)
-                v = new Val32(m.Specific.ImageBase, address);
+                v = Val32.New2(Val32.New(m.Specific.ImageBase), address);
             else if (func != null)
                 v = func.GetAddress(m);
             else

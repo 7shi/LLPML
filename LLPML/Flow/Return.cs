@@ -68,7 +68,7 @@ namespace Girl.LLPML
                     else
                     {
                         if (rt is TypeReference)
-                            codes.Add(I386.Mov(dest, (Val32)0));
+                            codes.Add(I386.Mov(dest, Val32.New(0)));
                         rt.AddSetCodes(codes, dest);
                     }
                     codes.AddDtorCodes(value.Type);

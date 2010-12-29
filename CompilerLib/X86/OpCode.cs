@@ -7,7 +7,7 @@ namespace Girl.X86
 {
     public class OpCode
     {
-        public Val32 Address = 0;
+        public Val32 Address = Val32.New(0);
 
         private byte[] data;
         private object op1, op2;

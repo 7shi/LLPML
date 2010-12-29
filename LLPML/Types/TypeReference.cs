@@ -120,7 +120,7 @@ namespace Girl.LLPML
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Mov(new Addr32(Reg32.EAX), (Val32)0),
+                I386.Mov(new Addr32(Reg32.EAX), Val32.New(0)),
             });
         }
 
@@ -170,7 +170,7 @@ namespace Girl.LLPML
                 I386.Jcc(Cc.NZ, label.Address),
                 I386.Push(Reg32.EAX),
                 codes.GetCall("var", Delete),
-                I386.Add(Reg32.ESP, 4),
+                I386.Add(Reg32.ESP, Val32.New(4)),
                 label,
             });
 #else

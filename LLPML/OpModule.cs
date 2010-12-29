@@ -37,7 +37,7 @@ namespace Girl.LLPML
 
             var block = new Girl.Binary.Block();
             block.Add(Module.DefaultEncoding.GetBytes(s + "\0"));
-            var type = new Val32(0, true);
+            var type = Val32.NewB(0, true);
             var ret = strings[s] = AddData("string_constant", s, type, 2, s.Length, block);
             type.Reference = GetTypeObject(Root.GetStruct("string"));
             return ret;
@@ -47,7 +47,7 @@ namespace Girl.LLPML
 
         public Val32 GetTypeObject(Struct.Define st)
         {
-            if (st == null) return 0;
+            if (st == null) return Val32.New(0);
 
             var name = st.FullName;
             if (types.ContainsKey(name)) return types[name];
@@ -62,7 +62,7 @@ namespace Girl.LLPML
             if (types.ContainsKey(name)) return types[name];
 
             var block = new Girl.Binary.Block();
-            var namev = new Val32(0, true);
+            var namev = Val32.NewB(0, true);
             block.Add(namev);
             if (dtor == null || name == "string" || name == "Type")
                 block.Add(0);
@@ -70,7 +70,7 @@ namespace Girl.LLPML
                 block.Add(GetAddress(dtor));
             block.Add(size);
             block.Add(baseType);
-            var type = new Val32(0, true);
+            var type = Val32.NewB(0, true);
             var tsz = (int)block.Length;
             var ret = types[name] = AddData("type_object", name, type, tsz, -1, block);
             namev.Reference = GetString(name);
@@ -89,7 +89,7 @@ namespace Girl.LLPML
                 var tts = tt as TypeStruct;
                 Function dtor = null;
                 string name = tt.Name;
-                Val32 targetType = 0;
+                Val32 targetType = Val32.New(0);
                 if (tt is TypeReference)
                 {
                     dtor = OpModule.Root.GetFunction(Struct.New.DereferencePtr);
@@ -115,7 +115,7 @@ namespace Girl.LLPML
                 return GetTypeObject(st);
             }
 
-            return GetTypeObject(type.Name, null, type.Size, 0);
+            return GetTypeObject(type.Name, null, type.Size, Val32.New(0));
         }
 
         public Val32 AddData(string category, string name, Val32 type, int size, int len, Girl.Binary.Block data)
@@ -128,12 +128,12 @@ namespace Girl.LLPML
             var offset = db.Block.Length;
             db.Block.Add(data);
             Module.Data.Add(category, name, db);
-            return new Val32(db.Address, offset);
+            return Val32.New2(db.Address, Val32.New(offset));
         }
 
         public Val32 GetAddress(Function f)
         {
-            if (f == null) return 0;
+            if (f == null) return Val32.New(0);
             return f.GetAddress(Module);
         }
 
@@ -157,7 +157,7 @@ namespace Girl.LLPML
         {
             Add(I386.Push(Reg32.ESP));
             t.AddDestructor(this);
-            Add(I386.Add(Reg32.ESP, 8));
+            Add(I386.Add(Reg32.ESP, Val32.New(8)));
         }
 
         public void AddOperatorCodes(TypeBase.Func f, Addr32 dest, IIntValue arg, bool pushf)

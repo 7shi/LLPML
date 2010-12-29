@@ -26,6 +26,7 @@ namespace Girl.X86
         public Addr32(Reg32 r) { reg = r; }
         public Addr32(Reg32 r, int offset) { reg = r; disp = offset; }
         public Addr32(Val32 ad) { address = ad; }
+        public Addr32(uint ad) : this(Val32.New(ad)) { }
         public Addr32(Addr32 src) { Set(src); }
         public Addr32(Addr32 src, byte middleBits)
             : this(src)
@@ -96,7 +97,7 @@ namespace Girl.X86
 
             if (address != null)
             {
-                address = new Val32(address, (uint)n);
+                address = Val32.New2(address, Val32.NewI(n));
             }
             else
             {

@@ -23,7 +23,7 @@ namespace Girl.LLPML
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, (uint)Value);
+            codes.AddCodes(op, dest, Val32.NewI(Value));
         }
 
         private static IIntValue ReadElement(BlockBase parent, XmlTextReader xr)

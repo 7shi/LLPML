@@ -100,9 +100,9 @@ namespace Girl.LLPML
                 I386.Push(Reg32.EAX),
                 I386.Push(ad),
                 codes.GetCall("delegate", Delegate.Free),
-                I386.Add(Reg32.ESP, 4),
+                I386.Add(Reg32.ESP, Val32.New(4)),
                 codes.GetCall("delegate", Delegate.Duplicate),
-                I386.Add(Reg32.ESP, 4),
+                I386.Add(Reg32.ESP, Val32.New(4)),
             });
 
             if (flag) codes.Add(I386.Pop(ad.Register));
@@ -116,7 +116,7 @@ namespace Girl.LLPML
             codes.AddRange(new[]
             {
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Mov(new Addr32(Reg32.EAX), (Val32)0),
+                I386.Mov(new Addr32(Reg32.EAX), Val32.New(0)),
             });
         }
 
@@ -129,7 +129,7 @@ namespace Girl.LLPML
                 I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(new Addr32(Reg32.EAX)),
                 codes.GetCall("delegate", Delegate.Free),
-                I386.Add(Reg32.ESP, 4),
+                I386.Add(Reg32.ESP, Val32.New(4)),
             });
         }
 

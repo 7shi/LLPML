@@ -189,7 +189,7 @@ namespace Girl.LLPML
                 (t as TypeFunction).CheckArgs(this, args_array);
             bool cleanup = NeedsDtor(val);
             if (cleanup)
-                codes.Add(I386.Sub(Reg32.ESP, 4));
+                codes.Add(I386.Sub(Reg32.ESP, Val32.New(4)));
             AddCodes(codes, args_array, callType, delegate
             {
                 if (!cleanup)
@@ -214,7 +214,7 @@ namespace Girl.LLPML
                 }
             });
             if (cleanup)
-                codes.Add(I386.Add(Reg32.ESP, 4));
+                codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
         }
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
@@ -272,7 +272,7 @@ namespace Girl.LLPML
                     p += 4;
                 }
                 if (pop) codes.Add(I386.Pop(Reg32.EAX));
-                codes.Add(I386.Add(Reg32.ESP, (byte)(args2.Length * 4)));
+                codes.Add(I386.Add(Reg32.ESP, Val32.New((byte)(args2.Length * 4))));
             }
         }
 

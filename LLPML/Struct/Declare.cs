@@ -110,7 +110,7 @@ namespace Girl.LLPML.Struct
             st.AddInit(codes, ad);
             AddInitValues(codes, st);
             st.AddConstructor(codes, ad);
-            codes.Add(I386.Add(Reg32.ESP, 4));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
         }
 
         private bool AddInitValues(OpModule codes, Define st)
@@ -144,9 +144,9 @@ namespace Girl.LLPML.Struct
                 }
                 else
                     throw Abort("invalid parameter: " + mem.Name);
-                codes.Add(I386.Add(ad, (uint)mem.Type.Size));
+                codes.Add(I386.Add(ad, Val32.NewI(mem.Type.Size)));
             }
-            codes.Add(I386.Add(Reg32.ESP, 4));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
             return true;
         }
 

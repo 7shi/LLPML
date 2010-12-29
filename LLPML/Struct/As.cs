@@ -28,7 +28,7 @@ namespace Girl.LLPML.Struct
             codes.AddRange(new[]
             {
                 I386.Call(f.First),
-                I386.Add(Reg32.ESP, 8),
+                I386.Add(Reg32.ESP, Val32.New(8)),
             });
             codes.AddCodes(op, dest);
         }

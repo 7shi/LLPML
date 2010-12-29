@@ -278,7 +278,7 @@ namespace Girl.LLPML
 
         public Val32 GetAddress(Module m)
         {
-            return new Val32(m.Specific.ImageBase, First);
+            return Val32.New2(Val32.New(m.Specific.ImageBase), First);
         }
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)

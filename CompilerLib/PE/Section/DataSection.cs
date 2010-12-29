@@ -8,7 +8,7 @@ namespace Girl.PE
 {
     public class DataBlock
     {
-        private Val32 address = new Val32(0, true);
+        private Val32 address = Val32.NewB(0, true);
         public Val32 Address { get { return address; } }
 
         public Block Block { get; private set; }

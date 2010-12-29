@@ -95,7 +95,7 @@ namespace Girl.LLPML
                         codes.AddRange(new[]
                         {
                             codes.GetCall("case", TypeString.Equal),
-                            I386.Add(Reg32.ESP, 8),
+                            I386.Add(Reg32.ESP, Val32.New(8)),
                             I386.Test(Reg32.EAX, Reg32.EAX),
                             I386.Jcc(Cc.NZ, Block.First),
                         });

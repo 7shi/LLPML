@@ -442,7 +442,7 @@ namespace Girl.LLPML
             {
                 I386.Push(codes.GetString(format)),
                 I386.Call(GetFunction("printfln").First),
-                I386.Add(Reg32.ESP, (uint)((argCount + 1) * 4))
+                I386.Add(Reg32.ESP, Val32.NewI(((argCount + 1) * 4)))
             });
         }
 

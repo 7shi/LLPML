@@ -34,20 +34,20 @@ namespace Girl.LLPML
                 if (Type.Size == 1)
                     codes.Add(I386.Inc(dest));
                 else
-                    codes.Add(I386.Add(dest, (uint)Type.Size));
+                    codes.Add(I386.Add(dest, Val32.NewI(Type.Size)));
             };
             funcs["dec"] = funcs["post-dec"] = (codes, dest) =>
             {
                 if (Type.Size == 1)
                     codes.Add(I386.Dec(dest));
                 else
-                    codes.Add(I386.Sub(dest, (uint)Type.Size));
+                    codes.Add(I386.Sub(dest, Val32.NewI(Type.Size)));
             };
             funcs["add"] = (codes, dest) =>
             {
                 codes.AddRange(new[]
                 {
-                    I386.Mov(Reg32.EDX, (uint)Type.Size),
+                    I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)),
                     I386.Mul(Reg32.EDX),
                     I386.Add(dest, Reg32.EAX)
                 });
@@ -56,7 +56,7 @@ namespace Girl.LLPML
             {
                 codes.AddRange(new[]
                 {
-                    I386.Mov(Reg32.EDX, (uint)Type.Size),
+                    I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)),
                     I386.Mul(Reg32.EDX),
                     I386.Sub(dest, Reg32.EAX)
                 });

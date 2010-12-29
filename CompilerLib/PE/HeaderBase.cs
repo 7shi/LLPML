@@ -32,7 +32,7 @@ namespace Girl.PE
                 else if (obj is byte) block.Add((byte)obj);
                 else if (obj is ushort) block.Add((ushort)obj);
                 else if (obj is uint) block.Add((uint)obj);
-                else if (obj is long) block.Add((long)obj);
+                //else if (obj is long) block.Add((long)obj);
                 else if (obj is char[]) block.Add((char[])obj);
                 else if (obj is string) block.Add((string)obj);
                 else if (obj is Val32) block.Add((Val32)obj);

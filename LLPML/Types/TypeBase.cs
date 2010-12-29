@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -91,7 +92,7 @@ namespace Girl.LLPML
                 codes.Add(I386.Lea(Reg32.EAX, ad));
             codes.Add(I386.Push(Reg32.EAX));
             AddConstructor(codes);
-            codes.Add(I386.Add(Reg32.ESP, 4));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
         }
 
         // type destructor
@@ -104,7 +105,7 @@ namespace Girl.LLPML
                 codes.Add(I386.Lea(Reg32.EAX, ad));
             codes.Add(I386.Push(Reg32.EAX));
             AddDestructor(codes);
-            codes.Add(I386.Add(Reg32.ESP, 4));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
         }
 
         // type check

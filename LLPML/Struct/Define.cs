@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -172,7 +173,7 @@ namespace Girl.LLPML.Struct
                 codes.Add(I386.Push(Reg32.EAX));
             codes.Add(I386.Call(b.First));
             if (ct == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, 4));
+                codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
         }
 
         public void AddInit(OpModule codes, Addr32 ad)

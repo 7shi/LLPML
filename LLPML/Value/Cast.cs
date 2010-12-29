@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -63,7 +64,7 @@ namespace Girl.LLPML
                 return (Source as Var).GetAddress(codes);
             else if (Source is IntValue)
                 codes.Add(I386.Mov(Var.DestRegister,
-                    (uint)(Source as IntValue).Value));
+                    Val32.NewI((Source as IntValue).Value)));
             else if (Source is StringValue)
                 codes.Add(I386.Mov(Var.DestRegister,
                     codes.GetString((Source as StringValue).Value)));

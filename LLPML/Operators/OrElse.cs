@@ -31,7 +31,7 @@ namespace Girl.LLPML
             codes.AddRange(new[]
             {
                 last,
-                I386.Mov(Reg32.EAX, (Val32)0),
+                I386.Mov(Reg32.EAX, Val32.New(0)),
                 I386.Setcc(Cc.NZ, Reg8.AL)
             });
             codes.AddCodes(op, dest);

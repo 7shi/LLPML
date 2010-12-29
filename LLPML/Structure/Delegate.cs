@@ -139,11 +139,11 @@ namespace Girl.LLPML
                 {
                     //   mov ecx, len
                     I386.MovB(new Addr32(Reg32.EDI), 0xb9),
-                    I386.Mov(new Addr32(Reg32.EDI, 1), (uint)len),
+                    I386.Mov(new Addr32(Reg32.EDI, 1), Val32.NewI(len)),
                     // push_arg:
                     //   push dword [esp + (len * 4)]
                     I386.Mov(new Addr32(Reg32.EDI, 5),
-                        (uint)(0x2474FF | ((len * 4) << 24))),
+                        Val32.NewI((0x2474FF | ((len * 4) << 24)))),
                     //   loop push_arg
                     I386.MovW(new Addr32(Reg32.EDI, 9), 0xfae2),
                 });
@@ -178,7 +178,7 @@ namespace Girl.LLPML
                 {
                     // add esp, (fargs.Length * 4)
                     I386.MovW(new Addr32(Reg32.EDI, p), 0xc481),
-                    I386.Mov(new Addr32(Reg32.EDI, p + 2), (uint)(fargs.Length * 4)),
+                    I386.Mov(new Addr32(Reg32.EDI, p + 2), Val32.NewI((fargs.Length * 4))),
                 });
                 p += 6;
             }

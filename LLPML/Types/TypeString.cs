@@ -28,7 +28,7 @@ namespace Girl.LLPML
                     I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
                     I386.Push(Reg32.EAX),
                     codes.GetCall("string", Equal),
-                    I386.Add(Reg32.ESP, 8),
+                    I386.Add(Reg32.ESP, Val32.New(8)),
                     I386.Test(Reg32.EAX, Reg32.EAX),
                 });
             };
@@ -53,7 +53,7 @@ namespace Girl.LLPML
                 I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
                 I386.Push(Reg32.EAX),
                 codes.GetCall("string", func),
-                I386.Add(Reg32.ESP, 8),
+                I386.Add(Reg32.ESP, Val32.New(8)),
                 I386.Xchg(Reg32.EAX, dest),
                 I386.Push(Reg32.EAX),
             });

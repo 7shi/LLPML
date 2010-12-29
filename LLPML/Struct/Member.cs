@@ -141,7 +141,7 @@ namespace Girl.LLPML.Struct
                     new Call(Parent, g.Name).AddCodes(codes, "mov", null);
                     if (mem != null)
                     {
-                        codes.Add(I386.Add(Reg32.EAX, (uint)st.GetOffset(name)));
+                        codes.Add(I386.Add(Reg32.EAX, Val32.NewI(st.GetOffset(name))));
                         codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
                         return new Addr32(Var.DestRegister);
                     }
@@ -158,7 +158,7 @@ namespace Girl.LLPML.Struct
                             I386.Call(gg.First)
                         });
                         if (gg.CallType == CallType.CDecl)
-                            codes.Add(I386.Add(Reg32.ESP, 4));
+                            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
                         return null;
                     }
                     throw Abort("undefined member: {0}.{1}", st.FullName, name);
@@ -448,7 +448,7 @@ namespace Girl.LLPML.Struct
                             I386.Call(gg.First)
                         });
                         if (gg.CallType == CallType.CDecl)
-                            codes.Add(I386.Add(Reg32.ESP, 4));
+                            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
                         codes.AddCodes(op, dest);
                         return;
                     }

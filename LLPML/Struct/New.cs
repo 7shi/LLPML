@@ -68,7 +68,7 @@ namespace Girl.LLPML.Struct
             var f = Parent.GetFunction(Function);
             if (f == null)
                 throw Abort("new: undefined function: {0}", Function);
-            Val32 type = codes.GetTypeObject(Type), izer = 0, ctor = 0, init = null;
+            Val32 type = codes.GetTypeObject(Type), izer = Val32.New(0), ctor = Val32.New(0), init = null;
             if (!IsArray)
             {
                 var st = tts.GetStruct();
@@ -89,10 +89,10 @@ namespace Girl.LLPML.Struct
             Length.AddCodes(codes, "push", null);
             codes.AddRange(new[]
             {
-                I386.Push((uint)tt.Size),
+                I386.Push(Val32.NewI(tt.Size)),
                 I386.Push(type),
                 I386.Call(f.First),
-                I386.Add(Reg32.ESP, 16),
+                I386.Add(Reg32.ESP, Val32.New(16)),
             });
             if (init != null)
                 codes.AddRange(new[]

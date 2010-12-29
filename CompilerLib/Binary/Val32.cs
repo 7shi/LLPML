@@ -71,21 +71,38 @@ namespace Girl.Binary
             }
         }
 
-        public Val32() { }
-        public Val32(uint v) { Value = v; }
-        public Val32(uint v, bool reloc) : this(v) { isNeedForRelocation = reloc; }
+        //public static implicit operator Val32(uint v)
+        //{
+        //    return new Val32(v);
+        //}
 
-        public Val32(Val32 a, Val32 b)
+        public static Val32 New(uint v)
         {
-            isInitialized = a.isInitialized;
-            isNeedForRelocation = a.isNeedForRelocation;
-            ref1 = a;
-            ref2 = b;
+            var ret = new Val32();
+            ret.Value = v;
+            return ret;
         }
 
-        public static implicit operator Val32(uint v)
+        public static Val32 NewI(int v)
         {
-            return new Val32(v);
+            return New((uint)v);
+        }
+
+        public static Val32 NewB(uint v, bool reloc)
+        {
+            var ret = New(v);
+            ret.isNeedForRelocation = reloc;
+            return ret;
+        }
+
+        public static Val32 New2(Val32 a, Val32 b)
+        {
+            var ret = new Val32();
+            ret.isInitialized = a.isInitialized;
+            ret.isNeedForRelocation = a.isNeedForRelocation;
+            ret.ref1 = a;
+            ret.ref2 = b;
+            return ret;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -69,7 +70,7 @@ namespace Girl.LLPML
                     ad = new Addr32(Reg32.ESP);
                     codes.Add(I386.Xchg(Reg32.EAX, ad));
                     dt.AddSetCodes(codes, ad);
-                    codes.Add(I386.Add(Reg32.ESP, 4));
+                    codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
                 }
                 else
                 {

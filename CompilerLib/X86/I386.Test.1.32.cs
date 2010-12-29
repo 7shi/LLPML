@@ -12,7 +12,7 @@ namespace Girl.X86
             // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
             // Push
-            Push((Val32)0x12345678)
+            Push(Val32.New(0x12345678))
                 .Test("push dword 0x12345678", "68-78-56-34-12");
             Push(Reg32.EAX)
                 .Test("push eax", "50");

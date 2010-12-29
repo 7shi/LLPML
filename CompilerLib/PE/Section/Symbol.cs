@@ -11,9 +11,9 @@ namespace Girl.PE
         public ushort Hint;
         public string Name;
 
-        private Val32 hintAddress = 0;
+        private Val32 hintAddress = Val32.New(0);
 
-        private Val32 importRef = new Val32(0, true);
+        private Val32 importRef = Val32.NewB(0, true);
         public Val32 ImportRef { get { return importRef; } }
 
         public Symbol(ushort hint, string name)

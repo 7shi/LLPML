@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
 
@@ -26,7 +27,7 @@ namespace Girl.LLPML
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.Z, last.Address));
             }
-            codes.Add(I386.Mov(Reg32.EAX, 1));
+            codes.Add(I386.Mov(Reg32.EAX, Val32.New(1)));
             codes.Add(last);
             codes.AddCodes(op, dest);
         }

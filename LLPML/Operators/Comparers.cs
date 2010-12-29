@@ -41,11 +41,11 @@ namespace Girl.LLPML
             codes.AddRange(new[]
             {
                 last,
-                I386.Mov(Reg32.EAX, (Val32)0),
+                I386.Mov(Reg32.EAX, Val32.New(0)),
                 I386.Setcc(c.Condition, Reg8.AL),
             });
             if (!OpModule.NeedsDtor(v))
-                codes.Add(I386.Add(Reg32.ESP, 4));
+                codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
             else
             {
                 codes.AddRange(new[]

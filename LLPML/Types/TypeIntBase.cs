@@ -40,7 +40,7 @@ namespace Girl.LLPML
                 codes.AddRange(new[]
                 {
                     I386.Test(Reg32.EAX, Reg32.EAX),
-                    I386.Mov(Reg32.EAX, (Val32)0),
+                    I386.Mov(Reg32.EAX, Val32.New(0)),
                     I386.Setcc(Cc.Z, Reg8.AL)
                 });
             };
@@ -68,15 +68,15 @@ namespace Girl.LLPML
             var last = new OpCode();
             codes.AddRange(new[]
             {
-                I386.Cmp(Reg32.EAX, (Val32)0),
+                I386.Cmp(Reg32.EAX, Val32.New(0)),
                 I386.Jcc(Cc.E, last.Address),
                 I386.Jcc(Cc.G, l1.Address),
-                I386.Mov(dest, (Val32)0),
+                I386.Mov(dest, Val32.New(0)),
                 I386.Jmp(last.Address),
                 l1,
-                I386.Cmp(Reg32.EAX, 255),
+                I386.Cmp(Reg32.EAX, Val32.New(255)),
                 I386.Jcc(Cc.LE, l2.Address),
-                I386.Mov(Reg32.EAX, 255),
+                I386.Mov(Reg32.EAX, Val32.New(255)),
                 l2,
                 I386.Mov(Reg32.ECX, Reg32.EAX),
                 I386.Shift(shift, dest, Reg8.CL),

@@ -145,7 +145,7 @@ namespace Girl.LLPML
                 I386.Rep(),
                 I386.Movsd(),
                 I386.Mov(Reg32.ECX, Reg32.EAX),
-                I386.And(Reg32.ECX, 3),
+                I386.And(Reg32.ECX, Val32.New(3)),
                 I386.Rep(),
                 I386.Movsb(),
                 I386.Pop(Reg32.ESI),
@@ -252,7 +252,7 @@ namespace Girl.LLPML
                     {
                         I386.Pop(Reg32.EDI),
                         I386.Mov(Reg32.ESI, Reg32.EAX),
-                        I386.Mov(Reg32.ECX, (uint)(count >> 2)),
+                        I386.Mov(Reg32.ECX, Val32.NewI((count >> 2))),
                         I386.Cld(),
                         I386.Rep(),
                         I386.Movsd()
@@ -260,7 +260,7 @@ namespace Girl.LLPML
                     if ((count & 3) > 0)
                         codes.AddRange(new[]
                         {
-                            I386.Mov(Reg32.ECX, (uint)(count & 3)),
+                            I386.Mov(Reg32.ECX, Val32.NewI((count & 3))),
                             I386.Rep(),
                             I386.Movsb()
                         });
@@ -290,12 +290,12 @@ namespace Girl.LLPML
                 I386.Pop(Reg32.ESI),
                 I386.Pop(Reg32.EDI),
                 I386.Mov(Reg32.ECX, Reg32.EAX),
-                I386.And(Reg32.ECX, 3),
+                I386.And(Reg32.ECX, Val32.New(3)),
                 I386.Std(),
                 I386.Rep(),
                 I386.Movsb(),
-                I386.Sub(Reg32.ESI, 3),
-                I386.Sub(Reg32.EDI, 3),
+                I386.Sub(Reg32.ESI, Val32.New(3)),
+                I386.Sub(Reg32.EDI, Val32.New(3)),
                 I386.Mov(Reg32.ECX, Reg32.EAX),
                 I386.Shr(Reg32.ECX, 2),
                 I386.Rep(),
