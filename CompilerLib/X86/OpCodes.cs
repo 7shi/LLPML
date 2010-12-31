@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
@@ -6,8 +7,20 @@ using Girl.PE;
 
 namespace Girl.X86
 {
-    public class OpCodes : List<OpCode>
+    public class OpCodes
     {
+        private ArrayList list;
+
+        public OpCodes()
+        {
+            list = new ArrayList();
+        }
+
+        public void Add(OpCode op)
+        {
+            list.Add(op);
+        }
+
         public void AddCodes(string op, Addr32 dest)
         {
             AddCodes(op, dest, (Addr32)null);
@@ -148,6 +161,14 @@ namespace Girl.X86
                         Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
                     break;
             }
+        }
+
+        public OpCode[] ToArray()
+        {
+            var ret = new OpCode[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = (OpCode)list[i];
+            return ret;
         }
     }
 }

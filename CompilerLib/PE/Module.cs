@@ -41,7 +41,7 @@ namespace Girl.PE
 
         public Function GetFunction(CallType call, string lib, string sym)
         {
-            Addr32 ad = new Addr32(Import.Add(lib, sym).ImportRef);
+            Addr32 ad = Addr32.NewV(Import.Add(lib, sym).ImportRef);
             return new Function(this, ad, call);
         }
 
@@ -191,7 +191,7 @@ namespace Girl.PE
                 foreach (uint reloc in block.Relocations)
                 {
                     uint v = BitConverter.ToUInt32(bytes, (int)reloc);
-                    Util.SetBytes(bytes, (int)reloc, v + Specific.ImageBase);
+                    Util.SetUInt(bytes, (int)reloc, v + Specific.ImageBase);
                     //Console.WriteLine("reloc[{0:X16}]{1:X16}", reloc, v);
                 }
                 bw.Write(bytes);

@@ -92,23 +92,17 @@ namespace Girl.LLPML
                     if (v.Type is TypeString)
                     {
                         v.AddCodes(codes, "push", null);
-                        codes.AddRange(new[]
-                        {
-                            codes.GetCall("case", TypeString.Equal),
-                            I386.Add(Reg32.ESP, Val32.New(8)),
-                            I386.Test(Reg32.EAX, Reg32.EAX),
-                            I386.Jcc(Cc.NZ, Block.First),
-                        });
+                        codes.Add(codes.GetCall("case", TypeString.Equal));
+                        codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
+                        codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                        codes.Add(I386.Jcc(Cc.NZ, Block.First));
                     }
                     else
                     {
                         v.AddCodes(codes, "mov", null);
-                        codes.AddRange(new[]
-                        {
-                            I386.Pop(Reg32.EDX),
-                            I386.Cmp(Reg32.EDX, Reg32.EAX),
-                            I386.Jcc(Cc.E, Block.First),
-                        });
+                        codes.Add(I386.Pop(Reg32.EDX));
+                        codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
+                        codes.Add(I386.Jcc(Cc.E, Block.First));
                     }
                 }
                 if (IsLast) codes.Add(I386.Jmp(Parent.Destruct));

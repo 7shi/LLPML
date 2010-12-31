@@ -79,13 +79,10 @@ namespace Girl.LLPML
             {
                 var flag = !ad.IsAddress && ad.Register == Var.DestRegister;
                 if (flag) codes.Add(I386.Push(ad.Register));
-                codes.AddRange(new[]
-                {
-                    I386.Push(Reg32.EAX),
-                    I386.Mov(Reg32.EAX, ad),
-                });
+                codes.Add(I386.Push(Reg32.EAX));
+                codes.Add(I386.Mov(Reg32.EAX, ad));
                 AddDereferenceCodes(codes);
-                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)));
+                codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.ESP)));
                 AddReferenceCodes(codes);
                 codes.Add(I386.Pop(Reg32.EAX));
                 if (flag) codes.Add(I386.Pop(ad.Register));
@@ -117,11 +114,8 @@ namespace Girl.LLPML
         public override void AddConstructor(OpModule codes)
         {
             if (!NeedsCtor) return;
-            codes.AddRange(new[]
-            {
-                I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Mov(new Addr32(Reg32.EAX), Val32.New(0)),
-            });
+            codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.ESP)));
+            codes.Add(I386.Mov(Addr32.New(Reg32.EAX), Val32.New(0)));
         }
 
         // type destructor
@@ -129,11 +123,8 @@ namespace Girl.LLPML
         public override void AddDestructor(OpModule codes)
         {
             if (!NeedsDtor) return;
-            codes.AddRange(new[]
-            {
-                I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX)),
-            });
+            codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.ESP)));
+            codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.EAX)));
             AddDereferenceCodes(codes);
         }
 
@@ -141,20 +132,14 @@ namespace Girl.LLPML
         {
 #if INLINE_REFCOUNT
             var label = new OpCode();
-            codes.AddRange(new[]
-            {
-                I386.Test(Reg32.EAX, Reg32.EAX),
-                I386.Jcc(Cc.Z, label.Address),
-                I386.Inc(new Addr32(Reg32.EAX, -12)),
-                label,
-            });
+            codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+            codes.Add(I386.Jcc(Cc.Z, label.Address));
+            codes.Add(I386.Inc(Addr32.NewRO(Reg32.EAX, -12)));
+            codes.Add(label);
 #else
-            codes.AddRange(new[]
-            {
-                I386.Push(Reg32.EAX),
-                GetCall("var", Reference),
-                I386.Pop(Reg32.EAX),
-            });
+            codes.Add(I386.Push(Reg32.EAX));
+            codes.Add(GetCall("var", Reference));
+            codes.Add(I386.Pop(Reg32.EAX));
 #endif
         }
 
@@ -162,24 +147,18 @@ namespace Girl.LLPML
         {
 #if INLINE_REFCOUNT
             var label = new OpCode();
-            codes.AddRange(new[]
-            {
-                I386.Test(Reg32.EAX, Reg32.EAX),
-                I386.Jcc(Cc.Z, label.Address),
-                I386.Dec(new Addr32(Reg32.EAX, -12)),
-                I386.Jcc(Cc.NZ, label.Address),
-                I386.Push(Reg32.EAX),
-                codes.GetCall("var", Delete),
-                I386.Add(Reg32.ESP, Val32.New(4)),
-                label,
-            });
+            codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+            codes.Add(I386.Jcc(Cc.Z, label.Address));
+            codes.Add(I386.Dec(Addr32.NewRO(Reg32.EAX, -12)));
+            codes.Add(I386.Jcc(Cc.NZ, label.Address));
+            codes.Add(I386.Push(Reg32.EAX));
+            codes.Add(codes.GetCall("var", Delete));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+            codes.Add(label);
 #else
-            codes.AddRange(new[]
-            {
-                I386.Push(Reg32.EAX),
-                GetCall("var", Dereference),
-                I386.Pop(Reg32.EAX),
-            });
+            codes.Add(I386.Push(Reg32.EAX));
+            codes.Add(GetCall("var", Dereference));
+            codes.Add(I386.Pop(Reg32.EAX));
 #endif
         }
 

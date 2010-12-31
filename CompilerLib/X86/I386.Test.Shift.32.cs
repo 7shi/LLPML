@@ -18,11 +18,11 @@ namespace Girl.X86
                 .Test("shl ecx, cl", "D3-E1");
             Shl(Reg32.EDX, 2)
                 .Test("shl edx, 2", "C1-E2-02");
-            Shl(new Addr32(Reg32.EBP, 4), 1)
+            Shl(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("shl dword [ebp+4], 1", "D1-65-04");
-            Shl(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            Shl(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("shl dword [ebp+4], cl", "D3-65-04");
-            Shl(new Addr32(Reg32.EBP, 4), 8)
+            Shl(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("shl dword [ebp+4], 8", "C1-65-04-08");
 
             // Shr
@@ -32,11 +32,11 @@ namespace Girl.X86
                 .Test("shr ecx, cl", "D3-E9");
             Shr(Reg32.EDX, 2)
                 .Test("shr edx, 2", "C1-EA-02");
-            Shr(new Addr32(Reg32.EBP, 4), 1)
+            Shr(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("shr dword [ebp+4], 1", "D1-6D-04");
-            Shr(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            Shr(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("shr dword [ebp+4], cl", "D3-6D-04");
-            Shr(new Addr32(Reg32.EBP, 4), 8)
+            Shr(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("shr dword [ebp+4], 8", "C1-6D-04-08");
 
             // Sal
@@ -46,11 +46,11 @@ namespace Girl.X86
                 .Test("sal ecx, cl", "D3-E1");
             Sal(Reg32.EDX, 2)
                 .Test("sal edx, 2", "C1-E2-02");
-            Sal(new Addr32(Reg32.EBP, 4), 1)
+            Sal(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("sal dword [ebp+4], 1", "D1-65-04");
-            Sal(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            Sal(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("sal dword [ebp+4], cl", "D3-65-04");
-            Sal(new Addr32(Reg32.EBP, 4), 8)
+            Sal(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("sal dword [ebp+4], 8", "C1-65-04-08");
 
             // Sar
@@ -60,11 +60,11 @@ namespace Girl.X86
                 .Test("sar ecx, cl", "D3-F9");
             Sar(Reg32.EDX, 2)
                 .Test("sar edx, 2", "C1-FA-02");
-            Sar(new Addr32(Reg32.EBP, 4), 1)
+            Sar(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("sar dword [ebp+4], 1", "D1-7D-04");
-            Sar(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            Sar(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("sar dword [ebp+4], cl", "D3-7D-04");
-            Sar(new Addr32(Reg32.EBP, 4), 8)
+            Sar(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("sar dword [ebp+4], 8", "C1-7D-04-08");
         }
     }

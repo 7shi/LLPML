@@ -17,7 +17,7 @@ namespace Girl.LLPML
         {
             if (AddConstCodes(codes, op, dest)) return;
 
-            var ad = new Addr32(Reg32.ESP);
+            var ad = Addr32.New(Reg32.ESP);
             var f = GetFunc();
             var v = values[0];
             TypeBase.Func schar = null, sint = null;

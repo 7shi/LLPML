@@ -67,7 +67,7 @@ namespace Girl.LLPML
             {
                 if (ad == null)
                 {
-                    ad = new Addr32(Reg32.ESP);
+                    ad = Addr32.New(Reg32.ESP);
                     codes.Add(I386.Xchg(Reg32.EAX, ad));
                     dt.AddSetCodes(codes, ad);
                     codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
@@ -80,7 +80,7 @@ namespace Girl.LLPML
             }
             else
             {
-                codes.Add(I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)));
+                codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.ESP)));
                 dt.AddSetCodes(codes, ad);
                 codes.AddDtorCodes(v.Type);
             }

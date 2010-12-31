@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Girl.X86
 {
-    public enum CallType { CDecl, Std };
+    public enum CallType { CDecl, Std }
 
     public enum Reg32
     {

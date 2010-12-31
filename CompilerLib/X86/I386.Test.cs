@@ -21,21 +21,21 @@ namespace Girl.X86
             TestMovx_16();
             TestMovx_8();
 
-            Call(new Addr32(Reg32.EAX))
+            Call(Addr32.New(Reg32.EAX))
                 .Test("call [eax]", "FF-10");
-            Call(new Addr32(0x12345678))
+            Call(Addr32.NewUInt(0x12345678))
                 .Test("call [0x12345678]", "FF-15-78-56-34-12");
 
-            Jmp(new Addr32(Reg32.EAX))
+            Jmp(Addr32.New(Reg32.EAX))
                 .Test("jmp [eax]", "FF-20");
-            Jmp(new Addr32(0x12345678))
+            Jmp(Addr32.NewUInt(0x12345678))
                 .Test("jmp [0x12345678]", "FF-25-78-56-34-12");
 
-            Lea(Reg32.EAX, new Addr32(0x12345678))
+            Lea(Reg32.EAX, Addr32.NewUInt(0x12345678))
                 .Test("lea eax, [0x12345678]", "8D-05-78-56-34-12");
-            Lea(Reg32.EAX, new Addr32(Reg32.EDX, -4))
+            Lea(Reg32.EAX, Addr32.NewRO(Reg32.EDX, -4))
                 .Test("lea eax, [edx-4]", "8D-42-FC");
-            Lea(Reg32.EAX, new Addr32(Reg32.EBP, -4))
+            Lea(Reg32.EAX, Addr32.NewRO(Reg32.EBP, -4))
                 .Test("lea eax, [ebp-4]", "8D-45-FC");
 
             Ret()

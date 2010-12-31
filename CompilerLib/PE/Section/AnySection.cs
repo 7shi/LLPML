@@ -20,7 +20,7 @@ namespace Girl.PE
 
         public override void Write(Block block)
         {
-            block.Add(data);
+            block.AddBytes(data);
         }
     }
 }

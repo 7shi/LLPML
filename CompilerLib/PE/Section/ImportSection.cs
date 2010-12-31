@@ -35,7 +35,7 @@ namespace Girl.PE
         public override void Write(Block block)
         {
             foreach (Library lib in libraries.Values) lib.WriteImportTable(block);
-            new ImportTable().Write(block);
+            new ImportTable().WriteBlock(block);
 
             foreach (Library lib in libraries.Values) lib.WriteImportLookupTable(block);
             foreach (Library lib in libraries.Values) lib.WriteImportAddressTable(block);

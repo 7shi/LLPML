@@ -285,7 +285,7 @@ namespace Girl.LLPML
                 ForEachMembers((p, pos) =>
                 {
                     if (!p.IsStatic)
-                        p.Address = new Addr32(Reg32.EBP, pos - stackSize);
+                        p.Address = Addr32.NewRO(Reg32.EBP, pos - stackSize);
                     return false;
                 }, null);
                 codes.Add(I386.Enter((ushort)stackSize, (byte)Level));
@@ -438,12 +438,9 @@ namespace Girl.LLPML
 
         public void AddDebug(OpModule codes, string format, int argCount)
         {
-            codes.AddRange(new[]
-            {
-                I386.Push(codes.GetString(format)),
-                I386.Call(GetFunction("printfln").First),
-                I386.Add(Reg32.ESP, Val32.NewI(((argCount + 1) * 4)))
-            });
+            codes.Add(I386.Push(codes.GetString(format)));
+            codes.Add(I386.Call(GetFunction("printfln").First));
+            codes.Add(I386.Add(Reg32.ESP, Val32.NewI(((argCount + 1) * 4))));
         }
 
         private List<IIntValue> typeInfos = new List<IIntValue>();

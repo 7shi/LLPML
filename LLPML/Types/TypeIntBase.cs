@@ -37,12 +37,9 @@ namespace Girl.LLPML
 
             funcs["not"] = (codes, dest) =>
             {
-                codes.AddRange(new[]
-                {
-                    I386.Test(Reg32.EAX, Reg32.EAX),
-                    I386.Mov(Reg32.EAX, Val32.New(0)),
-                    I386.Setcc(Cc.Z, Reg8.AL)
-                });
+                codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                codes.Add(I386.Mov(Reg32.EAX, Val32.New(0)));
+                codes.Add(I386.Setcc(Cc.Z, Reg8.AL));
             };
             funcs["neg"] = (codes, dest) => codes.Add(I386.Neg(Reg32.EAX));
             funcs["rev"] = (codes, dest) => codes.Add(I386.Not(Reg32.EAX));
@@ -66,22 +63,19 @@ namespace Girl.LLPML
             var l1 = new OpCode();
             var l2 = new OpCode();
             var last = new OpCode();
-            codes.AddRange(new[]
-            {
-                I386.Cmp(Reg32.EAX, Val32.New(0)),
-                I386.Jcc(Cc.E, last.Address),
-                I386.Jcc(Cc.G, l1.Address),
-                I386.Mov(dest, Val32.New(0)),
-                I386.Jmp(last.Address),
-                l1,
-                I386.Cmp(Reg32.EAX, Val32.New(255)),
-                I386.Jcc(Cc.LE, l2.Address),
-                I386.Mov(Reg32.EAX, Val32.New(255)),
-                l2,
-                I386.Mov(Reg32.ECX, Reg32.EAX),
-                I386.Shift(shift, dest, Reg8.CL),
-                last
-            });
+            codes.Add(I386.Cmp(Reg32.EAX, Val32.New(0)));
+            codes.Add(I386.Jcc(Cc.E, last.Address));
+            codes.Add(I386.Jcc(Cc.G, l1.Address));
+            codes.Add(I386.Mov(dest, Val32.New(0)));
+            codes.Add(I386.Jmp(last.Address));
+            codes.Add(l1);
+            codes.Add(I386.Cmp(Reg32.EAX, Val32.New(255)));
+            codes.Add(I386.Jcc(Cc.LE, l2.Address));
+            codes.Add(I386.Mov(Reg32.EAX, Val32.New(255)));
+            codes.Add(l2);
+            codes.Add(I386.Mov(Reg32.ECX, Reg32.EAX));
+            codes.Add(I386.Shift(shift, dest, Reg8.CL));
+            codes.Add(last);
         }
     }
 }

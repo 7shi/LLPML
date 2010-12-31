@@ -73,13 +73,10 @@ namespace Girl.LLPML
             {
                 target.AddCodes(codes, "mov", null);
                 var label = new OpCode();
-                codes.AddRange(new[]
-                {
-                    I386.Test(Reg32.EAX, Reg32.EAX),
-                    I386.Jcc(Cc.Z, label.Address),
-                    I386.Mov(Reg32.EAX, new Addr32(Reg32.EAX, -16)),
-                    label,
-                });
+                codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                codes.Add(I386.Jcc(Cc.Z, label.Address));
+                codes.Add(I386.Mov(Reg32.EAX, Addr32.NewRO(Reg32.EAX, -16)));
+                codes.Add(label);
                 codes.AddCodes(op, dest);
             }
             else

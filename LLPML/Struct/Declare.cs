@@ -101,12 +101,9 @@ namespace Girl.LLPML.Struct
             var st = GetStruct();
             if (!st.NeedsInit && values.Count == 0 && !st.NeedsCtor)
                 return;
-            codes.AddRange(new[]
-            {
-                I386.Lea(Reg32.EAX, GetAddress(codes, Parent)),
-                I386.Push(Reg32.EAX)
-            });
-            var ad = new Addr32(Reg32.ESP);
+            codes.Add(I386.Lea(Reg32.EAX, GetAddress(codes, Parent)));
+            codes.Add(I386.Push(Reg32.EAX));
+            var ad = Addr32.New(Reg32.ESP);
             st.AddInit(codes, ad);
             AddInitValues(codes, st);
             st.AddConstructor(codes, ad);
@@ -121,7 +118,7 @@ namespace Girl.LLPML.Struct
             if (members.Length != values.Count)
                 throw Abort("initializers mismatched: " + st.Name);
 
-            var ad = new Addr32(Reg32.ESP);
+            var ad = Addr32.New(Reg32.ESP);
             codes.Add(I386.Push(ad));
             for (int i = 0; i < values.Count; i++)
             {
@@ -140,7 +137,7 @@ namespace Girl.LLPML.Struct
                         throw Abort("value required: " + mem.Name);
                     (obj as IIntValue).AddCodes(codes, "mov", null);
                     codes.Add(I386.Mov(Var.DestRegister, ad));
-                    mem.Type.AddSetCodes(codes, new Addr32(Var.DestRegister));
+                    mem.Type.AddSetCodes(codes, Addr32.New(Var.DestRegister));
                 }
                 else
                     throw Abort("invalid parameter: " + mem.Name);

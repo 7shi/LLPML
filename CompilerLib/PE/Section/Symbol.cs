@@ -33,14 +33,14 @@ namespace Girl.PE
         public void Write(Block block, bool lookup)
         {
             if (!lookup) importRef.Value = block.Current;
-            block.Add(hintAddress);
+            block.AddVal32(hintAddress);
         }
 
         public void Write(Block block)
         {
             hintAddress.Value = block.Current;
-            block.Add(Hint);
-            block.Add(HeaderBase.Pad(NameSize, Name));
+            block.AddUShort(Hint);
+            block.AddString(HeaderBase.Pad(NameSize, Name));
         }
     }
 }

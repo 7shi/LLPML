@@ -23,7 +23,7 @@ namespace Girl.LLPML
             if (AddConstCodes(codes, op, dest)) return;
 
             OpCode last = new OpCode();
-            Addr32 ad = new Addr32(Reg32.ESP);
+            Addr32 ad = Addr32.New(Reg32.ESP);
             var f = GetFunc();
             var c = GetCond();
             var v = values[0];
@@ -32,27 +32,20 @@ namespace Girl.LLPML
             {
                 codes.AddOperatorCodes(f, ad, values[i], true);
                 if (i < values.Count - 1)
-                    codes.AddRange(new[]
-                    {
-                        I386.Jcc(c.NotCondition, last.Address),
-                        I386.Mov(ad, Reg32.EAX)
-                    });
+                {
+                    codes.Add(I386.Jcc(c.NotCondition, last.Address));
+                    codes.Add(I386.Mov(ad, Reg32.EAX));
+                }
             }
-            codes.AddRange(new[]
-            {
-                last,
-                I386.Mov(Reg32.EAX, Val32.New(0)),
-                I386.Setcc(c.Condition, Reg8.AL),
-            });
+            codes.Add(last);
+            codes.Add(I386.Mov(Reg32.EAX, Val32.New(0)));
+            codes.Add(I386.Setcc(c.Condition, Reg8.AL));
             if (!OpModule.NeedsDtor(v))
                 codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
             else
             {
-                codes.AddRange(new[]
-                {
-                    I386.Xchg(Reg32.EAX, new Addr32(Reg32.ESP)),
-                    I386.Push(Reg32.EAX),
-                });
+                codes.Add(I386.Xchg(Reg32.EAX, Addr32.New(Reg32.ESP)));
+                codes.Add(I386.Push(Reg32.EAX));
                 codes.AddDtorCodes(v.Type);
                 codes.Add(I386.Pop(Reg32.EAX));
             }

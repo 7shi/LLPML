@@ -12,19 +12,19 @@ namespace Girl.X86
             // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
             // Push
-            PushW((ushort)0x1234)
+            PushWU((ushort)0x1234)
                 .Test("push word 0x1234", "66-68-34-12");
             PushW(Reg16.AX)
                 .Test("push ax", "66-50");
             PushW(Reg16.SP)
                 .Test("push sp", "66-54");
-            PushW(new Addr32(Reg32.EAX))
+            PushWA(Addr32.New(Reg32.EAX))
                 .Test("push word [eax]", "66-FF-30");
-            PushW(new Addr32(Reg32.EBP))
+            PushWA(Addr32.New(Reg32.EBP))
                 .Test("push word [ebp]", "66-FF-75-00");
-            PushW(new Addr32(Reg32.EBP, -4))
+            PushWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("push word [ebp-4]", "66-FF-75-FC");
-            PushW(new Addr32(Reg32.ESI, 0x1000))
+            PushWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("push word [esi+0x1000]", "66-FF-B6-00-10-00-00");
 
             // Pop
@@ -32,13 +32,13 @@ namespace Girl.X86
                 .Test("pop ax", "66-58");
             PopW(Reg16.SP)
                 .Test("pop sp", "66-5C");
-            PopW(new Addr32(Reg32.EAX))
+            PopWA(Addr32.New(Reg32.EAX))
                 .Test("pop word [eax]", "66-8F-00");
-            PopW(new Addr32(Reg32.EBP))
+            PopWA(Addr32.New(Reg32.EBP))
                 .Test("pop word [ebp]", "66-8F-45-00");
-            PopW(new Addr32(Reg32.EBP, -4))
+            PopWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("pop word [ebp-4]", "66-8F-45-FC");
-            PopW(new Addr32(Reg32.ESI, 0x1000))
+            PopWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("pop word [esi+0x1000]", "66-8F-86-00-10-00-00");
 
             // Inc
@@ -46,13 +46,13 @@ namespace Girl.X86
                 .Test("inc ax", "66-40");
             IncW(Reg16.SP)
                 .Test("inc sp", "66-44");
-            IncW(new Addr32(Reg32.EAX))
+            IncWA(Addr32.New(Reg32.EAX))
                 .Test("inc word [eax]", "66-FF-00");
-            IncW(new Addr32(Reg32.EBP))
+            IncWA(Addr32.New(Reg32.EBP))
                 .Test("inc word [ebp]", "66-FF-45-00");
-            IncW(new Addr32(Reg32.EBP, -4))
+            IncWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("inc word [ebp-4]", "66-FF-45-FC");
-            IncW(new Addr32(Reg32.ESI, 0x1000))
+            IncWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("inc word [esi+0x1000]", "66-FF-86-00-10-00-00");
 
             // Dec
@@ -60,13 +60,13 @@ namespace Girl.X86
                 .Test("dec ax", "66-48");
             DecW(Reg16.SP)
                 .Test("dec sp", "66-4C");
-            DecW(new Addr32(Reg32.EAX))
+            DecWA(Addr32.New(Reg32.EAX))
                 .Test("dec word [eax]", "66-FF-08");
-            DecW(new Addr32(Reg32.EBP))
+            DecWA(Addr32.New(Reg32.EBP))
                 .Test("dec word [ebp]", "66-FF-4D-00");
-            DecW(new Addr32(Reg32.EBP, -4))
+            DecWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("dec word [ebp-4]", "66-FF-4D-FC");
-            DecW(new Addr32(Reg32.ESI, 0x1000))
+            DecWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("dec word [esi+0x1000]", "66-FF-8E-00-10-00-00");
 
             // Not
@@ -74,13 +74,13 @@ namespace Girl.X86
                 .Test("not ax", "66-F7-D0");
             NotW(Reg16.SP)
                 .Test("not sp", "66-F7-D4");
-            NotW(new Addr32(Reg32.EAX))
+            NotWA(Addr32.New(Reg32.EAX))
                 .Test("not word [eax]", "66-F7-10");
-            NotW(new Addr32(Reg32.EBP))
+            NotWA(Addr32.New(Reg32.EBP))
                 .Test("not word [ebp]", "66-F7-55-00");
-            NotW(new Addr32(Reg32.EBP, -4))
+            NotWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("not word [ebp-4]", "66-F7-55-FC");
-            NotW(new Addr32(Reg32.ESI, 0x1000))
+            NotWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("not word [esi+0x1000]", "66-F7-96-00-10-00-00");
 
             // Neg
@@ -88,13 +88,13 @@ namespace Girl.X86
                 .Test("neg ax", "66-F7-D8");
             NegW(Reg16.SP)
                 .Test("neg sp", "66-F7-DC");
-            NegW(new Addr32(Reg32.EAX))
+            NegWA(Addr32.New(Reg32.EAX))
                 .Test("neg word [eax]", "66-F7-18");
-            NegW(new Addr32(Reg32.EBP))
+            NegWA(Addr32.New(Reg32.EBP))
                 .Test("neg word [ebp]", "66-F7-5D-00");
-            NegW(new Addr32(Reg32.EBP, -4))
+            NegWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("neg word [ebp-4]", "66-F7-5D-FC");
-            NegW(new Addr32(Reg32.ESI, 0x1000))
+            NegWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("neg word [esi+0x1000]", "66-F7-9E-00-10-00-00");
 
             // Mul
@@ -102,13 +102,13 @@ namespace Girl.X86
                 .Test("mul ax", "66-F7-E0");
             MulW(Reg16.SP)
                 .Test("mul sp", "66-F7-E4");
-            MulW(new Addr32(Reg32.EAX))
+            MulWA(Addr32.New(Reg32.EAX))
                 .Test("mul word [eax]", "66-F7-20");
-            MulW(new Addr32(Reg32.EBP))
+            MulWA(Addr32.New(Reg32.EBP))
                 .Test("mul word [ebp]", "66-F7-65-00");
-            MulW(new Addr32(Reg32.EBP, -4))
+            MulWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("mul word [ebp-4]", "66-F7-65-FC");
-            MulW(new Addr32(Reg32.ESI, 0x1000))
+            MulWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("mul word [esi+0x1000]", "66-F7-A6-00-10-00-00");
 
             // Imul
@@ -116,13 +116,13 @@ namespace Girl.X86
                 .Test("imul ax", "66-F7-E8");
             ImulW(Reg16.SP)
                 .Test("imul sp", "66-F7-EC");
-            ImulW(new Addr32(Reg32.EAX))
+            ImulWA(Addr32.New(Reg32.EAX))
                 .Test("imul word [eax]", "66-F7-28");
-            ImulW(new Addr32(Reg32.EBP))
+            ImulWA(Addr32.New(Reg32.EBP))
                 .Test("imul word [ebp]", "66-F7-6D-00");
-            ImulW(new Addr32(Reg32.EBP, -4))
+            ImulWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("imul word [ebp-4]", "66-F7-6D-FC");
-            ImulW(new Addr32(Reg32.ESI, 0x1000))
+            ImulWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("imul word [esi+0x1000]", "66-F7-AE-00-10-00-00");
 
             // Div
@@ -130,13 +130,13 @@ namespace Girl.X86
                 .Test("div ax", "66-F7-F0");
             DivW(Reg16.SP)
                 .Test("div sp", "66-F7-F4");
-            DivW(new Addr32(Reg32.EAX))
+            DivWA(Addr32.New(Reg32.EAX))
                 .Test("div word [eax]", "66-F7-30");
-            DivW(new Addr32(Reg32.EBP))
+            DivWA(Addr32.New(Reg32.EBP))
                 .Test("div word [ebp]", "66-F7-75-00");
-            DivW(new Addr32(Reg32.EBP, -4))
+            DivWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("div word [ebp-4]", "66-F7-75-FC");
-            DivW(new Addr32(Reg32.ESI, 0x1000))
+            DivWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("div word [esi+0x1000]", "66-F7-B6-00-10-00-00");
 
             // Idiv
@@ -144,13 +144,13 @@ namespace Girl.X86
                 .Test("idiv ax", "66-F7-F8");
             IdivW(Reg16.SP)
                 .Test("idiv sp", "66-F7-FC");
-            IdivW(new Addr32(Reg32.EAX))
+            IdivWA(Addr32.New(Reg32.EAX))
                 .Test("idiv word [eax]", "66-F7-38");
-            IdivW(new Addr32(Reg32.EBP))
+            IdivWA(Addr32.New(Reg32.EBP))
                 .Test("idiv word [ebp]", "66-F7-7D-00");
-            IdivW(new Addr32(Reg32.EBP, -4))
+            IdivWA(Addr32.NewRO(Reg32.EBP, -4))
                 .Test("idiv word [ebp-4]", "66-F7-7D-FC");
-            IdivW(new Addr32(Reg32.ESI, 0x1000))
+            IdivWA(Addr32.NewRO(Reg32.ESI, 0x1000))
                 .Test("idiv word [esi+0x1000]", "66-F7-BE-00-10-00-00");
         }
     }

@@ -60,28 +60,28 @@ namespace Girl.X86
             if (op1 == null) return data;
 
             if (op1 is byte)
-                data = Util.GetBytes(data, (byte)op1);
+                data = Util.AddByteToBytes(data, (byte)op1);
             else if (op1 is ushort)
-                data = Util.GetBytes(data, (ushort)op1);
+                data = Util.AddUShortToBytes(data, (ushort)op1);
             else if (op1 is Val32)
             {
                 uint val = ((Val32)op1).Value;
                 if (ByteRelative)
                 {
                     val -= Address.Value + (uint)data.Length + 1;
-                    data = Util.GetBytes(data, (byte)val);
+                    data = Util.AddByteToBytes(data, (byte)val);
                 }
                 else
                 {
                     if (relative) val -= Address.Value + (uint)data.Length + 4;
-                    data = Util.GetBytes(data, val);
+                    data = Util.AddUIntToBytes(data, val);
                 }
             }
             else
             {
                 throw new Exception("The method or operation is not implemented.");
             }
-            if (op2 is byte) data = Util.Concat(data, new byte[] { (byte)op2 });
+            if (op2 is byte) data = Util.Concat(data, Util.GetBytes1((byte)op2));
             return data;
         }
 
@@ -89,21 +89,21 @@ namespace Girl.X86
         {
             if (op1 is Val32 && relative)
             {
-                block.Add(GetCodes());
+                block.AddBytes(GetCodes());
             }
             else if (data != null)
             {
-                block.Add(data);
+                block.AddBytes(data);
                 if (op2 is Addr32) (op2 as Addr32).Write(block);
                 if (op1 != null)
                 {
-                    if (op1 is byte) block.Add((byte)op1);
-                    else if (op1 is ushort) block.Add((ushort)op1);
-                    else if (op1 is Val32) block.Add((Val32)op1);
-                    else if (op1 is Val32) block.Add((Val32)op1);
+                    if (op1 is byte) block.AddByte((byte)op1);
+                    else if (op1 is ushort) block.AddUShort((ushort)op1);
+                    else if (op1 is Val32) block.AddVal32((Val32)op1);
+                    else if (op1 is Val32) block.AddVal32((Val32)op1);
                     else throw new Exception("The method or operation is not implemented.");
                 }
-                if (op2 is byte) block.Add((byte)op2);
+                if (op2 is byte) block.AddByte((byte)op2);
             }
         }
 

@@ -18,11 +18,11 @@ namespace Girl.X86
                 .Test("shl cl, cl", "D2-E1");
             ShlB(Reg8.DL, 2)
                 .Test("shl dl, 2", "C0-E2-02");
-            ShlB(new Addr32(Reg32.EBP, 4), 1)
+            ShlB(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("shl byte [ebp+4], 1", "D0-65-04");
-            ShlB(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            ShlB(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("shl byte [ebp+4], cl", "D2-65-04");
-            ShlB(new Addr32(Reg32.EBP, 4), 8)
+            ShlB(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("shl byte [ebp+4], 8", "C0-65-04-08");
 
             // Shr
@@ -32,11 +32,11 @@ namespace Girl.X86
                 .Test("shr cl, cl", "D2-E9");
             ShrB(Reg8.DL, 2)
                 .Test("shr dl, 2", "C0-EA-02");
-            ShrB(new Addr32(Reg32.EBP, 4), 1)
+            ShrB(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("shr byte [ebp+4], 1", "D0-6D-04");
-            ShrB(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            ShrB(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("shr byte [ebp+4], cl", "D2-6D-04");
-            ShrB(new Addr32(Reg32.EBP, 4), 8)
+            ShrB(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("shr byte [ebp+4], 8", "C0-6D-04-08");
 
             // Sal
@@ -46,11 +46,11 @@ namespace Girl.X86
                 .Test("sal cl, cl", "D2-E1");
             SalB(Reg8.DL, 2)
                 .Test("sal dl, 2", "C0-E2-02");
-            SalB(new Addr32(Reg32.EBP, 4), 1)
+            SalB(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("sal byte [ebp+4], 1", "D0-65-04");
-            SalB(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            SalB(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("sal byte [ebp+4], cl", "D2-65-04");
-            SalB(new Addr32(Reg32.EBP, 4), 8)
+            SalB(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("sal byte [ebp+4], 8", "C0-65-04-08");
 
             // Sar
@@ -60,11 +60,11 @@ namespace Girl.X86
                 .Test("sar cl, cl", "D2-F9");
             SarB(Reg8.DL, 2)
                 .Test("sar dl, 2", "C0-FA-02");
-            SarB(new Addr32(Reg32.EBP, 4), 1)
+            SarB(Addr32.NewRO(Reg32.EBP, 4), 1)
                 .Test("sar byte [ebp+4], 1", "D0-7D-04");
-            SarB(new Addr32(Reg32.EBP, 4), Reg8.CL)
+            SarB(Addr32.NewRO(Reg32.EBP, 4), Reg8.CL)
                 .Test("sar byte [ebp+4], cl", "D2-7D-04");
-            SarB(new Addr32(Reg32.EBP, 4), 8)
+            SarB(Addr32.NewRO(Reg32.EBP, 4), 8)
                 .Test("sar byte [ebp+4], 8", "C0-7D-04-08");
         }
     }

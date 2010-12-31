@@ -180,12 +180,9 @@ namespace Girl.LLPML
             {
                 var st = Parent as Struct.Define;
                 var offset = st.GetOffset(virtptr.Name);
-                codes.AddRange(new[]
-                {
-                    first,
-                    I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP, 4)),
-                    I386.Jmp(new Addr32(Reg32.EAX, offset))
-                });
+                codes.Add(first);
+                codes.Add(I386.Mov(Reg32.EAX, Addr32.NewRO(Reg32.ESP, 4)));
+                codes.Add(I386.Jmp(Addr32.NewRO(Reg32.EAX, offset)));
             }
             else if (!IsOverride)
             {
@@ -205,7 +202,7 @@ namespace Girl.LLPML
             argStack = 0;
             foreach (var arg in args)
             {
-                arg.Address = new Addr32(Reg32.EBP, argStack + 8);
+                arg.Address = Addr32.NewRO(Reg32.EBP, argStack + 8);
                 argStack += 4;
             }
 
@@ -232,7 +229,7 @@ namespace Girl.LLPML
             switch (name)
             {
                 case Struct.Define.Initializer:
-                    ThisStruct.AddInit(codes, new Addr32(Reg32.EBP, 8));
+                    ThisStruct.AddInit(codes, Addr32.NewRO(Reg32.EBP, 8));
                     break;
                 case Struct.Define.Constructor:
                     ThisStruct.AddBeforeCtor(codes);

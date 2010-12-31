@@ -77,31 +77,25 @@ namespace Girl.LLPML
                 if (ret == null)
                 {
                     codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
-                    ret = new Addr32(Var.DestRegister);
+                    ret = Addr32.New(Var.DestRegister);
                 }
                 else if (t.IsValue)
                 {
                     codes.Add(I386.Mov(Var.DestRegister, ret));
-                    ret = new Addr32(Var.DestRegister);
+                    ret = Addr32.New(Var.DestRegister);
                 }
                 ret.Add(ts * oi.Value);
                 return ret;
             }
 
             order.AddCodes(codes, "mov", null);
-            codes.AddRange(new[]
-            {
-                I386.Mov(Reg32.EDX, Val32.NewI(ts)),
-                I386.Imul(Reg32.EDX),
-                I386.Push(Reg32.EAX),
-            });
+            codes.Add(I386.Mov(Reg32.EDX, Val32.NewI(ts)));
+            codes.Add(I386.Imul(Reg32.EDX));
+            codes.Add(I386.Push(Reg32.EAX));
             target.AddCodes(codes, "mov", null);
-            codes.AddRange(new[]
-            {
-                I386.Pop(Var.DestRegister),
-                I386.Add(Var.DestRegister, Reg32.EAX),
-            });
-            return new Addr32(Var.DestRegister);
+            codes.Add(I386.Pop(Var.DestRegister));
+            codes.Add(I386.Add(Var.DestRegister, Reg32.EAX));
+            return Addr32.New(Var.DestRegister);
         }
 
         public override TypeBase Type

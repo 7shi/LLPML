@@ -19,23 +19,23 @@ namespace Girl.PE
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
         }
 
-        public override void Write(Block block)
+        public override void WriteBlock(Block block)
         {
             foreach (FieldInfo fi in GetFields())
             {
                 Object obj = fi.GetValue(this);
                 if (obj is Table)
                 {
-                    block.Add(((Table)obj).Address);
-                    block.Add(((Table)obj).Size);
+                    block.AddUInt(((Table)obj).Address);
+                    block.AddUInt(((Table)obj).Size);
                 }
-                else if (obj is byte) block.Add((byte)obj);
-                else if (obj is ushort) block.Add((ushort)obj);
-                else if (obj is uint) block.Add((uint)obj);
+                else if (obj is byte) block.AddByte((byte)obj);
+                else if (obj is ushort) block.AddUShort((ushort)obj);
+                else if (obj is uint) block.AddUInt((uint)obj);
                 //else if (obj is long) block.Add((long)obj);
-                else if (obj is char[]) block.Add((char[])obj);
-                else if (obj is string) block.Add((string)obj);
-                else if (obj is Val32) block.Add((Val32)obj);
+                else if (obj is char[]) block.AddChars((char[])obj);
+                else if (obj is string) block.AddString((string)obj);
+                else if (obj is Val32) block.AddVal32((Val32)obj);
                 else throw new Exception("The method or operation is not implemented.");
             }
         }

@@ -34,31 +34,22 @@ namespace Girl.LLPML
 
             funcs["mul"] = (codes, dest) =>
             {
-                codes.AddRange(new[]
-                {
-                    I386.Imul(dest),
-                    I386.Mov(dest, Reg32.EAX)
-                });
+                codes.Add(I386.Imul(dest));
+                codes.Add(I386.Mov(dest, Reg32.EAX));
             };
             funcs["div"] = (codes, dest) =>
             {
-                codes.AddRange(new[]
-                {
-                    I386.Xchg(Reg32.EAX, dest),
-                    I386.Cdq(),
-                    I386.Idiv(dest),
-                    I386.Mov(dest, Reg32.EAX)
-                });
+                codes.Add(I386.Xchg(Reg32.EAX, dest));
+                codes.Add(I386.Cdq());
+                codes.Add(I386.Idiv(dest));
+                codes.Add(I386.Mov(dest, Reg32.EAX));
             };
             funcs["mod"] = (codes, dest) =>
             {
-                codes.AddRange(new[]
-                {
-                    I386.Xchg(Reg32.EAX, dest),
-                    I386.Cdq(),
-                    I386.Idiv(dest),
-                    I386.Mov(dest, Reg32.EDX)
-                });
+                codes.Add(I386.Xchg(Reg32.EAX, dest));
+                codes.Add(I386.Cdq());
+                codes.Add(I386.Idiv(dest));
+                codes.Add(I386.Mov(dest, Reg32.EDX));
             };
 
             AddComparers(conds);

@@ -7,8 +7,11 @@ namespace Girl.Binary
     public class Val32
     {
         private uint value;
+        private Val32 ref1;
+        private Val32 ref2;
+        private bool isInitialized;
+        private bool isNeedForRelocation;
 
-        private Val32 ref1, ref2;
         public Val32 Reference
         {
             get
@@ -47,7 +50,6 @@ namespace Girl.Binary
             }
         }
 
-        private bool isInitialized = false;
         public bool IsInitialized
         {
             get
@@ -59,7 +61,6 @@ namespace Girl.Binary
             }
         }
 
-        private bool isNeedForRelocation = false;
         public bool IsNeedForRelocation
         {
             get
@@ -70,11 +71,6 @@ namespace Girl.Binary
                     return isNeedForRelocation;
             }
         }
-
-        //public static implicit operator Val32(uint v)
-        //{
-        //    return new Val32(v);
-        //}
 
         public static Val32 New(uint v)
         {

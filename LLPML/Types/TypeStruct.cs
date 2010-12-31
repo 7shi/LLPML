@@ -69,11 +69,8 @@ namespace Girl.LLPML
             var st = GetStruct();
             var f1 = st.GetFunction(Struct.Define.Initializer);
             var f2 = st.GetFunction(Struct.Define.Constructor);
-            codes.AddRange(new[]
-            {
-                I386.Call(f1.First),
-                I386.Call(f2.First),
-            });
+            codes.Add(I386.Call(f1.First));
+            codes.Add(I386.Call(f2.First));
         }
 
         // type destructor

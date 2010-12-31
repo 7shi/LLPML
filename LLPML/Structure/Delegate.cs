@@ -38,7 +38,7 @@ namespace Girl.LLPML
         }
 
         public Delegate(BlockBase parent, CallType callType, IIntValue[] args, IIntValue func)
-            :base(parent)
+            : base(parent)
         {
             Args = args;
             Function = func;
@@ -127,26 +127,20 @@ namespace Girl.LLPML
                 throw Abort("delegate: can not find: {0}", Alloc);
             Call.AddCodes(codes, alloc, new[] { new IntValue(DefaultSize) });
 
-            codes.AddRange(new[]
-            {
-                I386.Push(Reg32.EDI),
-                I386.Mov(Reg32.EDI, Reg32.EAX),
-            });
+            codes.Add(I386.Push(Reg32.EDI));
+            codes.Add(I386.Mov(Reg32.EDI, Reg32.EAX));
             int p = 0;
             if (len > 0)
             {
-                codes.AddRange(new[]
-                {
-                    //   mov ecx, len
-                    I386.MovB(new Addr32(Reg32.EDI), 0xb9),
-                    I386.Mov(new Addr32(Reg32.EDI, 1), Val32.NewI(len)),
-                    // push_arg:
-                    //   push dword [esp + (len * 4)]
-                    I386.Mov(new Addr32(Reg32.EDI, 5),
-                        Val32.NewI((0x2474FF | ((len * 4) << 24)))),
-                    //   loop push_arg
-                    I386.MovW(new Addr32(Reg32.EDI, 9), 0xfae2),
-                });
+                //   mov ecx, len
+                codes.Add(I386.MovB(Addr32.New(Reg32.EDI), 0xb9));
+                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, 1), Val32.NewI(len)));
+                // push_arg:
+                //   push dword [esp + (len * 4)]
+                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, 5),
+                    Val32.NewI((0x2474FF | ((len * 4) << 24)))));
+                //   loop push_arg
+                codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, 9), 0xfae2));
                 p = 11;
             }
             var args = Args.Clone() as IIntValue[];
@@ -154,53 +148,38 @@ namespace Girl.LLPML
             foreach (var arg in args)
             {
                 arg.AddCodes(codes, "mov", null);
-                codes.AddRange(new[]
-                {
-                    // push DWORD
-                    I386.MovB(new Addr32(Reg32.EDI, p), 0x68),
-                    I386.Mov(new Addr32(Reg32.EDI, p + 1), Reg32.EAX),
-                });
+                // push DWORD
+                codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0x68));
+                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
                 p += 5;
             }
             Function.AddCodes(codes, "mov", null);
-            codes.AddRange(new[]
-            {
-                // mov eax, DWORD
-                I386.MovB(new Addr32(Reg32.EDI, p), 0xb8),
-                I386.Mov(new Addr32(Reg32.EDI, p + 1), Reg32.EAX),
-                // call eax
-                I386.MovW(new Addr32(Reg32.EDI, p + 5), 0xd0ff),
-            });
+            // mov eax, DWORD
+            codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0xb8));
+            codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
+            // call eax
+            codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, p + 5), 0xd0ff));
             p += 7;
             if (f.CallType == CallType.CDecl)
             {
-                codes.AddRange(new[]
-                {
-                    // add esp, (fargs.Length * 4)
-                    I386.MovW(new Addr32(Reg32.EDI, p), 0xc481),
-                    I386.Mov(new Addr32(Reg32.EDI, p + 2), Val32.NewI((fargs.Length * 4))),
-                });
+                // add esp, (fargs.Length * 4)
+                codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, p), 0xc481));
+                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, p + 2), Val32.NewI((fargs.Length * 4))));
                 p += 6;
             }
             if (CallType == CallType.CDecl)
             {
                 // ret
-                codes.Add(I386.MovB(new Addr32(Reg32.EDI, p), 0xc3));
+                codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0xc3));
             }
             else
             {
                 // ret (len * 4)
-                codes.AddRange(new[]
-                {
-                    I386.MovB(new Addr32(Reg32.EDI, p), 0xc2),
-                    I386.MovW(new Addr32(Reg32.EDI, p + 1), (ushort)(len * 4)),
-                });
+                codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0xc2));
+                codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, p + 1), (ushort)(len * 4)));
             }
-            codes.AddRange(new[]
-            {
-                I386.Mov(Reg32.EAX, Reg32.EDI),
-                I386.Pop(Reg32.EDI),
-            });
+            codes.Add(I386.Mov(Reg32.EAX, Reg32.EDI));
+            codes.Add(I386.Pop(Reg32.EDI));
         }
     }
 }

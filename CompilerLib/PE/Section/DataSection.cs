@@ -14,14 +14,14 @@ namespace Girl.PE
         public Block Block { get; private set; }
 
         public DataBlock() { Block = new Block(); }
-        public DataBlock(byte[] d) : this() { Block.Add(d); }
+        public DataBlock(byte[] d) : this() { Block.AddBytes(d); }
 
         public void Write(Block block)
         {
             address.Value = block.Current;
-            block.Add(Block);
+            block.AddBlock(Block);
             uint padlen = Module.Align((uint)Block.Length, 4) - (uint)Block.Length;
-            if (padlen > 0) block.Add(new byte[padlen]);
+            if (padlen > 0) block.AddBytes(new byte[padlen]);
         }
     }
 
@@ -80,7 +80,7 @@ namespace Girl.PE
             foreach (var ctg in data.Values)
                 foreach (var db in ctg.Values)
                     db.Write(block);
-            if (IsEmtpy) block.Add(new byte[16]);
+            if (IsEmtpy) block.AddBytes(new byte[16]);
         }
     }
 }

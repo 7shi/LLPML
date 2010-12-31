@@ -26,7 +26,7 @@ namespace Girl.LLPML
             var ad2 = ad1;
             if (dest.Type.Size < Var.DefaultSize)
             {
-                ad2 = new Addr32(Reg32.ESP);
+                ad2 = Addr32.New(Reg32.ESP);
                 dest.Type.AddGetCodes(codes, "push", null, ad1);
             }
             GetFunc()(codes, ad2);
@@ -77,7 +77,7 @@ namespace Girl.LLPML
             thisdest.Type.AddGetCodes(codes, "push", null, ad1);
             if (thisdest.Type.Size < Var.DefaultSize)
             {
-                ad2 = new Addr32(Reg32.ESP);
+                ad2 = Addr32.New(Reg32.ESP);
                 codes.Add(I386.Push(ad2));
             }
             GetFunc()(codes, ad2);

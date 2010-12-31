@@ -45,21 +45,15 @@ namespace Girl.LLPML
             };
             funcs["add"] = (codes, dest) =>
             {
-                codes.AddRange(new[]
-                {
-                    I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)),
-                    I386.Mul(Reg32.EDX),
-                    I386.Add(dest, Reg32.EAX)
-                });
+                codes.Add(I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)));
+                codes.Add(I386.Mul(Reg32.EDX));
+                codes.Add(I386.Add(dest, Reg32.EAX));
             };
             funcs["sub"] = (codes, dest) =>
             {
-                codes.AddRange(new[]
-                {
-                    I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)),
-                    I386.Mul(Reg32.EDX),
-                    I386.Sub(dest, Reg32.EAX)
-                });
+                codes.Add(I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)));
+                codes.Add(I386.Mul(Reg32.EDX));
+                codes.Add(I386.Sub(dest, Reg32.EAX));
             };
 
             // partial inheritance

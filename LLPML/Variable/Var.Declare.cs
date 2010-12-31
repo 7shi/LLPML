@@ -111,16 +111,16 @@ namespace Girl.LLPML
                 {
                     var thisptr = new Struct.This(scope);
                     codes.Add(I386.Mov(Var.DestRegister, thisptr.GetAddress(codes)));
-                    return new Addr32(Address);
+                    return Addr32.NewAd(Address);
                 }
 
                 int plv = scope.Level, lv = Parent.Level;
                 if (plv == lv || Address.IsAddress)
-                    return new Addr32(Address);
+                    return Addr32.NewAd(Address);
                 if (lv <= 0 || lv >= plv)
                     throw Abort("Invalid variable scope: " + Name);
-                codes.Add(I386.Mov(Var.DestRegister, new Addr32(Reg32.EBP, -lv * 4)));
-                return new Addr32(Var.DestRegister, Address.Disp);
+                codes.Add(I386.Mov(Var.DestRegister, Addr32.NewRO(Reg32.EBP, -lv * 4)));
+                return Addr32.NewRO(Var.DestRegister, Address.Disp);
             }
 
             protected virtual void AddToParent()

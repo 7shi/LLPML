@@ -73,7 +73,7 @@ namespace Girl.LLPML
                 Source.AddCodes(codes, "mov", null);
                 return null;
             }
-            return new Addr32(Var.DestRegister);
+            return Addr32.New(Var.DestRegister);
         }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)

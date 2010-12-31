@@ -36,7 +36,7 @@ namespace Girl.LLPML
             if (strings.ContainsKey(s)) return strings[s];
 
             var block = new Girl.Binary.Block();
-            block.Add(Module.DefaultEncoding.GetBytes(s + "\0"));
+            block.AddBytes(Module.DefaultEncoding.GetBytes(s + "\0"));
             var type = Val32.NewB(0, true);
             var ret = strings[s] = AddData("string_constant", s, type, 2, s.Length, block);
             type.Reference = GetTypeObject(Root.GetStruct("string"));
@@ -63,13 +63,13 @@ namespace Girl.LLPML
 
             var block = new Girl.Binary.Block();
             var namev = Val32.NewB(0, true);
-            block.Add(namev);
+            block.AddVal32(namev);
             if (dtor == null || name == "string" || name == "Type")
-                block.Add(0);
+                block.AddInt(0);
             else
-                block.Add(GetAddress(dtor));
-            block.Add(size);
-            block.Add(baseType);
+                block.AddVal32(GetAddress(dtor));
+            block.AddInt(size);
+            block.AddVal32(baseType);
             var type = Val32.NewB(0, true);
             var tsz = (int)block.Length;
             var ret = types[name] = AddData("type_object", name, type, tsz, -1, block);
@@ -121,12 +121,12 @@ namespace Girl.LLPML
         public Val32 AddData(string category, string name, Val32 type, int size, int len, Girl.Binary.Block data)
         {
             var db = new DataBlock();
-            db.Block.Add(type);
-            db.Block.Add(1);
-            db.Block.Add(size);
-            db.Block.Add(len);
+            db.Block.AddVal32(type);
+            db.Block.AddInt(1);
+            db.Block.AddInt(size);
+            db.Block.AddInt(len);
             var offset = db.Block.Length;
-            db.Block.Add(data);
+            db.Block.AddBlock(data);
             Module.Data.Add(category, name, db);
             return Val32.New2(db.Address, Val32.New(offset));
         }
@@ -168,18 +168,17 @@ namespace Girl.LLPML
             {
                 Add(I386.Push(Reg32.EAX));
                 if (dest.Register == Reg32.ESP)
-                    dest = new Addr32(dest.Register, dest.Disp + 4);
+                    dest = Addr32.NewRO(dest.Register, dest.Disp + 4);
             }
             f(this, dest);
             if (cleanup)
             {
                 if (pushf)
-                    AddRange(new[]
-                    {
-                        I386.Pop(Reg32.EAX),
-                        I386.Pushf(),
-                        I386.Push(Reg32.EAX),
-                    });
+                {
+                    Add(I386.Pop(Reg32.EAX));
+                    Add(I386.Pushf());
+                    Add(I386.Push(Reg32.EAX));
+                }
                 AddDtorCodes(arg.Type);
                 if (pushf) Add(I386.Popf());
             }

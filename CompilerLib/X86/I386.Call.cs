@@ -14,19 +14,19 @@ namespace Girl.X86
             switch (op1)
             {
                 case Reg32.EAX:
-                    return new OpCode(new byte[] { 0xff, 0xd0 });
+                    return new OpCode(Util.GetBytes2(0xff, 0xd0));
             }
             throw new Exception("The method or operation is not implemented.");
         }
 
         public static OpCode Call(Addr32 op1)
         {
-            return new OpCode(new byte[] { 0xff }, null, new Addr32(op1, 2));
+            return new OpCode(Util.GetBytes1(0xff), null, Addr32.NewAdM(op1, 2));
         }
 
         public static OpCode Call(Val32 op1)
         {
-            return new OpCode(new byte[] { 0xe8 }, op1, true);
+            return new OpCode(Util.GetBytes1(0xe8), op1, true);
         }
 
         public static OpCode[] Call(CallType call, Addr32 func, object[] args)

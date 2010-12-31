@@ -9,84 +9,87 @@ namespace Girl.Binary
     public class Byte
     {
         public byte Value { get; private set; }
-        public Byte(byte v) { Value = v; }
+        public static Byte New(byte v) { var ret = new Byte(); ret.Value = v; return ret; }
     }
 
     public class UShort
     {
         public ushort Value { get; private set; }
-        public UShort(ushort v) { Value = v; }
+        public static UShort New(ushort v) { var ret = new UShort(); ret.Value = v; return ret; }
     }
 
     public class UInt
     {
         public uint Value { get; private set; }
-        public UInt(uint v) { Value = v; }
+        public static UInt New(uint v) { var ret = new UInt(); ret.Value = v; return ret; }
     }
 
     public class Int
     {
         public int Value { get; private set; }
-        public Int(int v) { Value = v; }
+        public static Int New(int v) { var ret = new Int(); ret.Value = v; return ret; }
     }
 
     public class Block
     {
-        private ArrayList data = new ArrayList();
+        private ArrayList data;
+        private uint length;
+        public uint Address;
+        private List<uint> relocs;
 
-        private uint length = 0;
         public uint Length { get { return length; } }
-
-        public uint Address = 0;
         public uint Current { get { return Address + length; } }
-
-        private List<uint> relocs = new List<uint>();
         public uint[] Relocations { get { return relocs.ToArray(); } }
 
-        public Block() { }
-        public Block(uint addr) { Address = addr; }
+        public Block()
+        {
+            data = new ArrayList();
+            relocs = new List<uint>();
+        }
 
-        public void Add(byte v) { data.Add(new Byte(v)); length += sizeof(byte); }
-        public void Add(Byte v) { data.Add(v); length += sizeof(byte); }
-        public void Add(ushort v) { data.Add(new UShort(v)); length += sizeof(ushort); }
-        public void Add(UShort v) { data.Add(v); length += sizeof(ushort); }
-        public void Add(uint v) { data.Add(new UInt(v)); length += sizeof(uint); }
-        public void Add(UInt v) { data.Add(v); length += sizeof(uint); }
-        public void Add(int v) { data.Add(new Int(v)); length += sizeof(int); }
-        public void Add(Int v) { data.Add(v); length += sizeof(int); }
-        //public void Add(long v) { data.Add(v); length += sizeof(long); }
-        public void Add(byte[] v) { data.Add(v); length += (uint)v.Length; }
-        public void Add(char[] v) { data.Add(v); length += (uint)v.Length; }
-        public void Add(string v) { data.Add(v); length += (uint)v.Length; }
-        public void Add(Val32 v)
+        public static Block New(uint addr) { var ret = new Block(); ret.Address = addr; return ret; }
+
+        public void AddByte(byte v) { data.Add(Byte.New(v)); length += sizeof(byte); }
+        public void AddByte2(Byte v) { data.Add(v); length += sizeof(byte); }
+        public void AddUShort(ushort v) { data.Add(UShort.New(v)); length += sizeof(ushort); }
+        public void AddUShort2(UShort v) { data.Add(v); length += sizeof(ushort); }
+        public void AddUInt(uint v) { data.Add(UInt.New(v)); length += sizeof(uint); }
+        public void AddUInt2(UInt v) { data.Add(v); length += sizeof(uint); }
+        public void AddInt(int v) { data.Add(Int.New(v)); length += sizeof(int); }
+        public void AddInt2(Int v) { data.Add(v); length += sizeof(int); }
+        public void AddBytes(byte[] v) { data.Add(v); length += (uint)v.Length; }
+        public void AddChars(char[] v) { data.Add(v); length += (uint)v.Length; }
+        public void AddString(string v) { data.Add(v); length += (uint)v.Length; }
+        public void AddVal32(Val32 v)
         {
             data.Add(v);
             if (v.IsNeedForRelocation) relocs.Add(length);
             length += sizeof(uint);
         }
 
-        public void Add(Block block)
+        public void AddBlock(Block block)
         {
-            foreach (object obj in block.data)
+            for (int i = 0; i < block.data.Count; i++)
             {
-                if (obj is Byte) Add((Byte)obj);
-                else if (obj is UShort) Add((UShort)obj);
-                else if (obj is UInt) Add((UInt)obj);
-                else if (obj is Int) Add((Int)obj);
-                //else if (obj is long) Add((long)obj);
-                else if (obj is byte[]) Add((byte[])obj);
-                else if (obj is char[]) Add((char[])obj);
-                else if (obj is string) Add((string)obj);
-                else if (obj is Block) Add((Block)obj);
-                else if (obj is Val32) Add((Val32)obj);
+                var obj = block.data[i];
+                if (obj is Byte) AddByte2((Byte)obj);
+                else if (obj is UShort) AddUShort2((UShort)obj);
+                else if (obj is UInt) AddUInt2((UInt)obj);
+                else if (obj is Int) AddInt2((Int)obj);
+                else if (obj is byte[]) AddBytes((byte[])obj);
+                else if (obj is char[]) AddChars((char[])obj);
+                else if (obj is string) AddString((string)obj);
+                else if (obj is Block) AddBlock((Block)obj);
+                else if (obj is Val32) AddVal32((Val32)obj);
                 else throw new Exception("The method or operation is not implemented.");
             }
         }
 
         public void Write(BinaryWriter bw)
         {
-            foreach (object obj in data)
+            for (int i = 0; i < data.Count; i++)
             {
+                var obj = data[i];
                 if (obj is Byte) bw.Write(((Byte)obj).Value);
                 else if (obj is UShort) bw.Write(((UShort)obj).Value);
                 else if (obj is UInt) bw.Write(((UInt)obj).Value);
@@ -103,8 +106,8 @@ namespace Girl.Binary
 
         public byte[] ToByteArray()
         {
-            MemoryStream ms = new MemoryStream();
-            BinaryWriter bw = new BinaryWriter(ms, Encoding.ASCII);
+            var ms = new MemoryStream();
+            var bw = new BinaryWriter(ms, Encoding.ASCII);
             Write(bw);
             bw.Close();
             ms.Close();

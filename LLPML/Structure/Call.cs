@@ -199,14 +199,11 @@ namespace Girl.LLPML
                 }
                 else
                 {
-                    var ad = new Addr32(Reg32.ESP, args_array.Length * 4);
+                    var ad = Addr32.NewRO(Reg32.ESP, args_array.Length * 4);
                     val.AddCodes(codes, "mov", ad);
-                    codes.AddRange(new[]
-                    {
-                        I386.Call(ad),
-                        I386.Push(Reg32.EAX),
-                    });
-                    var ad2 = new Addr32(Reg32.ESP, 4);
+                    codes.Add(I386.Call(ad));
+                    codes.Add(I386.Push(Reg32.EAX));
+                    var ad2 = Addr32.NewRO(Reg32.ESP, 4);
                     if (callType == CallType.CDecl)
                         ad2.Add(args_array.Length * 4);
                     val.Type.AddDestructor(codes, ad2);
@@ -267,7 +264,7 @@ namespace Girl.LLPML
                             codes.Add(I386.Push(Reg32.EAX));
                             pop = true;
                         }
-                        arg.Type.AddDestructor(codes, new Addr32(Reg32.ESP, p));
+                        arg.Type.AddDestructor(codes, Addr32.NewRO(Reg32.ESP, p));
                     }
                     p += 4;
                 }

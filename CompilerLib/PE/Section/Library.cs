@@ -49,21 +49,21 @@ namespace Girl.PE
 
         public void WriteImportTable(Block block)
         {
-            table.Write(block);
+            table.WriteBlock(block);
         }
 
         public void WriteImportLookupTable(Block block)
         {
             table.ImportLookupTable = block.Current;
             foreach (Symbol sym in symbols.Values) sym.Write(block, true);
-            block.Add(0);
+            block.AddInt(0);
         }
 
         public void WriteImportAddressTable(Block block)
         {
             table.ImportAddressTable = block.Current;
             foreach (Symbol sym in symbols.Values) sym.Write(block, false);
-            block.Add(0);
+            block.AddInt(0);
         }
 
         public void WriteSymbols(Block block)
@@ -74,7 +74,7 @@ namespace Girl.PE
         public void WriteName(Block block)
         {
             table.Name = block.Current;
-            block.Add(HeaderBase.Pad(NameSize, name));
+            block.AddString(HeaderBase.Pad(NameSize, name));
         }
     }
 }

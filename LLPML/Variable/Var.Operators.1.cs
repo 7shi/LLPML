@@ -39,7 +39,7 @@ namespace Girl.LLPML
                     if (!ad.IsAddress && ad.Register != Reg32.EBP)
                         codes.Add(I386.Push(ad.Register));
                     dest.Type.AddGetCodes(codes, "push", null, ad);
-                    ad2 = new Addr32(Reg32.ESP);
+                    ad2 = Addr32.New(Reg32.ESP);
                 }
                 foreach (IIntValue v in values)
                 {

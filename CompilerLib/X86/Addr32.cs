@@ -7,31 +7,28 @@ namespace Girl.X86
 {
     public class Addr32
     {
-        private bool isInitialized = true;
-        public bool IsInitialized { get { return isInitialized; } }
-
+        private bool isInitialized;
         private Reg32 reg;
-        public Reg32 Register { get { return reg; } }
-
-        private int disp = 0;
-        public int Disp { get { return disp; } }
-
+        private int disp;
         private Val32 address;
+        private byte middleBits;
+
+        public bool IsInitialized { get { return isInitialized; } }
+        public Reg32 Register { get { return reg; } }
+        public int Disp { get { return disp; } }
         public Val32 Address { get { return address; } }
         public bool IsAddress { get { return address != null; } }
 
-        private byte middleBits = 0;
-
-        public Addr32() { isInitialized = false; }
-        public Addr32(Reg32 r) { reg = r; }
-        public Addr32(Reg32 r, int offset) { reg = r; disp = offset; }
-        public Addr32(Val32 ad) { address = ad; }
-        public Addr32(uint ad) : this(Val32.New(ad)) { }
-        public Addr32(Addr32 src) { Set(src); }
-        public Addr32(Addr32 src, byte middleBits)
-            : this(src)
+        public static Addr32 New(Reg32 r) { var ret = new Addr32(); ret.isInitialized = true; ret.reg = r; return ret; }
+        public static Addr32 NewRO(Reg32 r, int offset) { var ret = new Addr32(); ret.isInitialized = true; ret.reg = r; ret.disp = offset; return ret; }
+        public static Addr32 NewV(Val32 ad) { var ret = new Addr32(); ret.isInitialized = true; ret.address = ad; return ret; }
+        public static Addr32 NewUInt(uint ad) { return NewV(Val32.New(ad)); }
+        public static Addr32 NewAd(Addr32 src) { var ret = new Addr32(); ret.isInitialized = true; ret.Set(src); return ret; }
+        public static Addr32 NewAdM(Addr32 src, byte middleBits)
         {
-            this.middleBits = middleBits;
+            var ret = NewAd(src);
+            ret.middleBits = middleBits;
+            return ret;
         }
 
         public void Set(Addr32 src)
@@ -46,28 +43,28 @@ namespace Girl.X86
         private byte[] GetModRM()
         {
             if (address != null)
-                return Util.GetBytes(new byte[] { 0x05 }, address.Value);
+                return Util.AddUIntToBytes(Util.GetBytes1(0x05), address.Value);
 
             sbyte sbdisp = (sbyte)disp;
             if (reg == Reg32.ESP)
             {
                 if (disp == 0)
-                    return new byte[] { 0x04, 0x24 };
+                    return Util.GetBytes2(0x04, 0x24);
                 else if (disp == sbdisp)
-                    return new byte[] { 0x44, 0x24, (byte)sbdisp };
+                    return Util.GetBytes3(0x44, 0x24, (byte)sbdisp);
                 else
-                    return Util.GetBytes(new byte[] { 0x84, 0x24 }, (uint)disp);
+                    return Util.AddUIntToBytes(Util.GetBytes2(0x84, 0x24), (uint)disp);
             }
             else if (reg == Reg32.EBP || disp != 0)
             {
                 if (disp == sbdisp)
-                    return new byte[] { (byte)(0x40 + (int)reg), (byte)sbdisp };
+                    return Util.GetBytes2((byte)(0x40 + (int)reg), (byte)sbdisp);
                 else
-                    return Util.GetBytes(new byte[] { (byte)(0x80 + (int)reg) }, (uint)disp);
+                    return Util.AddUIntToBytes(Util.GetBytes1((byte)(0x80 + (int)reg)), (uint)disp);
             }
             else
             {
-                return new byte[] { (byte)reg };
+                return Util.GetBytes1((byte)reg);
             }
         }
 
@@ -82,12 +79,12 @@ namespace Girl.X86
         {
             if (address != null)
             {
-                block.Add((byte)(0x05 + (middleBits << 3)));
-                block.Add(address);
+                block.AddByte((byte)(0x05 + (middleBits << 3)));
+                block.AddVal32(address);
             }
             else
             {
-                block.Add(GetCodes());
+                block.AddBytes(GetCodes());
             }
         }
 

@@ -95,15 +95,12 @@ namespace Girl.LLPML
             var flag = !ad.IsAddress && ad.Register == Var.DestRegister;
             if (flag) codes.Add(I386.Push(ad.Register));
 
-            codes.AddRange(new[]
-            {
-                I386.Push(Reg32.EAX),
-                I386.Push(ad),
-                codes.GetCall("delegate", Delegate.Free),
-                I386.Add(Reg32.ESP, Val32.New(4)),
-                codes.GetCall("delegate", Delegate.Duplicate),
-                I386.Add(Reg32.ESP, Val32.New(4)),
-            });
+            codes.Add(I386.Push(Reg32.EAX));
+            codes.Add(I386.Push(ad));
+            codes.Add(codes.GetCall("delegate", Delegate.Free));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+            codes.Add(codes.GetCall("delegate", Delegate.Duplicate));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
 
             if (flag) codes.Add(I386.Pop(ad.Register));
             base.AddSetCodes(codes, ad);
@@ -113,24 +110,18 @@ namespace Girl.LLPML
         public override bool NeedsCtor { get { return true; } }
         public override void AddConstructor(OpModule codes)
         {
-            codes.AddRange(new[]
-            {
-                I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Mov(new Addr32(Reg32.EAX), Val32.New(0)),
-            });
+            codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.ESP)));
+            codes.Add(I386.Mov(Addr32.New(Reg32.EAX), Val32.New(0)));
         }
 
         // type destructor
         public override bool NeedsDtor { get { return true; } }
         public override void AddDestructor(OpModule codes)
         {
-            codes.AddRange(new[]
-            {
-                I386.Mov(Reg32.EAX, new Addr32(Reg32.ESP)),
-                I386.Push(new Addr32(Reg32.EAX)),
-                codes.GetCall("delegate", Delegate.Free),
-                I386.Add(Reg32.ESP, Val32.New(4)),
-            });
+            codes.Add(I386.Mov(Reg32.EAX, Addr32.New(Reg32.ESP)));
+            codes.Add(I386.Push(Addr32.New(Reg32.EAX)));
+            codes.Add(codes.GetCall("delegate", Delegate.Free));
+            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
         }
 
         public TypeDelegate(

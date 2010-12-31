@@ -17,7 +17,7 @@ namespace Girl.PE
 
         public Block ToBlock(uint vaddr)
         {
-            Block ret = new Block(vaddr);
+            Block ret = Block.New(vaddr);
             Write(ret);
             block = ret;
             return ret;

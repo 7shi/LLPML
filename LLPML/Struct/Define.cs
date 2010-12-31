@@ -208,7 +208,7 @@ namespace Girl.LLPML.Struct
         {
             Define st = GetBaseStruct();
             if (st != null)
-                st.AddConstructor(codes, new Addr32(Reg32.EBP, 8));
+                st.AddConstructor(codes, Addr32.NewRO(Reg32.EBP, 8));
         }
 
         public void AddAfterDtor(OpModule codes)
@@ -228,11 +228,11 @@ namespace Girl.LLPML.Struct
                 return false;
             }, null);
             list.Reverse();
-            var ad = new Addr32(Reg32.EBP, 8);
+            var ad = Addr32.NewRO(Reg32.EBP, 8);
             foreach (var p in list)
             {
                 codes.Add(I386.Mov(Var.DestRegister, ad));
-                p.Type.AddDestructor(codes, new Addr32(Var.DestRegister, poslist[p]));
+                p.Type.AddDestructor(codes, Addr32.NewRO(Var.DestRegister, poslist[p]));
             }
             if (st != null)
                 st.AddDestructor(codes, ad);
@@ -242,7 +242,7 @@ namespace Girl.LLPML.Struct
 
         protected override void BeforeAddCodes(OpModule codes)
         {
-            thisptr.Address = new Addr32(Reg32.EBP, 8);
+            thisptr.Address = Addr32.NewRO(Reg32.EBP, 8);
             int lv = Level + 1;
             codes.Add(I386.Enter((ushort)(lv * 4), (byte)lv));
             var st = GetBaseStruct();
@@ -372,7 +372,7 @@ namespace Girl.LLPML.Struct
             ForEachMembers((p, pos) =>
             {
                 if (!p.IsStatic)
-                    p.Address = new Addr32(Var.DestRegister, offset + pos);
+                    p.Address = Addr32.NewRO(Var.DestRegister, offset + pos);
                 return false;
             }, null);
         }

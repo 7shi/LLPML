@@ -48,9 +48,9 @@ namespace Girl.X86
                     throw new Exception("invalid operator: " + op);
             }
             if (op2 == 1)
-                return new OpCode(new byte[] { 0xd1, b });
+                return new OpCode(Util.GetBytes2(0xd1, b));
             else
-                return new OpCode(new byte[] { 0xc1, b }, op2);
+                return new OpCode(Util.GetBytes2(0xc1, b), op2);
         }
 
         public static OpCode Shift(string op, Reg32 op1, Reg8 op2)
@@ -74,7 +74,7 @@ namespace Girl.X86
             if (op2 != Reg8.CL)
                 throw new Exception("invalid register: " + op2);
             else
-                return new OpCode(new byte[] { 0xd3, b });
+                return new OpCode(Util.GetBytes2(0xd3, b));
         }
 
         public static OpCode Shift(string op, Addr32 op1, byte op2)
@@ -84,21 +84,21 @@ namespace Girl.X86
             {
                 case "shl":
                 case "sal":
-                    ad = new Addr32(op1, 4);
+                    ad = Addr32.NewAdM(op1, 4);
                     break;
                 case "shr":
-                    ad = new Addr32(op1, 5);
+                    ad = Addr32.NewAdM(op1, 5);
                     break;
                 case "sar":
-                    ad = new Addr32(op1, 7);
+                    ad = Addr32.NewAdM(op1, 7);
                     break;
                 default:
                     throw new Exception("invalid operator: " + op);
             }
             if (op2 == 1)
-                return new OpCode(new byte[] { 0xd1 }, null, ad);
+                return new OpCode(Util.GetBytes1(0xd1), null, ad);
             else
-                return new OpCode(new byte[] { 0xc1 }, op2, ad);
+                return new OpCode(Util.GetBytes1(0xc1), op2, ad);
         }
 
         public static OpCode Shift(string op, Addr32 op1, Reg8 op2)
@@ -108,13 +108,13 @@ namespace Girl.X86
             {
                 case "shl":
                 case "sal":
-                    ad = new Addr32(op1, 4);
+                    ad = Addr32.NewAdM(op1, 4);
                     break;
                 case "shr":
-                    ad = new Addr32(op1, 5);
+                    ad = Addr32.NewAdM(op1, 5);
                     break;
                 case "sar":
-                    ad = new Addr32(op1, 7);
+                    ad = Addr32.NewAdM(op1, 7);
                     break;
                 default:
                     throw new Exception("invalid operator: " + op);
@@ -122,7 +122,7 @@ namespace Girl.X86
             if (op2 != Reg8.CL)
                 throw new Exception("invalid register: " + op2);
             else
-                return new OpCode(new byte[] { 0xd3 }, null, ad);
+                return new OpCode(Util.GetBytes1(0xd3), null, ad);
         }
     }
 }

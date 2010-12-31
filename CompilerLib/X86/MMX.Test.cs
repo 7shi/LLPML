@@ -13,59 +13,59 @@ namespace Girl.X86
                 .Test("movd mm1, eax", "0F-6E-C8");
             MovD(Mm._3, Reg32.ESP)
                 .Test("movd mm3, esp", "0F-6E-DC");
-            MovD(Mm._0, new Addr32(Reg32.EDX))
+            MovD(Mm._0, Addr32.New(Reg32.EDX))
                 .Test("movd mm0, [edx]", "0F-6E-02");
-            MovD(Mm._4, new Addr32(Reg32.EAX, 0x1000))
+            MovD(Mm._4, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("movd mm4, [eax+0x1000]", "0F-6E-A0-00-10-00-00");
-            MovD(Mm._5, new Addr32(Reg32.EBP, -4))
+            MovD(Mm._5, Addr32.NewRO(Reg32.EBP, -4))
                 .Test("movd mm5, [ebp-4]", "0F-6E-6D-FC");
-            MovD(Mm._7, new Addr32(0x12345678))
+            MovD(Mm._7, Addr32.NewUInt(0x12345678))
                 .Test("movd mm7, [0x12345678]", "0F-6E-3D-78-56-34-12");
             MovD(Reg32.EAX, Mm._1)
                 .Test("movd eax, mm1", "0F-7E-C8");
             MovD(Reg32.ESP, Mm._3)
                 .Test("movd esp, mm3", "0F-7E-DC");
-            MovD(new Addr32(Reg32.EDX), Mm._0)
+            MovD(Addr32.New(Reg32.EDX), Mm._0)
                 .Test("movd [edx], mm0", "0F-7E-02");
-            MovD(new Addr32(Reg32.EAX, 0x1000), Mm._4)
+            MovD(Addr32.NewRO(Reg32.EAX, 0x1000), Mm._4)
                 .Test("movd [eax+0x1000], mm4", "0F-7E-A0-00-10-00-00");
-            MovD(new Addr32(Reg32.EBP, -4), Mm._5)
+            MovD(Addr32.NewRO(Reg32.EBP, -4), Mm._5)
                 .Test("movd [ebp-4], mm5", "0F-7E-6D-FC");
-            MovD(new Addr32(0x12345678), Mm._7)
+            MovD(Addr32.NewUInt(0x12345678), Mm._7)
                 .Test("movd [0x12345678], mm7", "0F-7E-3D-78-56-34-12");
 
             MovQ(Mm._1, Mm._0)
                 .Test("movq mm1, mm0", "0F-6F-C8");
             MovQ(Mm._3, Mm._6)
                 .Test("movq mm3, mm6", "0F-6F-DE");
-            MovQ(Mm._0, new Addr32(Reg32.EDX))
+            MovQ(Mm._0, Addr32.New(Reg32.EDX))
                 .Test("movq mm0, [edx]", "0F-6F-02");
-            MovQ(Mm._4, new Addr32(Reg32.EAX, 0x1000))
+            MovQ(Mm._4, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("movq mm4, [eax+0x1000]", "0F-6F-A0-00-10-00-00");
-            MovQ(Mm._5, new Addr32(Reg32.EBP, -4))
+            MovQ(Mm._5, Addr32.NewRO(Reg32.EBP, -4))
                 .Test("movq mm5, [ebp-4]", "0F-6F-6D-FC");
-            MovQ(Mm._7, new Addr32(0x12345678))
+            MovQ(Mm._7, Addr32.NewUInt(0x12345678))
                 .Test("movq mm7, [0x12345678]", "0F-6F-3D-78-56-34-12");
-            MovQ(new Addr32(Reg32.EDX), Mm._0)
+            MovQ(Addr32.New(Reg32.EDX), Mm._0)
                 .Test("movq [edx], mm0", "0F-7F-02");
-            MovQ(new Addr32(Reg32.EAX, 0x1000), Mm._4)
+            MovQ(Addr32.NewRO(Reg32.EAX, 0x1000), Mm._4)
                 .Test("movq [eax+0x1000], mm4", "0F-7F-A0-00-10-00-00");
-            MovQ(new Addr32(Reg32.EBP, -4), Mm._5)
+            MovQ(Addr32.NewRO(Reg32.EBP, -4), Mm._5)
                 .Test("movq [ebp-4], mm5", "0F-7F-6D-FC");
-            MovQ(new Addr32(0x12345678), Mm._7)
+            MovQ(Addr32.NewUInt(0x12345678), Mm._7)
                 .Test("movq [0x12345678], mm7", "0F-7F-3D-78-56-34-12");
 
             PAddB(Mm._1, Mm._0)
                 .Test("paddb mm1, mm0", "0F-FC-C8");
             PAddB(Mm._3, Mm._6)
                 .Test("paddb mm3, mm6", "0F-FC-DE");
-            PAddB(Mm._0, new Addr32(Reg32.EDX))
+            PAddB(Mm._0, Addr32.New(Reg32.EDX))
                 .Test("paddb mm0, [edx]", "0F-FC-02");
-            PAddB(Mm._4, new Addr32(Reg32.EAX, 0x1000))
+            PAddB(Mm._4, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("paddb mm4, [eax+0x1000]", "0F-FC-A0-00-10-00-00");
-            PAddB(Mm._5, new Addr32(Reg32.EBP, -4))
+            PAddB(Mm._5, Addr32.NewRO(Reg32.EBP, -4))
                 .Test("paddb mm5, [ebp-4]", "0F-FC-6D-FC");
-            PAddB(Mm._7, new Addr32(0x12345678))
+            PAddB(Mm._7, Addr32.NewUInt(0x12345678))
                 .Test("paddb mm7, [0x12345678]", "0F-FC-3D-78-56-34-12");
 
             PAddW(Mm._1, Mm._0)
