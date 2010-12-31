@@ -32,13 +32,13 @@ namespace Girl.X86
             {
                 case "push":
                     if (ad != null)
-                        Add(I386.Push(ad));
+                        Add(I386.PushA(ad));
                     else
                         Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    if (ad != null) Add(I386.Mov(Reg32.EAX, ad));
-                    if (dest != null) Add(I386.FromName(op, dest, Reg32.EAX));
+                    if (ad != null) Add(I386.MovRA(Reg32.EAX, ad));
+                    if (dest != null) Add(I386.FromName2AR(op, dest, Reg32.EAX));
                     break;
             }
         }
@@ -48,13 +48,13 @@ namespace Girl.X86
             switch (op)
             {
                 case "push":
-                    Add(I386.Push(v));
+                    Add(I386.PushD(v));
                     break;
                 default:
                     if (dest != null)
-                        Add(I386.FromName(op, dest, v));
+                        Add(I386.FromName2A(op, dest, v));
                     else
-                        Add(I386.FromName(op, Reg32.EAX, v));
+                        Add(I386.FromName2R(op, Reg32.EAX, v));
                     break;
             }
         }
@@ -70,15 +70,15 @@ namespace Girl.X86
             {
                 case "push":
                     if (ad != null)
-                        Add(I386.MovsxW(Reg32.EAX, ad));
+                        Add(I386.MovsxWA(Reg32.EAX, ad));
                     else
                         Add(I386.MovsxW(Reg32.EAX, Reg16.AX));
                     Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    if (ad != null) Add(I386.MovW(Reg16.AX, ad));
+                    if (ad != null) Add(I386.MovWRA(Reg16.AX, ad));
                     if (dest != null)
-                        Add(I386.FromNameW(op, dest, Reg16.AX));
+                        Add(I386.FromName2WAR(op, dest, Reg16.AX));
                     else
                         Add(I386.MovsxW(Reg32.EAX, Reg16.AX));
                     break;
@@ -96,15 +96,15 @@ namespace Girl.X86
             {
                 case "push":
                     if (ad != null)
-                        Add(I386.MovzxW(Reg32.EAX, ad));
+                        Add(I386.MovzxWA(Reg32.EAX, ad));
                     else
                         Add(I386.MovzxW(Reg32.EAX, Reg16.AX));
                     Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    if (ad != null) Add(I386.MovW(Reg16.AX, ad));
+                    if (ad != null) Add(I386.MovWRA(Reg16.AX, ad));
                     if (dest != null)
-                        Add(I386.FromNameW(op, dest, Reg16.AX));
+                        Add(I386.FromName2WAR(op, dest, Reg16.AX));
                     else
                         Add(I386.MovzxW(Reg32.EAX, Reg16.AX));
                     break;
@@ -122,15 +122,15 @@ namespace Girl.X86
             {
                 case "push":
                     if (ad != null)
-                        Add(I386.MovsxB(Reg32.EAX, ad));
+                        Add(I386.MovsxBA(Reg32.EAX, ad));
                     else
                         Add(I386.MovsxB(Reg32.EAX, Reg8.AL));
                     Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    if (ad != null) Add(I386.MovB(Reg8.AL, ad));
+                    if (ad != null) Add(I386.MovBRA(Reg8.AL, ad));
                     if (dest != null)
-                        Add(I386.FromNameB(op, dest, Reg8.AL));
+                        Add(I386.FromName2BAR(op, dest, Reg8.AL));
                     else
                         Add(I386.MovsxB(Reg32.EAX, Reg8.AL));
                     break;
@@ -148,15 +148,15 @@ namespace Girl.X86
             {
                 case "push":
                     if (ad != null)
-                        Add(I386.MovzxB(Reg32.EAX, ad));
+                        Add(I386.MovzxBA(Reg32.EAX, ad));
                     else
                         Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
                     Add(I386.Push(Reg32.EAX));
                     break;
                 default:
-                    if (ad != null) Add(I386.MovB(Reg8.AL, ad));
+                    if (ad != null) Add(I386.MovBRA(Reg8.AL, ad));
                     if (dest != null)
-                        Add(I386.FromNameB(op, dest, Reg8.AL));
+                        Add(I386.FromName2BAR(op, dest, Reg8.AL));
                     else
                         Add(I386.MovzxB(Reg32.EAX, Reg8.AL));
                     break;

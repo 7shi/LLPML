@@ -34,17 +34,17 @@ namespace Girl.LLPML
                 if (i < values.Count - 1)
                 {
                     codes.Add(I386.Jcc(c.NotCondition, last.Address));
-                    codes.Add(I386.Mov(ad, Reg32.EAX));
+                    codes.Add(I386.MovAR(ad, Reg32.EAX));
                 }
             }
             codes.Add(last);
-            codes.Add(I386.Mov(Reg32.EAX, Val32.New(0)));
+            codes.Add(I386.MovR(Reg32.EAX, Val32.New(0)));
             codes.Add(I386.Setcc(c.Condition, Reg8.AL));
             if (!OpModule.NeedsDtor(v))
-                codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+                codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
             else
             {
-                codes.Add(I386.Xchg(Reg32.EAX, Addr32.New(Reg32.ESP)));
+                codes.Add(I386.XchgRA(Reg32.EAX, Addr32.New(Reg32.ESP)));
                 codes.Add(I386.Push(Reg32.EAX));
                 codes.AddDtorCodes(v.Type);
                 codes.Add(I386.Pop(Reg32.EAX));

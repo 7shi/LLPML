@@ -36,14 +36,14 @@ namespace Girl.LLPML
             if (count == 0) return;
 
             var loop = new OpCode();
-            codes.Add(I386.Push(Val32.NewI(count)));
-            codes.Add(I386.Push(Addr32.NewRO(Reg32.ESP, 4)));
+            codes.Add(I386.PushD(Val32.NewI(count)));
+            codes.Add(I386.PushA(Addr32.NewRO(Reg32.ESP, 4)));
             codes.Add(loop);
             Type.AddConstructor(codes);
-            codes.Add(I386.Add(Addr32.New(Reg32.ESP), Val32.NewI(Type.Size)));
-            codes.Add(I386.Dec(Addr32.NewRO(Reg32.ESP, 4)));
+            codes.Add(I386.AddA(Addr32.New(Reg32.ESP), Val32.NewI(Type.Size)));
+            codes.Add(I386.DecA(Addr32.NewRO(Reg32.ESP, 4)));
             codes.Add(I386.Jcc(Cc.NZ, loop.Address));
-            codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
+            codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
         }
 
         // type destructor
@@ -54,15 +54,15 @@ namespace Girl.LLPML
             if (count == 0) return;
 
             var loop = new OpCode();
-            codes.Add(I386.Push(Val32.NewI(count)));
-            codes.Add(I386.Push(Addr32.NewRO(Reg32.ESP, 4)));
-            codes.Add(I386.Add(Addr32.New(Reg32.ESP), Val32.NewI(Size)));
+            codes.Add(I386.PushD(Val32.NewI(count)));
+            codes.Add(I386.PushA(Addr32.NewRO(Reg32.ESP, 4)));
+            codes.Add(I386.AddA(Addr32.New(Reg32.ESP), Val32.NewI(Size)));
             codes.Add(loop);
-            codes.Add(I386.Sub(Addr32.New(Reg32.ESP), Val32.NewI(Type.Size)));
+            codes.Add(I386.SubA(Addr32.New(Reg32.ESP), Val32.NewI(Type.Size)));
             Type.AddDestructor(codes);
-            codes.Add(I386.Dec(Addr32.NewRO(Reg32.ESP, 4)));
+            codes.Add(I386.DecA(Addr32.NewRO(Reg32.ESP, 4)));
             codes.Add(I386.Jcc(Cc.NZ, loop.Address));
-            codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
+            codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
         }
 
         private IIntValue count;

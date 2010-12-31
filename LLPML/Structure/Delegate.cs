@@ -133,14 +133,14 @@ namespace Girl.LLPML
             if (len > 0)
             {
                 //   mov ecx, len
-                codes.Add(I386.MovB(Addr32.New(Reg32.EDI), 0xb9));
-                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, 1), Val32.NewI(len)));
+                codes.Add(I386.MovBA(Addr32.New(Reg32.EDI), 0xb9));
+                codes.Add(I386.MovA(Addr32.NewRO(Reg32.EDI, 1), Val32.NewI(len)));
                 // push_arg:
                 //   push dword [esp + (len * 4)]
-                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, 5),
+                codes.Add(I386.MovA(Addr32.NewRO(Reg32.EDI, 5),
                     Val32.NewI((0x2474FF | ((len * 4) << 24)))));
                 //   loop push_arg
-                codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, 9), 0xfae2));
+                codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, 9), 0xfae2));
                 p = 11;
             }
             var args = Args.Clone() as IIntValue[];
@@ -149,34 +149,34 @@ namespace Girl.LLPML
             {
                 arg.AddCodes(codes, "mov", null);
                 // push DWORD
-                codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0x68));
-                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
+                codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0x68));
+                codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
                 p += 5;
             }
             Function.AddCodes(codes, "mov", null);
             // mov eax, DWORD
-            codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0xb8));
-            codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
+            codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0xb8));
+            codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
             // call eax
-            codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, p + 5), 0xd0ff));
+            codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, p + 5), 0xd0ff));
             p += 7;
             if (f.CallType == CallType.CDecl)
             {
                 // add esp, (fargs.Length * 4)
-                codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, p), 0xc481));
-                codes.Add(I386.Mov(Addr32.NewRO(Reg32.EDI, p + 2), Val32.NewI((fargs.Length * 4))));
+                codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, p), 0xc481));
+                codes.Add(I386.MovA(Addr32.NewRO(Reg32.EDI, p + 2), Val32.NewI((fargs.Length * 4))));
                 p += 6;
             }
             if (CallType == CallType.CDecl)
             {
                 // ret
-                codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0xc3));
+                codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0xc3));
             }
             else
             {
                 // ret (len * 4)
-                codes.Add(I386.MovB(Addr32.NewRO(Reg32.EDI, p), 0xc2));
-                codes.Add(I386.MovW(Addr32.NewRO(Reg32.EDI, p + 1), (ushort)(len * 4)));
+                codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0xc2));
+                codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, p + 1), (ushort)(len * 4)));
             }
             codes.Add(I386.Mov(Reg32.EAX, Reg32.EDI));
             codes.Add(I386.Pop(Reg32.EDI));

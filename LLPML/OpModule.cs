@@ -157,7 +157,7 @@ namespace Girl.LLPML
         {
             Add(I386.Push(Reg32.ESP));
             t.AddDestructor(this);
-            Add(I386.Add(Reg32.ESP, Val32.New(8)));
+            Add(I386.AddR(Reg32.ESP, Val32.New(8)));
         }
 
         public void AddOperatorCodes(TypeBase.Func f, Addr32 dest, IIntValue arg, bool pushf)
@@ -189,7 +189,7 @@ namespace Girl.LLPML
             var f = Root.GetFunction(name);
             if (f == null)
                 throw root.Abort("{0}: can not find: {1}", tag, name);
-            return I386.Call(f.First);
+            return I386.CallD(f.First);
         }
     }
 }

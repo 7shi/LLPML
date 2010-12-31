@@ -81,17 +81,17 @@ namespace Girl.LLPML.Struct
                 izer = codes.GetAddress(st.GetFunction(Define.Initializer));
                 ctor = codes.GetAddress(st.GetFunction(Define.Constructor));
             }
-            codes.Add(I386.Push(ctor));
-            codes.Add(I386.Push(izer));
+            codes.Add(I386.PushD(ctor));
+            codes.Add(I386.PushD(izer));
             Length.AddCodes(codes, "push", null);
-            codes.Add(I386.Push(Val32.NewI(tt.Size)));
-            codes.Add(I386.Push(type));
-            codes.Add(I386.Call(f.First));
-            codes.Add(I386.Add(Reg32.ESP, Val32.New(16)));
+            codes.Add(I386.PushD(Val32.NewI(tt.Size)));
+            codes.Add(I386.PushD(type));
+            codes.Add(I386.CallD(f.First));
+            codes.Add(I386.AddR(Reg32.ESP, Val32.New(16)));
             if (init != null)
             {
                 codes.Add(I386.Push(Reg32.EAX));
-                codes.Add(I386.Call(init));
+                codes.Add(I386.CallD(init));
                 codes.Add(I386.Pop(Reg32.EAX));
             }
             codes.AddCodes(op, dest);

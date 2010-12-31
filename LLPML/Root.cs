@@ -121,8 +121,8 @@ namespace Girl.LLPML
                     if (retVal != null)
                         GetRetVal(this).AddCodes(codes, "push", null);
                     else
-                        codes.Add(I386.Push(Val32.New(0)));
-                    codes.Add(I386.Call(codes.Module.GetFunction(
+                        codes.Add(I386.PushD(Val32.New(0)));
+                    codes.Add(I386.CallA(codes.Module.GetFunction(
                         CallType.Std, "kernel32.dll", "ExitProcess").Address));
                     break;
                 default:

@@ -22,11 +22,11 @@ namespace Girl.LLPML
         {
             funcs["equal"] = funcs["not-equal"] = (codes, dest) =>
             {
-                codes.Add(I386.Push(dest));
-                codes.Add(I386.Xchg(Reg32.EAX, Addr32.New(Reg32.ESP)));
+                codes.Add(I386.PushA(dest));
+                codes.Add(I386.XchgRA(Reg32.EAX, Addr32.New(Reg32.ESP)));
                 codes.Add(I386.Push(Reg32.EAX));
                 codes.Add(codes.GetCall("string", Equal));
-                codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
+                codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
             };
             conds["equal"] = new CondPair(Cc.NZ, Cc.Z);
@@ -44,12 +44,12 @@ namespace Girl.LLPML
 
         private void AddFunc(OpModule codes, Addr32 dest, string func)
         {
-            codes.Add(I386.Push(dest));
-            codes.Add(I386.Xchg(Reg32.EAX, Addr32.New(Reg32.ESP)));
+            codes.Add(I386.PushA(dest));
+            codes.Add(I386.XchgRA(Reg32.EAX, Addr32.New(Reg32.ESP)));
             codes.Add(I386.Push(Reg32.EAX));
             codes.Add(codes.GetCall("string", func));
-            codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
-            codes.Add(I386.Xchg(Reg32.EAX, dest));
+            codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
+            codes.Add(I386.XchgRA(Reg32.EAX, dest));
             codes.Add(I386.Push(Reg32.EAX));
             codes.AddDtorCodes(TypeString.Instance);
         }

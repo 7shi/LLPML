@@ -14,31 +14,31 @@ namespace Girl.X86
             return OpCode.NewB(Util.GetBytes1(0x6a), op1);
         }
 
-        public static OpCode IncB(Reg8 op1) { return FromNameB("inc", op1); }
-        public static OpCode IncB(Addr32 op1) { return FromNameB("inc", op1); }
+        public static OpCode IncB(Reg8 op1) { return FromName1B("inc", op1); }
+        public static OpCode IncBA(Addr32 op1) { return FromName1BA("inc", op1); }
 
-        public static OpCode DecB(Reg8 op1) { return FromNameB("dec", op1); }
-        public static OpCode DecB(Addr32 op1) { return FromNameB("dec", op1); }
+        public static OpCode DecB(Reg8 op1) { return FromName1B("dec", op1); }
+        public static OpCode DecBA(Addr32 op1) { return FromName1BA("dec", op1); }
 
-        public static OpCode NotB(Reg8 op1) { return FromNameB("not", op1); }
-        public static OpCode NotB(Addr32 op1) { return FromNameB("not", op1); }
+        public static OpCode NotB(Reg8 op1) { return FromName1B("not", op1); }
+        public static OpCode NotBA(Addr32 op1) { return FromName1BA("not", op1); }
 
-        public static OpCode NegB(Reg8 op1) { return FromNameB("neg", op1); }
-        public static OpCode NegB(Addr32 op1) { return FromNameB("neg", op1); }
+        public static OpCode NegB(Reg8 op1) { return FromName1B("neg", op1); }
+        public static OpCode NegBA(Addr32 op1) { return FromName1BA("neg", op1); }
 
-        public static OpCode MulB(Reg8 op1) { return FromNameB("mul", op1); }
-        public static OpCode MulB(Addr32 op1) { return FromNameB("mul", op1); }
+        public static OpCode MulB(Reg8 op1) { return FromName1B("mul", op1); }
+        public static OpCode MulBA(Addr32 op1) { return FromName1BA("mul", op1); }
 
-        public static OpCode ImulB(Reg8 op1) { return FromNameB("imul", op1); }
-        public static OpCode ImulB(Addr32 op1) { return FromNameB("imul", op1); }
+        public static OpCode ImulB(Reg8 op1) { return FromName1B("imul", op1); }
+        public static OpCode ImulBA(Addr32 op1) { return FromName1BA("imul", op1); }
 
-        public static OpCode DivB(Reg8 op1) { return FromNameB("div", op1); }
-        public static OpCode DivB(Addr32 op1) { return FromNameB("div", op1); }
+        public static OpCode DivB(Reg8 op1) { return FromName1B("div", op1); }
+        public static OpCode DivBA(Addr32 op1) { return FromName1BA("div", op1); }
 
-        public static OpCode IdivB(Reg8 op1) { return FromNameB("idiv", op1); }
-        public static OpCode IdivB(Addr32 op1) { return FromNameB("idiv", op1); }
+        public static OpCode IdivB(Reg8 op1) { return FromName1B("idiv", op1); }
+        public static OpCode IdivBA(Addr32 op1) { return FromName1BA("idiv", op1); }
 
-        public static OpCode FromNameB(string op, Reg8 op1)
+        public static OpCode FromName1B(string op, Reg8 op1)
         {
             switch (op)
             {
@@ -63,7 +63,7 @@ namespace Girl.X86
             }
         }
 
-        public static OpCode FromNameB(string op, Addr32 op1)
+        public static OpCode FromName1BA(string op, Addr32 op1)
         {
             switch (op)
             {

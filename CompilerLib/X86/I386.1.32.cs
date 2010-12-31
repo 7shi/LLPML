@@ -9,47 +9,55 @@ namespace Girl.X86
     {
         // Push, Pop, Inc, Dec, Not, Neg, Mul, Imul, Div, Idiv
 
-        public static OpCode Push(Val32 op1)
+        public static OpCode PushD(Val32 op1)
         {
             return OpCode.NewD(Util.GetBytes1(0x68), op1);
         }
-        public static OpCode Push(Reg32 op1) { return FromName("push", op1); }
-        public static OpCode Push(Addr32 op1) { return FromName("push", op1); }
+        public static OpCode Push(Reg32 op1) { return FromName1("push", op1); }
+        public static OpCode PushA(Addr32 op1) { return FromName1A("push", op1); }
 
-        public static OpCode Pop(Reg32 op1) { return FromName("pop", op1); }
-        public static OpCode Pop(Addr32 op1) { return FromName("pop", op1); }
+        public static OpCode Pop(Reg32 op1) { return FromName1("pop", op1); }
+        public static OpCode PopA(Addr32 op1) { return FromName1A("pop", op1); }
 
-        public static OpCode Inc(Reg32 op1) { return FromName("inc", op1); }
-        public static OpCode Inc(Addr32 op1) { return FromName("inc", op1); }
+        public static OpCode Inc(Reg32 op1) { return FromName1("inc", op1); }
+        public static OpCode IncA(Addr32 op1) { return FromName1A("inc", op1); }
 
-        public static OpCode Dec(Reg32 op1) { return FromName("dec", op1); }
-        public static OpCode Dec(Addr32 op1) { return FromName("dec", op1); }
+        public static OpCode Dec(Reg32 op1) { return FromName1("dec", op1); }
+        public static OpCode DecA(Addr32 op1) { return FromName1A("dec", op1); }
 
-        public static OpCode Not(Reg32 op1) { return FromName("not", op1); }
-        public static OpCode Not(Addr32 op1) { return FromName("not", op1); }
+        public static OpCode Not(Reg32 op1) { return FromName1("not", op1); }
+        public static OpCode NotA(Addr32 op1) { return FromName1A("not", op1); }
 
-        public static OpCode Neg(Reg32 op1) { return FromName("neg", op1); }
-        public static OpCode Neg(Addr32 op1) { return FromName("neg", op1); }
+        public static OpCode Neg(Reg32 op1) { return FromName1("neg", op1); }
+        public static OpCode NegA(Addr32 op1) { return FromName1A("neg", op1); }
 
-        public static OpCode Mul(Reg32 op1) { return FromName("mul", op1); }
-        public static OpCode Mul(Addr32 op1) { return FromName("mul", op1); }
+        public static OpCode Mul(Reg32 op1) { return FromName1("mul", op1); }
+        public static OpCode MulA(Addr32 op1) { return FromName1A("mul", op1); }
 
-        public static OpCode Imul(Reg32 op1) { return FromName("imul", op1); }
-        public static OpCode Imul(Addr32 op1) { return FromName("imul", op1); }
+        public static OpCode Imul(Reg32 op1) { return FromName1("imul", op1); }
+        public static OpCode ImulA(Addr32 op1) { return FromName1A("imul", op1); }
 
-        public static OpCode Div(Reg32 op1) { return FromName("div", op1); }
-        public static OpCode Div(Addr32 op1) { return FromName("div", op1); }
+        public static OpCode Div(Reg32 op1) { return FromName1("div", op1); }
+        public static OpCode DivA(Addr32 op1) { return FromName1A("div", op1); }
 
-        public static OpCode Idiv(Reg32 op1) { return FromName("idiv", op1); }
-        public static OpCode Idiv(Addr32 op1) { return FromName("idiv", op1); }
+        public static OpCode Idiv(Reg32 op1) { return FromName1("idiv", op1); }
+        public static OpCode IdivA(Addr32 op1) { return FromName1A("idiv", op1); }
 
         public static bool IsOneOperand(string op)
         {
-            string[] s = { "push", "pop", "inc", "dec", "not", "neg", "mul", "imul", "div", "idiv" };
-            return Array.IndexOf(s, op) >= 0;
+            return op == "push"
+                || op == "pop"
+                || op == "inc"
+                || op == "dec"
+                || op == "not"
+                || op == "neg"
+                || op == "mul"
+                || op == "imul"
+                || op == "div"
+                || op == "idiv";
         }
 
-        public static OpCode FromName(string op, Reg32 op1)
+        public static OpCode FromName1(string op, Reg32 op1)
         {
             switch (op)
             {
@@ -78,7 +86,7 @@ namespace Girl.X86
             }
         }
 
-        public static OpCode FromName(string op, Addr32 op1)
+        public static OpCode FromName1A(string op, Addr32 op1)
         {
             switch (op)
             {

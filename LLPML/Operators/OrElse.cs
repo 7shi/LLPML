@@ -29,7 +29,7 @@ namespace Girl.LLPML
                     codes.Add(I386.Jcc(Cc.NZ, last.Address));
             }
             codes.Add(last);
-            codes.Add(I386.Mov(Reg32.EAX, Val32.New(0)));
+            codes.Add(I386.MovR(Reg32.EAX, Val32.New(0)));
             codes.Add(I386.Setcc(Cc.NZ, Reg8.AL));
             codes.AddCodes(op, dest);
         }

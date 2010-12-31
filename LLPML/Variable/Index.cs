@@ -81,7 +81,7 @@ namespace Girl.LLPML
                 }
                 else if (t.IsValue)
                 {
-                    codes.Add(I386.Mov(Var.DestRegister, ret));
+                    codes.Add(I386.MovRA(Var.DestRegister, ret));
                     ret = Addr32.New(Var.DestRegister);
                 }
                 ret.Add(ts * oi.Value);
@@ -89,7 +89,7 @@ namespace Girl.LLPML
             }
 
             order.AddCodes(codes, "mov", null);
-            codes.Add(I386.Mov(Reg32.EDX, Val32.NewI(ts)));
+            codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(ts)));
             codes.Add(I386.Imul(Reg32.EDX));
             codes.Add(I386.Push(Reg32.EAX));
             target.AddCodes(codes, "mov", null);

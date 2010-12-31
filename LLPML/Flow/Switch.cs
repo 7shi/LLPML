@@ -93,7 +93,7 @@ namespace Girl.LLPML
                     {
                         v.AddCodes(codes, "push", null);
                         codes.Add(codes.GetCall("case", TypeString.Equal));
-                        codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
+                        codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
                         codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                         codes.Add(I386.Jcc(Cc.NZ, Block.First));
                     }

@@ -181,7 +181,7 @@ namespace Girl.LLPML
                 var st = Parent as Struct.Define;
                 var offset = st.GetOffset(virtptr.Name);
                 codes.Add(first);
-                codes.Add(I386.Mov(Reg32.EAX, Addr32.NewRO(Reg32.ESP, 4)));
+                codes.Add(I386.MovRA(Reg32.EAX, Addr32.NewRO(Reg32.ESP, 4)));
                 codes.Add(I386.Jmp(Addr32.NewRO(Reg32.EAX, offset)));
             }
             else if (!IsOverride)
@@ -220,7 +220,7 @@ namespace Girl.LLPML
                     throw arg.Abort("undefined type: {0}: {1}", arg.Name, arg.Type.Name);
                 if (ArgNeededGC(arg))
                 {
-                    codes.Add(I386.Mov(Reg32.EAX, arg.Address));
+                    codes.Add(I386.MovRA(Reg32.EAX, arg.Address));
                     TypeReference.AddReferenceCodes(codes);
                 }
             }

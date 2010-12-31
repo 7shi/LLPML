@@ -25,8 +25,8 @@ namespace Girl.LLPML.Struct
 
             TypeOf.AddCodes(this, Parent, values[1], codes, "push", null);
             values[0].AddCodes(codes, "push", null);
-            codes.Add(I386.Call(f.First));
-            codes.Add(I386.Add(Reg32.ESP, Val32.New(8)));
+            codes.Add(I386.CallD(f.First));
+            codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
             codes.AddCodes(op, dest);
         }
 

@@ -34,7 +34,7 @@ namespace Girl.PE
             {
                 if (args[i] is string) args[i] = module.GetString((string)args[i]);
             }
-            return I386.Call(callType, address, args);
+            return I386.CallArgs(callType, address, args);
         }
     }
 }

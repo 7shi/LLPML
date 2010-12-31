@@ -69,8 +69,8 @@ namespace Girl.LLPML
             var st = GetStruct();
             var f1 = st.GetFunction(Struct.Define.Initializer);
             var f2 = st.GetFunction(Struct.Define.Constructor);
-            codes.Add(I386.Call(f1.First));
-            codes.Add(I386.Call(f2.First));
+            codes.Add(I386.CallD(f1.First));
+            codes.Add(I386.CallD(f2.First));
         }
 
         // type destructor
@@ -78,7 +78,7 @@ namespace Girl.LLPML
         public override void AddDestructor(OpModule codes)
         {
             var dtor = GetStruct().GetFunction(Struct.Define.Destructor);
-            codes.Add(I386.Call(dtor.First));
+            codes.Add(I386.CallD(dtor.First));
         }
 
         // type check

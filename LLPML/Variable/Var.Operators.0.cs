@@ -78,7 +78,7 @@ namespace Girl.LLPML
             if (thisdest.Type.Size < Var.DefaultSize)
             {
                 ad2 = Addr32.New(Reg32.ESP);
-                codes.Add(I386.Push(ad2));
+                codes.Add(I386.PushA(ad2));
             }
             GetFunc()(codes, ad2);
             if (thisdest.Type.Size < Var.DefaultSize)

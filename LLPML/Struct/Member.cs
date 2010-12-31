@@ -141,7 +141,7 @@ namespace Girl.LLPML.Struct
                     new Call(Parent, g.Name).AddCodes(codes, "mov", null);
                     if (mem != null)
                     {
-                        codes.Add(I386.Add(Reg32.EAX, Val32.NewI(st.GetOffset(name))));
+                        codes.Add(I386.AddR(Reg32.EAX, Val32.NewI(st.GetOffset(name))));
                         codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
                         return Addr32.New(Var.DestRegister);
                     }
@@ -153,9 +153,9 @@ namespace Girl.LLPML.Struct
                     {
                         var gg = GetFunction("get_");
                         codes.Add(I386.Push(Reg32.EAX));
-                        codes.Add(I386.Call(gg.First));
+                        codes.Add(I386.CallD(gg.First));
                         if (gg.CallType == CallType.CDecl)
-                            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+                            codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
                         return null;
                     }
                     throw Abort("undefined member: {0}.{1}", st.FullName, name);
@@ -164,7 +164,7 @@ namespace Girl.LLPML.Struct
 
             if (t != null && t.IsValue)
             {
-                codes.Add(I386.Mov(Var.DestRegister, ret));
+                codes.Add(I386.MovRA(Var.DestRegister, ret));
                 ret = Addr32.New(Var.DestRegister);
             }
             if (mem != null)
@@ -426,7 +426,7 @@ namespace Girl.LLPML.Struct
                     (target as Member).AddCodesInternal(codes, "mov", null);
                 else
                     target.AddCodes(codes, "mov", null);
-                codes.Add(I386.Mov(Reg32.EAX, Addr32.NewRO(Reg32.EAX, -4)));
+                codes.Add(I386.MovRA(Reg32.EAX, Addr32.NewRO(Reg32.EAX, -4)));
                 codes.AddCodes(op, dest);
                 return;
             }
@@ -440,9 +440,9 @@ namespace Girl.LLPML.Struct
                         new Call(Parent, g.Name).AddCodes(codes, "mov", null);
                         var gg = GetFunction("get_");
                         codes.Add(I386.Push(Reg32.EAX));
-                        codes.Add(I386.Call(gg.First));
+                        codes.Add(I386.CallD(gg.First));
                         if (gg.CallType == CallType.CDecl)
-                            codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+                            codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
                         codes.AddCodes(op, dest);
                         return;
                     }

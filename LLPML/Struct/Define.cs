@@ -168,12 +168,12 @@ namespace Girl.LLPML.Struct
         private void CallBlock(OpModule codes, Addr32 ad, Block b, CallType ct)
         {
             if (ad != null)
-                codes.Add(I386.Push(ad));
+                codes.Add(I386.PushA(ad));
             else
                 codes.Add(I386.Push(Reg32.EAX));
-            codes.Add(I386.Call(b.First));
+            codes.Add(I386.CallD(b.First));
             if (ct == CallType.CDecl)
-                codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+                codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
         }
 
         public void AddInit(OpModule codes, Addr32 ad)
@@ -231,7 +231,7 @@ namespace Girl.LLPML.Struct
             var ad = Addr32.NewRO(Reg32.EBP, 8);
             foreach (var p in list)
             {
-                codes.Add(I386.Mov(Var.DestRegister, ad));
+                codes.Add(I386.MovRA(Var.DestRegister, ad));
                 p.Type.AddDestructor(codes, Addr32.NewRO(Var.DestRegister, poslist[p]));
             }
             if (st != null)

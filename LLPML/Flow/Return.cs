@@ -54,7 +54,7 @@ namespace Girl.LLPML
                 var dest = retval.GetAddress(codes);
                 if (!OpModule.NeedsDtor(value))
                 {
-                    codes.Add(I386.Mov(dest, Reg32.EAX));
+                    codes.Add(I386.MovAR(dest, Reg32.EAX));
                     var tr = value.Type as TypeReference;
                     if (tr != null && tr.UseGC)
                         TypeReference.AddReferenceCodes(codes);
@@ -64,11 +64,11 @@ namespace Girl.LLPML
                     codes.Add(I386.Push(Reg32.EAX));
                     var rt = f.ReturnType;
                     if (rt == null)
-                        codes.Add(I386.Mov(dest, Reg32.EAX));
+                        codes.Add(I386.MovAR(dest, Reg32.EAX));
                     else
                     {
                         if (rt is TypeReference)
-                            codes.Add(I386.Mov(dest, Val32.New(0)));
+                            codes.Add(I386.MovA(dest, Val32.New(0)));
                         rt.AddSetCodes(codes, dest);
                     }
                     codes.AddDtorCodes(value.Type);

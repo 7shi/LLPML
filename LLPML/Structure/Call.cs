@@ -189,7 +189,7 @@ namespace Girl.LLPML
                 (t as TypeFunction).CheckArgs(this, args_array);
             bool cleanup = NeedsDtor(val);
             if (cleanup)
-                codes.Add(I386.Sub(Reg32.ESP, Val32.New(4)));
+                codes.Add(I386.SubR(Reg32.ESP, Val32.New(4)));
             AddCodes(codes, args_array, callType, delegate
             {
                 if (!cleanup)
@@ -201,7 +201,7 @@ namespace Girl.LLPML
                 {
                     var ad = Addr32.NewRO(Reg32.ESP, args_array.Length * 4);
                     val.AddCodes(codes, "mov", ad);
-                    codes.Add(I386.Call(ad));
+                    codes.Add(I386.CallA(ad));
                     codes.Add(I386.Push(Reg32.EAX));
                     var ad2 = Addr32.NewRO(Reg32.ESP, 4);
                     if (callType == CallType.CDecl)
@@ -211,7 +211,7 @@ namespace Girl.LLPML
                 }
             });
             if (cleanup)
-                codes.Add(I386.Add(Reg32.ESP, Val32.New(4)));
+                codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
         }
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
@@ -224,7 +224,7 @@ namespace Girl.LLPML
         {
             AddCodes(codes, args, f.CallType, delegate
             {
-                codes.Add(I386.Call(f.First));
+                codes.Add(I386.CallD(f.First));
             });
         }
 
@@ -269,7 +269,7 @@ namespace Girl.LLPML
                     p += 4;
                 }
                 if (pop) codes.Add(I386.Pop(Reg32.EAX));
-                codes.Add(I386.Add(Reg32.ESP, Val32.New((byte)(args2.Length * 4))));
+                codes.Add(I386.AddR(Reg32.ESP, Val32.New((byte)(args2.Length * 4))));
             }
         }
 

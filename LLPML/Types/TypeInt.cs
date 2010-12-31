@@ -34,22 +34,22 @@ namespace Girl.LLPML
 
             funcs["mul"] = (codes, dest) =>
             {
-                codes.Add(I386.Imul(dest));
-                codes.Add(I386.Mov(dest, Reg32.EAX));
+                codes.Add(I386.ImulA(dest));
+                codes.Add(I386.MovAR(dest, Reg32.EAX));
             };
             funcs["div"] = (codes, dest) =>
             {
-                codes.Add(I386.Xchg(Reg32.EAX, dest));
+                codes.Add(I386.XchgRA(Reg32.EAX, dest));
                 codes.Add(I386.Cdq());
-                codes.Add(I386.Idiv(dest));
-                codes.Add(I386.Mov(dest, Reg32.EAX));
+                codes.Add(I386.IdivA(dest));
+                codes.Add(I386.MovAR(dest, Reg32.EAX));
             };
             funcs["mod"] = (codes, dest) =>
             {
-                codes.Add(I386.Xchg(Reg32.EAX, dest));
+                codes.Add(I386.XchgRA(Reg32.EAX, dest));
                 codes.Add(I386.Cdq());
-                codes.Add(I386.Idiv(dest));
-                codes.Add(I386.Mov(dest, Reg32.EDX));
+                codes.Add(I386.IdivA(dest));
+                codes.Add(I386.MovAR(dest, Reg32.EDX));
             };
 
             AddComparers(conds);
@@ -114,7 +114,7 @@ namespace Girl.LLPML
         // set value
         public override void AddSetCodes(OpModule codes, Addr32 dest)
         {
-            codes.Add(I386.MovW(dest, Reg16.AX));
+            codes.Add(I386.MovWAR(dest, Reg16.AX));
         }
 
         // cast
@@ -152,7 +152,7 @@ namespace Girl.LLPML
         // set value
         public override void AddSetCodes(OpModule codes, Addr32 dest)
         {
-            codes.Add(I386.MovB(dest, Reg8.AL));
+            codes.Add(I386.MovBAR(dest, Reg8.AL));
         }
 
         // cast

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
@@ -19,35 +20,37 @@ namespace Girl.X86
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public static OpCode Call(Addr32 op1)
+        public static OpCode CallA(Addr32 op1)
         {
             return OpCode.NewA(Util.GetBytes1(0xff), Addr32.NewAdM(op1, 2));
         }
 
-        public static OpCode Call(Val32 op1)
+        public static OpCode CallD(Val32 op1)
         {
             return OpCode.NewDRel(Util.GetBytes1(0xe8), op1, true);
         }
 
-        public static OpCode[] Call(CallType call, Addr32 func, object[] args)
+        public static OpCode[] CallArgs(CallType call, Addr32 func, object[] args)
         {
-            List<OpCode> ret = new List<OpCode>();
-            args = args.Clone() as object[];
-            Array.Reverse(args);
-            foreach (object arg in args)
+            var list = new ArrayList();
+            for (int i = args.Length - 1; i >= 0; i--)
             {
-                if (arg is int) ret.Add(Push(Val32.NewI((int)arg)));
-                else if (arg is uint) ret.Add(Push(Val32.New((uint)arg)));
-                else if (arg is Val32) ret.Add(Push((Val32)arg));
-                else if (arg is Addr32) ret.Add(Push((Addr32)arg));
+                var arg = args[i];
+                if (arg is int) list.Add(PushD(Val32.NewI((int)arg)));
+                else if (arg is uint) list.Add(PushD(Val32.New((uint)arg)));
+                else if (arg is Val32) list.Add(PushD((Val32)arg));
+                else if (arg is Addr32) list.Add(PushA((Addr32)arg));
                 else throw new Exception("Unknown argument.");
             }
-            ret.Add(Call(func));
+            list.Add(CallA(func));
             if (call == CallType.CDecl)
             {
-                ret.Add(Add(Reg32.ESP, Val32.New((byte)(args.Length * 4))));
+                list.Add(AddR(Reg32.ESP, Val32.New((byte)(args.Length * 4))));
             }
-            return ret.ToArray();
+            var ret = new OpCode[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as OpCode;
+            return ret;
         }
     }
 }

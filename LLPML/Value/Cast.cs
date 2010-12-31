@@ -63,10 +63,10 @@ namespace Girl.LLPML
             if (Source is Var)
                 return (Source as Var).GetAddress(codes);
             else if (Source is IntValue)
-                codes.Add(I386.Mov(Var.DestRegister,
+                codes.Add(I386.MovR(Var.DestRegister,
                     Val32.NewI((Source as IntValue).Value)));
             else if (Source is StringValue)
-                codes.Add(I386.Mov(Var.DestRegister,
+                codes.Add(I386.MovR(Var.DestRegister,
                     codes.GetString((Source as StringValue).Value)));
             else
             {

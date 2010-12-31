@@ -32,28 +32,28 @@ namespace Girl.LLPML
             funcs["inc"] = funcs["post-inc"] = (codes, dest) =>
             {
                 if (Type.Size == 1)
-                    codes.Add(I386.Inc(dest));
+                    codes.Add(I386.IncA(dest));
                 else
-                    codes.Add(I386.Add(dest, Val32.NewI(Type.Size)));
+                    codes.Add(I386.AddA(dest, Val32.NewI(Type.Size)));
             };
             funcs["dec"] = funcs["post-dec"] = (codes, dest) =>
             {
                 if (Type.Size == 1)
-                    codes.Add(I386.Dec(dest));
+                    codes.Add(I386.DecA(dest));
                 else
-                    codes.Add(I386.Sub(dest, Val32.NewI(Type.Size)));
+                    codes.Add(I386.SubA(dest, Val32.NewI(Type.Size)));
             };
             funcs["add"] = (codes, dest) =>
             {
-                codes.Add(I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)));
+                codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(Type.Size)));
                 codes.Add(I386.Mul(Reg32.EDX));
-                codes.Add(I386.Add(dest, Reg32.EAX));
+                codes.Add(I386.AddAR(dest, Reg32.EAX));
             };
             funcs["sub"] = (codes, dest) =>
             {
-                codes.Add(I386.Mov(Reg32.EDX, Val32.NewI(Type.Size)));
+                codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(Type.Size)));
                 codes.Add(I386.Mul(Reg32.EDX));
-                codes.Add(I386.Sub(dest, Reg32.EAX));
+                codes.Add(I386.SubAR(dest, Reg32.EAX));
             };
 
             // partial inheritance

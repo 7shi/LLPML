@@ -110,7 +110,7 @@ namespace Girl.LLPML
                 if (IsMember && !IsStatic)
                 {
                     var thisptr = new Struct.This(scope);
-                    codes.Add(I386.Mov(Var.DestRegister, thisptr.GetAddress(codes)));
+                    codes.Add(I386.MovRA(Var.DestRegister, thisptr.GetAddress(codes)));
                     return Addr32.NewAd(Address);
                 }
 
@@ -119,7 +119,7 @@ namespace Girl.LLPML
                     return Addr32.NewAd(Address);
                 if (lv <= 0 || lv >= plv)
                     throw Abort("Invalid variable scope: " + Name);
-                codes.Add(I386.Mov(Var.DestRegister, Addr32.NewRO(Reg32.EBP, -lv * 4)));
+                codes.Add(I386.MovRA(Var.DestRegister, Addr32.NewRO(Reg32.EBP, -lv * 4)));
                 return Addr32.NewRO(Var.DestRegister, Address.Disp);
             }
 

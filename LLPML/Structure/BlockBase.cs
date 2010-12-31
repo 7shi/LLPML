@@ -293,7 +293,7 @@ namespace Girl.LLPML
             string n = FullName;
             if (!string.IsNullOrEmpty(n)
                 && (Parent == null || Parent.FullName != n))
-                codes.Add(I386.Mov(Reg32.EAX, codes.GetString(n)));
+                codes.Add(I386.MovR(Reg32.EAX, codes.GetString(n)));
         }
 
         public override void AddCodes(OpModule codes)
@@ -431,16 +431,16 @@ namespace Girl.LLPML
         public void AddDebug(OpModule codes, string message)
         {
             codes.Add(I386.Push(Reg32.EAX));
-            codes.Add(I386.Push(codes.GetString(message)));
+            codes.Add(I386.PushD(codes.GetString(message)));
             AddDebug(codes, "%s", 1);
             codes.Add(I386.Pop(Reg32.EAX));
         }
 
         public void AddDebug(OpModule codes, string format, int argCount)
         {
-            codes.Add(I386.Push(codes.GetString(format)));
-            codes.Add(I386.Call(GetFunction("printfln").First));
-            codes.Add(I386.Add(Reg32.ESP, Val32.NewI(((argCount + 1) * 4))));
+            codes.Add(I386.PushD(codes.GetString(format)));
+            codes.Add(I386.CallD(GetFunction("printfln").First));
+            codes.Add(I386.AddR(Reg32.ESP, Val32.NewI(((argCount + 1) * 4))));
         }
 
         private List<IIntValue> typeInfos = new List<IIntValue>();

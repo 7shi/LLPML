@@ -10,10 +10,10 @@ namespace Girl.X86
         // Movzx, Movsx
 
         public static OpCode MovzxW(Reg32 op1, Reg16 op2) { return FromNameW("movzx", op1, op2); }
-        public static OpCode MovzxW(Reg32 op1, Addr32 op2) { return FromNameW("movzx", op1, op2); }
+        public static OpCode MovzxWA(Reg32 op1, Addr32 op2) { return FromNameWA("movzx", op1, op2); }
 
         public static OpCode MovsxW(Reg32 op1, Reg16 op2) { return FromNameW("movsx", op1, op2); }
-        public static OpCode MovsxW(Reg32 op1, Addr32 op2) { return FromNameW("movsx", op1, op2); }
+        public static OpCode MovsxWA(Reg32 op1, Addr32 op2) { return FromNameWA("movsx", op1, op2); }
 
         public static OpCode FromNameW(string op, Reg32 op1, Reg16 op2)
         {
@@ -32,7 +32,7 @@ namespace Girl.X86
             return OpCode.NewBytes(Util.GetBytes3(0x0f, b, (byte)(0xc0 + (((int)op1) << 3) + op2)));
         }
 
-        public static OpCode FromNameW(string op, Reg32 op1, Addr32 op2)
+        public static OpCode FromNameWA(string op, Reg32 op1, Addr32 op2)
         {
             byte b;
             switch (op)

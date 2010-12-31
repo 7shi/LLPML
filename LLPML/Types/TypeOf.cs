@@ -75,7 +75,7 @@ namespace Girl.LLPML
                 var label = new OpCode();
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.Z, label.Address));
-                codes.Add(I386.Mov(Reg32.EAX, Addr32.NewRO(Reg32.EAX, -16)));
+                codes.Add(I386.MovRA(Reg32.EAX, Addr32.NewRO(Reg32.EAX, -16)));
                 codes.Add(label);
                 codes.AddCodes(op, dest);
             }

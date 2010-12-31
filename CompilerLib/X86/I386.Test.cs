@@ -21,9 +21,9 @@ namespace Girl.X86
             TestMovx_16();
             TestMovx_8();
 
-            Call(Addr32.New(Reg32.EAX))
+            CallA(Addr32.New(Reg32.EAX))
                 .Test("call [eax]", "FF-10");
-            Call(Addr32.NewUInt(0x12345678))
+            CallA(Addr32.NewUInt(0x12345678))
                 .Test("call [0x12345678]", "FF-15-78-56-34-12");
 
             Jmp(Addr32.New(Reg32.EAX))

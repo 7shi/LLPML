@@ -13,56 +13,56 @@ namespace Girl.X86
 
             MovzxB(Reg32.EAX, Reg8.BL)
                 .Test("movzx eax, bl", "0F-B6-C3");
-            MovzxB(Reg32.EAX, Addr32.New(Reg32.EDX))
+            MovzxBA(Reg32.EAX, Addr32.New(Reg32.EDX))
                 .Test("movzx eax, byte [edx]", "0F-B6-02");
-            MovzxB(Reg32.EBX, Addr32.New(Reg32.EAX))
+            MovzxBA(Reg32.EBX, Addr32.New(Reg32.EAX))
                 .Test("movzx ebx, byte [eax]", "0F-B6-18");
-            MovzxB(Reg32.ECX, Addr32.New(Reg32.ESP))
+            MovzxBA(Reg32.ECX, Addr32.New(Reg32.ESP))
                 .Test("movzx ecx, byte [esp]", "0F-B6-0C-24");
-            MovzxB(Reg32.EBP, Addr32.NewRO(Reg32.EAX, 0x1000))
+            MovzxBA(Reg32.EBP, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("movzx ebp, byte [eax+0x1000]", "0F-B6-A8-00-10-00-00");
-            MovzxB(Reg32.EAX, Addr32.NewUInt(0x12345678))
+            MovzxBA(Reg32.EAX, Addr32.NewUInt(0x12345678))
                 .Test("movzx eax, byte [0x12345678]", "0F-B6-05-78-56-34-12");
 
-            MovzxB(Reg16.AX, Reg8.BL)
+            MovzxWB(Reg16.AX, Reg8.BL)
                 .Test("movzx ax, bl", "66-0F-B6-C3");
-            MovzxB(Reg16.AX, Addr32.New(Reg32.EDX))
+            MovzxWBA(Reg16.AX, Addr32.New(Reg32.EDX))
                 .Test("movzx ax, byte [edx]", "66-0F-B6-02");
-            MovzxB(Reg16.BX, Addr32.New(Reg32.EAX))
+            MovzxWBA(Reg16.BX, Addr32.New(Reg32.EAX))
                 .Test("movzx bx, byte [eax]", "66-0F-B6-18");
-            MovzxB(Reg16.CX, Addr32.New(Reg32.ESP))
+            MovzxWBA(Reg16.CX, Addr32.New(Reg32.ESP))
                 .Test("movzx cx, byte [esp]", "66-0F-B6-0C-24");
-            MovzxB(Reg16.BP, Addr32.NewRO(Reg32.EAX, 0x1000))
+            MovzxWBA(Reg16.BP, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("movzx bp, byte [eax+0x1000]", "66-0F-B6-A8-00-10-00-00");
-            MovzxB(Reg16.AX, Addr32.NewUInt(0x12345678))
+            MovzxWBA(Reg16.AX, Addr32.NewUInt(0x12345678))
                 .Test("movzx ax, byte [0x12345678]", "66-0F-B6-05-78-56-34-12");
 
             // Movsx
 
             MovsxB(Reg32.EAX, Reg8.BL)
                 .Test("movsx eax, bl", "0F-BE-C3");
-            MovsxB(Reg32.EAX, Addr32.New(Reg32.EDX))
+            MovsxBA(Reg32.EAX, Addr32.New(Reg32.EDX))
                 .Test("movsx eax, byte [edx]", "0F-BE-02");
-            MovsxB(Reg32.EBX, Addr32.New(Reg32.EAX))
+            MovsxBA(Reg32.EBX, Addr32.New(Reg32.EAX))
                 .Test("movsx ebx, byte [eax]", "0F-BE-18");
-            MovsxB(Reg32.ECX, Addr32.New(Reg32.ESP))
+            MovsxBA(Reg32.ECX, Addr32.New(Reg32.ESP))
                 .Test("movsx ecx, byte [esp]", "0F-BE-0C-24");
-            MovsxB(Reg32.EBP, Addr32.NewRO(Reg32.EAX, 0x1000))
+            MovsxBA(Reg32.EBP, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("movsx ebp, byte [eax+0x1000]", "0F-BE-A8-00-10-00-00");
-            MovsxB(Reg32.EAX, Addr32.NewUInt(0x12345678))
+            MovsxBA(Reg32.EAX, Addr32.NewUInt(0x12345678))
                 .Test("movsx eax, byte [0x12345678]", "0F-BE-05-78-56-34-12");
 
-            MovsxB(Reg16.AX, Reg8.BL)
+            MovsxWB(Reg16.AX, Reg8.BL)
                 .Test("movsx ax, bl", "66-0F-BE-C3");
-            MovsxB(Reg16.AX, Addr32.New(Reg32.EDX))
+            MovsxWBA(Reg16.AX, Addr32.New(Reg32.EDX))
                 .Test("movsx ax, byte [edx]", "66-0F-BE-02");
-            MovsxB(Reg16.BX, Addr32.New(Reg32.EAX))
+            MovsxWBA(Reg16.BX, Addr32.New(Reg32.EAX))
                 .Test("movsx bx, byte [eax]", "66-0F-BE-18");
-            MovsxB(Reg16.CX, Addr32.New(Reg32.ESP))
+            MovsxWBA(Reg16.CX, Addr32.New(Reg32.ESP))
                 .Test("movsx cx, byte [esp]", "66-0F-BE-0C-24");
-            MovsxB(Reg16.BP, Addr32.NewRO(Reg32.EAX, 0x1000))
+            MovsxWBA(Reg16.BP, Addr32.NewRO(Reg32.EAX, 0x1000))
                 .Test("movsx bp, byte [eax+0x1000]", "66-0F-BE-A8-00-10-00-00");
-            MovsxB(Reg16.AX, Addr32.NewUInt(0x12345678))
+            MovsxWBA(Reg16.AX, Addr32.NewUInt(0x12345678))
                 .Test("movsx ax, byte [0x12345678]", "66-0F-BE-05-78-56-34-12");
         }
     }
