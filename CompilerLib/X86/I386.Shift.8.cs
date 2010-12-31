@@ -48,9 +48,9 @@ namespace Girl.X86
                     throw new Exception("invalid operator: " + op);
             }
             if (op2 == 1)
-                return new OpCode(Util.GetBytes2(0xd0, b));
+                return OpCode.NewBytes(Util.GetBytes2(0xd0, b));
             else
-                return new OpCode(Util.GetBytes2(0xc0, b), op2);
+                return OpCode.New(Util.GetBytes2(0xc0, b), op2);
         }
 
         public static OpCode ShiftB(string op, Reg8 op1, Reg8 op2)
@@ -74,7 +74,7 @@ namespace Girl.X86
             if (op2 != Reg8.CL)
                 throw new Exception("invalid register: " + op2);
             else
-                return new OpCode(Util.GetBytes2(0xd2, b));
+                return OpCode.NewBytes(Util.GetBytes2(0xd2, b));
         }
 
         public static OpCode ShiftB(string op, Addr32 op1, byte op2)
@@ -96,9 +96,9 @@ namespace Girl.X86
                     throw new Exception("invalid operator: " + op);
             }
             if (op2 == 1)
-                return new OpCode(Util.GetBytes1(0xd0), null, ad);
+                return OpCode.NewA(Util.GetBytes1(0xd0), null, ad);
             else
-                return new OpCode(Util.GetBytes1(0xc0), op2, ad);
+                return OpCode.NewA(Util.GetBytes1(0xc0), op2, ad);
         }
 
         public static OpCode ShiftB(string op, Addr32 op1, Reg8 op2)
@@ -122,7 +122,7 @@ namespace Girl.X86
             if (op2 != Reg8.CL)
                 throw new Exception("invalid register: " + op2);
             else
-                return new OpCode(Util.GetBytes1(0xd2), null, ad);
+                return OpCode.NewA(Util.GetBytes1(0xd2), null, ad);
         }
     }
 }

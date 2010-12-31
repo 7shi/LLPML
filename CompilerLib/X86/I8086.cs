@@ -9,7 +9,7 @@ namespace Girl.X86
     {
         public static OpCode Push(Reg16 op1)
         {
-            return new OpCode(Util.GetBytes1((byte)(0x50 + (int)op1)));
+            return OpCode.NewBytes(Util.GetBytes1((byte)(0x50 + (int)op1)));
         }
 
         public static OpCode Push(SegReg op1)
@@ -17,16 +17,16 @@ namespace Girl.X86
             switch (op1)
             {
                 case SegReg.ES:
-                    return new OpCode(Util.GetBytes1(0x06));
+                    return OpCode.NewBytes(Util.GetBytes1(0x06));
                 case SegReg.CS:
-                    return new OpCode(Util.GetBytes1(0x0e));
+                    return OpCode.NewBytes(Util.GetBytes1(0x0e));
             }
             throw new Exception("The method or operation is not implemented.");
         }
 
         public static OpCode Pop(Reg16 op1)
         {
-            return new OpCode(Util.GetBytes1((byte)(0x58 + (int)op1)));
+            return OpCode.NewBytes(Util.GetBytes1((byte)(0x58 + (int)op1)));
         }
 
         public static OpCode Pop(SegReg op1)
@@ -34,36 +34,36 @@ namespace Girl.X86
             switch (op1)
             {
                 case SegReg.ES:
-                    return new OpCode(Util.GetBytes1(0x07));
+                    return OpCode.NewBytes(Util.GetBytes1(0x07));
                 case SegReg.DS:
-                    return new OpCode(Util.GetBytes1(0x1f));
+                    return OpCode.NewBytes(Util.GetBytes1(0x1f));
             }
             throw new Exception("The method or operation is not implemented.");
         }
 
         public static OpCode Mov(Reg16 op1, ushort op2)
         {
-            return new OpCode(Util.GetBytes1((byte)(0xb8 + (int)op1)), op2);
+            return OpCode.New(Util.GetBytes1((byte)(0xb8 + (int)op1)), op2);
         }
 
         public static OpCode Mov(Reg8 op1, byte op2)
         {
-            return new OpCode(Util.GetBytes1((byte)(0xb0 + (int)op1)), op2);
+            return OpCode.New(Util.GetBytes1((byte)(0xb0 + (int)op1)), op2);
         }
 
         public static OpCode Inc(Reg16 op1)
         {
-            return new OpCode(Util.GetBytes1((byte)(0x40 + (int)op1)));
+            return OpCode.NewBytes(Util.GetBytes1((byte)(0x40 + (int)op1)));
         }
 
         public static OpCode Dec(Reg16 op1)
         {
-            return new OpCode(Util.GetBytes1((byte)(0x48 + (int)op1)));
+            return OpCode.NewBytes(Util.GetBytes1((byte)(0x48 + (int)op1)));
         }
 
         public static OpCode Int(byte op1)
         {
-            return new OpCode(Util.GetBytes1(0xcd), op1);
+            return OpCode.New(Util.GetBytes1(0xcd), op1);
         }
     }
 }

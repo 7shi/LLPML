@@ -23,10 +23,10 @@ namespace Girl.X86
 
         public void AddCodes(string op, Addr32 dest)
         {
-            AddCodes(op, dest, (Addr32)null);
+            AddCodesA(op, dest, (Addr32)null);
         }
 
-        public void AddCodes(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesA(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
@@ -43,7 +43,7 @@ namespace Girl.X86
             }
         }
 
-        public void AddCodes(string op, Addr32 dest, Val32 v)
+        public void AddCodesV(string op, Addr32 dest, Val32 v)
         {
             switch (op)
             {
@@ -61,10 +61,10 @@ namespace Girl.X86
 
         public void AddCodesSW(string op, Addr32 dest)
         {
-            AddCodesSW(op, dest, null);
+            AddCodesSWA(op, dest, null);
         }
 
-        public void AddCodesSW(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesSWA(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
@@ -87,10 +87,10 @@ namespace Girl.X86
 
         public void AddCodesUW(string op, Addr32 dest)
         {
-            AddCodesUW(op, dest, null);
+            AddCodesUWA(op, dest, null);
         }
 
-        public void AddCodesUW(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesUWA(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
@@ -113,10 +113,10 @@ namespace Girl.X86
 
         public void AddCodesSB(string op, Addr32 dest)
         {
-            AddCodesSB(op, dest, null);
+            AddCodesSBA(op, dest, null);
         }
 
-        public void AddCodesSB(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesSBA(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {
@@ -139,10 +139,10 @@ namespace Girl.X86
 
         public void AddCodesUB(string op, Addr32 dest)
         {
-            AddCodesUB(op, dest, null);
+            AddCodesUBA(op, dest, null);
         }
 
-        public void AddCodesUB(string op, Addr32 dest, Addr32 ad)
+        public void AddCodesUBA(string op, Addr32 dest, Addr32 ad)
         {
             switch (op)
             {

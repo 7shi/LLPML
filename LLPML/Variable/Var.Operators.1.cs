@@ -72,7 +72,7 @@ namespace Girl.LLPML
                 if (this.dest.Type.Size < Var.DefaultSize)
                     codes.AddCodes(op, dest);
                 else
-                    codes.AddCodes(op, dest, ad);
+                    codes.AddCodesA(op, dest, ad);
             }
         }
 

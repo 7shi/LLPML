@@ -90,7 +90,7 @@ namespace Girl.LLPML
                 }
                 v = f.GetAddress(m);
             }
-            codes.AddCodes(op, dest, v);
+            codes.AddCodesV(op, dest, v);
         }
 
         public Function GetFunction()

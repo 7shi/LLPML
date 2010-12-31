@@ -9,42 +9,44 @@ namespace Girl.X86
     {
         public static OpCode Jmp(Addr32 op1)
         {
-            return new OpCode(Util.GetBytes1(0xff), null, Addr32.NewAdM(op1, 4));
+            return OpCode.NewA(Util.GetBytes1(0xff), null, Addr32.NewAdM(op1, 4));
         }
 
         public static OpCode Jmp(Val32 op1)
         {
-            return new OpCode(Util.GetBytes1(0xe9), op1, true);
+            return OpCode.NewV(Util.GetBytes1(0xe9), op1, true);
         }
 
         public static OpCode Jcc(Cc c, Val32 op1)
         {
-            return new OpCode(Util.GetBytes2(0x0f, (byte)(0x80 + c)), op1, true);
+            return OpCode.NewV(Util.GetBytes2(0x0f, (byte)(0x80 + c)), op1, true);
         }
 
         public static OpCode Ret(ushort op1)
         {
-            return new OpCode(Util.GetBytes1(0xc2), op1);
+            return OpCode.New(Util.GetBytes1(0xc2), op1);
         }
 
         public static OpCode Loop(Val32 op1)
         {
-            return new OpCode(Util.GetBytes1(0xe2), op1, true) { ByteRelative = true };
+            var ret = OpCode.NewV(Util.GetBytes1(0xe2), op1, true);
+            ret.ByteRelative = true;
+            return ret;
         }
 
         public static OpCode Lea(Reg32 op1, Addr32 op2)
         {
-            return new OpCode(Util.GetBytes1(0x8d), null, Addr32.NewAdM(op2, (byte)op1));
+            return OpCode.NewA(Util.GetBytes1(0x8d), null, Addr32.NewAdM(op2, (byte)op1));
         }
 
         public static OpCode Setcc(Cc c, Reg8 op1)
         {
-            return new OpCode(Util.GetBytes3(0x0f, (byte)(0x90 + c), (byte)(0xc0 + op1)));
+            return OpCode.NewBytes(Util.GetBytes3(0x0f, (byte)(0x90 + c), (byte)(0xc0 + op1)));
         }
 
         public static OpCode Enter(ushort op1, byte op2)
         {
-            return new OpCode(Util.GetBytes1(0xc8), op1, op2);
+            return OpCode.NewB(Util.GetBytes1(0xc8), op1, op2);
         }
 
         public static OpCode Nop() { return FromName("nop"); }
@@ -68,35 +70,35 @@ namespace Girl.X86
             switch (op)
             {
                 case "nop":
-                    return new OpCode(Util.GetBytes1(0x90));
+                    return OpCode.NewBytes(Util.GetBytes1(0x90));
                 case "ret":
-                    return new OpCode(Util.GetBytes1(0xc3));
+                    return OpCode.NewBytes(Util.GetBytes1(0xc3));
                 case "cdq":
-                    return new OpCode(Util.GetBytes1(0x99));
+                    return OpCode.NewBytes(Util.GetBytes1(0x99));
                 case "cld":
-                    return new OpCode(Util.GetBytes1(0xfc));
+                    return OpCode.NewBytes(Util.GetBytes1(0xfc));
                 case "std":
-                    return new OpCode(Util.GetBytes1(0xfd));
+                    return OpCode.NewBytes(Util.GetBytes1(0xfd));
                 case "rep":
-                    return new OpCode(Util.GetBytes1(0xf3));
+                    return OpCode.NewBytes(Util.GetBytes1(0xf3));
                 case "leave":
-                    return new OpCode(Util.GetBytes1(0xc9));
+                    return OpCode.NewBytes(Util.GetBytes1(0xc9));
                 case "movsb":
-                    return new OpCode(Util.GetBytes1(0xa4));
+                    return OpCode.NewBytes(Util.GetBytes1(0xa4));
                 case "movsw":
-                    return new OpCode(Util.GetBytes2(0x66, 0xa5));
+                    return OpCode.NewBytes(Util.GetBytes2(0x66, 0xa5));
                 case "movsd":
-                    return new OpCode(Util.GetBytes1(0xa5));
+                    return OpCode.NewBytes(Util.GetBytes1(0xa5));
                 case "stosb":
-                    return new OpCode(Util.GetBytes1(0xaa));
+                    return OpCode.NewBytes(Util.GetBytes1(0xaa));
                 case "stosw":
-                    return new OpCode(Util.GetBytes2(0x66, 0xab));
+                    return OpCode.NewBytes(Util.GetBytes2(0x66, 0xab));
                 case "stosd":
-                    return new OpCode(Util.GetBytes1(0xab));
+                    return OpCode.NewBytes(Util.GetBytes1(0xab));
                 case "pushf":
-                    return new OpCode(Util.GetBytes1(0x9c));
+                    return OpCode.NewBytes(Util.GetBytes1(0x9c));
                 case "popf":
-                    return new OpCode(Util.GetBytes1(0x9d));
+                    return OpCode.NewBytes(Util.GetBytes1(0x9d));
                 default:
                     throw new Exception("invalid operator: " + op);
             }

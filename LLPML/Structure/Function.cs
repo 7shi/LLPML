@@ -280,7 +280,7 @@ namespace Girl.LLPML
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, codes.GetAddress(this));
+            codes.AddCodesV(op, dest, codes.GetAddress(this));
         }
 
         public void SetReturnType(TypeBase type)

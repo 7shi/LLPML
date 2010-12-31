@@ -11,7 +11,7 @@ namespace Girl.X86
 
         public static OpCode PushWU(ushort op1)
         {
-            return new OpCode(Util.GetBytes2(0x66, 0x68), op1);
+            return OpCode.New(Util.GetBytes2(0x66, 0x68), op1);
         }
         public static OpCode PushW(Reg16 op1) { return FromNameW("push", op1); }
         public static OpCode PushWA(Addr32 op1) { return FromNameWA("push", op1); }
@@ -48,25 +48,25 @@ namespace Girl.X86
             switch (op)
             {
                 case "push":
-                    return new OpCode(Util.GetBytes2(0x66, (byte)(0x50 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes2(0x66, (byte)(0x50 + op1)));
                 case "pop":
-                    return new OpCode(Util.GetBytes2(0x66, (byte)(0x58 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes2(0x66, (byte)(0x58 + op1)));
                 case "inc":
-                    return new OpCode(Util.GetBytes2(0x66, (byte)(0x40 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes2(0x66, (byte)(0x40 + op1)));
                 case "dec":
-                    return new OpCode(Util.GetBytes2(0x66, (byte)(0x48 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes2(0x66, (byte)(0x48 + op1)));
                 case "not":
-                    return new OpCode(Util.GetBytes3(0x66, 0xf7, (byte)(0xd0 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes3(0x66, 0xf7, (byte)(0xd0 + op1)));
                 case "neg":
-                    return new OpCode(Util.GetBytes3(0x66, 0xf7, (byte)(0xd8 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes3(0x66, 0xf7, (byte)(0xd8 + op1)));
                 case "mul":
-                    return new OpCode(Util.GetBytes3(0x66, 0xf7, (byte)(0xe0 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes3(0x66, 0xf7, (byte)(0xe0 + op1)));
                 case "imul":
-                    return new OpCode(Util.GetBytes3(0x66, 0xf7, (byte)(0xe8 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes3(0x66, 0xf7, (byte)(0xe8 + op1)));
                 case "div":
-                    return new OpCode(Util.GetBytes3(0x66, 0xf7, (byte)(0xf0 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes3(0x66, 0xf7, (byte)(0xf0 + op1)));
                 case "idiv":
-                    return new OpCode(Util.GetBytes3(0x66, 0xf7, (byte)(0xf8 + op1)));
+                    return OpCode.NewBytes(Util.GetBytes3(0x66, 0xf7, (byte)(0xf8 + op1)));
                 default:
                     throw new Exception("invalid operator: " + op);
             }
@@ -77,25 +77,25 @@ namespace Girl.X86
             switch (op)
             {
                 case "push":
-                    return new OpCode(Util.GetBytes2(0x66, 0xff), null, Addr32.NewAdM(op1, 6));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xff), null, Addr32.NewAdM(op1, 6));
                 case "pop":
-                    return new OpCode(Util.GetBytes2(0x66, 0x8f), null, op1);
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0x8f), null, op1);
                 case "inc":
-                    return new OpCode(Util.GetBytes2(0x66, 0xff), null, op1);
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xff), null, op1);
                 case "dec":
-                    return new OpCode(Util.GetBytes2(0x66, 0xff), null, Addr32.NewAdM(op1, 1));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xff), null, Addr32.NewAdM(op1, 1));
                 case "not":
-                    return new OpCode(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 2));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 2));
                 case "neg":
-                    return new OpCode(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 3));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 3));
                 case "mul":
-                    return new OpCode(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 4));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 4));
                 case "imul":
-                    return new OpCode(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 5));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 5));
                 case "div":
-                    return new OpCode(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 6));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 6));
                 case "idiv":
-                    return new OpCode(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 7));
+                    return OpCode.NewA(Util.GetBytes2(0x66, 0xf7), null, Addr32.NewAdM(op1, 7));
                 default:
                     throw new Exception("invalid operator: " + op);
             }

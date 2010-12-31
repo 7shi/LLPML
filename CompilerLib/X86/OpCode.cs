@@ -7,42 +7,53 @@ namespace Girl.X86
 {
     public class OpCode
     {
-        public Val32 Address = Val32.New(0);
-
+        public Val32 Address;
         private byte[] data;
         private object op1, op2;
         private bool relative = false;
         public bool ByteRelative { get; set; }
 
-        public OpCode() { }
-        public OpCode(byte[] d) { data = d; }
-        public OpCode(string text) { data = Encoding.ASCII.GetBytes(text); }
-
-        public OpCode(byte[] d, object op)
+        public OpCode()
         {
-            data = d;
-            op1 = op;
+            Address = Val32.New(0);
         }
 
-        public OpCode(byte[] d, object op, Addr32 mem)
+        public static OpCode NewBytes(byte[] d) { var ret = new OpCode(); ret.data = d; return ret; }
+        public static OpCode NewString(string text) { var ret = new OpCode(); ret.data = Encoding.ASCII.GetBytes(text); return ret; }
+
+        public static OpCode New(byte[] d, object op)
         {
-            data = d;
-            op1 = op;
-            op2 = mem;
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = op;
+            return ret;
         }
 
-        public OpCode(byte[] d, object op1, byte op2)
+        public static OpCode NewA(byte[] d, object op, Addr32 mem)
         {
-            data = d;
-            this.op1 = op1;
-            this.op2 = op2;
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = op;
+            ret.op2 = mem;
+            return ret;
         }
 
-        public OpCode(byte[] d, Val32 op, bool rel)
+        public static OpCode NewB(byte[] d, object op1, byte op2)
         {
-            data = d;
-            op1 = op;
-            relative = rel;
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = op1;
+            ret.op2 = op2;
+            return ret;
+        }
+
+        public static OpCode NewV(byte[] d, Val32 op, bool rel)
+        {
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = op;
+            ret.relative = rel;
+            return ret;
         }
 
         public void Set(OpCode src)

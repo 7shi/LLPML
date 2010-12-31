@@ -80,7 +80,7 @@ namespace Girl.LLPML
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
-            codes.AddCodesUW(op, dest, src);
+            codes.AddCodesUWA(op, dest, src);
         }
 
         // set value
@@ -129,7 +129,7 @@ namespace Girl.LLPML
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
-            codes.AddCodesUB(op, dest, src);
+            codes.AddCodesUBA(op, dest, src);
         }
 
         // set value

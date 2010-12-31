@@ -62,7 +62,7 @@ namespace Girl.LLPML
                 var fpt = Types.GetType(parent, fpname);
                 if (fpt == null || !fpt.Check())
                     throw caller.Abort("undefined type: {0}", fpname);
-                codes.AddCodes(op, dest, codes.GetTypeObject(fpt));
+                codes.AddCodesV(op, dest, codes.GetTypeObject(fpt));
                 return;
             }
 
@@ -80,7 +80,7 @@ namespace Girl.LLPML
                 codes.AddCodes(op, dest);
             }
             else
-                codes.AddCodes(op, dest, codes.GetTypeObject(tt));
+                codes.AddCodesV(op, dest, codes.GetTypeObject(tt));
         }
     }
 }

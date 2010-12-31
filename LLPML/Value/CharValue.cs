@@ -22,7 +22,7 @@ namespace Girl.LLPML
 
         public void AddCodes(OpModule codes, string op, Addr32 dest)
         {
-            codes.AddCodes(op, dest, Val32.New(Value));
+            codes.AddCodesV(op, dest, Val32.New(Value));
         }
     }
 }

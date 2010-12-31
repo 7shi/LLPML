@@ -167,7 +167,7 @@ namespace Girl.X86
         {
             byte b1 = 0x66, b2 = GetCode(op);
             if (op == "movq" || op == "movdqu") b1 = 0xf3;
-            return new OpCode(Util.GetBytes4(b1, 0x0f, b2, (byte)(0xc0 + (((int)op1) << 3) + op2)));
+            return OpCode.NewBytes(Util.GetBytes4(b1, 0x0f, b2, (byte)(0xc0 + (((int)op1) << 3) + op2)));
         }
 
         public static OpCode FromName(string op, Xmm op1, Addr32 op2)
@@ -183,7 +183,7 @@ namespace Girl.X86
                     b2 = GetCode(op);
                     break;
             }
-            return new OpCode(Util.GetBytes3(b1, 0x0f, b2), null, Addr32.NewAdM(op2, (byte)op1));
+            return OpCode.NewA(Util.GetBytes3(b1, 0x0f, b2), null, Addr32.NewAdM(op2, (byte)op1));
         }
 
         public static OpCode FromName(string op, Addr32 op1, Xmm op2)
@@ -205,7 +205,7 @@ namespace Girl.X86
                 default:
                     throw new Exception("invalid operator: " + op);
             }
-            return new OpCode(Util.GetBytes3(b1, 0x0f, b2), null, Addr32.NewAdM(op1, (byte)op2));
+            return OpCode.NewA(Util.GetBytes3(b1, 0x0f, b2), null, Addr32.NewAdM(op1, (byte)op2));
         }
 
         public static OpCode FromName(string op, Xmm op1, Reg32 op2)
@@ -219,7 +219,7 @@ namespace Girl.X86
                 default:
                     throw new Exception("invalid operator: " + op);
             }
-            return new OpCode(Util.GetBytes4(0x66, 0x0f, b, (byte)(0xc0 + (((int)op1) << 3) + op2)));
+            return OpCode.NewBytes(Util.GetBytes4(0x66, 0x0f, b, (byte)(0xc0 + (((int)op1) << 3) + op2)));
         }
 
         public static OpCode FromName(string op, Reg32 op1, Xmm op2)
@@ -233,7 +233,7 @@ namespace Girl.X86
                 default:
                     throw new Exception("invalid operator: " + op);
             }
-            return new OpCode(Util.GetBytes4(0x66, 0x0f, b, (byte)(0xc0 + (((int)op2) << 3) + op1)));
+            return OpCode.NewBytes(Util.GetBytes4(0x66, 0x0f, b, (byte)(0xc0 + (((int)op2) << 3) + op1)));
         }
 
         public static OpCode FromName(string op, Xmm op1, byte op2)
@@ -275,7 +275,7 @@ namespace Girl.X86
             }
             if (b1 == 0 || b2 == 0)
                 throw new Exception("invalid operator: " + op);
-            return new OpCode(Util.GetBytes4(0x66, 0x0f, b1, (byte)(b2 + op1)), op2);
+            return OpCode.New(Util.GetBytes4(0x66, 0x0f, b1, (byte)(b2 + op1)), op2);
         }
     }
 }

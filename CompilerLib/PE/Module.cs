@@ -19,7 +19,7 @@ namespace Girl.PE
                 I8086.Int(0x21),
                 I8086.Mov(Reg16.AX, 0x4c01),
                 I8086.Int(0x21),
-                new OpCode("This program cannot be run in DOS mode.\r\n$")
+                OpCode.NewString("This program cannot be run in DOS mode.\r\n$")
             };
 
         public PEFileHeader PEHeader = new PEFileHeader();
