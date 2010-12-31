@@ -43,12 +43,12 @@ namespace Girl.X86
 
         public static OpCode Mov(Reg16 op1, ushort op2)
         {
-            return OpCode.New(Util.GetBytes1((byte)(0xb8 + (int)op1)), op2);
+            return OpCode.NewW(Util.GetBytes1((byte)(0xb8 + (int)op1)), op2);
         }
 
         public static OpCode Mov(Reg8 op1, byte op2)
         {
-            return OpCode.New(Util.GetBytes1((byte)(0xb0 + (int)op1)), op2);
+            return OpCode.NewB(Util.GetBytes1((byte)(0xb0 + (int)op1)), op2);
         }
 
         public static OpCode Inc(Reg16 op1)
@@ -63,7 +63,7 @@ namespace Girl.X86
 
         public static OpCode Int(byte op1)
         {
-            return OpCode.New(Util.GetBytes1(0xcd), op1);
+            return OpCode.NewB(Util.GetBytes1(0xcd), op1);
         }
     }
 }

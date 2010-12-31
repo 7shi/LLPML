@@ -21,12 +21,12 @@ namespace Girl.X86
 
         public static OpCode Call(Addr32 op1)
         {
-            return OpCode.NewA(Util.GetBytes1(0xff), null, Addr32.NewAdM(op1, 2));
+            return OpCode.NewA(Util.GetBytes1(0xff), Addr32.NewAdM(op1, 2));
         }
 
         public static OpCode Call(Val32 op1)
         {
-            return OpCode.NewV(Util.GetBytes1(0xe8), op1, true);
+            return OpCode.NewVRel(Util.GetBytes1(0xe8), op1, true);
         }
 
         public static OpCode[] Call(CallType call, Addr32 func, object[] args)

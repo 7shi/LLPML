@@ -11,7 +11,7 @@ namespace Girl.X86
 
         public static OpCode PushB(byte op1)
         {
-            return OpCode.New(Util.GetBytes1(0x6a), op1);
+            return OpCode.NewB(Util.GetBytes1(0x6a), op1);
         }
 
         public static OpCode IncB(Reg8 op1) { return FromNameB("inc", op1); }
@@ -68,21 +68,21 @@ namespace Girl.X86
             switch (op)
             {
                 case "inc":
-                    return OpCode.NewA(Util.GetBytes1(0xfe), null, op1);
+                    return OpCode.NewA(Util.GetBytes1(0xfe), op1);
                 case "dec":
-                    return OpCode.NewA(Util.GetBytes1(0xfe), null, Addr32.NewAdM(op1, 1));
+                    return OpCode.NewA(Util.GetBytes1(0xfe), Addr32.NewAdM(op1, 1));
                 case "not":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), null, Addr32.NewAdM(op1, 2));
+                    return OpCode.NewA(Util.GetBytes1(0xf6), Addr32.NewAdM(op1, 2));
                 case "neg":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), null, Addr32.NewAdM(op1, 3));
+                    return OpCode.NewA(Util.GetBytes1(0xf6), Addr32.NewAdM(op1, 3));
                 case "mul":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), null, Addr32.NewAdM(op1, 4));
+                    return OpCode.NewA(Util.GetBytes1(0xf6), Addr32.NewAdM(op1, 4));
                 case "imul":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), null, Addr32.NewAdM(op1, 5));
+                    return OpCode.NewA(Util.GetBytes1(0xf6), Addr32.NewAdM(op1, 5));
                 case "div":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), null, Addr32.NewAdM(op1, 6));
+                    return OpCode.NewA(Util.GetBytes1(0xf6), Addr32.NewAdM(op1, 6));
                 case "idiv":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), null, Addr32.NewAdM(op1, 7));
+                    return OpCode.NewA(Util.GetBytes1(0xf6), Addr32.NewAdM(op1, 7));
                 default:
                     throw new Exception("invalid operator: " + op);
             }

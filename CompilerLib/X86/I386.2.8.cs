@@ -119,7 +119,7 @@ namespace Girl.X86
                         bytes = Util.GetBytes2(0x80, (byte)(code * 8 + 0xc0 + op1));
                     break;
             }
-            return OpCode.New(bytes, op2);
+            return OpCode.NewB(bytes, op2);
         }
 
         public static OpCode FromNameB(string op, Reg8 op1, Addr32 op2)
@@ -129,7 +129,7 @@ namespace Girl.X86
             {
                 case "mov":
                     if (op1 == Reg8.AL && op2.IsAddress)
-                        return OpCode.New(Util.GetBytes1(0xa0), op2.Address);
+                        return OpCode.NewV(Util.GetBytes1(0xa0), op2.Address);
                     b = 0x8a;
                     break;
                 case "xchg":
@@ -141,7 +141,7 @@ namespace Girl.X86
                     b = (byte)(code * 8 + 2);
                     break;
             }
-            return OpCode.NewA(Util.GetBytes1(b), null, Addr32.NewAdM(op2, (byte)op1));
+            return OpCode.NewA(Util.GetBytes1(b), Addr32.NewAdM(op2, (byte)op1));
         }
 
         public static OpCode FromNameB(string op, Addr32 op1, Reg8 op2)
@@ -151,7 +151,7 @@ namespace Girl.X86
             {
                 case "mov":
                     if (op2 == Reg8.AL && op1.IsAddress)
-                        return OpCode.New(Util.GetBytes1(0xa2), op1.Address);
+                        return OpCode.NewV(Util.GetBytes1(0xa2), op1.Address);
                     b = 0x88;
                     break;
                 case "test":
@@ -163,7 +163,7 @@ namespace Girl.X86
                     b = (byte)(code * 8);
                     break;
             }
-            return OpCode.NewA(Util.GetBytes1(b), null, Addr32.NewAdM(op1, (byte)op2));
+            return OpCode.NewA(Util.GetBytes1(b), Addr32.NewAdM(op1, (byte)op2));
         }
 
         public static OpCode FromNameB(string op, Addr32 op1, byte op2)
@@ -171,13 +171,13 @@ namespace Girl.X86
             switch (op)
             {
                 case "mov":
-                    return OpCode.NewA(Util.GetBytes1(0xc6), op2, op1);
+                    return OpCode.NewBA(Util.GetBytes1(0xc6), op2, op1);
                 case "test":
-                    return OpCode.NewA(Util.GetBytes1(0xf6), op2, op1);
+                    return OpCode.NewBA(Util.GetBytes1(0xf6), op2, op1);
                 default:
                     int code = GetOperatorCode(op);
                     if (code < 0) throw new Exception("invalid operator: " + op);
-                    return OpCode.NewA(Util.GetBytes1(0x80), op2, Addr32.NewAdM(op1, (byte)code));
+                    return OpCode.NewBA(Util.GetBytes1(0x80), op2, Addr32.NewAdM(op1, (byte)code));
             }
         }
     }

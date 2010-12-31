@@ -46,7 +46,7 @@ namespace Girl.X86
                 default:
                     throw new Exception("invalid operator: " + op);
             }
-            return OpCode.NewA(Util.GetBytes2(0x0f, b), null, Addr32.NewAdM(op2, (byte)op1));
+            return OpCode.NewA(Util.GetBytes2(0x0f, b), Addr32.NewAdM(op2, (byte)op1));
         }
     }
 }

@@ -28,7 +28,23 @@ namespace Girl.X86
             return ret;
         }
 
-        public static OpCode New(byte[] d, object op)
+        public static OpCode NewB(byte[] d, byte op)
+        {
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = Girl.Binary.Byte.New(op);
+            return ret;
+        }
+
+        public static OpCode NewW(byte[] d, ushort op)
+        {
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = UShort.New(op);
+            return ret;
+        }
+
+        public static OpCode NewV(byte[] d, Val32 op)
         {
             var ret = new OpCode();
             ret.data = d;
@@ -36,7 +52,33 @@ namespace Girl.X86
             return ret;
         }
 
-        public static OpCode NewA(byte[] d, object op, Addr32 mem)
+        public static OpCode NewA(byte[] d, Addr32 mem)
+        {
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op2 = mem;
+            return ret;
+        }
+
+        public static OpCode NewBA(byte[] d, byte op, Addr32 mem)
+        {
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = Girl.Binary.Byte.New(op);
+            ret.op2 = mem;
+            return ret;
+        }
+
+        public static OpCode NewWA(byte[] d, ushort op, Addr32 mem)
+        {
+            var ret = new OpCode();
+            ret.data = d;
+            ret.op1 = UShort.New(op);
+            ret.op2 = mem;
+            return ret;
+        }
+
+        public static OpCode NewVA(byte[] d, Val32 op, Addr32 mem)
         {
             var ret = new OpCode();
             ret.data = d;
@@ -45,16 +87,16 @@ namespace Girl.X86
             return ret;
         }
 
-        public static OpCode NewB(byte[] d, object op1, byte op2)
+        public static OpCode NewWB(byte[] d, ushort op1, byte op2)
         {
             var ret = new OpCode();
             ret.data = d;
-            ret.op1 = op1;
-            ret.op2 = op2;
+            ret.op1 = UShort.New(op1);
+            ret.op2 = Girl.Binary.Byte.New(op2);
             return ret;
         }
 
-        public static OpCode NewV(byte[] d, Val32 op, bool rel)
+        public static OpCode NewVRel(byte[] d, Val32 op, bool rel)
         {
             var ret = new OpCode();
             ret.data = d;
@@ -74,16 +116,16 @@ namespace Girl.X86
         public byte[] GetCodes()
         {
             byte[] data = this.data;
-            if (op2 is Addr32) data = Util.Concat(data, (op2 as Addr32).GetCodes());
+            if (this.op2 is Addr32) data = Util.Concat(data, (op2 as Addr32).GetCodes());
             if (op1 == null) return data;
 
-            if (op1 is byte)
-                data = Util.AddByteToBytes(data, (byte)op1);
-            else if (op1 is ushort)
-                data = Util.AddUShortToBytes(data, (ushort)op1);
-            else if (op1 is Val32)
+            if (this.op1 is Girl.Binary.Byte)
+                data = Util.AddByteToBytes(data, (op1 as Girl.Binary.Byte).Value);
+            else if (this.op1 is UShort)
+                data = Util.AddUShortToBytes(data, (op1 as UShort).Value);
+            else if (this.op1 is Val32)
             {
-                uint val = ((Val32)op1).Value;
+                uint val = (op1 as Val32).Value;
                 if (ByteRelative)
                 {
                     val -= Address.Value + (uint)data.Length + 1;
@@ -99,29 +141,28 @@ namespace Girl.X86
             {
                 throw new Exception("The method or operation is not implemented.");
             }
-            if (op2 is byte) data = Util.Concat(data, Util.GetBytes1((byte)op2));
+            if (this.op2 is Girl.Binary.Byte) data = Util.Concat(data, Util.GetBytes1((op2 as Girl.Binary.Byte).Value));
             return data;
         }
 
         public void Write(Block block)
         {
-            if (op1 is Val32 && relative)
+            if (this.op1 is Val32 && relative)
             {
                 block.AddBytes(GetCodes());
             }
             else if (data != null)
             {
                 block.AddBytes(data);
-                if (op2 is Addr32) (op2 as Addr32).Write(block);
+                if (this.op2 is Addr32) (op2 as Addr32).Write(block);
                 if (op1 != null)
                 {
-                    if (op1 is byte) block.AddByte((byte)op1);
-                    else if (op1 is ushort) block.AddUShort((ushort)op1);
-                    else if (op1 is Val32) block.AddVal32((Val32)op1);
-                    else if (op1 is Val32) block.AddVal32((Val32)op1);
+                    if (this.op1 is Girl.Binary.Byte) block.AddByte2(op1 as Girl.Binary.Byte);
+                    else if (this.op1 is UShort) block.AddUShort2(op1 as UShort);
+                    else if (this.op1 is Val32) block.AddVal32(op1 as Val32);
                     else throw new Exception("The method or operation is not implemented.");
                 }
-                if (op2 is byte) block.AddByte((byte)op2);
+                if (this.op2 is Girl.Binary.Byte) block.AddByte2(op2 as Girl.Binary.Byte);
             }
         }
 
