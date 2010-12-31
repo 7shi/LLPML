@@ -67,7 +67,7 @@ namespace Girl.LLPML
             codes.Add(I386.Jcc(Cc.E, last.Address));
             codes.Add(I386.Jcc(Cc.G, l1.Address));
             codes.Add(I386.Mov(dest, Val32.New(0)));
-            codes.Add(I386.Jmp(last.Address));
+            codes.Add(I386.JmpD(last.Address));
             codes.Add(l1);
             codes.Add(I386.Cmp(Reg32.EAX, Val32.New(255)));
             codes.Add(I386.Jcc(Cc.LE, l2.Address));

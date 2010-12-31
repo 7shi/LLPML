@@ -40,7 +40,7 @@ namespace Girl.X86
 
             Ret()
                 .Test("ret", "C3");
-            Ret(8)
+            RetW(8)
                 .Test("ret 8", "C2-08-00");
 
             Setcc(Cc.A, Reg8.AL)

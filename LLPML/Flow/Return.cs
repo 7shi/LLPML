@@ -82,7 +82,7 @@ namespace Girl.LLPML
                 if (b == f) break;
                 b.AddExitCodes(codes);
             }
-            if (!IsLast) codes.Add(I386.Jmp(b.Destruct));
+            if (!IsLast) codes.Add(I386.JmpD(b.Destruct));
         }
     }
 }

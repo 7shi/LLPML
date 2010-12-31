@@ -43,7 +43,7 @@ namespace Girl.LLPML
                 if (b.AcceptsBreak) break;
                 b.AddExitCodes(codes);
             }
-            codes.Add(I386.Jmp(b.Destruct));
+            codes.Add(I386.JmpD(b.Destruct));
         }
     }
 }

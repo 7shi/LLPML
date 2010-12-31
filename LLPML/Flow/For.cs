@@ -75,9 +75,9 @@ namespace Girl.LLPML
             base.BeforeAddCodes(codes);
             if (Init != null) Init.AddCodes(codes);
             if (Loop != null)
-                codes.Add(I386.Jmp(Loop.Last));
+                codes.Add(I386.JmpD(Loop.Last));
             else
-                codes.Add(I386.Jmp(Block.Last));
+                codes.Add(I386.JmpD(Block.Last));
         }
 
         public override void AddCodes(OpModule codes)

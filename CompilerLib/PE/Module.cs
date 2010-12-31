@@ -41,7 +41,7 @@ namespace Girl.PE
 
         public Function GetFunction(CallType call, string lib, string sym)
         {
-            Addr32 ad = Addr32.NewV(Import.Add(lib, sym).ImportRef);
+            var ad = Addr32.NewD(Import.Add(lib, sym).ImportRef);
             return new Function(this, ad, call);
         }
 

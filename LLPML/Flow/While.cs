@@ -15,7 +15,7 @@ namespace Girl.LLPML
         protected override void BeforeAddCodes(OpModule codes)
         {
             base.BeforeAddCodes(codes);
-            codes.Add(I386.Jmp(Block.Last));
+            codes.Add(I386.JmpD(Block.Last));
         }
     }
 }

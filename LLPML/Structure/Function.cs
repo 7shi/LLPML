@@ -268,7 +268,7 @@ namespace Girl.LLPML
                 GetRetVal(this).AddCodes(codes, "mov", null);
             base.AddExitCodes(codes);
             if (CallType == CallType.Std && argStack > 0)
-                codes.Add(I386.Ret(argStack));
+                codes.Add(I386.RetW(argStack));
             else
                 codes.Add(I386.Ret());
         }

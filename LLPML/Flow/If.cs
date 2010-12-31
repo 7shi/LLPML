@@ -41,7 +41,7 @@ namespace Girl.LLPML
                 }
                 Block.AddCodes(codes);
                 if (Next != null)
-                    codes.Add(I386.Jmp(Parent.Destruct));
+                    codes.Add(I386.JmpD(Parent.Destruct));
                 codes.Add(next);
             }
         }

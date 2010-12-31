@@ -21,8 +21,8 @@ namespace Girl.X86
 
         public static Addr32 New(Reg32 r) { var ret = new Addr32(); ret.isInitialized = true; ret.reg = r; return ret; }
         public static Addr32 NewRO(Reg32 r, int offset) { var ret = new Addr32(); ret.isInitialized = true; ret.reg = r; ret.disp = offset; return ret; }
-        public static Addr32 NewV(Val32 ad) { var ret = new Addr32(); ret.isInitialized = true; ret.address = ad; return ret; }
-        public static Addr32 NewUInt(uint ad) { return NewV(Val32.New(ad)); }
+        public static Addr32 NewD(Val32 ad) { var ret = new Addr32(); ret.isInitialized = true; ret.address = ad; return ret; }
+        public static Addr32 NewUInt(uint ad) { return NewD(Val32.New(ad)); }
         public static Addr32 NewAd(Addr32 src) { var ret = new Addr32(); ret.isInitialized = true; ret.Set(src); return ret; }
         public static Addr32 NewAdM(Addr32 src, byte middleBits)
         {

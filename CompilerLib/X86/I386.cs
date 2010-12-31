@@ -12,24 +12,24 @@ namespace Girl.X86
             return OpCode.NewA(Util.GetBytes1(0xff), Addr32.NewAdM(op1, 4));
         }
 
-        public static OpCode Jmp(Val32 op1)
+        public static OpCode JmpD(Val32 op1)
         {
-            return OpCode.NewVRel(Util.GetBytes1(0xe9), op1, true);
+            return OpCode.NewDRel(Util.GetBytes1(0xe9), op1, true);
         }
 
         public static OpCode Jcc(Cc c, Val32 op1)
         {
-            return OpCode.NewVRel(Util.GetBytes2(0x0f, (byte)(0x80 + c)), op1, true);
+            return OpCode.NewDRel(Util.GetBytes2(0x0f, (byte)(0x80 + c)), op1, true);
         }
 
-        public static OpCode Ret(ushort op1)
+        public static OpCode RetW(ushort op1)
         {
             return OpCode.NewW(Util.GetBytes1(0xc2), op1);
         }
 
         public static OpCode Loop(Val32 op1)
         {
-            var ret = OpCode.NewVRel(Util.GetBytes1(0xe2), op1, true);
+            var ret = OpCode.NewDRel(Util.GetBytes1(0xe2), op1, true);
             ret.ByteRelative = true;
             return ret;
         }

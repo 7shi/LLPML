@@ -82,7 +82,7 @@ namespace Girl.LLPML
                 int len = values.Count;
                 if (len == 0)
                 {
-                    codes.Add(I386.Jmp(Block.First));
+                    codes.Add(I386.JmpD(Block.First));
                     return;
                 }
 
@@ -105,7 +105,7 @@ namespace Girl.LLPML
                         codes.Add(I386.Jcc(Cc.E, Block.First));
                     }
                 }
-                if (IsLast) codes.Add(I386.Jmp(Parent.Destruct));
+                if (IsLast) codes.Add(I386.JmpD(Parent.Destruct));
             }
         }
 

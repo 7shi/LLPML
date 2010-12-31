@@ -11,7 +11,7 @@ namespace Girl.X86
 
         public static OpCode Push(Val32 op1)
         {
-            return OpCode.NewV(Util.GetBytes1(0x68), op1);
+            return OpCode.NewD(Util.GetBytes1(0x68), op1);
         }
         public static OpCode Push(Reg32 op1) { return FromName("push", op1); }
         public static OpCode Push(Addr32 op1) { return FromName("push", op1); }

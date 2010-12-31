@@ -44,7 +44,7 @@ namespace Girl.X86
             return ret;
         }
 
-        public static OpCode NewV(byte[] d, Val32 op)
+        public static OpCode NewD(byte[] d, Val32 op)
         {
             var ret = new OpCode();
             ret.data = d;
@@ -78,7 +78,7 @@ namespace Girl.X86
             return ret;
         }
 
-        public static OpCode NewVA(byte[] d, Val32 op, Addr32 mem)
+        public static OpCode NewDA(byte[] d, Val32 op, Addr32 mem)
         {
             var ret = new OpCode();
             ret.data = d;
@@ -96,7 +96,7 @@ namespace Girl.X86
             return ret;
         }
 
-        public static OpCode NewVRel(byte[] d, Val32 op, bool rel)
+        public static OpCode NewDRel(byte[] d, Val32 op, bool rel)
         {
             var ret = new OpCode();
             ret.data = d;

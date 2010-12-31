@@ -101,7 +101,7 @@ namespace Girl.LLPML
         {
             ForEachMembers((p, pos) =>
             {
-                p.Address = Addr32.NewV(codes.Module.GetBuffer(p.Name, p.Type.Size));
+                p.Address = Addr32.NewD(codes.Module.GetBuffer(p.Name, p.Type.Size));
                 return false;
             }, null);
         }
@@ -174,7 +174,7 @@ namespace Girl.LLPML
             {
                 var vd = s as Var.Declare;
                 if (vd != null && vd.IsStatic)
-                    vd.Address = Addr32.NewV(m.GetBuffer(vd.FullName, vd.Type.Size));
+                    vd.Address = Addr32.NewD(m.GetBuffer(vd.FullName, vd.Type.Size));
             }
         }
 

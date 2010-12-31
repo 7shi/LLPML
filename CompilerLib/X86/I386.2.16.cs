@@ -134,7 +134,7 @@ namespace Girl.X86
             {
                 case "mov":
                     if (op1 == Reg16.AX && op2.IsAddress)
-                        return OpCode.NewV(Util.GetBytes2(0x66, 0xa1), op2.Address);
+                        return OpCode.NewD(Util.GetBytes2(0x66, 0xa1), op2.Address);
                     b = 0x8b;
                     break;
                 case "xchg":
@@ -156,7 +156,7 @@ namespace Girl.X86
             {
                 case "mov":
                     if (op2 == Reg16.AX && op1.IsAddress)
-                        return OpCode.NewV(Util.GetBytes2(0x66, 0xa3), op1.Address);
+                        return OpCode.NewD(Util.GetBytes2(0x66, 0xa3), op1.Address);
                     b = 0x89;
                     break;
                 case "test":

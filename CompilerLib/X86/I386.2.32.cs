@@ -130,7 +130,7 @@ namespace Girl.X86
                         bytes = Util.GetBytes2(0x81, (byte)(code * 8 + 0xc0 + op1));
                     break;
             }
-            return OpCode.NewV(bytes, op2);
+            return OpCode.NewD(bytes, op2);
         }
 
         public static OpCode FromName(string op, Reg32 op1, Addr32 op2)
@@ -140,7 +140,7 @@ namespace Girl.X86
             {
                 case "mov":
                     if (op1 == Reg32.EAX && op2.IsAddress)
-                        return OpCode.NewV(Util.GetBytes1(0xa1), op2.Address);
+                        return OpCode.NewD(Util.GetBytes1(0xa1), op2.Address);
                     b = 0x8b;
                     break;
                 case "xchg":
@@ -162,7 +162,7 @@ namespace Girl.X86
             {
                 case "mov":
                     if (op2 == Reg32.EAX && op1.IsAddress)
-                        return OpCode.NewV(Util.GetBytes1(0xa3), op1.Address);
+                        return OpCode.NewD(Util.GetBytes1(0xa3), op1.Address);
                     b = 0x89;
                     break;
                 case "test":
@@ -182,13 +182,13 @@ namespace Girl.X86
             switch (op)
             {
                 case "mov":
-                    return OpCode.NewVA(Util.GetBytes1(0xc7), op2, op1);
+                    return OpCode.NewDA(Util.GetBytes1(0xc7), op2, op1);
                 case "test":
-                    return OpCode.NewVA(Util.GetBytes1(0xf7), op2, op1);
+                    return OpCode.NewDA(Util.GetBytes1(0xf7), op2, op1);
                 default:
                     int code = GetOperatorCode(op);
                     if (code < 0) throw new Exception("invalid operator: " + op);
-                    return OpCode.NewVA(Util.GetBytes1(0x81), op2, Addr32.NewAdM(op1, (byte)code));
+                    return OpCode.NewDA(Util.GetBytes1(0x81), op2, Addr32.NewAdM(op1, (byte)code));
             }
         }
     }

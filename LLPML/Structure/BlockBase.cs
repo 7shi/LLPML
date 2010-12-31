@@ -342,7 +342,7 @@ namespace Girl.LLPML
             if (GetMembers<Function>().Length > 0
                 || GetMembers<Struct.Define>().Length > 0)
             {
-                codes.Add(I386.Jmp(last.Address));
+                codes.Add(I386.JmpD(last.Address));
             }
         }
 
