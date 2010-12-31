@@ -7,19 +7,26 @@ namespace Girl.X86
 {
     public class OpCode
     {
-        public Val32 Address;
+        public Val32 Address = Val32.New(0);
         private byte[] data;
-        private object op1, op2;
-        private bool relative = false;
+        private object op1;
+        private object op2;
+        private bool relative;
         public bool ByteRelative { get; set; }
 
-        public OpCode()
+        public static OpCode NewBytes(byte[] d)
         {
-            Address = Val32.New(0);
+            var ret = new OpCode();
+            ret.data = d;
+            return ret;
         }
 
-        public static OpCode NewBytes(byte[] d) { var ret = new OpCode(); ret.data = d; return ret; }
-        public static OpCode NewString(string text) { var ret = new OpCode(); ret.data = Encoding.ASCII.GetBytes(text); return ret; }
+        public static OpCode NewString(string text)
+        {
+            var ret = new OpCode();
+            ret.data = Encoding.ASCII.GetBytes(text);
+            return ret;
+        }
 
         public static OpCode New(byte[] d, object op)
         {
