@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
@@ -11,10 +12,15 @@ namespace Girl.PE
         private Val32 address = Val32.NewB(0, true);
         public Val32 Address { get { return address; } }
 
-        public Block Block { get; private set; }
+        private Block block = new Block();
+        public Block Block { get { return block; } }
 
-        public DataBlock() { Block = new Block(); }
-        public DataBlock(byte[] d) : this() { Block.AddBytes(d); }
+        public static DataBlock New(byte[] d)
+        {
+            var ret = new DataBlock();
+            ret.block.AddBytes(d);
+            return ret;
+        }
 
         public void Write(Block block)
         {
@@ -30,26 +36,27 @@ namespace Girl.PE
         private string name;
         public override string Name { get { return name; } }
 
-        public DataSection(string name)
+        public static DataSection New(string name)
         {
-            this.name = name;
+            var ret = new DataSection();
+            ret.name = name;
+            return ret;
         }
 
-        private Dictionary<string, Dictionary<string, DataBlock>> data =
-            new Dictionary<string, Dictionary<string, DataBlock>>();
+        private Hashtable data = new Hashtable();
 
         public bool IsEmtpy { get { return data.Count == 0; } }
 
-        private Dictionary<string, DataBlock> GetCategory(string name)
+        private Hashtable GetCategory(string name)
         {
-            if (data.ContainsKey(name)) return data[name];
+            if (data.ContainsKey(name)) return data[name] as Hashtable;
 
-            var ret = new Dictionary<string, DataBlock>();
+            var ret = new Hashtable();
             data.Add(name, ret);
             return ret;
         }
 
-        public void Add(string category, string name, DataBlock data)
+        public void AddDataBlock(string category, string name, DataBlock data)
         {
             var ctg = GetCategory(category);
             if (!ctg.ContainsKey(name)) ctg.Add(name, data);
@@ -58,16 +65,16 @@ namespace Girl.PE
         public DataBlock Add(string category, string name, byte[] data)
         {
             var ctg = GetCategory(category);
-            if (ctg.ContainsKey(name)) return ctg[name];
+            if (ctg.ContainsKey(name)) return ctg[name] as DataBlock;
 
-            var ret = new DataBlock(data);
+            var ret = DataBlock.New(data);
             ctg.Add(name, ret);
             return ret;
         }
 
         public DataBlock AddString(string s)
         {
-            return Add("string", s, Module.DefaultEncoding.GetBytes(s + "\0"));
+            return Add("string", s, Module.EncodeString(s));
         }
 
         public DataBlock AddBuffer(string name, int size)
@@ -77,9 +84,9 @@ namespace Girl.PE
 
         public override void Write(Block block)
         {
-            foreach (var ctg in data.Values)
+            foreach (Hashtable ctg in data.Values)
                 foreach (var db in ctg.Values)
-                    db.Write(block);
+                    (db as DataBlock).Write(block);
             if (IsEmtpy) block.AddBytes(new byte[16]);
         }
     }

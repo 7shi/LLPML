@@ -12,10 +12,12 @@ namespace Girl.PE
 
         public byte[] data;
 
-        public AnySection(string name, byte[] data)
+        public static AnySection New(string name, byte[] data)
         {
-            this.name = name;
-            this.data = data;
+            var ret = new AnySection();
+            ret.name = name;
+            ret.data = data;
+            return ret;
         }
 
         public override void Write(Block block)

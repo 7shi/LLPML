@@ -73,7 +73,7 @@ namespace Girl.LLPML
         {
             codes.Add(first);
             string n = alias != null ? alias : name;
-            codes.Add(I386.Jmp(codes.Module.GetFunction(CallType, module, n).Address));
+            codes.Add(I386.Jmp(codes.Module.GetFunction(module, n)));
         }
     }
 }

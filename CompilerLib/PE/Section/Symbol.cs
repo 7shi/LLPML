@@ -16,10 +16,12 @@ namespace Girl.PE
         private Val32 importRef = Val32.NewB(0, true);
         public Val32 ImportRef { get { return importRef; } }
 
-        public Symbol(ushort hint, string name)
+        public static Symbol New(ushort hint, string name)
         {
-            Hint = hint;
-            Name = name;
+            var ret = new Symbol();
+            ret.Hint = hint;
+            ret.Name = name;
+            return ret;
         }
 
         public int NameSize
@@ -30,7 +32,7 @@ namespace Girl.PE
             }
         }
 
-        public void Write(Block block, bool lookup)
+        public void WriteLookup(Block block, bool lookup)
         {
             if (!lookup) importRef.Value = block.Current;
             block.AddVal32(hintAddress);

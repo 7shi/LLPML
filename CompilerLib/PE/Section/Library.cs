@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,16 +13,13 @@ namespace Girl.PE
         public string Name { get { return name; } }
 
         private ImportTable table = new ImportTable();
-        private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+        private Hashtable symbols = new Hashtable();
 
-        public Library(string name)
+        public static Library New(string name)
         {
-            this.name = name;
-        }
-
-        public void Add(Symbol sym)
-        {
-            symbols.Add(sym.Name, sym);
+            var ret = new Library();
+            ret.name = name;
+            return ret;
         }
 
         public Symbol Add(string name)
@@ -29,11 +27,11 @@ namespace Girl.PE
             Symbol sym;
             if (symbols.ContainsKey(name))
             {
-                sym = symbols[name];
+                sym = symbols[name] as Symbol;
             }
             else
             {
-                sym = new Symbol(0, name);
+                sym = Symbol.New(0, name);
                 symbols.Add(name, sym);
             }
             return sym;
@@ -55,20 +53,23 @@ namespace Girl.PE
         public void WriteImportLookupTable(Block block)
         {
             table.ImportLookupTable = block.Current;
-            foreach (Symbol sym in symbols.Values) sym.Write(block, true);
+            foreach (var sym in symbols.Values)
+                (sym as Symbol).WriteLookup(block, true);
             block.AddInt(0);
         }
 
         public void WriteImportAddressTable(Block block)
         {
             table.ImportAddressTable = block.Current;
-            foreach (Symbol sym in symbols.Values) sym.Write(block, false);
+            foreach (var sym in symbols.Values)
+                (sym as Symbol).WriteLookup(block, false);
             block.AddInt(0);
         }
 
         public void WriteSymbols(Block block)
         {
-            foreach (Symbol sym in symbols.Values) sym.Write(block);
+            foreach (var sym in symbols.Values)
+                (sym as Symbol).Write(block);
         }
 
         public void WriteName(Block block)

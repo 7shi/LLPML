@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,23 +11,18 @@ namespace Girl.PE
     {
         public override string Name { get { return ".idata"; } }
 
-        private Dictionary<string, Library> libraries = new Dictionary<string, Library>();
-
-        public void Add(Library lib)
-        {
-            libraries.Add(lib.Name, lib);
-        }
+        private Hashtable libraries = new Hashtable();
 
         public Symbol Add(string libname, string sym)
         {
             Library lib;
             if (libraries.ContainsKey(libname))
             {
-                lib = libraries[libname];
+                lib = libraries[libname] as Library;
             }
             else
             {
-                lib = new Library(libname);
+                lib = Library.New(libname);
                 libraries.Add(libname, lib);
             }
             return lib.Add(sym);

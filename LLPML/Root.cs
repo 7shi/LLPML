@@ -123,7 +123,7 @@ namespace Girl.LLPML
                     else
                         codes.Add(I386.PushD(Val32.New(0)));
                     codes.Add(I386.CallA(codes.Module.GetFunction(
-                        CallType.Std, "kernel32.dll", "ExitProcess").Address));
+                        "kernel32.dll", "ExitProcess")));
                     break;
                 default:
                     if (retVal != null)

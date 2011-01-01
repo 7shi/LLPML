@@ -14,8 +14,9 @@ namespace Girl.PE
 
         public override void Write(Block block)
         {
-            foreach (OpCode op in OpCodes)
+            for (int i = 0; i < OpCodes.Length; i++)
             {
+                var op = OpCodes[i];
                 op.Address.Value = block.Current;
                 op.Write(block);
             }

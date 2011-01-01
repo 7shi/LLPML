@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,39 +11,27 @@ namespace Girl.PE
     public class Module
     {
         public DOSHeader DOSHeader = new DOSHeader();
-        public OpCode[] DOSStub = new[]
-            {
-                I8086.PushS(SegReg.CS),
-                I8086.PopS(SegReg.DS),
-                I8086.Mov(Reg16.DX, 0x000e),
-                I8086.MovB(Reg8.AH, 0x09),
-                I8086.Int(0x21),
-                I8086.Mov(Reg16.AX, 0x4c01),
-                I8086.Int(0x21),
-                OpCode.NewString("This program cannot be run in DOS mode.\r\n$")
-            };
 
         public PEFileHeader PEHeader = new PEFileHeader();
         public PEHeaderStandardFields Standard = new PEHeaderStandardFields();
         public PEHeaderWindowsNTSpecificFields Specific = new PEHeaderWindowsNTSpecificFields();
         public PEHeaderDataDirectories DataDirs = new PEHeaderDataDirectories();
 
-        private List<SectionBase> Sections = new List<SectionBase>();
+        private ArrayList Sections = new ArrayList();
         public TextSection Text = new TextSection();
-        public DataSection Data = new DataSection(".data");
-        public DataSection RData = new DataSection(".rdata");
-        public DataSection BSS = new DataSection(".bss");
+        public DataSection Data = DataSection.New(".data");
+        public DataSection RData = DataSection.New(".rdata");
+        public DataSection BSS = DataSection.New(".bss");
         public ImportSection Import = new ImportSection();
 
-        public static Encoding DefaultEncoding = Encoding.Unicode;
-
-        public Module() { }
-        public Module(ushort subsys) { Specific.SubSystem = subsys; }
-
-        public Function GetFunction(CallType call, string lib, string sym)
+        public static byte[] EncodeString(string s)
         {
-            var ad = Addr32.NewD(Import.Add(lib, sym).ImportRef);
-            return new Function(this, ad, call);
+            return Encoding.Unicode.GetBytes(s + "\0");
+        }
+
+        public Addr32 GetFunction(string lib, string sym)
+        {
+            return Addr32.NewD(Import.Add(lib, sym).ImportRef);
         }
 
         public Val32 GetString(string s)
@@ -69,8 +58,10 @@ namespace Girl.PE
 
         public Block CreateBlock(SectionBase sb)
         {
-            uint vaddr = sb.Header != null ? sb.Header.VirtualAddress : GetNextVirtualAddress();
-            return sb.ToBlock(vaddr);
+            if (sb.Header != null)
+                return sb.ToBlock(sb.Header.VirtualAddress);
+            else
+                return sb.ToBlock(GetNextVirtualAddress());
         }
 
         public SectionHeader AddSection(SectionBase sb)
@@ -117,20 +108,20 @@ namespace Girl.PE
         public uint GetNextVirtualAddress()
         {
             if (Sections.Count == 0) return Specific.SectionAlignment;
-            SectionHeader last = Sections[Sections.Count - 1].Header;
+            var last = (Sections[Sections.Count - 1] as SectionBase).Header;
             return last.VirtualAddress + Align(last.VirtualSize, Specific.SectionAlignment);
         }
 
         public uint GetNextPointerToRawData()
         {
             if (Sections.Count == 0) return Specific.HeaderSize;
-            SectionHeader last = Sections[Sections.Count - 1].Header;
+            var last = (Sections[Sections.Count - 1] as SectionBase).Header;
             return last.PointerToRawData + last.SizeOfRawData;
         }
 
         public void Link(string output)
         {
-            SectionHeader text = AddSection(Text);
+            var text = AddSection(Text);
             AddSection(Data);
             if (!RData.IsEmtpy) AddSection(RData);
             if (!BSS.IsEmtpy) AddSection(BSS);
@@ -138,8 +129,8 @@ namespace Girl.PE
             PEHeader.TimeDateStamp = (uint)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
             Standard.EntryPoint = text.VirtualAddress;
 
-            FileStream fs = new FileStream(output, FileMode.Create);
-            BinaryWriter bw = new BinaryWriter(fs, Encoding.ASCII);
+            var fs = new FileStream(output, FileMode.Create);
+            var bw = new BinaryWriter(fs, Encoding.ASCII);
             Write(bw);
             bw.Close();
             fs.Close();
@@ -150,9 +141,10 @@ namespace Girl.PE
             PEHeader.NumberOfSections = (ushort)Sections.Count;
             Standard.InitializedDataSize = 0;
             Standard.UninitializedDataSize = 0;
-            foreach (SectionBase sb in Sections)
+            for (int i = 0; i < Sections.Count; i++)
             {
-                SectionHeader sh = sb.Header;
+                var sb = Sections[i] as SectionBase;
+                var sh = sb.Header;
                 if ((sh.Characteristics & IMAGE_SCN.CNT_INITIALIZED_DATA) != 0)
                     Standard.InitializedDataSize += sh.VirtualSize;
                 else if ((sh.Characteristics & IMAGE_SCN.CNT_UNINITIALIZED_DATA) != 0)
@@ -170,26 +162,29 @@ namespace Girl.PE
             SetPosition(bw, 0x3c);
             const int peSignPos = 0x80;
             bw.Write(peSignPos);
-            Write(bw, DOSStub);
+            WriteCodes(bw, DOSHeader.Stub);
             SetPosition(bw, peSignPos);
-            Write(bw, "PE\0\0");
+            WriteString(bw, "PE\0\0");
             PEHeader.Write(bw);
             Standard.Write(bw);
             Specific.Write(bw);
             DataDirs.Write(bw);
-            foreach (SectionBase sb in Sections)
+            for (int i = 0; i < Sections.Count; i++)
             {
+                var sb = Sections[i] as SectionBase;
                 sb.Header.Write(bw);
             }
 
             // write sections
-            foreach (SectionBase sb in Sections)
+            for (int i = 0; i < Sections.Count; i++)
             {
+                var sb = Sections[i] as SectionBase;
                 SetPosition(bw, sb.Header.PointerToRawData);
-                Block block = CreateBlock(sb);
-                byte[] bytes = block.ToByteArray();
-                foreach (uint reloc in block.Relocations)
+                var block = CreateBlock(sb);
+                var bytes = block.ToByteArray();
+                for (int j = 0; j < block.Relocations.Length; j++)
                 {
+                    var reloc = block.Relocations[j];
                     uint v = BitConverter.ToUInt32(bytes, (int)reloc);
                     Util.SetUInt(bytes, (int)reloc, v + Specific.ImageBase);
                     //Console.WriteLine("reloc[{0:X16}]{1:X16}", reloc, v);
@@ -205,22 +200,22 @@ namespace Girl.PE
             if (len > 0) bw.Write(new byte[len]);
         }
 
-        public static void Write(BinaryWriter bw, OpCode[] ops)
+        public static void WriteCodes(BinaryWriter bw, OpCode[] ops)
         {
-            foreach (OpCode op in ops)
+            for (int i = 0; i < ops.Length; i++)
             {
-                bw.Write(op.GetCodes());
+                bw.Write(ops[i].GetCodes());
             }
         }
 
-        public static void Write(BinaryWriter bw, string s)
+        public static void WriteString(BinaryWriter bw, string s)
         {
             bw.Write(s.ToCharArray());
         }
 
-        public static void Write(BinaryWriter bw, int pad, string s)
+        public static void WritePadString(BinaryWriter bw, int pad, string s)
         {
-            Write(bw, s);
+            WriteString(bw, s);
             int len = pad - s.Length;
             if (len > 0) bw.Write(new byte[len]);
         }

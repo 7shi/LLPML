@@ -36,7 +36,7 @@ namespace Girl.LLPML
             if (strings.ContainsKey(s)) return strings[s];
 
             var block = new Girl.Binary.Block();
-            block.AddBytes(Module.DefaultEncoding.GetBytes(s + "\0"));
+            block.AddBytes(Module.EncodeString(s));
             var type = Val32.NewB(0, true);
             var ret = strings[s] = AddData("string_constant", s, type, 2, s.Length, block);
             type.Reference = GetTypeObject(Root.GetStruct("string"));
@@ -127,7 +127,7 @@ namespace Girl.LLPML
             db.Block.AddInt(len);
             var offset = db.Block.Length;
             db.Block.AddBlock(data);
-            Module.Data.Add(category, name, db);
+            Module.Data.AddDataBlock(category, name, db);
             return Val32.New2(db.Address, Val32.New(offset));
         }
 

@@ -29,6 +29,17 @@ namespace Girl.PE
         public uint NumberOfSymbols = 0;
         public ushort OptionalHeaderSize = 0xe0;
         public ushort Characteristics = 0x10e;
+
+        public override void WriteBlock(Block block)
+        {
+            block.AddUShort(Machine);
+            block.AddUShort(NumberOfSections);
+            block.AddUInt(TimeDateStamp);
+            block.AddUInt(PointerToSymbolTable);
+            block.AddUInt(NumberOfSymbols);
+            block.AddUShort(OptionalHeaderSize);
+            block.AddUShort(Characteristics);
+        }
     }
 
     public class PEHeaderStandardFields : HeaderBase
@@ -42,6 +53,19 @@ namespace Girl.PE
         public uint EntryPoint;
         public uint BaseOfCode;
         public uint BaseOfData;
+
+        public override void WriteBlock(Block block)
+        {
+            block.AddUShort(Magic);
+            block.AddByte(LMajor);
+            block.AddByte(LMinor);
+            block.AddUInt(CodeSize);
+            block.AddUInt(InitializedDataSize);
+            block.AddUInt(UninitializedDataSize);
+            block.AddUInt(EntryPoint);
+            block.AddUInt(BaseOfCode);
+            block.AddUInt(BaseOfData);
+        }
     }
 
     public class PEHeaderWindowsNTSpecificFields : HeaderBase
@@ -67,6 +91,31 @@ namespace Girl.PE
         public uint HeapCommitSize = 0x1000;
         public uint LoaderFlags = 0;
         public uint NumberOfDataDirectories = 0x10;
+
+        public override void WriteBlock(Block block)
+        {
+            block.AddUInt(ImageBase);
+            block.AddUInt(SectionAlignment);
+            block.AddUInt(FileAlignment);
+            block.AddUShort(OSMajor);
+            block.AddUShort(OSMinor);
+            block.AddUShort(UserMajor);
+            block.AddUShort(UserMinor);
+            block.AddUShort(SubSysMajor);
+            block.AddUShort(SubSysMinor);
+            block.AddUInt(Reserved);
+            block.AddUInt(ImageSize);
+            block.AddUInt(HeaderSize);
+            block.AddUInt(FileChecksum);
+            block.AddUShort(SubSystem);
+            block.AddUShort(DLLFlags);
+            block.AddUInt(StackReserveSize);
+            block.AddUInt(StackCommitSize);
+            block.AddUInt(HeapReserveSize);
+            block.AddUInt(HeapCommitSize);
+            block.AddUInt(LoaderFlags);
+            block.AddUInt(NumberOfDataDirectories);
+        }
     }
 
     public class PEHeaderDataDirectories : HeaderBase
@@ -87,6 +136,26 @@ namespace Girl.PE
         public Table DelayImportDescriptor;
         public Table CLIHeader;
         public Table Reserved;
+
+        public override void WriteBlock(Block block)
+        {
+            ExportTable.WriteBlock(block);
+            ImportTable.WriteBlock(block);
+            ResourceTable.WriteBlock(block);
+            ExceptionTable.WriteBlock(block);
+            CertificateTable.WriteBlock(block);
+            BaseRelocationTable.WriteBlock(block);
+            Debug.WriteBlock(block);
+            Copyright.WriteBlock(block);
+            GlobalPtr.WriteBlock(block);
+            TLSTable.WriteBlock(block);
+            LoadConfigTable.WriteBlock(block);
+            BoundImport.WriteBlock(block);
+            IAT.WriteBlock(block);
+            DelayImportDescriptor.WriteBlock(block);
+            CLIHeader.WriteBlock(block);
+            Reserved.WriteBlock(block);
+        }
     }
 
     public class SectionHeader : HeaderBase
@@ -107,6 +176,20 @@ namespace Girl.PE
         public ushort NumberOfRelocations = 0;
         public ushort NumberOfLinenumbers = 0;
         public uint Characteristics;
+
+        public override void WriteBlock(Block block)
+        {
+            block.AddString(name);
+            block.AddUInt(VirtualSize);
+            block.AddUInt(VirtualAddress);
+            block.AddUInt(SizeOfRawData);
+            block.AddUInt(PointerToRawData);
+            block.AddUInt(PointerToRelocations);
+            block.AddUInt(PointerToLinenumbers);
+            block.AddUShort(NumberOfRelocations);
+            block.AddUShort(NumberOfLinenumbers);
+            block.AddUInt(Characteristics);
+        }
     }
 
     public class ImportTable : HeaderBase
@@ -116,5 +199,14 @@ namespace Girl.PE
         public uint ForwarderChain = 0;
         public uint Name = 0;
         public uint ImportAddressTable = 0;
+
+        public override void WriteBlock(Block block)
+        {
+            block.AddUInt(ImportLookupTable);
+            block.AddUInt(DateTimeStamp);
+            block.AddUInt(ForwarderChain);
+            block.AddUInt(Name);
+            block.AddUInt(ImportAddressTable);
+        }
     }
 }

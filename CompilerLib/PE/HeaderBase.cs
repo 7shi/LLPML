@@ -9,37 +9,16 @@ namespace Girl.PE
     public struct Table
     {
         public uint Address, Size;
+
+        public void WriteBlock(Block block)
+        {
+            block.AddUInt(Address);
+            block.AddUInt(Size);
+        }
     }
 
     public abstract class HeaderBase : WriterBase
     {
-        public FieldInfo[] GetFields()
-        {
-            return this.GetType().GetFields(
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-        }
-
-        public override void WriteBlock(Block block)
-        {
-            foreach (FieldInfo fi in GetFields())
-            {
-                Object obj = fi.GetValue(this);
-                if (obj is Table)
-                {
-                    block.AddUInt(((Table)obj).Address);
-                    block.AddUInt(((Table)obj).Size);
-                }
-                else if (obj is byte) block.AddByte((byte)obj);
-                else if (obj is ushort) block.AddUShort((ushort)obj);
-                else if (obj is uint) block.AddUInt((uint)obj);
-                //else if (obj is long) block.Add((long)obj);
-                else if (obj is char[]) block.AddChars((char[])obj);
-                else if (obj is string) block.AddString((string)obj);
-                else if (obj is Val32) block.AddVal32((Val32)obj);
-                else throw new Exception("The method or operation is not implemented.");
-            }
-        }
-
         public static string Trim(string s)
         {
             int p = s.IndexOf('\0');
