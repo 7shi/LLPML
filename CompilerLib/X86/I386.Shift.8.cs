@@ -10,24 +10,24 @@ namespace Girl.X86
         // Shl, Shr, Sal, Sar
 
         public static OpCode ShlB(Reg8 op1, byte op2) { return ShiftB("shl", op1, op2); }
-        public static OpCode ShlB(Reg8 op1, Reg8 op2) { return ShiftB("shl", op1, op2); }
-        public static OpCode ShlB(Addr32 op1, byte op2) { return ShiftB("shl", op1, op2); }
-        public static OpCode ShlB(Addr32 op1, Reg8 op2) { return ShiftB("shl", op1, op2); }
+        public static OpCode ShlBR(Reg8 op1, Reg8 op2) { return ShiftBR("shl", op1, op2); }
+        public static OpCode ShlBA(Addr32 op1, byte op2) { return ShiftBA("shl", op1, op2); }
+        public static OpCode ShlBAR(Addr32 op1, Reg8 op2) { return ShiftBAR("shl", op1, op2); }
 
         public static OpCode ShrB(Reg8 op1, byte op2) { return ShiftB("shr", op1, op2); }
-        public static OpCode ShrB(Reg8 op1, Reg8 op2) { return ShiftB("shr", op1, op2); }
-        public static OpCode ShrB(Addr32 op1, byte op2) { return ShiftB("shr", op1, op2); }
-        public static OpCode ShrB(Addr32 op1, Reg8 op2) { return ShiftB("shr", op1, op2); }
+        public static OpCode ShrBR(Reg8 op1, Reg8 op2) { return ShiftBR("shr", op1, op2); }
+        public static OpCode ShrBA(Addr32 op1, byte op2) { return ShiftBA("shr", op1, op2); }
+        public static OpCode ShrBAR(Addr32 op1, Reg8 op2) { return ShiftBAR("shr", op1, op2); }
 
         public static OpCode SalB(Reg8 op1, byte op2) { return ShiftB("sal", op1, op2); }
-        public static OpCode SalB(Reg8 op1, Reg8 op2) { return ShiftB("sal", op1, op2); }
-        public static OpCode SalB(Addr32 op1, byte op2) { return ShiftB("sal", op1, op2); }
-        public static OpCode SalB(Addr32 op1, Reg8 op2) { return ShiftB("sal", op1, op2); }
+        public static OpCode SalBR(Reg8 op1, Reg8 op2) { return ShiftBR("sal", op1, op2); }
+        public static OpCode SalBA(Addr32 op1, byte op2) { return ShiftBA("sal", op1, op2); }
+        public static OpCode SalBAR(Addr32 op1, Reg8 op2) { return ShiftBAR("sal", op1, op2); }
 
         public static OpCode SarB(Reg8 op1, byte op2) { return ShiftB("sar", op1, op2); }
-        public static OpCode SarB(Reg8 op1, Reg8 op2) { return ShiftB("sar", op1, op2); }
-        public static OpCode SarB(Addr32 op1, byte op2) { return ShiftB("sar", op1, op2); }
-        public static OpCode SarB(Addr32 op1, Reg8 op2) { return ShiftB("sar", op1, op2); }
+        public static OpCode SarBR(Reg8 op1, Reg8 op2) { return ShiftBR("sar", op1, op2); }
+        public static OpCode SarBA(Addr32 op1, byte op2) { return ShiftBA("sar", op1, op2); }
+        public static OpCode SarBAR(Addr32 op1, Reg8 op2) { return ShiftBAR("sar", op1, op2); }
 
         public static OpCode ShiftB(string op, Reg8 op1, byte op2)
         {
@@ -53,7 +53,7 @@ namespace Girl.X86
                 return OpCode.NewB(Util.GetBytes2(0xc0, b), op2);
         }
 
-        public static OpCode ShiftB(string op, Reg8 op1, Reg8 op2)
+        public static OpCode ShiftBR(string op, Reg8 op1, Reg8 op2)
         {
             byte b;
             switch (op)
@@ -77,7 +77,7 @@ namespace Girl.X86
                 return OpCode.NewBytes(Util.GetBytes2(0xd2, b));
         }
 
-        public static OpCode ShiftB(string op, Addr32 op1, byte op2)
+        public static OpCode ShiftBA(string op, Addr32 op1, byte op2)
         {
             Addr32 ad;
             switch (op)
@@ -101,7 +101,7 @@ namespace Girl.X86
                 return OpCode.NewBA(Util.GetBytes1(0xc0), op2, ad);
         }
 
-        public static OpCode ShiftB(string op, Addr32 op1, Reg8 op2)
+        public static OpCode ShiftBAR(string op, Addr32 op1, Reg8 op2)
         {
             Addr32 ad;
             switch (op)

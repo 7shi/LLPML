@@ -74,7 +74,7 @@ namespace Girl.LLPML
             codes.Add(I386.MovR(Reg32.EAX, Val32.New(255)));
             codes.Add(l2);
             codes.Add(I386.Mov(Reg32.ECX, Reg32.EAX));
-            codes.Add(I386.Shift(shift, dest, Reg8.CL));
+            codes.Add(I386.ShiftAR(shift, dest, Reg8.CL));
             codes.Add(last);
         }
     }
