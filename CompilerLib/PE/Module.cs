@@ -12,10 +12,10 @@ namespace Girl.PE
         public DOSHeader DOSHeader = new DOSHeader();
         public OpCode[] DOSStub = new[]
             {
-                I8086.Push(SegReg.CS),
-                I8086.Pop(SegReg.DS),
+                I8086.PushS(SegReg.CS),
+                I8086.PopS(SegReg.DS),
                 I8086.Mov(Reg16.DX, 0x000e),
-                I8086.Mov(Reg8.AH, 0x09),
+                I8086.MovB(Reg8.AH, 0x09),
                 I8086.Int(0x21),
                 I8086.Mov(Reg16.AX, 0x4c01),
                 I8086.Int(0x21),

@@ -9,12 +9,7 @@ namespace Girl.X86
 {
     public class OpCodes
     {
-        private ArrayList list;
-
-        public OpCodes()
-        {
-            list = new ArrayList();
-        }
+        private ArrayList list = new ArrayList();
 
         public void Add(OpCode op)
         {

@@ -12,7 +12,7 @@ namespace Girl.X86
             return OpCode.NewBytes(Util.GetBytes1((byte)(0x50 + (int)op1)));
         }
 
-        public static OpCode Push(SegReg op1)
+        public static OpCode PushS(SegReg op1)
         {
             switch (op1)
             {
@@ -29,7 +29,7 @@ namespace Girl.X86
             return OpCode.NewBytes(Util.GetBytes1((byte)(0x58 + (int)op1)));
         }
 
-        public static OpCode Pop(SegReg op1)
+        public static OpCode PopS(SegReg op1)
         {
             switch (op1)
             {
@@ -46,7 +46,7 @@ namespace Girl.X86
             return OpCode.NewW(Util.GetBytes1((byte)(0xb8 + (int)op1)), op2);
         }
 
-        public static OpCode Mov(Reg8 op1, byte op2)
+        public static OpCode MovB(Reg8 op1, byte op2)
         {
             return OpCode.NewB(Util.GetBytes1((byte)(0xb0 + (int)op1)), op2);
         }
