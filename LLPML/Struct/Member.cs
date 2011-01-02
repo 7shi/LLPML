@@ -38,8 +38,8 @@ namespace Girl.LLPML.Struct
         public Member Child { get; protected set; }
 
         public Member(BlockBase parent, string name)
-            : base(parent)
         {
+            Parent = parent;
             this.name = name;
         }
 
@@ -49,7 +49,7 @@ namespace Girl.LLPML.Struct
             if (st == null)
                 throw Abort("can not find member: {0}", name);
 
-            var mem = st.GetMember(name);
+            var mem = st.GetMemberDecl(name);
             if (mem != null && mem.IsStatic)
                 return Addr32.NewAd(mem.Address);
 
@@ -188,7 +188,7 @@ namespace Girl.LLPML.Struct
                 var st = GetTargetStruct();
                 if (st == null) return null;
 
-                var m = st.GetMember(name);
+                var m = st.GetMemberDecl(name);
                 if (m != null) return m.Type;
 
                 var f = st.GetFunction(name);
@@ -256,7 +256,7 @@ namespace Girl.LLPML.Struct
             var st = GetTargetStruct();
             if (st == null) return null;
 
-            var m = st.GetMember(name);
+            var m = st.GetMemberDecl(name);
             if (m != null) return null;
 
             var f = st.GetFunction(name);

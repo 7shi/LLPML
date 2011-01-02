@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -18,7 +19,7 @@ namespace Girl.LLPML
 
         public Func<string, TextReader> StreamDelegate;
 
-        private List<string> included = new List<string>();
+        private StringCollection included = new StringCollection();
 
         private Stack<string> sources = new Stack<string>();
         public string Source

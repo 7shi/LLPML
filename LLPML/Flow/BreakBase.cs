@@ -21,11 +21,7 @@ namespace Girl.LLPML
             UsingPointers = list.ToArray();
         }
 
-        public BreakBase()
-        {
-        }
-
-        public BreakBase(BlockBase parent)
+        protected void init(BlockBase parent)
         {
             Parent = parent;
             SetUsingPointers();

@@ -9,7 +9,12 @@ namespace Girl.LLPML
 {
     public class While : Do
     {
-        public While(BlockBase parent) : base(parent) { }
+        public static new While New(BlockBase parent)
+        {
+            var ret = new While();
+            ret.init(parent);
+            return ret;
+        }
 
         protected override void BeforeAddCodes(OpModule codes)
         {

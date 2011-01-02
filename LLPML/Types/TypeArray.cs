@@ -90,7 +90,7 @@ namespace Girl.LLPML
         }
 
         public TypeArray(TypeBase type, int count)
-            : this(type, new IntValue(count))
+            : this(type, IntValue.New(count))
         {
         }
     }

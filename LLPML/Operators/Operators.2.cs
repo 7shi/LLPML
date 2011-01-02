@@ -7,10 +7,9 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Add : Operator
+    public abstract class Operator2 : Operator
     {
-        public override string Tag { get { return "add"; } }
-        public Add(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
+        protected abstract int Calculate(int a, int b);
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
@@ -63,72 +62,117 @@ namespace Girl.LLPML
                 if (iv == null) return null;
                 ret = Calculate(ret, iv.Value);
             }
-            return new IntValue(ret);
+            return IntValue.New(ret);
         }
-
-        protected virtual int Calculate(int a, int b) { return a + b; }
     }
 
-    public class Sub : Add
+    public class Add : Operator2
+    {
+        public override string Tag { get { return "add"; } }
+        protected override int Calculate(int a, int b) { return a + b; }
+
+        public static Add New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Add(), parent, arg1, arg2) as Add;
+        }
+    }
+
+    public class Sub : Operator2
     {
         public override string Tag { get { return "sub"; } }
-        public Sub(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a - b; }
+
+        public static Sub New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Sub(), parent, arg1, arg2) as Sub;
+        }
     }
 
-    public class And : Add
+    public class And : Operator2
     {
         public override string Tag { get { return "and"; } }
-        public And(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a & b; }
+
+        public static And New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new And(), parent, arg1, arg2) as And;
+        }
     }
 
-    public class Or : Add
+    public class Or : Operator2
     {
         public override string Tag { get { return "or"; } }
-        public Or(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a | b; }
+
+        public static Or New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Or(), parent, arg1, arg2) as Or;
+        }
     }
 
-    public class Xor : Add
+    public class Xor : Operator2
     {
         public override string Tag { get { return "xor"; } }
-        public Xor(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a ^ b; }
+
+        public static Xor New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Xor(), parent, arg1, arg2) as Xor;
+        }
     }
 
-    public class ShiftLeft : Add
+    public class ShiftLeft : Operator2
     {
         public override string Tag { get { return "shift-left"; } }
-        public ShiftLeft(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a << b; }
+
+        public static ShiftLeft New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new ShiftLeft(), parent, arg1, arg2) as ShiftLeft;
+        }
     }
 
-    public class ShiftRight : Add
+    public class ShiftRight : Operator2
     {
         public override string Tag { get { return "shift-right"; } }
-        public ShiftRight(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a >> b; }
+
+        public static ShiftRight New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new ShiftRight(), parent, arg1, arg2) as ShiftRight;
+        }
     }
 
-    public class Mul : Add
+    public class Mul : Operator2
     {
         public override string Tag { get { return "mul"; } }
-        public Mul(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a * b; }
+
+        public static Mul New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Mul(), parent, arg1, arg2) as Mul;
+        }
     }
 
-    public class Div : Add
+    public class Div : Operator2
     {
         public override string Tag { get { return "div"; } }
-        public Div(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a / b; }
+
+        public static Div New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Div(), parent, arg1, arg2) as Div;
+        }
     }
 
-    public class Mod : Add
+    public class Mod : Operator2
     {
         public override string Tag { get { return "mod"; } }
-        public Mod(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override int Calculate(int a, int b) { return a % b; }
+
+        public static Mod New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Mod(), parent, arg1, arg2) as Mod;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -27,8 +28,8 @@ namespace Girl.LLPML
         {
             this.target = target;
             this.args.AddRange(args);
-            if (string.IsNullOrEmpty(name) && target is Struct.Member)
-                this.name = (target as Struct.Member).GetName();
+            if (string.IsNullOrEmpty(name) && target is Member)
+                this.name = (target as Member).GetName();
         }
 
         public Call(BlockBase parent, NodeBase val, NodeBase target, params NodeBase[] args)
@@ -41,9 +42,9 @@ namespace Girl.LLPML
 
         public NodeBase GetFunction(OpModule codes, NodeBase target, out List<NodeBase> args)
         {
-            if (val == null && target is Struct.Member)
+            if (val == null && target is Member)
             {
-                var mem = target as Struct.Member;
+                var mem = target as Member;
                 var memf = mem.GetFunction();
                 if (memf == null)
                     memf = Parent.GetFunction(mem.GetName());
@@ -80,25 +81,25 @@ namespace Girl.LLPML
                 if (ret == null)
                     throw Abort("undefined function: {0}", name);
                 else if (ret.HasThis)
-                    return GetFunction(codes, new Struct.This(Parent), out args);
+                    return GetFunction(codes, This.New(Parent), out args);
                 args = this.args;
                 return ret;
             }
 
-            Struct.Define st = Types.GetStruct(target.Type);
+            var st = Types.GetStruct(target.Type);
             if (st != null)
             {
                 ret = st.GetFunction(name);
                 if (ret == null)
                 {
-                    var mem = st.GetMember(name);
+                    var mem = st.GetMemberDecl(name);
                     if (mem != null)
                     {
                         args = this.args;
-                        var mem2 = new Struct.Member(Parent, name);
-                        if (target is Struct.Member)
+                        var mem2 = new Member(Parent, name);
+                        if (target is Member)
                         {
-                            var mem3 = (target as Struct.Member).Duplicate();
+                            var mem3 = (target as Member).Duplicate();
                             mem3.Append(mem2);
                             return mem3;
                         }
@@ -123,9 +124,9 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
-            List<NodeBase> args = new List<NodeBase>();
-            if (this.val == null && target is Struct.Member)
-                args.Add((target as Struct.Member).GetTarget());
+            var args = new List<NodeBase>();
+            if (this.val == null && target is Member)
+                args.Add((target as Member).GetTarget());
             else if (target != null)
                 args.Add(target);
             args.AddRange(this.args);
@@ -140,7 +141,7 @@ namespace Girl.LLPML
             if (f is Function)
             {
                 (f.Type as TypeFunction).CheckArgs(this, args_array);
-                AddCodes(codes, f as Function, args_array);
+                AddCallCodes(codes, f as Function, args_array);
                 return;
             }
 
@@ -152,7 +153,7 @@ namespace Girl.LLPML
             bool cleanup = NeedsDtor(val);
             if (cleanup)
                 codes.Add(I386.SubR(Reg32.ESP, Val32.New(4)));
-            AddCodes(codes, args_array, callType, delegate
+            AddCallCodes2(codes, args_array, callType, delegate
             {
                 if (!cleanup)
                 {
@@ -182,9 +183,9 @@ namespace Girl.LLPML
             codes.AddCodes(op, dest);
         }
 
-        public static void AddCodes(OpModule codes, Function f, NodeBase[] args)
+        public static void AddCallCodes(OpModule codes, Function f, NodeBase[] args)
         {
-            AddCodes(codes, args, f.CallType, delegate
+            AddCallCodes2(codes, args, f.CallType, delegate
             {
                 codes.Add(I386.CallD(f.First));
             });
@@ -197,7 +198,7 @@ namespace Girl.LLPML
                 var t = arg.Type;
                 if (t != null) return t.NeedsDtor;
             }
-            else if (arg is Struct.Member)
+            else if (arg is Member)
             {
                 var t = arg.Type;
                 if (t is TypeDelegate) return t.NeedsDtor;
@@ -205,7 +206,7 @@ namespace Girl.LLPML
             return false;
         }
 
-        public static void AddCodes(
+        public static void AddCallCodes2(
             OpModule codes, NodeBase[] args, CallType type, Action delg)
         {
             var args2 = args.Clone() as NodeBase[];

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 
 namespace Girl.LLPML
 {
@@ -93,7 +94,7 @@ namespace Girl.LLPML
             return ToVarType(GetType(parent, type));
         }
 
-        public static Struct.Define GetStruct(TypeBase t)
+        public static Define GetStruct(TypeBase t)
         {
             if (t == null)
                 return null;

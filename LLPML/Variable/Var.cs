@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -16,26 +17,27 @@ namespace Girl.LLPML
         public override TypeBase Type { get { return Reference.Type; } }
         public VarDeclare Reference { get; protected set; }
 
-        public Var() { }
-        public Var(BlockBase parent) { Parent = parent; }
-
-        public Var(BlockBase parent, VarDeclare var)
+        public static Var New(BlockBase parent, VarDeclare var)
         {
-            Parent = parent;
-            name = var.Name;
-            Reference = var;
+            var ret = new Var();
+            ret.Parent = parent;
+            ret.name = var.Name;
+            ret.Reference = var;
+            return ret;
         }
 
-        public Var(BlockBase parent, string name)
+        public static Var NewName(BlockBase parent, string name)
         {
-            Parent = parent;
-            this.name = name;
-            Reference = parent.GetVar(name);
-            if (Reference == null)
-                throw Abort("undefined pointer: " + name);
+            var ret = new Var();
+            ret.Parent = parent;
+            ret.name = name;
+            ret.Reference = parent.GetVar(name);
+            if (ret.Reference == null)
+                throw ret.Abort("undefined pointer: " + name);
+            return ret;
         }
 
-        public virtual Struct.Define GetStruct()
+        public virtual Define GetStruct()
         {
             return Types.GetStruct(Type);
         }

@@ -13,7 +13,10 @@ namespace Girl.LLPML
         public override string Tag { get { return "or-else"; } }
         public override TypeBase Type { get { return TypeBool.Instance; } }
 
-        public OrElse(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
+        public static OrElse New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new OrElse(), parent, arg1, arg2) as OrElse;
+        }
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
@@ -45,7 +48,10 @@ namespace Girl.LLPML
                 if (iv == null) return null;
                 ret = Calculate(ret, iv.Value == 0 ? false : true);
             }
-            return new IntValue(ret ? 1 : 0);
+            if (ret)
+                return IntValue.New(1);
+            else
+                return IntValue.New(0);
         }
 
         protected bool Calculate(bool a, bool b) { return a || b; }

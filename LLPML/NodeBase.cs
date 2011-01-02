@@ -29,20 +29,24 @@ namespace Girl.LLPML
 
         public virtual TypeBase Type { get { return null; } }
 
-        public SrcInfo SrcInfo { get; set; }
-
-        private Parsing.SrcInfo GetSrcInfo()
+        private SrcInfo srcInfo;
+        public SrcInfo SrcInfo
         {
-            var ret = SrcInfo;
-            if (ret != null) return ret;
-
-            if (Parent == null) return null;
-            return Parent.GetSrcInfo();
+            get
+            {
+                if (srcInfo != null)
+                    return srcInfo;
+                else if (Parent != null)
+                    return Parent.SrcInfo;
+                else
+                    return null;
+            }
+            set { srcInfo = value; }
         }
 
         public Exception Abort(string format, params object[] args)
         {
-            return AbortInfo(GetSrcInfo(), format, args);
+            return AbortInfo(SrcInfo, format, args);
         }
 
         public Exception AbortInfo(SrcInfo si, string format, params object[] args)

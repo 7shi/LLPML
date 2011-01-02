@@ -18,7 +18,12 @@ namespace Girl.LLPML
         public override bool AcceptsContinue { get { return true; } }
         public override Val32 Continue { get { return Block.Last; } }
 
-        public For(BlockBase parent) : base(parent) { }
+        public static For New(BlockBase parent)
+        {
+            var ret = new For();
+            ret.init(parent);
+            return ret;
+        }
 
         protected override void BeforeAddCodes(OpModule codes)
         {
@@ -36,7 +41,7 @@ namespace Girl.LLPML
             AddSentence(Block);
             if (Loop != null) AddSentence(Loop);
             if (Cond == null)
-                Cond = new Cond(this, new IntValue(1));
+                Cond = Cond.New(this, IntValue.New(1));
             Cond.First = Block.First;
             AddSentence(Cond);
             base.AddCodes(codes);

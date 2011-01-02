@@ -8,14 +8,11 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    // operator_X(a, b, c) => a X b && b X c
-
-    public class Equal : Operator
+    public abstract class OperatorCmp : Operator
     {
-        public override string Tag { get { return "equal"; } }
-        public override TypeBase Type { get { return TypeBool.Instance; } }
+        protected abstract bool Calculate(int a, int b);
 
-        public Equal(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
+        public override TypeBase Type { get { return TypeBool.Instance; } }
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
@@ -58,46 +55,75 @@ namespace Girl.LLPML
                 var a = IntValue.GetValue(values[i]);
                 var b = IntValue.GetValue(values[i + 1]);
                 if (a == null || b == null) return null;
-                if (!Calculate(a.Value, b.Value)) return new IntValue(0);
+                if (!Calculate(a.Value, b.Value)) return IntValue.New(0);
             }
-            return new IntValue(1);
+            return IntValue.New(1);
         }
-
-        protected virtual bool Calculate(int a, int b) { return a == b; }
     }
 
-    public class NotEqual : Equal
+    public class Equal : OperatorCmp
+    {
+        public override string Tag { get { return "equal"; } }
+        protected override bool Calculate(int a, int b) { return a == b; }
+
+        public static Equal New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Equal(), parent, arg1, arg2) as Equal;
+        }
+    }
+
+    public class NotEqual : OperatorCmp
     {
         public override string Tag { get { return "not-equal"; } }
-        public NotEqual(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override bool Calculate(int a, int b) { return a != b; }
+
+        public static NotEqual New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new NotEqual(), parent, arg1, arg2) as NotEqual;
+        }
     }
 
-    public class Less : Equal
+    public class Less : OperatorCmp
     {
         public override string Tag { get { return "less"; } }
-        public Less(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override bool Calculate(int a, int b) { return a < b; }
+
+        public static Less New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Less(), parent, arg1, arg2) as Less;
+        }
     }
 
-    public class Greater : Equal
+    public class Greater : OperatorCmp
     {
         public override string Tag { get { return "greater"; } }
-        public Greater(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override bool Calculate(int a, int b) { return a > b; }
+
+        public static Greater New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new Greater(), parent, arg1, arg2) as Greater;
+        }
     }
 
-    public class LessEqual : Equal
+    public class LessEqual : OperatorCmp
     {
         public override string Tag { get { return "less-equal"; } }
-        public LessEqual(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override bool Calculate(int a, int b) { return a <= b; }
+
+        public static LessEqual New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new LessEqual(), parent, arg1, arg2) as LessEqual;
+        }
     }
 
-    public class GreaterEqual : Equal
+    public class GreaterEqual : OperatorCmp
     {
         public override string Tag { get { return "greater-equal"; } }
-        public GreaterEqual(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         protected override bool Calculate(int a, int b) { return a >= b; }
+
+        public static GreaterEqual New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new GreaterEqual(), parent, arg1, arg2) as GreaterEqual;
+        }
     }
 }

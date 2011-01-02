@@ -17,7 +17,12 @@ namespace Girl.LLPML
         public override bool AcceptsContinue { get { return true; } }
         public override Val32 Continue { get { return Block.Last; } }
 
-        public Do(BlockBase parent) : base(parent) { }
+        public static Do New(BlockBase parent)
+        {
+            var ret = new Do();
+            ret.init(parent);
+            return ret;
+        }
 
         public override void AddCodes(OpModule codes)
         {

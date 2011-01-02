@@ -54,8 +54,8 @@ namespace Girl.LLPML
                 = funcs["less"]
                 = funcs["less-equal"]
                 = (codes, dest) => codes.Add(I386.CmpAR(dest, Reg32.EAX));
-            conds["equal"] = new CondPair(Cc.E, Cc.NE);
-            conds["not-equal"] = new CondPair(Cc.NE, Cc.E);
+            conds["equal"] = CondPair.New(Cc.E, Cc.NE);
+            conds["not-equal"] = CondPair.New(Cc.NE, Cc.E);
         }
 
         public static void Shift(string shift, OpModule codes, Addr32 dest)

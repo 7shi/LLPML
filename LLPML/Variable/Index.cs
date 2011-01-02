@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -13,11 +14,13 @@ namespace Girl.LLPML
         private NodeBase target;
         private NodeBase order;
 
-        public Index(BlockBase parent, NodeBase target, NodeBase order)
-            : base(parent)
+        public static Index New(BlockBase parent, NodeBase target, NodeBase order)
         {
-            this.target = target;
-            this.order = order;
+            var ret = new Index();
+            ret.Parent = parent;
+            ret.target = target;
+            ret.order = order;
+            return ret;
         }
 
         public override Addr32 GetAddress(OpModule codes)
@@ -80,9 +83,9 @@ namespace Girl.LLPML
                     return TypeConstChar.Instance;
                 else if (t != null)
                     return t.Type;
-                if (target is Struct.Member)
+                if (target is Member)
                     throw Abort("index: undefined member: {0}",
-                        (target as Struct.Member).FullName);
+                        (target as Member).FullName);
                 else if (target is NodeBase)
                     throw Abort("index: undefined symbol: {0}",
                         (target as NodeBase).Name);

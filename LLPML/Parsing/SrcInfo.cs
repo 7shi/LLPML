@@ -11,11 +11,13 @@ namespace Girl.LLPML.Parsing
         public int Number { get; private set; }
         public int Position { get; private set; }
 
-        public SrcInfo(string source, int number, int position)
+        public static SrcInfo New(string source, int number, int position)
         {
-            Source = source;
-            Number = number;
-            Position = position;
+            var ret = new SrcInfo();
+            ret.Source = source;
+            ret.Number = number;
+            ret.Position = position;
+            return ret;
         }
 
         public override string ToString()

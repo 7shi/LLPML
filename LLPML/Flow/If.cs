@@ -20,15 +20,6 @@ namespace Girl.LLPML
             public Val32 First { get { return first.Address; } }
 
             public CondBlock(If parent) { Parent = parent; }
-            public CondBlock(If parent, Cond cond) : this(parent, cond, null) { }
-            public CondBlock(If parent, Block block) : this(parent, null, block) { }
-
-            public CondBlock(If parent, Cond cond, Block block)
-                : this(parent)
-            {
-                Cond = cond;
-                Block = block;
-            }
 
             public override void AddCodes(OpModule codes)
             {
@@ -49,7 +40,12 @@ namespace Girl.LLPML
         private List<CondBlock> blocks = new List<CondBlock>();
         public List<CondBlock> Blocks { get { return blocks; } }
 
-        public If(BlockBase parent) : base(parent) { }
+        public static If New(BlockBase parent)
+        {
+            var ret = new If();
+            ret.init(parent);
+            return ret;
+        }
 
         public override void AddCodes(OpModule codes)
         {

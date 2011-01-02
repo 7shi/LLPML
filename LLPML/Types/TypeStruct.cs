@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.X86;
 
 namespace Girl.LLPML
@@ -67,8 +68,8 @@ namespace Girl.LLPML
         public override void AddConstructor(OpModule codes)
         {
             var st = GetStruct();
-            var f1 = st.GetFunction(Struct.Define.Initializer);
-            var f2 = st.GetFunction(Struct.Define.Constructor);
+            var f1 = st.GetFunction(Define.Initializer);
+            var f2 = st.GetFunction(Define.Constructor);
             codes.Add(I386.CallD(f1.First));
             codes.Add(I386.CallD(f2.First));
         }
@@ -77,7 +78,7 @@ namespace Girl.LLPML
         public override bool NeedsDtor { get { return GetStruct().NeedsDtor; } }
         public override void AddDestructor(OpModule codes)
         {
-            var dtor = GetStruct().GetFunction(Struct.Define.Destructor);
+            var dtor = GetStruct().GetFunction(Define.Destructor);
             codes.Add(I386.CallD(dtor.First));
         }
 
@@ -88,7 +89,7 @@ namespace Girl.LLPML
             return ret != null;
         }
 
-        public Struct.Define GetStruct()
+        public Define GetStruct()
         {
             var ret = Parent.GetStruct(name);
             if (ret != null) return ret;

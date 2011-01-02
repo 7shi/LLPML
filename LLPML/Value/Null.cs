@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
@@ -10,10 +11,13 @@ namespace Girl.LLPML
 {
     public class Null : NodeBase
     {
-        public Null(BlockBase parent)
+        public static Null New(BlockBase parent, SrcInfo si)
         {
-            Parent = parent;
-            name = "null";
+            var ret = new Null();
+            ret.Parent = parent;
+            ret.name = "null";
+            ret.SrcInfo = si;
+            return ret;
         }
 
         public override TypeBase Type { get { return null; } }

@@ -4,18 +4,12 @@ using System.Text;
 using System.Xml;
 using Girl.PE;
 using Girl.X86;
+using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
-    public class Inc : VarOperator
+    public abstract class VarOperatorPre : VarOperator
     {
-        public override string Tag { get { return "inc"; } }
-
-        public override int Min { get { return 0; } }
-        public override int Max { get { return 0; } }
-
-        public Inc(BlockBase parent, NodeBase dest) : base(parent, dest) { }
-
         private Addr32 Calculate(OpModule codes)
         {
             var dest = Var.Get(this.dest);
@@ -52,18 +46,28 @@ namespace Girl.LLPML
         }
     }
 
-    public class Dec : Inc
+    public class Inc : VarOperatorPre
     {
-        public override string Tag { get { return "dec"; } }
-        public Dec(BlockBase parent, NodeBase dest) : base(parent, dest) { }
+        public override string Tag { get { return "inc"; } }
+
+        public static Inc New(BlockBase parent, NodeBase dest, SrcInfo si)
+        {
+            return Init0(new Inc(), parent, dest, si) as Inc;
+        }
     }
 
-    public class PostInc : Inc
+    public class Dec : VarOperatorPre
     {
-        public override string Tag { get { return "post-inc"; } }
+        public override string Tag { get { return "dec"; } }
 
-        public PostInc(BlockBase parent, NodeBase dest) : base(parent, dest) { }
+        public static Dec New(BlockBase parent, NodeBase dest, SrcInfo si)
+        {
+            return Init0(new Dec(), parent, dest, si) as Dec;
+        }
+    }
 
+    public abstract class VarOperatorPost : VarOperatorPre
+    {
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             var thisdest = Var.Get(this.dest);
@@ -88,9 +92,23 @@ namespace Girl.LLPML
         }
     }
 
-    public class PostDec : PostInc
+    public class PostInc : VarOperatorPost
+    {
+        public override string Tag { get { return "post-inc"; } }
+
+        public static PostInc New(BlockBase parent, NodeBase dest)
+        {
+            return Init0(new PostInc(), parent, dest, null) as PostInc;
+        }
+    }
+
+    public class PostDec : VarOperatorPost
     {
         public override string Tag { get { return "post-dec"; } }
-        public PostDec(BlockBase parent, NodeBase dest) : base(parent, dest) { }
+
+        public static PostDec New(BlockBase parent, NodeBase dest)
+        {
+            return Init0(new PostDec(), parent, dest, null) as PostDec;
+        }
     }
 }

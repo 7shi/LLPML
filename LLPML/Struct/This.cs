@@ -7,11 +7,13 @@ namespace Girl.LLPML.Struct
 {
     public class This : Var
     {
-        public This(BlockBase parent)
-            : base(parent)
+        public static This New(BlockBase parent)
         {
-            name = "this";
-            Reference = Parent.GetVar(name);
+            var ret = new This();
+            ret.Parent = parent;
+            ret.name = "this";
+            ret.Reference = parent.GetVar(ret.name);
+            return ret;
         }
     }
 }

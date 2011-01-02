@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.LLPML.Struct;
 
 namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
         // Expression ::= Factor (operator Factor)*
-        private NodeBase Expression()
+        private NodeBase ReadExpression()
         {
-            return Expression(0);
+            return ReadExpressionOrder(0);
         }
 
-        private NodeBase Expression(int order)
+        private NodeBase ReadExpressionOrder(int order)
         {
             if (!CanRead) throw Abort("式がありません。");
             if (order >= operators.Length) return Factor();
 
-            var ret = Expression(order + 1);
+            var ret = ReadExpressionOrder(order + 1);
             var si = SrcInfo;
 
             while (CanRead)
@@ -42,7 +43,7 @@ namespace Girl.LLPML.Parsing
         {
             if (Read() == "(")
             {
-                var cast = Cast();
+                var cast = ReadCast();
                 if (cast != null) return cast;
 
                 var g = Group();
@@ -57,7 +58,7 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) return null;
 
-            var ret = Expression();
+            var ret = ReadExpression();
             if (ret == null || !CanRead) return null;
             if (Read() != ")")
             {
@@ -83,21 +84,27 @@ namespace Girl.LLPML.Parsing
                         var v = Integer();
                         if (v != null)
                         {
-                            if (t == "-") return new IntValue(-v.Value) { SrcInfo = si };
-                            return v;
+                            if (t == "-")
+                            {
+                                var ret = IntValue.New(-v.Value);
+                                ret.SrcInfo = si;
+                                return ret;
+                            }
+                            else
+                                return v;
                         }
-                        var n = Expression(order);
-                        if (t == "-") return new Neg(parent, n) { SrcInfo = si };
+                        var n = ReadExpressionOrder(order);
+                        if (t == "-") return Neg.New(parent, n, si);
                         return n;
                     }
                 case "!":
-                    return new Not(parent, Expression(order)) { SrcInfo = si };
+                    return Not.New(parent, ReadExpressionOrder(order), si);
                 case "~":
-                    return new Rev(parent, Expression(order)) { SrcInfo = si };
+                    return Rev.New(parent, ReadExpressionOrder(order), si);
                 case "++":
-                    return new Inc(parent, Expression(order)) { SrcInfo = si };
+                    return Inc.New(parent, ReadExpressionOrder(order), si);
                 case "--":
-                    return new Dec(parent, Expression(order)) { SrcInfo = si };
+                    return Dec.New(parent, ReadExpressionOrder(order), si);
             }
             Rewind();
             return Value();
@@ -124,15 +131,19 @@ namespace Girl.LLPML.Parsing
 
             if (t == "::")
             {
-                var ret = Expression();
+                var ret = ReadExpression();
                 if (ret is NodeBase)
                     (ret as NodeBase).Parent = parent.Root;
                 return ret;
             }
 
             var v = parent.GetVar(t);
-            if (v != null && !(v.Parent is Struct.Define))
-                return new Var(parent, v) { SrcInfo = si };
+            if (v != null && !(v.Parent is Define))
+            {
+                var ret = Var.New(parent, v);
+                ret.SrcInfo = si;
+                return ret;
+            }
 
             var i = parent.GetInt(t);
             if (i != null) return i;
@@ -153,17 +164,21 @@ namespace Girl.LLPML.Parsing
             var si = SrcInfo;
             var t = Read();
             if (t == null) return null;
-            if (t.StartsWith("0x")) return new IntValue(t) { SrcInfo = si };
-
-            foreach (var ch in t)
+            IntValue ret;
+            if (!t.StartsWith("0x"))
             {
-                if (!char.IsDigit(ch))
+                foreach (var ch in t)
                 {
-                    Rewind();
-                    return null;
+                    if (!char.IsDigit(ch))
+                    {
+                        Rewind();
+                        return null;
+                    }
                 }
             }
-            return new IntValue(t) { SrcInfo = si };
+            ret = IntValue.NewString(t);
+            ret.SrcInfo = si;
+            return ret;
         }
 
         private StringValue String()
@@ -173,12 +188,16 @@ namespace Girl.LLPML.Parsing
             if (t == null) return null;
             if (t.EndsWith("\""))
             {
+                StringValue sv = null;
                 if (t.Length >= 2 && t.StartsWith("\""))
-                    return new StringValue(GetString(
-                        t.Substring(1, t.Length - 2))) { SrcInfo = si };
+                    sv = StringValue.New(GetString(t.Substring(1, t.Length - 2)));
                 else if (t.Length >= 3 && t.StartsWith("@\""))
-                    return new StringValue(
-                        t.Substring(2, t.Length - 3)) { SrcInfo = si };
+                    sv = StringValue.New(t.Substring(2, t.Length - 3));
+                if (sv != null)
+                {
+                    sv.SrcInfo = si;
+                    return sv;
+                }
             }
             Rewind();
             return null;
@@ -197,10 +216,10 @@ namespace Girl.LLPML.Parsing
             var s = GetString(t.Substring(1, t.Length - 2));
             if (s.Length != 1)
                 throw Abort("1文字ではありません: {0}", t);
-            return new CharValue(s[0]) { SrcInfo = si };
+            return CharValue.New(s[0], si);
         }
 
-        private Cast Cast()
+        private Cast ReadCast()
         {
             var si = SrcInfo;
             var type = Read();
@@ -224,7 +243,7 @@ namespace Girl.LLPML.Parsing
                         Rewind();
                 }
                 if (br2 == ")")
-                    return new Cast(parent, type, Expression()) { SrcInfo = si };
+                    return Cast.New(parent, type, ReadExpression(), si);
                 Rewind();
             }
             Rewind();

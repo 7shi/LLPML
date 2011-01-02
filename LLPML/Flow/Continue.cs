@@ -10,11 +10,16 @@ namespace Girl.LLPML
 {
     public class Continue : BreakBase
     {
-        public Continue(BlockBase parent) : base(parent) { }
+        public static Continue New(BlockBase parent)
+        {
+            var ret = new Continue();
+            ret.init(parent);
+            return ret;
+        }
 
         public bool CanContinue()
         {
-            for (BlockBase p = Parent; p != null; p = p.Parent)
+            for (var p = Parent; p != null; p = p.Parent)
             {
                 if (p is Function) return false;
                 if (p.AcceptsContinue) return true;
@@ -24,8 +29,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
-            BlockBase b = Parent;
-            VarDeclare[] ptrs = UsingPointers;
+            var b = Parent;
+            var ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)

@@ -29,8 +29,8 @@ namespace Girl.LLPML
                 codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
             };
-            conds["equal"] = new CondPair(Cc.NZ, Cc.Z);
-            conds["not-equal"] = new CondPair(Cc.Z, Cc.NZ);
+            conds["equal"] = CondPair.New(Cc.NZ, Cc.Z);
+            conds["not-equal"] = CondPair.New(Cc.Z, Cc.NZ);
 
             funcs["add"] = (codes, dest) => AddFunc(codes, dest, Add);
             funcs["add-char"] = (codes, dest) => AddFunc(codes, dest, Add + "_char");

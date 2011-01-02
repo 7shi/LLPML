@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -10,10 +11,10 @@ namespace Girl.LLPML.Parsing
     {
         private NodeBase[] Sentence()
         {
-            return Sentence(";");
+            return SentenceWith(";");
         }
 
-        private NodeBase[] Sentence(string separator)
+        private NodeBase[] SentenceWith(string separator)
         {
             if (!CanRead) throw Abort("文がありません。");
 
@@ -54,22 +55,22 @@ namespace Girl.LLPML.Parsing
                     Extern();
                     return null;
                 case "if":
-                    nb = If();
+                    nb = ReadIf();
                     break;
                 case "while":
-                    nb = While();
+                    nb = ReadWhile();
                     break;
                 case "for":
-                    nb = For();
+                    nb = ReadFor();
                     break;
                 case "switch":
-                    nb = Switch();
+                    nb = ReadSwitch();
                     break;
                 case "new":
                     {
-                        var n = New();
+                        var n = ReadNew();
                         n.SrcInfo = si;
-                        nb = new Expression(parent, n);
+                        nb = Expression.New(parent, n);
                         break;
                     }
             }
@@ -134,9 +135,8 @@ namespace Girl.LLPML.Parsing
 
         private NodeBase[] SentenceExpression()
         {
-            var si = SrcInfo;
-            var v = Expression();
-            var e = new Expression(parent, v) { SrcInfo = si };
+            var e = Expression.New(parent, ReadExpression());
+            e.SrcInfo = SrcInfo;
             return new NodeBase[] { e };
         }
 
@@ -145,21 +145,22 @@ namespace Girl.LLPML.Parsing
             switch (t)
             {
                 case "do":
-                    return Do();
+                    return ReadDo();
                 case "return":
                     if (CanRead && Peek() != ";")
-                        return new Return(parent, Expression());
-                    return new Return(parent);
+                        return Return.New(parent, ReadExpression());
+                    else
+                        return Return.New(parent, null);
                 case "break":
                     {
-                        var brk = new Break(parent);
+                        var brk = Break.New(parent);
                         if (!brk.CanBreak())
                             throw Abort("break: ここでは使用できません。");
                         return brk;
                     }
                 case "continue":
                     {
-                        var con = new Continue(parent);
+                        var con = Continue.New(parent);
                         if (!con.CanContinue())
                             throw Abort("continue: ここでは使用できません。");
                         return con;
@@ -168,7 +169,7 @@ namespace Girl.LLPML.Parsing
             return null;
         }
 
-        private Struct.Define StructDefine(string type)
+        private Define StructDefine(string type)
         {
             if (!CanRead) throw Abort("{0}: 名前が必要です。", type);
 
@@ -200,7 +201,7 @@ namespace Girl.LLPML.Parsing
             var ret = parent.GetStruct(name);
             var first = ret == null;
             if (first)
-                ret = new Struct.Define(parent, name, baseType);
+                ret = new Define(parent, name, baseType);
             else if (baseType != null)
             {
                 if (ret.BaseType == null)
@@ -266,7 +267,7 @@ namespace Girl.LLPML.Parsing
 
             var args = new NodeBase[autoArgs.Length];
             for (int i = 0; i < args.Length; i++)
-                args[i] = new Var(parent, autoArgs[i].Name);
+                args[i] = Var.NewName(parent, autoArgs[i].Name);
             return new Delegate(parent, f.CallType, args, f)
             {
                 SrcInfo = f.SrcInfo,
@@ -485,10 +486,10 @@ namespace Girl.LLPML.Parsing
 
         private Cond ReadCond(BlockBase parent, string type)
         {
-            return ReadCond(parent, type, "(", ")");
+            return ReadCondWith(parent, type, "(", ")");
         }
 
-        private Cond ReadCond(BlockBase parent, string type, string start, string end)
+        private Cond ReadCondWith(BlockBase parent, string type, string start, string end)
         {
             Check(type, start);
             if (Read() == end) return null;
@@ -496,7 +497,7 @@ namespace Girl.LLPML.Parsing
 
             var p = this.parent;
             this.parent = parent;
-            var ret = new Cond(parent, Expression());
+            var ret = Cond.New(parent, ReadExpression());
             this.parent = p;
 
             Check(type, end);
@@ -506,10 +507,10 @@ namespace Girl.LLPML.Parsing
 
         private Block ReadSentenceBlock(BlockBase parent, string type)
         {
-            return ReadSentenceBlock(parent, type, null, ";");
+            return ReadSentenceBlockWith(parent, type, null, ";");
         }
 
-        private Block ReadSentenceBlock(BlockBase parent, string type, BlockBase target, string separator)
+        private Block ReadSentenceBlockWith(BlockBase parent, string type, BlockBase target, string separator)
         {
             Block ret = null;
             var p = this.parent;
@@ -517,7 +518,7 @@ namespace Girl.LLPML.Parsing
             if (Peek() == "{")
             {
                 this.parent = parent;
-                var s = Sentence(separator);
+                var s = SentenceWith(separator);
                 if (s != null && s.Length == 1) ret = s[0] as Block;
             }
             else
@@ -525,7 +526,7 @@ namespace Girl.LLPML.Parsing
                 ret = new Block(parent);
                 if (target == null) target = ret;
                 this.parent = target;
-                var s = Sentence(separator);
+                var s = SentenceWith(separator);
                 if (s != null) ret.AddSentences(s);
             }
             if (ret == null)
@@ -534,17 +535,17 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private While While()
+        private While ReadWhile()
         {
-            var ret = new While(parent);
+            var ret = While.New(parent);
             ret.Cond = ReadCond(ret, "while");
             ret.Block = ReadSentenceBlock(ret, "while");
             return ret;
         }
 
-        private Do Do()
+        private Do ReadDo()
         {
-            var ret = new Do(parent);
+            var ret = Do.New(parent);
             ret.Block = ReadSentenceBlock(ret, "do");
             var t = Read();
             if (t != "while")
@@ -556,14 +557,14 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private If If()
+        private If ReadIf()
         {
-            var ret = new If(parent);
-            If(ret);
+            var ret = If.New(parent);
+            ReadIfInternal(ret);
             return ret;
         }
 
-        private void If(If target)
+        private void ReadIfInternal(If target)
         {
             var cb1 = new If.CondBlock(target);
             cb1.Cond = ReadCond(target, "if");
@@ -580,7 +581,7 @@ namespace Girl.LLPML.Parsing
             var t2 = Read();
             if (t2 == "if")
             {
-                If(target);
+                ReadIfInternal(target);
                 return;
             }
 
@@ -590,42 +591,42 @@ namespace Girl.LLPML.Parsing
             target.Blocks.Add(cb2);
         }
 
-        private For For()
+        private For ReadFor()
         {
             Check("for", "(");
-            var ret = new For(parent);
-            ret.Init = ReadSentenceBlock(ret, "for", ret, ";");
-            ret.Cond = ReadCond(ret, "for", "", ";");
+            var ret = For.New(parent);
+            ret.Init = ReadSentenceBlockWith(ret, "for", ret, ";");
+            ret.Cond = ReadCondWith(ret, "for", "", ";");
             if (Read() != ")")
             {
                 Rewind();
-                ret.Loop = ReadSentenceBlock(ret, "for", null, "");
+                ret.Loop = ReadSentenceBlockWith(ret, "for", null, "");
                 Check("for", ")");
             }
             ret.Block = ReadSentenceBlock(ret, "for");
             return ret;
         }
 
-        private Switch Switch()
+        private Switch ReadSwitch()
         {
             Check("switch", "(");
 
             var si = SrcInfo;
-            var expr = Expression() as NodeBase;
+            var expr = ReadExpression() as NodeBase;
             if (expr == null)
                 throw parent.AbortInfo(si, "switch: 値が必要です。");
 
             Check("switch", ")");
             Check("switch", "{");
 
-            var ret = new Switch(parent, expr);
-            Switch(ret);
+            var ret = Switch.New(parent, expr);
+            ReadCase(ret);
             return ret;
         }
 
-        private void Switch(Switch target)
+        private void ReadCase(Switch target)
         {
-            var scb = new Switch.CaseBlock();
+            var scb = new CaseBlock();
             for (; ; )
             {
                 var t = Read();
@@ -638,13 +639,13 @@ namespace Girl.LLPML.Parsing
                         if (scb.Block != null)
                         {
                             target.Blocks.Add(scb);
-                            scb = new Switch.CaseBlock();
+                            scb = new CaseBlock();
                         }
                         if (scb.Case == null)
-                            scb.Case = new Switch.Case(target);
+                            scb.Case = Case.New(target);
                         if (t == "case")
                         {
-                            var v = Expression() as NodeBase;
+                            var v = ReadExpression() as NodeBase;
                             if (v == null)
                                 throw Abort("case: 値が必要です。");
                             Check("case", ":");

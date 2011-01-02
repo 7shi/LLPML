@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using Girl.PE;
 using Girl.X86;
+using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
@@ -13,26 +14,21 @@ namespace Girl.LLPML
 
         protected NodeBase dest;
         protected List<NodeBase> values = new List<NodeBase>();
-        public NodeBase[] GetValues() { return values.ToArray(); }
 
-        public virtual int Min { get { return 1; } }
-        public virtual int Max { get { return int.MaxValue; } }
-
-        public VarOperator() { }
-        public VarOperator(BlockBase parent, NodeBase dest)
+        protected static VarOperator Init0(VarOperator op, BlockBase parent, NodeBase dest, SrcInfo si)
         {
-            Parent = parent;
-            this.dest = dest;
+            op.Parent = parent;
+            op.dest = dest;
+            if (si != null) op.SrcInfo = si;
+            return op;
         }
 
-        public VarOperator(BlockBase parent, NodeBase dest, params NodeBase[] values)
-            : this(parent, dest)
+        protected static VarOperator Init1(VarOperator op, BlockBase parent, NodeBase dest, NodeBase arg)
         {
-            if (values.Length < Min)
-                throw Abort("too few operands");
-            else if (values.Length > Max)
-                throw Abort("too many operands");
-            this.values.AddRange(values);
+            op.Parent = parent;
+            op.dest = dest;
+            if (arg != null) op.values.Add(arg);
+            return op;
         }
 
         protected TypeBase.Func GetFunc()

@@ -57,10 +57,10 @@ namespace Girl.LLPML
 
         public static void AddComparers(Dictionary<string, CondPair> conds)
         {
-            conds["greater"] = new CondPair(Cc.A, Cc.NA);
-            conds["greater-equal"] = new CondPair(Cc.AE, Cc.NAE);
-            conds["less"] = new CondPair(Cc.B, Cc.NB);
-            conds["less-equal"] = new CondPair(Cc.BE, Cc.NBE);
+            conds["greater"] = CondPair.New(Cc.A, Cc.NA);
+            conds["greater-equal"] = CondPair.New(Cc.AE, Cc.NAE);
+            conds["less"] = CondPair.New(Cc.B, Cc.NB);
+            conds["less-equal"] = CondPair.New(Cc.BE, Cc.NBE);
         }
     }
 

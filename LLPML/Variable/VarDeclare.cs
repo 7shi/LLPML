@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -19,7 +20,7 @@ namespace Girl.LLPML
         public virtual bool NeedsCtor { get { return type.NeedsCtor; } }
         public virtual bool NeedsDtor { get { return type.NeedsDtor; } }
 
-        public VarDeclare() { }
+        protected VarDeclare() { }
 
         public VarDeclare(BlockBase parent, string name)
         {
@@ -56,11 +57,11 @@ namespace Girl.LLPML
         protected virtual void Init()
         {
             if (type == null) type = TypeVar.Instance;
-            IsMember = Parent is Struct.Define;
+            IsMember = Parent is Define;
             if (Parent.Parent == null) IsStatic = true;
         }
 
-        public Struct.Define GetStruct()
+        public Define GetStruct()
         {
             var ret = Types.GetStruct(Type);
             if (ret != null) return ret;
@@ -71,7 +72,7 @@ namespace Girl.LLPML
         {
             if (IsMember && !IsStatic)
             {
-                var thisptr = new Struct.This(scope);
+                var thisptr = This.New(scope);
                 codes.Add(I386.MovRA(Var.DestRegister, thisptr.GetAddress(codes)));
                 return Addr32.NewAd(Address);
             }
@@ -94,7 +95,7 @@ namespace Girl.LLPML
         private void AddConstructor(OpModule codes)
         {
             if (!type.NeedsCtor) return;
-            var pst = Parent as Struct.Define;
+            var pst = Parent as Define;
             if (pst != null && pst.IsClass)
             {
                 var tr = type as TypeReference;
@@ -116,7 +117,7 @@ namespace Girl.LLPML
 
             if (Value != null)
             {
-                var s = new Set(Parent, new Var(Parent, this), Value);
+                var s = Set.New(Parent, Var.New(Parent, this), Value);
                 s.AddCodes(codes);
             }
         }

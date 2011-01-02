@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
@@ -25,12 +26,15 @@ namespace Girl.LLPML
             }
         }
 
-        public Cast(BlockBase parent, string type, NodeBase source)
+        public static Cast New(BlockBase parent, string type, NodeBase source, SrcInfo si)
         {
-            this.Parent = parent;
-            name = "__cast";
-            this.type = type;
-            Source = source;
+            var ret = new Cast();
+            ret.Parent = parent;
+            ret.name = "__cast";
+            ret.type = type;
+            ret.Source = source;
+            ret.SrcInfo = si;
+            return ret;
         }
 
         public override Addr32 GetAddress(OpModule codes)

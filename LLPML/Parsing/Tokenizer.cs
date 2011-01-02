@@ -31,17 +31,12 @@ namespace Girl.LLPML.Parsing
         private string[] reserved;
         public string[] Reserved { set { reserved = value; } }
 
-        public Tokenizer(string file, string src)
+        public static Tokenizer New(string file, string src)
         {
-            this.file = file;
-            Source = src;
-        }
-
-        public Tokenizer(string file, string src, int lineNumber, int linePosition)
-            : this(file, src)
-        {
-            this.lineNumber = lineNumber;
-            this.linePosition = linePosition;
+            var ret = new Tokenizer();
+            ret.file = file;
+            ret.Source = src;
+            return ret;
         }
 
         public bool CanRead { get { return Peek() != null; } }
@@ -130,7 +125,7 @@ namespace Girl.LLPML.Parsing
                     return d.SrcInfo;
                 }
                 SkipSpaces();
-                return new SrcInfo(file, lineNumber, linePosition);
+                return SrcInfo.New(file, lineNumber, linePosition);
             }
         }
 

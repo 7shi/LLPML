@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -10,8 +11,8 @@ namespace Girl.LLPML.Struct
 {
     public class Declare : VarDeclare
     {
-        private List<object> values = new List<object>();
-        public List<object> Values { get { return values; } }
+        private ArrayList values = new ArrayList();
+        public ArrayList Values { get { return values; } }
 
         public override bool NeedsInit
         {
@@ -71,7 +72,7 @@ namespace Girl.LLPML.Struct
         {
             if (values.Count == 0) return false;
 
-            VarDeclare[] members = st.GetMembers();
+            VarDeclare[] members = st.GetMemberDecls();
             if (members.Length != values.Count)
                 throw Abort("initializers mismatched: " + st.Name);
 

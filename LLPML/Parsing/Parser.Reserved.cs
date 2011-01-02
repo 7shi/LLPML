@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.LLPML.Struct;
 using Girl.X86;
 
 namespace Girl.LLPML.Parsing
@@ -15,16 +16,16 @@ namespace Girl.LLPML.Parsing
             switch (t)
             {
                 case "null":
-                    return new Null(parent) { SrcInfo = si };
+                    return Null.New(parent, si);
                 case "true":
-                    return new Cast(parent, "bool", new IntValue(1)) { SrcInfo = si };
+                    return Cast.New(parent, "bool", IntValue.New(1), si);
                 case "false":
-                    return new Cast(parent, "bool", new IntValue(0)) { SrcInfo = si };
+                    return Cast.New(parent, "bool", IntValue.New(0), si);
                 case "base":
-                    return new Struct.Base(parent) { SrcInfo = si };
+                    return Base.New(parent, si);
                 case "new":
                     {
-                        var n = New();
+                        var n = ReadNew();
                         n.SrcInfo = si;
                         return n;
                     }
@@ -68,20 +69,20 @@ namespace Girl.LLPML.Parsing
                         var br = Read();
                         if (br != "(")
                             if (br != null) Rewind();
-                        var arg = Expression();
+                        var arg = ReadExpression();
                         if (arg == null)
                             throw parent.AbortInfo(si, "sizeof: 引数が必要です。");
                         if (br == "(") Check("sizeof", ")");
-                        return new SizeOf(parent, arg) { SrcInfo = si };
+                        return SizeOf.New(parent, arg, si);
                     }
                 case "addrof":
-                    return new AddrOf(parent, Expression()) { SrcInfo = si };
+                    return AddrOf.New(parent, ReadExpression(), si);
                 case "typeof":
                     {
                         var br = Read();
                         if (br != "(")
                             if (br != null) Rewind();
-                        var arg = Expression();
+                        var arg = ReadExpression();
                         if (arg == null)
                             throw parent.AbortInfo(si, "typeof: 引数が必要です。");
                         if (br == "(") Check("typeof", ")");
@@ -93,13 +94,13 @@ namespace Girl.LLPML.Parsing
                         return new TypeOf(parent, arg) { SrcInfo = si };
                     }
                 case "__FUNCTION__":
-                    return new StringValue(parent.FullName);
+                    return StringValue.New(parent.FullName);
                 case "__FILE__":
-                    return new StringValue(si.Source);
+                    return StringValue.New(si.Source);
                 case "__LINE__":
-                    return new IntValue(si.Number);
+                    return IntValue.New(si.Number);
                 case "__VERSION__":
-                    return new StringValue("LLPML ver." + Root.VERSION);
+                    return StringValue.New("LLPML ver." + Root.VERSION);
             }
             if (t != null) Rewind();
             return null;
@@ -127,8 +128,8 @@ namespace Girl.LLPML.Parsing
             {
                 var parent = this.parent;
                 this.parent = ret;
-                var ex = Expression();
-                ret.AddSentence(new Return(ret, ex));
+                var ex = ReadExpression();
+                ret.AddSentence(Return.New(ret, ex));
                 this.parent = parent;
             }
 
@@ -137,7 +138,7 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private Struct.New New()
+        private New ReadNew()
         {
             var type = Read();
             if (type == null)
@@ -149,20 +150,20 @@ namespace Girl.LLPML.Parsing
                 Check("new", ")");
             else if (br == "[")
             {
-                var len = Expression();
+                var len = ReadExpression();
                 Check("new", "]");
-                return new Struct.New(parent, type, len);
+                return new New(parent, type, len);
             }
             else if (br != null)
                 Rewind();
-            if (Peek() != "{") return new Struct.New(parent, type);
+            if (Peek() != "{") return new New(parent, type);
 
             // 無名クラス
-            var anon = new Struct.Define(parent, "", type);
+            var anon = new Define(parent, "", type);
             anon.IsClass = true;
             ReadBlock("anonymous class", anon);
             parent.AddStruct(anon);
-            return new Struct.New(parent, anon.Name);
+            return new New(parent, anon.Name);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Girl.LLPML
             var alloc = Parent.Root.GetFunction(Alloc);
             if (alloc == null)
                 throw Abort("delegate: can not find: {0}", Alloc);
-            Call.AddCodes(codes, alloc, new[] { new IntValue(DefaultSize) });
+            Call.AddCallCodes(codes, alloc, new[] { IntValue.New(DefaultSize) });
 
             codes.Add(I386.Push(Reg32.EDI));
             codes.Add(I386.Mov(Reg32.EDI, Reg32.EAX));

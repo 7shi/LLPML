@@ -12,10 +12,10 @@ namespace Girl.LLPML.Struct
     {
         public override string Tag { get { return "__type_as"; } }
 
-        public override int Min { get { return 2; } }
-        public override int Max { get { return 2; } }
-
-        public As(BlockBase parent, NodeBase v1, NodeBase v2) : base(parent, v1, v2) { }
+        public static As New(BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init2(new As(), parent, arg1, arg2) as As;
+        }
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {

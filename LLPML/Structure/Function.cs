@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -34,7 +35,7 @@ namespace Girl.LLPML
                     if (virtptr != null)
                         throw Abort("can not remove virtual");
                 }
-                else if (Parent is Struct.Define)
+                else if (Parent is Define)
                 {
                     var ovrfunc = new Function(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
@@ -65,7 +66,7 @@ namespace Girl.LLPML
                     if (ovrptr != null)
                         throw Abort("can not remove override");
                 }
-                else if (Parent is Struct.Define)
+                else if (Parent is Define)
                 {
                     ovrfunc = new Function(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
@@ -127,7 +128,7 @@ namespace Girl.LLPML
         {
             if (IsVirtual)
             {
-                var st = Parent as Struct.Define;
+                var st = Parent as Define;
                 var offset = st.GetOffset(virtptr.Name);
                 codes.Add(first);
                 codes.Add(I386.MovRA(Reg32.EAX, Addr32.NewRO(Reg32.ESP, 4)));
@@ -177,10 +178,10 @@ namespace Girl.LLPML
 
             switch (name)
             {
-                case Struct.Define.Initializer:
+                case Define.Initializer:
                     ThisStruct.AddInit(codes, Addr32.NewRO(Reg32.EBP, 8));
                     break;
-                case Struct.Define.Constructor:
+                case Define.Constructor:
                     ThisStruct.AddBeforeCtor(codes);
                     break;
             }
@@ -190,7 +191,7 @@ namespace Girl.LLPML
         {
             var name = this.name;
             if (virtfunc != null) name = virtfunc.name;
-            if (thisptr != null && name == Struct.Define.Destructor)
+            if (thisptr != null && name == Define.Destructor)
                 ThisStruct.AddAfterDtor(codes);
             AddExitCodes(codes);
         }
@@ -211,7 +212,7 @@ namespace Girl.LLPML
 
         public override void AddExitCodes(OpModule codes)
         {
-            if (thisptr != null && name == Struct.Define.Constructor)
+            if (thisptr != null && name == Define.Constructor)
                 thisptr.AddCodesV(codes, "mov", null);
             else if (retVal != null)
                 GetRetVal(this).AddCodesV(codes, "mov", null);
@@ -271,7 +272,7 @@ namespace Girl.LLPML
         {
             if (!isAnonymous) return base.GetVar(name);
 
-            var v = GetMember<VarDeclare>(name);
+            var v = GetMember(name) as VarDeclare;
             if (v != null) return v;
 
             var vp = Parent.GetVar(name);
@@ -284,11 +285,11 @@ namespace Girl.LLPML
 
         protected void CheckThisArg()
         {
-            if (Parent is Struct.Define && !IsStatic)
+            if (Parent is Define && !IsStatic)
             {
-                var type = Types.ToVarType((Parent as Struct.Define).Type);
+                var type = Types.ToVarType((Parent as Define).Type);
                 args.Add(new Arg(this, "this", type));
-                thisptr = new Struct.This(this);
+                thisptr = This.New(this);
             }
         }
 
@@ -300,27 +301,27 @@ namespace Girl.LLPML
             if (f == null || !f.HasThis) return;
 
             InsertArg(new Arg(this, "this", f.thisptr.Type));
-            thisptr = new Struct.This(this);
+            thisptr = This.New(this);
         }
 
         protected override void MakeUpInternal()
         {
             if (HasThis && CallType != CallType.CDecl &&
-                (name == Struct.Define.Constructor
-                || name == Struct.Define.Destructor))
+                (name == Define.Constructor
+                || name == Define.Destructor))
             {
                 throw Abort("{0}: must be __cdecl", FullName);
             }
             if (IsOverride)
             {
-                var st = (Parent as Struct.Define).GetBaseStruct();
+                var st = (Parent as Define).GetBaseStruct();
                 Function vf = null;
                 if (st != null) vf = st.GetFunction(name);
                 if (vf == null || (!vf.IsVirtual && !vf.IsOverride))
                     throw Abort("can not find virtual: {0}", name);
                 first = vf.first;
-                ovrptr = new Var(Parent, "virtual_" + name);
-                var setvp = new Set(Parent, ovrptr, new Variant(ovrfunc));
+                ovrptr = Var.NewName(Parent, "virtual_" + name);
+                var setvp = Set.New(Parent, ovrptr, new Variant(ovrfunc));
                 Parent.AddSentence(setvp);
             }
         }

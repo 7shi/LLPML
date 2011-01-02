@@ -10,17 +10,13 @@ namespace Girl.LLPML
 {
     public class StringValue : NodeBase
     {
-        public string Value { get; private set; }
+        public string Value { get; protected set; }
 
-        protected StringValue(BlockBase parent, string value)
+        public static StringValue New(string value)
         {
-            Parent = parent;
-            Value = value;
-        }
-
-        public StringValue(string value)
-        {
-            Value = value;
+            var ret = new StringValue();
+            ret.Value = value;
+            return ret;
         }
 
         public override TypeBase Type { get { return TypeConstString.Instance; } }

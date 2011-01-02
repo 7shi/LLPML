@@ -12,15 +12,12 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "cond"; } }
 
-        public override int Min { get { return 1; } }
-        public override int Max { get { return 1; } }
         public Val32 First, Next;
 
-        public Cond(BlockBase parent) : base(parent) { }
-        public Cond(BlockBase parent, NodeBase values)
-            : base(parent, new NodeBase[] { values }) { }
-
-        public override void AddCodesV(OpModule codes, string op, Addr32 dest) { }
+        public static Cond New(BlockBase parent, NodeBase arg)
+        {
+            return Init1(new Cond(), parent, arg) as Cond;
+        }
 
         public override void AddCodes(OpModule codes)
         {

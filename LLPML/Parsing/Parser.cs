@@ -13,11 +13,13 @@ namespace Girl.LLPML.Parsing
         private string Peek() { return tokenizer.Peek(); }
         private void Rewind() { tokenizer.Rewind(); }
 
-        public Parser(Tokenizer tokenizer, BlockBase parent)
+        public static Parser New(Tokenizer tokenizer, BlockBase parent)
         {
-            this.tokenizer = tokenizer;
-            this.parent = parent;
-            Init();
+            var ret = new Parser();
+            ret.tokenizer = tokenizer;
+            ret.parent = parent;
+            ret.Init();
+            return ret;
         }
 
         public NodeBase[] ParseExpressions()
@@ -59,7 +61,7 @@ namespace Girl.LLPML.Parsing
 
             while (CanRead)
             {
-                var arg = Expression();
+                var arg = ReadExpression();
                 if (arg == null) return null;
                 ret.Add(arg);
                 var t = Read();

@@ -14,9 +14,17 @@ namespace Girl.LLPML
         private int value;
         public virtual int Value { get { return value; } }
 
-        protected IntValue(BlockBase parent) { Parent = parent; }
-        public IntValue(int value) { this.value = value; }
-        public IntValue(string value) : this(Parse(value)) { }
+        public static IntValue New(int value)
+        {
+            var ret = new IntValue();
+            ret.value = value;
+            return ret;
+        }
+
+        public static IntValue NewString(string value)
+        {
+            return New(Parse(value));
+        }
 
         public override TypeBase Type { get { return TypeInt.Instance; } }
 
@@ -27,7 +35,7 @@ namespace Girl.LLPML
 
         public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)
         {
-            Parser parser = new Parser(token, parent);
+            Parser parser = Parser.New(token, parent);
             NodeBase[] ret = parser.ParseExpressions();
             if (token.CanRead) ret = null;
             return ret;

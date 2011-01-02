@@ -10,9 +10,12 @@ namespace Girl.LLPML
 {
     public class ConstString : StringValue
     {
-        public ConstString(BlockBase parent, string value)
-            : base(parent, value)
+        public static ConstString New(BlockBase parent, string value)
         {
+            var ret = new ConstString();
+            ret.Parent = parent;
+            ret.Value = value;
+            return ret;
         }
     }
 }

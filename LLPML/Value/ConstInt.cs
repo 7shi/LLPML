@@ -13,10 +13,12 @@ namespace Girl.LLPML
     {
         public NodeBase Value { get; private set; }
 
-        public ConstInt(BlockBase parent, NodeBase value)
+        public static ConstInt New(BlockBase parent, NodeBase value)
         {
-            Parent = parent;
-            Value = value;
+            var ret = new ConstInt();
+            ret.Parent = parent;
+            ret.Value = value;
+            return ret;
         }
 
         public override TypeBase Type { get { return TypeInt.Instance; } }

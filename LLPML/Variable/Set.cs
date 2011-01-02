@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -12,20 +13,9 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "set"; } }
 
-        public override int Min { get { return 1; } }
-        public override int Max { get { return 1; } }
-
-        public Set(BlockBase parent, NodeBase dest) : base(parent, dest) { }
-
-        public Set(BlockBase parent, NodeBase dest, NodeBase value)
-            : base(parent, dest)
+        public static Set New(BlockBase parent, NodeBase dest, NodeBase arg)
         {
-            this.values.Add(value);
-        }
-
-        public Set(BlockBase parent, NodeBase dest, int value)
-            : this(parent, dest, new IntValue(value))
-        {
+            return Init1(new Set(), parent, dest, arg) as Set;
         }
 
         public override void AddCodes(OpModule codes)
@@ -38,7 +28,7 @@ namespace Girl.LLPML
                     var setter = (this.dest as Variant).GetSetter();
                     if (setter != null)
                     {
-                        new Call(Parent, setter, new Struct.This(Parent), values[0])
+                        new Call(Parent, setter, This.New(Parent), values[0])
                             .AddCodes(codes);
                         return;
                     }
@@ -48,9 +38,9 @@ namespace Girl.LLPML
             var dt = dest.Type;
             if (dt is TypeConstChar)
                 throw Abort("set: can not change constants");
-            if (dest is Struct.Member)
+            if (dest is Member)
             {
-                var mem = dest as Struct.Member;
+                var mem = dest as Member;
                 if (mem.IsSetter)
                 {
                     mem.AddSetterCodes(codes, values[0]);

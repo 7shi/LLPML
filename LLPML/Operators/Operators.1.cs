@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Neg : Operator
+    public abstract class Operator1 : Operator
     {
-        public override string Tag { get { return "neg"; } }
-
-        public override int Min { get { return 1; } }
-        public override int Max { get { return 1; } }
-
-        public Neg(BlockBase parent, NodeBase value) : base(parent, value) { }
+        protected abstract int Calculate(int v);
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
@@ -29,24 +25,41 @@ namespace Girl.LLPML
         {
             var v = IntValue.GetValue(values[0]);
             if (v == null) return null;
-            return new IntValue(Calculate(v.Value));
+            return IntValue.New(Calculate(v.Value));
         }
-
-        protected virtual int Calculate(int v) { return -v; }
     }
 
-    public class Rev : Neg
+    public class Neg : Operator1
+    {
+        public override string Tag { get { return "neg"; } }
+        protected override int Calculate(int v) { return -v; }
+
+        public static Neg New(BlockBase parent, NodeBase arg, SrcInfo si)
+        {
+            return Init3(new Neg(), parent, arg, null, si) as Neg;
+        }
+    }
+
+    public class Rev : Operator1
     {
         public override string Tag { get { return "rev"; } }
-        public Rev(BlockBase parent, NodeBase value) : base(parent, value) { }
         protected override int Calculate(int v) { return ~v; }
+
+        public static Rev New(BlockBase parent, NodeBase arg, SrcInfo si)
+        {
+            return Init3(new Rev(), parent, arg, null, si) as Rev;
+        }
     }
 
-    public class Not : Neg
+    public class Not : Operator1
     {
         public override string Tag { get { return "not"; } }
         public override TypeBase Type { get { return TypeBool.Instance; } }
-        public Not(BlockBase parent, NodeBase value) : base(parent, value) { }
         protected override int Calculate(int v) { return v != 0 ? 0 : 1; }
+
+        public static Not New(BlockBase parent, NodeBase arg, SrcInfo si)
+        {
+            return Init3(new Not(), parent, arg, null, si) as Not;
+        }
     }
 }

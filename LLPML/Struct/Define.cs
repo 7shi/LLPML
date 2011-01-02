@@ -51,20 +51,20 @@ namespace Girl.LLPML.Struct
             BaseType = baseType;
         }
 
-        public override T GetMember<T>(string name)
+        public override object GetMember(string name)
         {
-            object obj;
-            if (members.TryGetValue(name, out obj)) return obj as T;
-            Define st = GetBaseStruct();
+            if (members.ContainsKey(name))
+                return members.Get(name);
+            var st = GetBaseStruct();
             if (st == null) return null;
-            return st.GetMember<T>(name);
+            return st.GetMember(name);
         }
 
-        public override T GetMemberRecursive<T>(string name)
+        public override object GetMemberRecursive(string name)
         {
-            T ret = GetMember<T>(name);
+            var ret = GetMember(name);
             if (ret != null || Parent == null) return ret;
-            ret = Parent.GetMemberRecursive<T>(name);
+            ret = Parent.GetMemberRecursive(name);
             if (ret == null || !(ret is VarDeclare || ret is Function)) return ret;
             if ((ret as NodeBase).Parent is Root) return ret;
             return null;
@@ -111,7 +111,7 @@ namespace Girl.LLPML.Struct
             return ret + st.GetSizeInternal();
         }
 
-        public VarDeclare GetMember(string name)
+        public VarDeclare GetMemberDecl(string name)
         {
             VarDeclare ret = null;
             ForEachMembers((p, pos) =>
@@ -123,14 +123,14 @@ namespace Girl.LLPML.Struct
             if (ret != null) return ret;
             Define st = GetBaseStruct();
             if (st == null) return null;
-            return st.GetMember(name);
+            return st.GetMemberDecl(name);
         }
 
-        public VarDeclare[] GetMembers()
+        public VarDeclare[] GetMemberDecls()
         {
             List<VarDeclare> list = new List<VarDeclare>();
             Define st = GetBaseStruct();
-            if (st != null) list.AddRange(st.GetMembers());
+            if (st != null) list.AddRange(st.GetMemberDecls());
             ForEachMembers((p, pos) =>
             {
                 list.Add(p);
@@ -139,7 +139,7 @@ namespace Girl.LLPML.Struct
             return list.ToArray();
         }
 
-        public override Struct.Define ThisStruct { get { return this; } }
+        public override Define ThisStruct { get { return this; } }
 
         private void CallBlock(OpModule codes, Addr32 ad, Block b, CallType ct)
         {
@@ -356,12 +356,15 @@ namespace Girl.LLPML.Struct
         protected override void MakeUpInternal()
         {
             CheckStruct();
-            string[] funcs = { Initializer, Constructor, Destructor };
-            foreach (var func in funcs)
-            {
-                var f = base.GetMember<Function>(func);
-                if (f == null) AddFunction(new Function(this, func, false));
-            }
+
+            var f1 = base.GetMember(Initializer) as Function;
+            if (f1 == null) AddFunction(new Function(this, Initializer, false));
+
+            var f2 = base.GetMember(Constructor) as Function;
+            if (f2 == null) AddFunction(new Function(this, Constructor, false));
+
+            var f3 = base.GetMember(Destructor) as Function;
+            if (f3 == null) AddFunction(new Function(this, Destructor, false));
         }
 
         public bool CanUpCast(Define st)

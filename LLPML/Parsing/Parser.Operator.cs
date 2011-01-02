@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.LLPML.Struct;
 
 namespace Girl.LLPML.Parsing
 {
@@ -15,17 +16,17 @@ namespace Girl.LLPML.Parsing
             {
                 new[]
                 {
-                    new VarOperator("="  , (dest, arg) => new Set(parent, dest, arg)),
-                    new VarOperator("+=" , (dest, arg) => new VarAdd(parent, dest, arg)),
-                    new VarOperator("-=" , (dest, arg) => new VarSub(parent, dest, arg)),
-                    new VarOperator("*=" , (dest, arg) => new VarMul(parent, dest, arg)),
-                    new VarOperator("/=" , (dest, arg) => new VarDiv(parent, dest, arg)),
-                    new VarOperator("%=" , (dest, arg) => new VarMod(parent, dest, arg)),
-                    new VarOperator("&=" , (dest, arg) => new VarAnd(parent, dest, arg)),
-                    new VarOperator("|=" , (dest, arg) => new VarOr(parent, dest, arg)),
-                    new VarOperator("^=" , (dest, arg) => new VarXor(parent, dest, arg)),
-                    new VarOperator("<<=", (dest, arg) => new VarShiftLeft(parent, dest, arg)),
-                    new VarOperator(">>=", (dest, arg) => new VarShiftRight(parent, dest, arg)),
+                    new VarOperator("="  , (dest, arg) => Set.New(parent, dest, arg)),
+                    new VarOperator("+=" , (dest, arg) => VarAdd.New(parent, dest, arg)),
+                    new VarOperator("-=" , (dest, arg) => VarSub.New(parent, dest, arg)),
+                    new VarOperator("*=" , (dest, arg) => VarMul.New(parent, dest, arg)),
+                    new VarOperator("/=" , (dest, arg) => VarDiv.New(parent, dest, arg)),
+                    new VarOperator("%=" , (dest, arg) => VarMod.New(parent, dest, arg)),
+                    new VarOperator("&=" , (dest, arg) => VarAnd.New(parent, dest, arg)),
+                    new VarOperator("|=" , (dest, arg) => VarOr.New(parent, dest, arg)),
+                    new VarOperator("^=" , (dest, arg) => VarXor.New(parent, dest, arg)),
+                    new VarOperator("<<=", (dest, arg) => VarShiftLeft.New(parent, dest, arg)),
+                    new VarOperator(">>=", (dest, arg) => VarShiftRight.New(parent, dest, arg)),
                 },
                 new[]
                 {
@@ -34,63 +35,59 @@ namespace Girl.LLPML.Parsing
                 },
                 new[]
                 {
-                    new Operator("&&"     , (arg1, arg2) => new AndAlso(parent, arg1, arg2)),
-                    new Operator("||"     , (arg1, arg2) => new OrElse(parent, arg1, arg2)),
-                    new Operator("andalso", (arg1, arg2) => new AndAlso(parent, arg1, arg2)),
-                    new Operator("orelse" , (arg1, arg2) => new OrElse(parent, arg1, arg2)),
+                    new Operator("&&"     , (arg1, arg2) => AndAlso.New(parent, arg1, arg2)),
+                    new Operator("||"     , (arg1, arg2) => OrElse.New(parent, arg1, arg2)),
+                    new Operator("andalso", (arg1, arg2) => AndAlso.New(parent, arg1, arg2)),
+                    new Operator("orelse" , (arg1, arg2) => OrElse.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
-                    new Operator("&"  , (arg1, arg2) => new And(parent, arg1, arg2)),
-                    new Operator("|"  , (arg1, arg2) => new Or(parent, arg1, arg2)),
-                    new Operator("^"  , (arg1, arg2) => new Xor(parent, arg1, arg2)),
-                    new Operator("and", (arg1, arg2) => new And(parent, arg1, arg2)),
-                    new Operator("or" , (arg1, arg2) => new Or(parent, arg1, arg2)),
-                    new Operator("xor", (arg1, arg2) => new Xor(parent, arg1, arg2)),
+                    new Operator("&"  , (arg1, arg2) => And.New(parent, arg1, arg2)),
+                    new Operator("|"  , (arg1, arg2) => Or.New(parent, arg1, arg2)),
+                    new Operator("^"  , (arg1, arg2) => Xor.New(parent, arg1, arg2)),
+                    new Operator("and", (arg1, arg2) => And.New(parent, arg1, arg2)),
+                    new Operator("or" , (arg1, arg2) => Or.New(parent, arg1, arg2)),
+                    new Operator("xor", (arg1, arg2) => Xor.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
-                    new Operator("==", (arg1, arg2) => new Equal(parent, arg1, arg2)),
-                    new Operator("!=", (arg1, arg2) => new NotEqual(parent, arg1, arg2)),
+                    new Operator("==", (arg1, arg2) => Equal.New(parent, arg1, arg2)),
+                    new Operator("!=", (arg1, arg2) => NotEqual.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
-                    new Operator("<" , (arg1, arg2) => new Less(parent, arg1, arg2)),
-                    new Operator(">" , (arg1, arg2) => new Greater(parent, arg1, arg2)),
-                    new Operator("<=", (arg1, arg2) => new LessEqual(parent, arg1, arg2)),
-                    new Operator(">=", (arg1, arg2) => new GreaterEqual(parent, arg1, arg2)),
-                    new Operator("lt", (arg1, arg2) => new Less(parent, arg1, arg2)),
-                    new Operator("gt", (arg1, arg2) => new Greater(parent, arg1, arg2)),
-                    new Operator("le", (arg1, arg2) => new LessEqual(parent, arg1, arg2)),
-                    new Operator("ge", (arg1, arg2) => new GreaterEqual(parent, arg1, arg2)),
-                    new Operator("is", (arg1, arg2) => new Struct.Is(parent, arg1, arg2)),
-                    new Operator("as", (arg1, arg2) => new Struct.As(parent, arg1, arg2)),
+                    new Operator("<" , (arg1, arg2) => Less.New(parent, arg1, arg2)),
+                    new Operator(">" , (arg1, arg2) => Greater.New(parent, arg1, arg2)),
+                    new Operator("<=", (arg1, arg2) => LessEqual.New(parent, arg1, arg2)),
+                    new Operator(">=", (arg1, arg2) => GreaterEqual.New(parent, arg1, arg2)),
+                    new Operator("is", (arg1, arg2) => Is.New(parent, arg1, arg2)),
+                    new Operator("as", (arg1, arg2) => As.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
-                    new Operator("<<" , (arg1, arg2) => new ShiftLeft(parent, arg1, arg2)),
-                    new Operator(">>" , (arg1, arg2) => new ShiftRight(parent, arg1, arg2)),
-                    new Operator("shl", (arg1, arg2) => new ShiftLeft(parent, arg1, arg2)),
-                    new Operator("shr", (arg1, arg2) => new ShiftRight(parent, arg1, arg2)),
+                    new Operator("<<" , (arg1, arg2) => ShiftLeft.New(parent, arg1, arg2)),
+                    new Operator(">>" , (arg1, arg2) => ShiftRight.New(parent, arg1, arg2)),
+                    new Operator("shl", (arg1, arg2) => ShiftLeft.New(parent, arg1, arg2)),
+                    new Operator("shr", (arg1, arg2) => ShiftRight.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
-                    new Operator("+", (arg1, arg2) => new Add(parent, arg1, arg2)),
-                    new Operator("-", (arg1, arg2) => new Sub(parent, arg1, arg2)),
+                    new Operator("+", (arg1, arg2) => Add.New(parent, arg1, arg2)),
+                    new Operator("-", (arg1, arg2) => Sub.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
-                    new Operator("*", (arg1, arg2) => new Mul(parent, arg1, arg2)),
-                    new Operator("/", (arg1, arg2) => new Div(parent, arg1, arg2)),
-                    new Operator("%", (arg1, arg2) => new Mod(parent, arg1, arg2)),
+                    new Operator("*", (arg1, arg2) => Mul.New(parent, arg1, arg2)),
+                    new Operator("/", (arg1, arg2) => Div.New(parent, arg1, arg2)),
+                    new Operator("%", (arg1, arg2) => Mod.New(parent, arg1, arg2)),
                 },
                 new[]
                 {
                     new WrapOperator("(", Call),
                     new WrapOperator(".", Member),
-                    new WrapOperator("[", Index),
-                    new WrapOperator("++", (target, order) => new PostInc(parent, target)),
-                    new WrapOperator("--", (target, order) => new PostDec(parent, target)),
+                    new WrapOperator("[", ReadIndex),
+                    new WrapOperator("++", (target, order) => PostInc.New(parent, target)),
+                    new WrapOperator("--", (target, order) => PostDec.New(parent, target)),
                 },
             };
 
@@ -140,7 +137,7 @@ namespace Girl.LLPML.Parsing
             public override NodeBase Read(NodeBase arg, int order)
             {
                 Parser parser = handler.Target as Parser;
-                return handler(arg, parser.Expression(order + assoc));
+                return handler(arg, parser.ReadExpressionOrder(order + assoc));
             }
         }
 
@@ -157,7 +154,7 @@ namespace Girl.LLPML.Parsing
             public override NodeBase Read(NodeBase arg, int order)
             {
                 Parser parser = handler.Target as Parser;
-                return handler(arg, parser.Expression(order + assoc));
+                return handler(arg, parser.ReadExpressionOrder(order + assoc));
             }
         }
 

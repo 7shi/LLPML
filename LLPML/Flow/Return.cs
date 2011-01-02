@@ -23,8 +23,13 @@ namespace Girl.LLPML
             }
         }
 
-        public Return(BlockBase parent) : base(parent) { }
-        public Return(BlockBase parent, NodeBase value) : this(parent) { Value = value; }
+        public static Return New(BlockBase parent, NodeBase value)
+        {
+            var ret = new Return();
+            ret.init(parent);
+            if (value != null) ret.Value = value;
+            return ret;
+        }
 
         public override void AddCodes(OpModule codes)
         {

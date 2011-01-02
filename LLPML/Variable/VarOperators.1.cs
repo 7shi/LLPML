@@ -7,12 +7,8 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class VarAdd : VarOperator
+    public abstract class VarOperator1 : VarOperator
     {
-        public override string Tag { get { return "add"; } }
-
-        public VarAdd(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-
         private Addr32 Calculate(OpModule codes)
         {
             var dest = Var.Get(this.dest);
@@ -73,57 +69,103 @@ namespace Girl.LLPML
         }
     }
 
-    public class VarSub : VarAdd
+    public class VarAdd : VarOperator1
+    {
+        public override string Tag { get { return "add"; } }
+
+        public static VarAdd New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarAdd(), parent, dest, arg) as VarAdd;
+        }
+    }
+
+    public class VarSub : VarOperator1
     {
         public override string Tag { get { return "sub"; } }
-        public VarSub(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarSub New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarSub(), parent, dest, arg) as VarSub;
+        }
     }
 
-    public class VarAnd : VarAdd
+    public class VarAnd : VarOperator1
     {
         public override string Tag { get { return "and"; } }
-        public VarAnd(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarAnd New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarAnd(), parent, dest, arg) as VarAnd;
+        }
     }
 
-    public class VarOr : VarAdd
+    public class VarOr : VarOperator1
     {
         public override string Tag { get { return "or"; } }
-        public VarOr(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarOr New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarOr(), parent, dest, arg) as VarOr;
+        }
     }
 
-    public class VarXor : VarAdd
+    public class VarXor : VarOperator1
     {
         public override string Tag { get { return "xor"; } }
-        public VarXor(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarXor New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarXor(), parent, dest, arg) as VarXor;
+        }
     }
 
-    public class VarShiftLeft : VarAdd
+    public class VarShiftLeft : VarOperator1
     {
         public override string Tag { get { return "shift-left"; } }
-        public VarShiftLeft(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarShiftLeft New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarShiftLeft(), parent, dest, arg) as VarShiftLeft;
+        }
     }
 
-    public class VarShiftRight : VarShiftLeft
+    public class VarShiftRight : VarOperator1
     {
         public override string Tag { get { return "shift-right"; } }
-        public VarShiftRight(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarShiftRight New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarShiftRight(), parent, dest, arg) as VarShiftRight;
+        }
     }
 
-    public class VarMul : VarAdd
+    public class VarMul : VarOperator1
     {
         public override string Tag { get { return "mul"; } }
-        public VarMul(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarMul New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarMul(), parent, dest, arg) as VarMul;
+        }
     }
 
-    public class VarDiv : VarAdd
+    public class VarDiv : VarOperator1
     {
         public override string Tag { get { return "div"; } }
-        public VarDiv(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarDiv New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarDiv(), parent, dest, arg) as VarDiv;
+        }
     }
 
-    public class VarMod : VarAdd
+    public class VarMod : VarOperator1
     {
         public override string Tag { get { return "mod"; } }
-        public VarMod(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
+
+        public static VarMod New(BlockBase parent, NodeBase dest, NodeBase arg)
+        {
+            return Init1(new VarMod(), parent, dest, arg) as VarMod;
+        }
     }
 }

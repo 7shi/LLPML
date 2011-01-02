@@ -10,10 +10,12 @@ namespace Girl.LLPML
         public Cc Condition { get; private set; }
         public Cc NotCondition { get; private set; }
 
-        public CondPair(Cc condition, Cc notCondition)
+        public static CondPair New(Cc condition, Cc notCondition)
         {
-            Condition = condition;
-            NotCondition = notCondition;
+            var ret = new CondPair();
+            ret.Condition = condition;
+            ret.NotCondition = notCondition;
+            return ret;
         }
     }
 }

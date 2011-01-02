@@ -10,7 +10,12 @@ namespace Girl.LLPML
 {
     public class Break : BreakBase
     {
-        public Break(BlockBase parent) : base(parent) { }
+        public static Break New(BlockBase parent)
+        {
+            var ret = new Break();
+            ret.init(parent);
+            return ret;
+        }
 
         public bool CanBreak()
         {
@@ -24,8 +29,8 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
-            BlockBase b = Parent;
-            VarDeclare[] ptrs = UsingPointers;
+            var b = Parent;
+            var ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)

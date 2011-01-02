@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -112,8 +113,12 @@ namespace Girl.LLPML
         {
             if (GetFunction() != null) return null;
             var v = Parent.GetVar(name);
-            if (v != null && v.Parent is Struct.Define)
-                return new Var(Parent, v) { SrcInfo = SrcInfo };
+            if (v != null && v.Parent is Define)
+            {
+                var ret = Var.New(Parent, v);
+                ret.SrcInfo = SrcInfo;
+                return ret;
+            }
             return null;
         }
 
@@ -148,8 +153,8 @@ namespace Girl.LLPML
             if (parent.Parent == null) return null;
 
             var v = parent.GetVar(name);
-            if (v != null && (v.Parent is Struct.Define || v.Parent.Parent == null))
-                return new Var(parent, v);
+            if (v != null && (v.Parent is Define || v.Parent.Parent == null))
+                return Var.New(parent, v);
 
             return null;
         }

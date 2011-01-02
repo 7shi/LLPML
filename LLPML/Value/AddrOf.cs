@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
@@ -12,10 +13,13 @@ namespace Girl.LLPML
     {
         public NodeBase Target { get; private set; }
 
-        public AddrOf(BlockBase parent, NodeBase target)
+        public static AddrOf New(BlockBase parent, NodeBase target, SrcInfo si)
         {
-            Parent = parent;
-            Target = target;
+            var ret = new AddrOf();
+            ret.Parent = parent;
+            ret.Target = target;
+            ret.SrcInfo = si;
+            return ret;
         }
 
         public override TypeBase Type { get { return new TypePointer(Target.Type); } }

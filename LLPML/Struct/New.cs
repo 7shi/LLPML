@@ -21,7 +21,7 @@ namespace Girl.LLPML.Struct
         {
             Parent = parent;
             this.type = Types.GetVarType(parent, type);
-            Length = new IntValue(-1);
+            Length = IntValue.New(-1);
         }
 
         public New(BlockBase parent, string type, NodeBase length)

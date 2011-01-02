@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -24,9 +25,11 @@ namespace Girl.LLPML
             }
         }
 
-        public OpModule(Module m)
+        public static OpModule New(Module m)
         {
-            Module = m;
+            var ret = new OpModule();
+            ret.Module = m;
+            return ret;
         }
 
         private Dictionary<string, Val32> strings = new Dictionary<string, Val32>();
@@ -45,7 +48,7 @@ namespace Girl.LLPML
 
         private Dictionary<string, Val32> types = new Dictionary<string, Val32>();
 
-        public Val32 GetTypeObject(Struct.Define st)
+        public Val32 GetTypeObject(Define st)
         {
             if (st == null) return Val32.New(0);
 
@@ -53,7 +56,7 @@ namespace Girl.LLPML
             if (types.ContainsKey(name)) return types[name];
 
             return GetTypeObject(
-                name, st.GetFunction(Struct.Define.Destructor),
+                name, st.GetFunction(Define.Destructor),
                 st.GetSize(), GetTypeObject(st.GetBaseStruct()));
         }
 
@@ -143,13 +146,13 @@ namespace Girl.LLPML
             var vt = v.Type;
             if (vt == null) return false;
 
-            var vsm = v as Struct.Member;
+            var vsm = v as Member;
             if (vsm != null && vt is TypeDelegate && vsm.GetDelegate() != null)
                 return true;
 
-            var mem = v as Struct.Member;
-            return vt.NeedsDtor && !(v is Struct.As)
-                && (v is Call || v is Struct.New || v is Delegate || v is Operator
+            var mem = v as Member;
+            return vt.NeedsDtor && !(v is As)
+                && (v is Call || v is New || v is Delegate || v is Operator
                 || (mem != null && mem.IsGetter));
         }
 

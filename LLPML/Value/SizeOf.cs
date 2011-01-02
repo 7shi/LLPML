@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
@@ -12,10 +13,13 @@ namespace Girl.LLPML
     {
         public NodeBase target;
 
-        public SizeOf(BlockBase parent, NodeBase target)
-            : base(parent)
+        public static SizeOf New(BlockBase parent, NodeBase target, SrcInfo si)
         {
-            this.target = target;
+            var ret = new SizeOf();
+            ret.Parent = parent;
+            ret.target = target;
+            ret.SrcInfo = si;
+            return ret;
         }
 
         public override int Value

@@ -14,12 +14,13 @@ namespace Girl.LLPML
         private char value;
         public char Value { get { return value; } }
 
-        protected CharValue(BlockBase parent, string name)
+        public static CharValue New(char value, SrcInfo si)
         {
-            Parent = parent;
-            this.name = name;
+            var ret = new CharValue();
+            ret.value = value;
+            ret.SrcInfo = si;
+            return ret;
         }
-        public CharValue(char value) { this.value = value; }
 
         public override TypeBase Type { get { return TypeChar.Instance; } }
 

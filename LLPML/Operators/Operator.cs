@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
@@ -12,19 +13,24 @@ namespace Girl.LLPML
         public abstract string Tag { get; }
 
         protected List<NodeBase> values = new List<NodeBase>();
-        public NodeBase[] GetValues() { return values.ToArray(); }
 
-        public virtual int Min { get { return 2; } }
-        public virtual int Max { get { return int.MaxValue; } }
-
-        public Operator(BlockBase parent, params NodeBase[] values)
+        protected static Operator Init1(Operator op, BlockBase parent, NodeBase arg1)
         {
-            Parent = parent;
-            if (values.Length < Min)
-                throw Abort("too few operands");
-            else if (values.Length > Max)
-                throw Abort("too many operands");
-            this.values.AddRange(values);
+            return Init3(op, parent, arg1, null, null);
+        }
+
+        protected static Operator Init2(Operator op, BlockBase parent, NodeBase arg1, NodeBase arg2)
+        {
+            return Init3(op, parent, arg1, arg2, null);
+        }
+
+        protected static Operator Init3(Operator op, BlockBase parent, NodeBase arg1, NodeBase arg2, SrcInfo si)
+        {
+            op.Parent = parent;
+            if (arg1 != null) op.values.Add(arg1);
+            if (arg2 != null) op.values.Add(arg2);
+            if (si != null) op.SrcInfo = si;
+            return op;
         }
 
         protected TypeBase.Func GetFunc()

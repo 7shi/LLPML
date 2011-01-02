@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Girl.LLPML.Struct;
 
 namespace Girl.LLPML.Parsing
 {
@@ -75,7 +76,7 @@ namespace Girl.LLPML.Parsing
             var br1 = Read();
             if (br1 == "[")
             {
-                array = Expression();
+                array = ReadExpression();
                 Check(category, "]");
             }
             else
@@ -108,7 +109,7 @@ namespace Girl.LLPML.Parsing
                         throw parent.AbortInfo(si, "const int: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const int: 等号がありません。");
-                    parent.AddInt(name, Expression());
+                    parent.AddInt(name, ReadExpression());
                 });
         }
 
@@ -179,7 +180,7 @@ namespace Girl.LLPML.Parsing
                         try
                         {
                             var vd = new VarDeclare(parent, name, tb);
-                            if (eq) vd.Value = Expression();
+                            if (eq) vd.Value = ReadExpression();
                             v = vd;
                         }
                         catch
@@ -214,15 +215,15 @@ namespace Girl.LLPML.Parsing
                         var vs = Types.GetValueType(type);
                         if (vs == null)
                         {
-                            v = new Struct.Declare(parent, name, type);
-                            if (eq) ReadInitializers(v as Struct.Declare, type);
+                            v = new Declare(parent, name, type);
+                            if (eq) ReadInitializers(v as Declare, type);
                         }
                         else
                         {
                             var vd = new VarDeclare(parent, name, tb);
                             if (eq)
                             {
-                                var ex = Expression();
+                                var ex = ReadExpression();
                                 vd.Value = ex;
                             }
                             v = vd;
@@ -243,20 +244,20 @@ namespace Girl.LLPML.Parsing
             return list.ToArray();
         }
 
-        private void ReadInitializers(Struct.Declare st, string type)
+        private void ReadInitializers(Declare st, string type)
         {
             Check(type, "{");
             for (; ; )
             {
                 if (Peek() == "{")
                 {
-                    var st2 = new Struct.Declare(st);
+                    var st2 = new Declare(st);
                     st2.SrcInfo = SrcInfo;
                     ReadInitializers(st2, type);
                     st.Values.Add(st2);
                 }
                 else
-                    st.Values.Add(Expression());
+                    st.Values.Add(ReadExpression());
 
                 var t = Read();
                 if (t == "}")
@@ -280,7 +281,7 @@ namespace Girl.LLPML.Parsing
                     if (array == null)
                     {
                         var vd = new VarDeclare(parent, name, type);
-                        if (eq) vd.Value = Expression();
+                        if (eq) vd.Value = ReadExpression();
                         v = vd;
                     }
                     else

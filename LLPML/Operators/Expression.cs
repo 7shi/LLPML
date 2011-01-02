@@ -12,10 +12,10 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "expression"; } }
 
-        public override int Min { get { return 1; } }
-        public override int Max { get { return 1; } }
-
-        public Expression(BlockBase parent, NodeBase value) : base(parent, value) { }
+        public static Expression New(BlockBase parent, NodeBase arg)
+        {
+            return Init1(new Expression(), parent, arg) as Expression;
+        }
 
         public override void AddCodes(OpModule codes)
         {
@@ -23,24 +23,10 @@ namespace Girl.LLPML
 
             var v = values[0];
             var nb = v as NodeBase;
-            if (nb != null)
-            {
-                bool nd;
-                //try
-                {
-                    nd = OpModule.NeedsDtor(v);
-                }
-                //catch
-                //{
-                //    throw nb.Abort("–¢’è‹`‚ÌŒ^‚Å‚·: {0}", v.Type.Name);
-                //}
-                if (!nd)
-                {
-                    nb.AddCodes(codes);
-                    return;
-                }
-            }
-            AddCodesV(codes, "mov", null);
+            if (nb != null && !OpModule.NeedsDtor(v))
+                nb.AddCodes(codes);
+            else
+                AddCodesV(codes, "mov", null);
         }
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)

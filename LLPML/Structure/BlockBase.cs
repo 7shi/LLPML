@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Girl.Binary;
+using Girl.LLPML.Struct;
 using Girl.PE;
 using Girl.X86;
 
@@ -37,25 +39,25 @@ namespace Girl.LLPML
         {
             if (retVal == null)
                 retVal = new VarDeclare(this, "__retval");
-            return new Var(parent, retVal);
+            return Var.New(parent, retVal);
         }
 
         protected ListDictionary members = new ListDictionary();
 
         #region Member
 
-        public virtual T GetMember<T>(string name) where T : class
+        public virtual object GetMember(string name)
         {
-            object obj;
-            if (members.TryGetValue(name, out obj)) return obj as T;
+            if (members.ContainsKey(name))
+                return members.Get(name);
             return null;
         }
 
-        public virtual T GetMemberRecursive<T>(string name) where T : class
+        public virtual object GetMemberRecursive(string name)
         {
-            T ret = GetMember<T>(name);
+            var ret = GetMember(name);
             if (ret != null || Parent == null) return ret;
-            return Parent.GetMemberRecursive<T>(name);
+            return Parent.GetMemberRecursive(name);
         }
 
         public T[] GetMembers<T>() where T : class
@@ -79,19 +81,19 @@ namespace Girl.LLPML
 
         public ConstInt GetInt(string name)
         {
-            object obj = GetMember<object>(name);
+            var obj = GetMember(name);
             if (obj is ConstInt) return obj as ConstInt;
             return Parent == null ? null : Parent.GetInt(name);
         }
 
         public bool AddInt(string name, NodeBase value)
         {
-            return AddMember(name, new ConstInt(this, value));
+            return AddMember(name, ConstInt.New(this, value));
         }
 
         public bool AddInt(string name, int value)
         {
-            return AddInt(name, new IntValue(value));
+            return AddInt(name, IntValue.New(value));
         }
 
         #endregion
@@ -100,29 +102,26 @@ namespace Girl.LLPML
 
         public ConstString GetString(string name)
         {
-            return GetMemberRecursive<ConstString>(name);
+            return GetMemberRecursive(name) as ConstString;
         }
 
         public bool AddString(string name, string value)
         {
-            return AddMember(name, new ConstString(this, value));
+            return AddMember(name, ConstString.New(this, value));
         }
 
         #endregion
 
-        public virtual VarDeclare GetVar(string name) { return GetMemberRecursive<VarDeclare>(name); }
+        public virtual VarDeclare GetVar(string name) { return GetMemberRecursive(name) as VarDeclare; }
         public bool AddVar(VarDeclare v) { return AddMember(v.Name, v); }
 
-        public Function GetFunction(string name) { return GetMemberRecursive<Function>(name); }
+        public Function GetFunction(string name) { return GetMemberRecursive(name) as Function; }
         public bool AddFunction(Function f) { return AddMember(f.Name, f); }
 
-        public Struct.Define GetStruct(string name) { return GetMemberRecursive<Struct.Define>(name); }
-        public bool AddStruct(Struct.Define s) { return AddMember(s.Name, s); }
+        public Define GetStruct(string name) { return GetMemberRecursive(name) as Define; }
+        public bool AddStruct(Define s) { return AddMember(s.Name, s); }
 
         #endregion
-
-        public BlockBase() { }
-        public BlockBase(BlockBase parent) : base(parent) { }
 
         public virtual bool HasStackFrame
         {
@@ -156,7 +155,7 @@ namespace Girl.LLPML
             foreach (var obj in members.Values)
             {
                 Type t = obj.GetType();
-                if (t == typeof(VarDeclare) || t == typeof(Struct.Declare))
+                if (t == typeof(VarDeclare) || t == typeof(Declare))
                 {
                     var p = obj as VarDeclare;
                     var len = p.Type.Size;
@@ -227,7 +226,7 @@ namespace Girl.LLPML
             AfterAddCodes(codes);
             foreach (Function func in GetMembers<Function>())
                 func.AddCodes(codes);
-            foreach (Struct.Define st in GetMembers<Struct.Define>())
+            foreach (Define st in GetMembers<Define>())
                 st.AddCodes(codes);
             codes.Add(last);
         }
@@ -237,7 +236,7 @@ namespace Girl.LLPML
             if (IsTerminated) return;
             AddExitCodes(codes);
             if (GetMembers<Function>().Length > 0
-                || GetMembers<Struct.Define>().Length > 0)
+                || GetMembers<Define>().Length > 0)
             {
                 codes.Add(I386.JmpD(last.Address));
             }
@@ -282,7 +281,7 @@ namespace Girl.LLPML
             return root;
         }
 
-        public virtual Struct.Define ThisStruct
+        public virtual Define ThisStruct
         {
             get
             {
@@ -432,8 +431,8 @@ namespace Girl.LLPML
 
         public class ListDictionary
         {
-            private Dictionary<string, object> dict = new Dictionary<string, object>();
-            private List<object> list = new List<object>();
+            private Hashtable dict = new Hashtable();
+            private ArrayList list = new ArrayList();
 
             public void Add(string key, object value)
             {
@@ -448,9 +447,12 @@ namespace Girl.LLPML
                 get { return list.ToArray(); }
             }
 
-            public bool TryGetValue(string name, out object obj)
+            public object Get(string name)
             {
-                return dict.TryGetValue(name, out obj);
+                if (dict.ContainsKey(name))
+                    return dict[name];
+                else
+                    return null;
             }
 
             public bool ContainsKey(string name)
