@@ -57,7 +57,7 @@ namespace Girl.LLPML.Parsing
             throw Abort("const: 型が指定されていません。");
         }
 
-        private delegate void DeclareHandler(string name, bool eq, SrcInfo si, IIntValue array);
+        private delegate void DeclareHandler(string name, bool eq, SrcInfo si, NodeBase array);
 
         private void ReadDeclare(string category, Action delg1, DeclareHandler delg2)
         {
@@ -71,7 +71,7 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0}: 名前が不適切です: {1}", category, name);
             }
 
-            IIntValue array = null;
+            NodeBase array = null;
             var br1 = Read();
             if (br1 == "[")
             {

@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public class Cast : Var
     {
-        public IIntValue Source { get; private set; }
+        public NodeBase Source { get; private set; }
 
         private string type;
         public override TypeBase Type
@@ -25,7 +25,7 @@ namespace Girl.LLPML
             }
         }
 
-        public Cast(BlockBase parent, string type, IIntValue source)
+        public Cast(BlockBase parent, string type, NodeBase source)
         {
             this.Parent = parent;
             name = "__cast";
@@ -45,7 +45,7 @@ namespace Girl.LLPML
 
             Parse(xr, delegate
             {
-                IIntValue[] v = IntValue.Read(Parent, xr);
+                NodeBase[] v = IntValue.Read(Parent, xr);
                 if (v != null)
                 {
                     if (v.Length > 1 || Source != null)
@@ -89,7 +89,7 @@ namespace Girl.LLPML
                 Source.AddCodes(codes, op, dest);
         }
 
-        public IIntValue GetSource()
+        public NodeBase GetSource()
         {
             var ret = Source;
             if (ret == null || !(ret is Cast)) return ret;

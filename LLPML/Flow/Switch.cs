@@ -12,9 +12,9 @@ namespace Girl.LLPML
     {
         private class Expression : NodeBase
         {
-            private IIntValue value;
+            private NodeBase value;
 
-            public Expression(BlockBase parent, IIntValue value)
+            public Expression(BlockBase parent, NodeBase value)
                 : base(parent)
             {
                 this.value = value;
@@ -29,7 +29,7 @@ namespace Girl.LLPML
             {
                 Parse(xr, delegate
                 {
-                    IIntValue[] v = IntValue.Read(Parent, xr);
+                    NodeBase[] v = IntValue.Read(Parent, xr);
                     if (v != null)
                     {
                         if (v.Length > 1 || value != null)
@@ -51,8 +51,8 @@ namespace Girl.LLPML
 
         public class Case : NodeBase
         {
-            private List<IIntValue> values = new List<IIntValue>();
-            public List<IIntValue> Values { get { return values; } }
+            private List<NodeBase> values = new List<NodeBase>();
+            public List<NodeBase> Values { get { return values; } }
 
             public Block Block;
             public bool IsLast;
@@ -66,7 +66,7 @@ namespace Girl.LLPML
                 {
                     var vs = IntValue.Read(Parent, xr);
                     if (vs == null) return;
-                    foreach (IIntValue v in vs)
+                    foreach (NodeBase v in vs)
                     {
                         if (!(v is IntValue))
                             throw Abort(xr, "constant required");
@@ -122,7 +122,7 @@ namespace Girl.LLPML
 
         public override bool AcceptsBreak { get { return true; } }
 
-        public Switch(BlockBase parent, IIntValue expr)
+        public Switch(BlockBase parent, NodeBase expr)
             : base(parent)
         {
             this.expr = new Expression(this, expr);

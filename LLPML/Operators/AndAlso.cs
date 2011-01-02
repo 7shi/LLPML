@@ -13,15 +13,15 @@ namespace Girl.LLPML
         public override string Tag { get { return "and-also"; } }
         public override TypeBase Type { get { return TypeBool.Instance; } }
 
-        public AndAlso(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
+        public AndAlso(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         public AndAlso(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             if (AddConstCodes(codes, op, dest)) return;
 
-            OpCode last = new OpCode();
-            foreach (IIntValue v in values)
+            var last = new OpCode();
+            foreach (var v in values)
             {
                 v.AddCodes(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));

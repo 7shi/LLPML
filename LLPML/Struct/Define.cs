@@ -18,7 +18,7 @@ namespace Girl.LLPML.Struct
 
         protected TypeBase type;
 
-        public TypeBase Type
+        public override TypeBase Type
         {
             get
             {

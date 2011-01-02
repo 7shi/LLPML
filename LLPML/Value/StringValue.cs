@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class StringValue : NodeBase, IIntValue
+    public class StringValue : NodeBase
     {
         public string Value { get; private set; }
 
@@ -23,9 +23,9 @@ namespace Girl.LLPML
             Value = value;
         }
 
-        public TypeBase Type { get { return TypeConstString.Instance; } }
+        public override TypeBase Type { get { return TypeConstString.Instance; } }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, codes.GetString(Value));
         }

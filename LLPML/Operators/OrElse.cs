@@ -13,7 +13,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "or-else"; } }
         public override TypeBase Type { get { return TypeBool.Instance; } }
 
-        public OrElse(BlockBase parent, params IIntValue[] values) : base(parent, values) { }
+        public OrElse(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
         public OrElse(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)

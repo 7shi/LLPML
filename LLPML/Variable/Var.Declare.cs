@@ -14,7 +14,7 @@ namespace Girl.LLPML
         {
             public Addr32 Address { get; set; }
             public bool IsMember { get; protected set; }
-            public IIntValue Value { get; set; }
+            public NodeBase Value { get; set; }
             public bool IsStatic { get; set; }
 
             public virtual bool NeedsInit { get { return Value != null; } }
@@ -40,13 +40,13 @@ namespace Girl.LLPML
                 }
             }
 
-            public Declare(BlockBase parent, string name, TypeBase type, IIntValue value)
+            public Declare(BlockBase parent, string name, TypeBase type, NodeBase value)
                 : this(parent, name, type)
             {
                 Value = value;
             }
 
-            public static Declare Array(BlockBase parent, string name, TypeBase type, IIntValue count)
+            public static Declare Array(BlockBase parent, string name, TypeBase type, NodeBase count)
             {
                 var ret = new Declare(parent, name);
                 ret.doneInferType = true;
@@ -85,7 +85,7 @@ namespace Girl.LLPML
                     if (t != null) type = t;
                     Parse(xr, delegate
                     {
-                        IIntValue[] v = IntValue.Read(Parent, xr);
+                        NodeBase[] v = IntValue.Read(Parent, xr);
                         if (v != null)
                         {
                             if (v.Length > 1 || Value != null)
@@ -162,7 +162,7 @@ namespace Girl.LLPML
             protected TypeBase type;
             protected bool doneInferType = false;
 
-            public virtual TypeBase Type
+            public override TypeBase Type
             {
                 get
                 {

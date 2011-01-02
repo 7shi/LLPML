@@ -15,7 +15,7 @@ namespace Girl.LLPML.Struct
         public override int Min { get { return 2; } }
         public override int Max { get { return 2; } }
 
-        public Is(BlockBase parent, IIntValue v1, IIntValue v2) : base(parent, v1, v2) { }
+        public Is(BlockBase parent, NodeBase v1, NodeBase v2) : base(parent, v1, v2) { }
         public Is(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)

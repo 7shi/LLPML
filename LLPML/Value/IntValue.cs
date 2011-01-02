@@ -9,7 +9,7 @@ using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
-    public class IntValue : NodeBase, IIntValue
+    public class IntValue : NodeBase
     {
         private int value;
         public virtual int Value { get { return value; } }
@@ -19,14 +19,14 @@ namespace Girl.LLPML
         public IntValue(int value) { this.value = value; }
         public IntValue(string value) : this(Parse(value)) { }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
+        public override TypeBase Type { get { return TypeInt.Instance; } }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, Val32.NewI(Value));
         }
 
-        private static IIntValue ReadElement(BlockBase parent, XmlTextReader xr)
+        private static NodeBase ReadElement(BlockBase parent, XmlTextReader xr)
         {
             switch (xr.Name)
             {
@@ -151,16 +151,16 @@ namespace Girl.LLPML
             }
         }
 
-        public static IIntValue[] Read(BlockBase parent, XmlTextReader xr)
+        public static NodeBase[] Read(BlockBase parent, XmlTextReader xr)
         {
             switch (xr.NodeType)
             {
                 case XmlNodeType.Element:
-                    return new IIntValue[] { ReadElement(parent, xr) };
+                    return new NodeBase[] { ReadElement(parent, xr) };
 
                 case XmlNodeType.Text:
                     {
-                        IIntValue[] ret = ReadText(parent,
+                        NodeBase[] ret = ReadText(parent,
                             new Tokenizer(parent.Root.Source, xr));
                         if (ret == null)
                             throw parent.Abort(xr, "invalid expression");
@@ -174,10 +174,10 @@ namespace Girl.LLPML
             throw parent.Abort(xr, "value required");
         }
 
-        public static IIntValue[] ReadText(BlockBase parent, Tokenizer token)
+        public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)
         {
             Parser parser = new Parser(token, parent);
-            IIntValue[] ret = parser.ParseExpressions();
+            NodeBase[] ret = parser.ParseExpressions();
             if (token.CanRead) ret = null;
             return ret;
         }
@@ -191,7 +191,7 @@ namespace Girl.LLPML
             return int.Parse(value);
         }
 
-        public static IntValue GetValue(IIntValue v)
+        public static IntValue GetValue(NodeBase v)
         {
             if (v is ConstInt)
                 return GetValue((v as ConstInt).Value);

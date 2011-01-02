@@ -20,7 +20,7 @@ namespace Girl.LLPML.Parsing
             Init();
         }
 
-        public IIntValue[] ParseExpressions()
+        public NodeBase[] ParseExpressions()
         {
             return Arguments(",", null, false);
         }
@@ -48,12 +48,12 @@ namespace Girl.LLPML.Parsing
             return ret.ToArray();
         }
 
-        private IIntValue[] Arguments(string sep, string end, bool mustSep)
+        private NodeBase[] Arguments(string sep, string end, bool mustSep)
         {
             var br = Read();
             if (br == null) return null;
 
-            var ret = new List<IIntValue>();
+            var ret = new List<NodeBase>();
             if (br == end) return ret.ToArray();
             Rewind();
 

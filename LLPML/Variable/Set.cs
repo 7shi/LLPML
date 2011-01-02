@@ -15,15 +15,15 @@ namespace Girl.LLPML
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
-        public Set(BlockBase parent, IIntValue dest) : base(parent, dest) { }
+        public Set(BlockBase parent, NodeBase dest) : base(parent, dest) { }
 
-        public Set(BlockBase parent, IIntValue dest, IIntValue value)
+        public Set(BlockBase parent, NodeBase dest, NodeBase value)
             : base(parent, dest)
         {
             this.values.Add(value);
         }
 
-        public Set(BlockBase parent, IIntValue dest, int value)
+        public Set(BlockBase parent, NodeBase dest, int value)
             : this(parent, dest, new IntValue(value))
         {
         }

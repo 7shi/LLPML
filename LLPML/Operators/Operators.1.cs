@@ -15,7 +15,7 @@ namespace Girl.LLPML
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
-        public Neg(BlockBase parent, IIntValue value) : base(parent, value) { }
+        public Neg(BlockBase parent, NodeBase value) : base(parent, value) { }
         public Neg(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
@@ -39,7 +39,7 @@ namespace Girl.LLPML
     public class Rev : Neg
     {
         public override string Tag { get { return "rev"; } }
-        public Rev(BlockBase parent, IIntValue value) : base(parent, value) { }
+        public Rev(BlockBase parent, NodeBase value) : base(parent, value) { }
         public Rev(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override int Calculate(int v) { return ~v; }
     }
@@ -48,7 +48,7 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "not"; } }
         public override TypeBase Type { get { return TypeBool.Instance; } }
-        public Not(BlockBase parent, IIntValue value) : base(parent, value) { }
+        public Not(BlockBase parent, NodeBase value) : base(parent, value) { }
         public Not(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override int Calculate(int v) { return v != 0 ? 0 : 1; }
     }

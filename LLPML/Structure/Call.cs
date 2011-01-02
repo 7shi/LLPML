@@ -8,12 +8,12 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Call : NodeBase, IIntValue
+    public partial class Call : NodeBase
     {
-        private IIntValue target;
-        protected List<IIntValue> args = new List<IIntValue>();
+        private NodeBase target;
+        protected List<NodeBase> args = new List<NodeBase>();
 
-        private IIntValue val;
+        private NodeBase val;
         private CallType callType = CallType.CDecl;
 
         public Call(BlockBase parent, string name)
@@ -21,7 +21,7 @@ namespace Girl.LLPML
         {
         }
 
-        public Call(BlockBase parent, string name, IIntValue target, params IIntValue[] args)
+        public Call(BlockBase parent, string name, NodeBase target, params NodeBase[] args)
             : this(parent, name)
         {
             this.target = target;
@@ -30,7 +30,7 @@ namespace Girl.LLPML
                 this.name = (target as Struct.Member).GetName();
         }
 
-        public Call(BlockBase parent, IIntValue val, IIntValue target, params IIntValue[] args)
+        public Call(BlockBase parent, NodeBase val, NodeBase target, params NodeBase[] args)
             : base(parent)
         {
             this.val = val;
@@ -77,7 +77,7 @@ namespace Girl.LLPML
                 throw Abort(xr, "either name or var required");
         }
 
-        public IIntValue GetFunction(OpModule codes, IIntValue target, out List<IIntValue> args)
+        public NodeBase GetFunction(OpModule codes, NodeBase target, out List<NodeBase> args)
         {
             if (val == null && target is Struct.Member)
             {
@@ -93,7 +93,7 @@ namespace Girl.LLPML
                         throw Abort("call: undefined function: {0}", mem.FullName);
                 }
                 var memt = mem.GetTarget();
-                args = new List<IIntValue>();
+                args = new List<NodeBase>();
                 if (memt != null && !memf.IsStatic)
                     args.Add(memt);
                 args.AddRange(this.args);
@@ -101,7 +101,7 @@ namespace Girl.LLPML
             }
             else if (string.IsNullOrEmpty(name))
             {
-                args = new List<IIntValue>();
+                args = new List<NodeBase>();
                 if (target != null) args.Add(target);
                 args.AddRange(this.args);
                 if (val is Function)
@@ -153,7 +153,7 @@ namespace Girl.LLPML
                 else
                     throw Abort("undefined function: {0}", st.GetFullName(name));
             }
-            args = new List<IIntValue>();
+            args = new List<NodeBase>();
             args.Add(target);
             args.AddRange(this.args);
             return ret;
@@ -161,7 +161,7 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
-            List<IIntValue> args = new List<IIntValue>();
+            List<NodeBase> args = new List<NodeBase>();
             if (this.val == null && target is Struct.Member)
                 args.Add((target as Struct.Member).GetTarget());
             else if (target != null)
@@ -214,13 +214,13 @@ namespace Girl.LLPML
                 codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
         }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
         }
 
-        public static void AddCodes(OpModule codes, Function f, IIntValue[] args)
+        public static void AddCodes(OpModule codes, Function f, NodeBase[] args)
         {
             AddCodes(codes, args, f.CallType, delegate
             {
@@ -228,7 +228,7 @@ namespace Girl.LLPML
             });
         }
 
-        public static bool NeedsDtor(IIntValue arg)
+        public static bool NeedsDtor(NodeBase arg)
         {
             if (arg is Call || arg is Delegate)
             {
@@ -244,11 +244,11 @@ namespace Girl.LLPML
         }
 
         public static void AddCodes(
-            OpModule codes, IIntValue[] args, CallType type, Action delg)
+            OpModule codes, NodeBase[] args, CallType type, Action delg)
         {
-            var args2 = args.Clone() as IIntValue[];
+            var args2 = args.Clone() as NodeBase[];
             Array.Reverse(args2);
-            foreach (IIntValue arg in args2)
+            foreach (NodeBase arg in args2)
                 arg.AddCodes(codes, "push", null);
             delg();
             if (type == CallType.CDecl && args2.Length > 0)
@@ -276,7 +276,7 @@ namespace Girl.LLPML
         protected TypeBase type;
         protected bool doneInferType = false;
 
-        public TypeBase Type
+        public override TypeBase Type
         {
             get
             {
@@ -299,7 +299,7 @@ namespace Girl.LLPML
                 }
                 else
                 {
-                    List<IIntValue> args;
+                    List<NodeBase> args;
                     var f = GetFunction(null, target, out args);
                     if (f is Function)
                         type = (f as Function).ReturnType;
@@ -310,12 +310,12 @@ namespace Girl.LLPML
             }
         }
 
-        public void PipeForward(IIntValue arg)
+        public void PipeForward(NodeBase arg)
         {
             args.Add(arg);
         }
 
-        public void PipeBack(IIntValue arg)
+        public void PipeBack(NodeBase arg)
         {
             //if (target != null) args.Insert(0, target);
             //target = arg;

@@ -109,9 +109,9 @@ namespace Girl.LLPML.Parsing
             tokenizer.Reserved = reserved.ToArray();
         }
 
-        private delegate IIntValue NodeDelegate(IIntValue arg1, IIntValue arg2);
-        private delegate IIntValue VarDelegate(IIntValue dest, IIntValue value);
-        private delegate IIntValue WrapDelegate(IIntValue arg, int order);
+        private delegate NodeBase NodeDelegate(NodeBase arg1, NodeBase arg2);
+        private delegate NodeBase VarDelegate(NodeBase dest, NodeBase value);
+        private delegate NodeBase WrapDelegate(NodeBase arg, int order);
 
         private abstract class OperatorBase
         {
@@ -124,7 +124,7 @@ namespace Girl.LLPML.Parsing
                 this.assoc = assoc;
             }
 
-            public abstract IIntValue Read(IIntValue arg, int order);
+            public abstract NodeBase Read(NodeBase arg, int order);
         }
 
         private class Operator : OperatorBase
@@ -137,7 +137,7 @@ namespace Girl.LLPML.Parsing
                 this.handler = handler;
             }
 
-            public override IIntValue Read(IIntValue arg, int order)
+            public override NodeBase Read(NodeBase arg, int order)
             {
                 Parser parser = handler.Target as Parser;
                 return handler(arg, parser.Expression(order + assoc));
@@ -154,7 +154,7 @@ namespace Girl.LLPML.Parsing
                 this.handler = handler;
             }
 
-            public override IIntValue Read(IIntValue arg, int order)
+            public override NodeBase Read(NodeBase arg, int order)
             {
                 Parser parser = handler.Target as Parser;
                 return handler(arg, parser.Expression(order + assoc));
@@ -171,7 +171,7 @@ namespace Girl.LLPML.Parsing
                 this.handler = handler;
             }
 
-            public override IIntValue Read(IIntValue target, int order)
+            public override NodeBase Read(NodeBase target, int order)
             {
                 return handler(target, order);
             }

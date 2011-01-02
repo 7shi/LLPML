@@ -10,8 +10,8 @@ namespace Girl.LLPML.Struct
 {
     public class Member : Var
     {
-        private IIntValue target;
-        public IIntValue Target
+        private NodeBase target;
+        public NodeBase Target
         {
             get
             {
@@ -280,14 +280,14 @@ namespace Girl.LLPML.Struct
             return name;
         }
 
-        public IIntValue GetTarget()
+        public NodeBase GetTarget()
         {
             if (Child != null)
                 return Child.GetTarget();
             return GetTargetInternal();
         }
 
-        public IIntValue GetTargetInternal()
+        public NodeBase GetTargetInternal()
         {
             var target = Target;
             if (target is Member)
@@ -398,17 +398,17 @@ namespace Girl.LLPML.Struct
             return m;
         }
 
-        protected Call GetCall(string prefix, params IIntValue[] args)
+        protected Call GetCall(string prefix, params NodeBase[] args)
         {
             return new Call(Parent, GetFunction(prefix), GetTargetInternal(), args);
         }
 
-        protected void AddSetterCodesInternal(OpModule codes, IIntValue arg)
+        protected void AddSetterCodesInternal(OpModule codes, NodeBase arg)
         {
             GetCall("set_", arg).AddCodes(codes);
         }
 
-        public void AddSetterCodes(OpModule codes, IIntValue arg)
+        public void AddSetterCodes(OpModule codes, NodeBase arg)
         {
             if (Child != null)
                 Child.AddSetterCodes(codes, arg);

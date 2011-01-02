@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Function : Block, IIntValue
+    public class Function : Block
     {
         public CallType CallType { get; set; }
         public bool IsStatic { get; protected set; }
@@ -278,7 +278,7 @@ namespace Girl.LLPML
             return Val32.New2(Val32.New(m.Specific.ImageBase), First);
         }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, codes.GetAddress(this));
         }
@@ -292,7 +292,7 @@ namespace Girl.LLPML
         protected TypeBase type;
         protected bool doneInferType = false;
 
-        public TypeBase Type
+        public override TypeBase Type
         {
             get
             {

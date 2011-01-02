@@ -9,25 +9,25 @@ namespace Girl.LLPML
 {
     public partial class Var
     {
-        public abstract class Operator : NodeBase, IIntValue
+        public abstract class Operator : NodeBase
         {
             public abstract string Tag { get; }
 
-            protected IIntValue dest;
-            protected List<IIntValue> values = new List<IIntValue>();
-            public IIntValue[] GetValues() { return values.ToArray(); }
+            protected NodeBase dest;
+            protected List<NodeBase> values = new List<NodeBase>();
+            public NodeBase[] GetValues() { return values.ToArray(); }
 
             public virtual int Min { get { return 1; } }
             public virtual int Max { get { return int.MaxValue; } }
 
             public Operator() { }
-            public Operator(BlockBase parent, IIntValue dest)
+            public Operator(BlockBase parent, NodeBase dest)
                 : base(parent)
             {
                 this.dest = dest;
             }
 
-            public Operator(BlockBase parent, IIntValue dest, params IIntValue[] values)
+            public Operator(BlockBase parent, NodeBase dest, params NodeBase[] values)
                 : this(parent, dest)
             {
                 if (values.Length < Min)
@@ -45,7 +45,7 @@ namespace Girl.LLPML
                 {
                     var vs = IntValue.Read(Parent, xr);
                     if (vs == null) return;
-                    foreach (IIntValue v in vs)
+                    foreach (NodeBase v in vs)
                     {
                         if (dest == null)
                             dest = v;
@@ -74,8 +74,7 @@ namespace Girl.LLPML
                 return f;
             }
 
-            public TypeBase Type { get { return dest.Type; } }
-            public abstract void AddCodes(OpModule codes, string op, Addr32 dest);
+            public override TypeBase Type { get { return dest.Type; } }
         }
     }
 }

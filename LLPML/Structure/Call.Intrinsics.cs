@@ -10,7 +10,7 @@ namespace Girl.LLPML
 {
     public partial class Call
     {
-        public bool AddIntrinsicCodes(OpModule codes, List<IIntValue> args)
+        public bool AddIntrinsicCodes(OpModule codes, List<NodeBase> args)
         {
             switch (name)
             {
@@ -65,7 +65,7 @@ namespace Girl.LLPML
             return false;
         }
 
-        public static void Stos(OpModule codes, string op, IIntValue dest, IIntValue data, IIntValue count)
+        public static void Stos(OpModule codes, string op, NodeBase dest, NodeBase data, NodeBase count)
         {
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
@@ -81,7 +81,7 @@ namespace Girl.LLPML
             codes.Add(I386.Popf());
         }
 
-        public static void Movs(OpModule codes, string op, IIntValue dest, IIntValue src, IIntValue count)
+        public static void Movs(OpModule codes, string op, NodeBase dest, NodeBase src, NodeBase count)
         {
             var direction = I386.Cld();
             if (op.EndsWith("_rev"))
@@ -106,7 +106,7 @@ namespace Girl.LLPML
             codes.Add(I386.Popf());
         }
 
-        public static void Memcpy(OpModule codes, IIntValue dest, IIntValue src, IIntValue count)
+        public static void Memcpy(OpModule codes, NodeBase dest, NodeBase src, NodeBase count)
         {
             if (count is IntValue)
             {
@@ -136,7 +136,7 @@ namespace Girl.LLPML
             codes.Add(I386.Popf());
         }
 
-        public static void Memcpy(OpModule codes, IIntValue dest, IIntValue src, int count)
+        public static void Memcpy(OpModule codes, NodeBase dest, NodeBase src, int count)
         {
             switch (count)
             {
@@ -222,7 +222,7 @@ namespace Girl.LLPML
             }
         }
 
-        public static void MemcpyRev(OpModule codes, IIntValue dest, IIntValue src, IIntValue count)
+        public static void MemcpyRev(OpModule codes, NodeBase dest, NodeBase src, NodeBase count)
         {
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
@@ -248,7 +248,7 @@ namespace Girl.LLPML
             codes.Add(I386.Popf());
         }
 
-        public static void Cpuid(OpModule codes, IIntValue result, IIntValue eax)
+        public static void Cpuid(OpModule codes, NodeBase result, NodeBase eax)
         {
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));

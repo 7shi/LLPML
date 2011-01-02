@@ -10,10 +10,10 @@ namespace Girl.LLPML
 {
     public class Index : Var
     {
-        private IIntValue target;
-        private IIntValue order;
+        private NodeBase target;
+        private NodeBase order;
 
-        public Index(BlockBase parent, IIntValue target, IIntValue order)
+        public Index(BlockBase parent, NodeBase target, NodeBase order)
             : base(parent)
         {
             this.target = target;

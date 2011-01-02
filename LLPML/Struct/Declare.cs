@@ -88,7 +88,7 @@ namespace Girl.LLPML.Struct
                 }
                 else
                 {
-                    IIntValue[] v = IntValue.Read(Parent, xr);
+                    NodeBase[] v = IntValue.Read(Parent, xr);
                     if (v != null) values.AddRange(v);
                 }
             });
@@ -131,11 +131,11 @@ namespace Girl.LLPML.Struct
                         throw Abort("struct required: " + mem.Name);
                     (obj as Declare).AddInitValues(codes, memst);
                 }
-                else if (obj is IIntValue)
+                else if (obj is NodeBase)
                 {
                     if (!(mem is Var.Declare))
                         throw Abort("value required: " + mem.Name);
-                    (obj as IIntValue).AddCodes(codes, "mov", null);
+                    (obj as NodeBase).AddCodes(codes, "mov", null);
                     codes.Add(I386.MovRA(Var.DestRegister, ad));
                     mem.Type.AddSetCodes(codes, Addr32.New(Var.DestRegister));
                 }

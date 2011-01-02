@@ -84,7 +84,7 @@ namespace Girl.LLPML
             return Parent == null ? null : Parent.GetInt(name);
         }
 
-        public bool AddInt(string name, IIntValue value)
+        public bool AddInt(string name, NodeBase value)
         {
             return AddMember(name, new ConstInt(this, value));
         }
@@ -114,7 +114,7 @@ namespace Girl.LLPML
             return IntValue.Parse(value);
         }
 
-        public IIntValue ReadInt(XmlTextReader xr)
+        public NodeBase ReadInt(XmlTextReader xr)
         {
             string name = xr["name"];
             if (name != null)
@@ -443,9 +443,9 @@ namespace Girl.LLPML
             codes.Add(I386.AddR(Reg32.ESP, Val32.NewI(((argCount + 1) * 4))));
         }
 
-        private List<IIntValue> typeInfos = new List<IIntValue>();
+        private List<NodeBase> typeInfos = new List<NodeBase>();
 
-        public void AddTypeInfo(IIntValue v)
+        public void AddTypeInfo(NodeBase v)
         {
             GetRetVal(this);
             typeInfos.Add(v);
@@ -479,7 +479,7 @@ namespace Girl.LLPML
             }
         }
 
-        private bool InferType(IIntValue v)
+        private bool InferType(NodeBase v)
         {
             var vt = v.Type;
             if (vt == null) return true;

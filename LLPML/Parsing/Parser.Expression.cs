@@ -7,12 +7,12 @@ namespace Girl.LLPML.Parsing
     public partial class Parser
     {
         // Expression ::= Factor (operator Factor)*
-        private IIntValue Expression()
+        private NodeBase Expression()
         {
             return Expression(0);
         }
 
-        private IIntValue Expression(int order)
+        private NodeBase Expression(int order)
         {
             if (!CanRead) throw Abort("式がありません。");
             if (order >= operators.Length) return Factor();
@@ -38,7 +38,7 @@ namespace Girl.LLPML.Parsing
         }
 
         // Factor ::= Cast | Group | Unary
-        private IIntValue Factor()
+        private NodeBase Factor()
         {
             if (Read() == "(")
             {
@@ -53,7 +53,7 @@ namespace Girl.LLPML.Parsing
         }
 
         // Group ::= "(" Expression ")"
-        private IIntValue Group()
+        private NodeBase Group()
         {
             if (!CanRead) return null;
 
@@ -67,7 +67,7 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private IIntValue Unary()
+        private NodeBase Unary()
         {
             if (!CanRead) throw Abort("式がありません。");
 
@@ -103,7 +103,7 @@ namespace Girl.LLPML.Parsing
             return Value();
         }
 
-        private IIntValue Value()
+        private NodeBase Value()
         {
             if (!CanRead) throw Abort("式がありません。");
 

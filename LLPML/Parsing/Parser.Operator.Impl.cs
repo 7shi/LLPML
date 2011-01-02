@@ -6,7 +6,7 @@ namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
-        private IIntValue Call(IIntValue target, int order)
+        private NodeBase Call(NodeBase target, int order)
         {
             var fn = "call";
             if (target is NodeBase)
@@ -27,7 +27,7 @@ namespace Girl.LLPML.Parsing
             return new Call(parent, target, null, args);
         }
 
-        private IIntValue Member(IIntValue target, int order)
+        private NodeBase Member(NodeBase target, int order)
         {
             Struct.Member mem = target as Struct.Member;
             var t2 = Read();
@@ -49,7 +49,7 @@ namespace Girl.LLPML.Parsing
             return t2m;
         }
 
-        private IIntValue Index(IIntValue target, int order)
+        private NodeBase Index(NodeBase target, int order)
         {
             var t = Read();
             if (t == "]" && target is Variant)
@@ -61,7 +61,7 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private Call ConvertToCall(IIntValue v)
+        private Call ConvertToCall(NodeBase v)
         {
             if (v is Call)
                 return v as Call;
@@ -73,14 +73,14 @@ namespace Girl.LLPML.Parsing
             return new Call(parent, mem.GetName(), mem.GetTarget());
         }
 
-        private IIntValue PipeForward(IIntValue arg1, IIntValue arg2)
+        private NodeBase PipeForward(NodeBase arg1, NodeBase arg2)
         {
             var ret = ConvertToCall(arg2);
             ret.PipeForward(arg1);
             return ret;
         }
 
-        private IIntValue PipeBack(IIntValue arg1, IIntValue arg2)
+        private NodeBase PipeBack(NodeBase arg1, NodeBase arg2)
         {
             var ret = ConvertToCall(arg2);
             ret.PipeBack(arg1);

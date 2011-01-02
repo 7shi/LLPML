@@ -8,11 +8,11 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class AddrOf : NodeBase, IIntValue
+    public class AddrOf : NodeBase
     {
-        public IIntValue Target { get; private set; }
+        public NodeBase Target { get; private set; }
 
-        public AddrOf(BlockBase parent, IIntValue target) : base(parent) { Target = target; }
+        public AddrOf(BlockBase parent, NodeBase target) : base(parent) { Target = target; }
         public AddrOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)
@@ -32,9 +32,9 @@ namespace Girl.LLPML
                 throw Abort(xr, "target required");
         }
 
-        public TypeBase Type { get { return new TypePointer(Target.Type); } }
+        public override TypeBase Type { get { return new TypePointer(Target.Type); } }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var t = Var.Get(Target);
             if (t == null)

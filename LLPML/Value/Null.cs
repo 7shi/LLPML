@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Null : NodeBase, IIntValue
+    public class Null : NodeBase
     {
         public Null(BlockBase parent) : base(parent, "null") { }
         public Null(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
@@ -19,9 +19,9 @@ namespace Girl.LLPML
             name = "null";
         }
 
-        public TypeBase Type { get { return null; } }
+        public override TypeBase Type { get { return null; } }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, Val32.New(0));
         }

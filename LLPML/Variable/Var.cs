@@ -8,12 +8,12 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public partial class Var : NodeBase, IIntValue
+    public partial class Var : NodeBase
     {
         public const int DefaultSize = 4;
         public const Reg32 DestRegister = Reg32.ECX;
 
-        public virtual TypeBase Type { get { return Reference.Type; } }
+        public override TypeBase Type { get { return Reference.Type; } }
         public Var.Declare Reference { get; protected set; }
 
         public Var() { }
@@ -58,12 +58,12 @@ namespace Girl.LLPML
             return Reference.GetAddress(codes, Parent);
         }
 
-        public virtual void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }
 
-        public static Var Get(IIntValue v)
+        public static Var Get(NodeBase v)
         {
             if (v is Variant)
                 return (v as Variant).GetVar();

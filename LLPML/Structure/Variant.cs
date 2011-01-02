@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Variant : NodeBase, IIntValue
+    public class Variant : NodeBase
     {
         private Function func;
         private Val32 address;
@@ -24,7 +24,7 @@ namespace Girl.LLPML
             RequiresName(xr);
         }
 
-        public TypeBase Type
+        public override TypeBase Type
         {
             get
             {
@@ -55,7 +55,7 @@ namespace Girl.LLPML
             return null;
         }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             Val32 v;
             var m = codes.Module;
@@ -130,14 +130,14 @@ namespace Girl.LLPML
             get { return GetSetter() != null; }
         }
 
-        public IIntValue GetConst()
+        public NodeBase GetConst()
         {
             var ret = GetTarget(Parent, name);
             if (ret is NodeBase) (ret as NodeBase).SrcInfo = SrcInfo;
             return ret;
         }
 
-        public static IIntValue GetTarget(BlockBase parent, string name)
+        public static NodeBase GetTarget(BlockBase parent, string name)
         {
             if (parent == null || name == null)
                 return null;

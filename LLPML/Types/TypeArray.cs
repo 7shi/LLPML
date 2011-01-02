@@ -65,7 +65,7 @@ namespace Girl.LLPML
             codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
         }
 
-        private IIntValue count;
+        private NodeBase count;
         public int Count
         {
             get
@@ -83,7 +83,7 @@ namespace Girl.LLPML
             }
         }
 
-        public TypeArray(TypeBase type, IIntValue count)
+        public TypeArray(TypeBase type, NodeBase count)
         {
             Type = type;
             this.count = count;

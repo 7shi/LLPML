@@ -12,8 +12,8 @@ namespace Girl.LLPML
     {
         public bool IsLast = false;
 
-        private IIntValue value;
-        public IIntValue Value
+        private NodeBase value;
+        public NodeBase Value
         {
             get { return value; }
             set
@@ -24,7 +24,7 @@ namespace Girl.LLPML
         }
 
         public Return(BlockBase parent) : base(parent) { }
-        public Return(BlockBase parent, IIntValue value) : this(parent) { Value = value; }
+        public Return(BlockBase parent, NodeBase value) : this(parent) { Value = value; }
         public Return(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void Read(XmlTextReader xr)

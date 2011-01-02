@@ -9,19 +9,19 @@ using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
-    public class ConstInt : NodeBase, IIntValue
+    public class ConstInt : NodeBase
     {
-        public IIntValue Value { get; private set; }
+        public NodeBase Value { get; private set; }
 
-        public ConstInt(BlockBase parent, IIntValue value)
+        public ConstInt(BlockBase parent, NodeBase value)
             : base(parent)
         {
             Value = value;
         }
 
-        public TypeBase Type { get { return TypeInt.Instance; } }
+        public override TypeBase Type { get { return TypeInt.Instance; } }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var v = IntValue.GetValue(Value);
             if (v != null)

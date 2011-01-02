@@ -13,7 +13,7 @@ namespace Girl.LLPML
         {
             public override string Tag { get { return "add"; } }
 
-            public Add(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Add(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Add(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
             private Addr32 Calculate(OpModule codes)
@@ -41,7 +41,7 @@ namespace Girl.LLPML
                     dest.Type.AddGetCodes(codes, "push", null, ad);
                     ad2 = Addr32.New(Reg32.ESP);
                 }
-                foreach (IIntValue v in values)
+                foreach (NodeBase v in values)
                 {
                     var vv = v;
                     var ff = f;
@@ -79,63 +79,63 @@ namespace Girl.LLPML
         public class Sub : Add
         {
             public override string Tag { get { return "sub"; } }
-            public Sub(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Sub(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Sub(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class And : Add
         {
             public override string Tag { get { return "and"; } }
-            public And(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public And(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public And(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Or : Add
         {
             public override string Tag { get { return "or"; } }
-            public Or(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Or(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Or(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Xor : Add
         {
             public override string Tag { get { return "xor"; } }
-            public Xor(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Xor(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Xor(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class ShiftLeft : Add
         {
             public override string Tag { get { return "shift-left"; } }
-            public ShiftLeft(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public ShiftLeft(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public ShiftLeft(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class ShiftRight : ShiftLeft
         {
             public override string Tag { get { return "shift-right"; } }
-            public ShiftRight(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public ShiftRight(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public ShiftRight(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Mul : Add
         {
             public override string Tag { get { return "mul"; } }
-            public Mul(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Mul(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Mul(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Div : Add
         {
             public override string Tag { get { return "div"; } }
-            public Div(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Div(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Div(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
 
         public class Mod : Add
         {
             public override string Tag { get { return "mod"; } }
-            public Mod(BlockBase parent, IIntValue dest, params IIntValue[] values) : base(parent, dest, values) { }
+            public Mod(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
             public Mod(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         }
     }

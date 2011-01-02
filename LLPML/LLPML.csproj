@@ -106,7 +106,6 @@
     <Compile Include="Root.cs" />
     <Compile Include="Structure\Call.cs" />
     <Compile Include="Structure\Block.cs" />
-    <Compile Include="Value\IIntValue.cs" />
     <Compile Include="Variable\Var.Declare.cs" />
     <Compile Include="Flow\For.cs" />
     <Compile Include="Flow\Break.cs" />

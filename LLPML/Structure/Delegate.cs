@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Delegate : NodeBase, IIntValue
+    public class Delegate : NodeBase
     {
         public const string Alloc = "__jit_alloc";
         public const string Free = "__jit_free";
@@ -20,24 +20,24 @@ namespace Girl.LLPML
             return new TypeDelegate(parent.Root, CallType.CDecl, TypeVar.Instance, null);
         }
 
-        public IIntValue[] Args { get; protected set; }
-        public IIntValue Function { get; protected set; }
+        public NodeBase[] Args { get; protected set; }
+        public NodeBase Function { get; protected set; }
         public CallType CallType { get; protected set; }
         public bool Auto { get; set; }
 
-        public Delegate(BlockBase parent, CallType callType, IIntValue[] args)
+        public Delegate(BlockBase parent, CallType callType, NodeBase[] args)
             : base(parent)
         {
             var len = args.Length;
             if (len < 1)
                 throw Abort("delegate: arguments required");
-            Args = new IIntValue[len - 1];
+            Args = new NodeBase[len - 1];
             Array.Copy(args, Args, len - 1);
             Function = args[len - 1];
             CallType = callType;
         }
 
-        public Delegate(BlockBase parent, CallType callType, IIntValue[] args, IIntValue func)
+        public Delegate(BlockBase parent, CallType callType, NodeBase[] args, NodeBase func)
             : base(parent)
         {
             Args = args;
@@ -55,8 +55,8 @@ namespace Girl.LLPML
             CallType = CallType.CDecl;
             if (xr["type"] == "std") CallType = CallType.Std;
 
-            var args = new List<IIntValue>();
-            IIntValue last = null;
+            var args = new List<NodeBase>();
+            NodeBase last = null;
             Parse(xr, delegate
             {
                 var vs = IntValue.Read(Parent, xr);
@@ -76,7 +76,7 @@ namespace Girl.LLPML
         protected TypeBase type;
         protected bool doneInferType = false;
 
-        public TypeBase Type
+        public override TypeBase Type
         {
             get
             {
@@ -98,7 +98,7 @@ namespace Girl.LLPML
             }
         }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
@@ -143,7 +143,7 @@ namespace Girl.LLPML
                 codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, 9), 0xfae2));
                 p = 11;
             }
-            var args = Args.Clone() as IIntValue[];
+            var args = Args.Clone() as NodeBase[];
             Array.Reverse(args);
             foreach (var arg in args)
             {

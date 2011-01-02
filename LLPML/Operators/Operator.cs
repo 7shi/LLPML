@@ -7,17 +7,17 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public abstract class Operator : NodeBase, IIntValue
+    public abstract class Operator : NodeBase
     {
         public abstract string Tag { get; }
 
-        protected List<IIntValue> values = new List<IIntValue>();
-        public IIntValue[] GetValues() { return values.ToArray(); }
+        protected List<NodeBase> values = new List<NodeBase>();
+        public NodeBase[] GetValues() { return values.ToArray(); }
 
         public virtual int Min { get { return 2; } }
         public virtual int Max { get { return int.MaxValue; } }
 
-        public Operator(BlockBase parent, params IIntValue[] values)
+        public Operator(BlockBase parent, params NodeBase[] values)
             : base(parent)
         {
             if (values.Length < Min)
@@ -35,7 +35,7 @@ namespace Girl.LLPML
             {
                 var vs = IntValue.Read(Parent, xr);
                 if (vs == null) return;
-                foreach (IIntValue v in vs)
+                foreach (NodeBase v in vs)
                 {
                     if (values.Count == Max)
                         throw Abort(xr, "too many operands");
@@ -66,7 +66,7 @@ namespace Girl.LLPML
             return c;
         }
 
-        public virtual TypeBase Type
+        public override TypeBase Type
         {
             get
             {
@@ -74,8 +74,6 @@ namespace Girl.LLPML
                 return values[0].Type;
             }
         }
-
-        public abstract void AddCodes(OpModule codes, string op, Addr32 dest);
 
         public abstract IntValue GetConst();
 

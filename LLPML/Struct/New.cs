@@ -7,26 +7,27 @@ using Girl.X86;
 
 namespace Girl.LLPML.Struct
 {
-    public class New : NodeBase, IIntValue
+    public class New : NodeBase
     {
         public const string Function = "__operator_new";
         public const string DereferencePtr = "__dereference_ptr";
 
-        public IIntValue Length { get; protected set; }
+        protected TypeBase type;
+        public override TypeBase Type { get { return type; } }
+        public NodeBase Length { get; protected set; }
         public bool IsArray { get { return !(Length is IntValue && (Length as IntValue).Value == -1); } }
-        public TypeBase Type { get; protected set; }
 
         public New(BlockBase parent, string type)
             : base(parent)
         {
-            Type = Types.GetVarType(parent, type);
+            this.type = Types.GetVarType(parent, type);
             Length = new IntValue(-1);
         }
 
-        public New(BlockBase parent, string type, IIntValue length)
+        public New(BlockBase parent, string type, NodeBase length)
             : base(parent)
         {
-            Type = new TypeReference(Types.GetType(parent, type), true);
+            this.type = new TypeReference(Types.GetType(parent, type), true);
             Length = length;
         }
 
@@ -44,12 +45,12 @@ namespace Girl.LLPML.Struct
             int len;
             if (length != null && int.TryParse(length, out len))
             {
-                Type = new TypeReference(Types.GetType(Parent, type), true);
+                this.type = new TypeReference(Types.GetType(Parent, type), true);
                 Length = new IntValue(len);
             }
             else
             {
-                Type = Types.GetVarType(Parent, type);
+                this.type = Types.GetVarType(Parent, type);
                 Length = new IntValue(-1);
             }
         }
@@ -59,7 +60,7 @@ namespace Girl.LLPML.Struct
             AddCodes(codes, "mov", null);
         }
 
-        public void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
             var tt = Type.Type;
             var tts = tt as TypeStruct;

@@ -137,7 +137,7 @@ namespace Girl.LLPML
             return f.GetAddress(Module);
         }
 
-        public static bool NeedsDtor(IIntValue v)
+        public static bool NeedsDtor(NodeBase v)
         {
             while (v is Cast) v = (v as Cast).Source;
             var vt = v.Type;
@@ -160,7 +160,7 @@ namespace Girl.LLPML
             Add(I386.AddR(Reg32.ESP, Val32.New(8)));
         }
 
-        public void AddOperatorCodes(TypeBase.Func f, Addr32 dest, IIntValue arg, bool pushf)
+        public void AddOperatorCodes(TypeBase.Func f, Addr32 dest, NodeBase arg, bool pushf)
         {
             arg.AddCodes(this, "mov", null);
             var cleanup = NeedsDtor(arg);

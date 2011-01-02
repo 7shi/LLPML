@@ -17,6 +17,8 @@ namespace Girl.LLPML
         protected Root root;
         public Root Root { get { return root; } }
 
+        public virtual TypeBase Type { get { return null; } }
+
         public Parsing.SrcInfo SrcInfo { get; set; }
 
         public NodeBase()
@@ -97,6 +99,7 @@ namespace Girl.LLPML
         }
 
         public virtual void AddCodes(OpModule codes) { }
+        public virtual void AddCodes(OpModule codes, string op, Addr32 dest) { }
 
         protected void NoChild(XmlTextReader xr)
         {

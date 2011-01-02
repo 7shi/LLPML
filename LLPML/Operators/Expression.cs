@@ -15,7 +15,7 @@ namespace Girl.LLPML
         public override int Min { get { return 1; } }
         public override int Max { get { return 1; } }
 
-        public Expression(BlockBase parent, IIntValue value) : base(parent, value) { }
+        public Expression(BlockBase parent, NodeBase value) : base(parent, value) { }
         public Expression(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes)

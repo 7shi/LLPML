@@ -257,14 +257,14 @@ namespace Girl.LLPML.Parsing
             this.parent = parent;
         }
 
-        private IIntValue AutoDelegate(Function f)
+        private NodeBase AutoDelegate(Function f)
         {
             if (f == null) return null;
 
             var autoArgs = f.GetAutoArgs();
             if (autoArgs == null) return f;
 
-            var args = new IIntValue[autoArgs.Length];
+            var args = new NodeBase[autoArgs.Length];
             for (int i = 0; i < args.Length; i++)
                 args[i] = new Var(parent, autoArgs[i].Name);
             return new Delegate(parent, f.CallType, args, f)
@@ -611,7 +611,7 @@ namespace Girl.LLPML.Parsing
             Check("switch", "(");
 
             var si = SrcInfo;
-            var expr = Expression() as IIntValue;
+            var expr = Expression() as NodeBase;
             if (expr == null)
                 throw parent.Abort(si, "switch: 値が必要です。");
 
@@ -644,7 +644,7 @@ namespace Girl.LLPML.Parsing
                             scb.Case = new Switch.Case(target);
                         if (t == "case")
                         {
-                            var v = Expression() as IIntValue;
+                            var v = Expression() as NodeBase;
                             if (v == null)
                                 throw Abort("case: 値が必要です。");
                             Check("case", ":");

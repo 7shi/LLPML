@@ -8,7 +8,7 @@ namespace Girl.LLPML.Parsing
     public partial class Parser
     {
         // 予約語
-        private IIntValue Reserved()
+        private NodeBase Reserved()
         {
             var si = SrcInfo;
             var t = Read();

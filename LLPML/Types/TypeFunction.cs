@@ -38,7 +38,7 @@ namespace Girl.LLPML
             return sb.ToString();
         }
 
-        public void CheckArgs(NodeBase target, IIntValue[] args)
+        public void CheckArgs(NodeBase target, NodeBase[] args)
         {
             if (!(args.Length == Args.Length
                 || (HasParams && args.Length >= Args.Length)))

@@ -10,9 +10,9 @@ namespace Girl.LLPML
 {
     public class SizeOf : IntValue
     {
-        public IIntValue target;
+        public NodeBase target;
 
-        public SizeOf(BlockBase parent, IIntValue target)
+        public SizeOf(BlockBase parent, NodeBase target)
             : base(parent)
         {
             this.target = target;
