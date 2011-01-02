@@ -13,15 +13,15 @@ namespace Girl.LLPML
         public CallType CallType { get; set; }
         public bool IsStatic { get; protected set; }
 
-        protected List<Var.Declare> args
-            = new List<Var.Declare>();
-        public List<Var.Declare> Args { get { return args; } }
+        protected List<VarDeclare> args
+            = new List<VarDeclare>();
+        public List<VarDeclare> Args { get { return args; } }
 
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
 
         protected Function virtfunc;
-        protected Var.Declare virtptr;
+        protected VarDeclare virtptr;
 
         public bool IsVirtual
         {
@@ -40,7 +40,7 @@ namespace Girl.LLPML
                     ovrfunc.SetOverride(this);
                     if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
-                    virtptr = new Var.Declare(
+                    virtptr = new VarDeclare(
                         Parent, "virtual_" + name,
                         null, /// todo: delegate type
                         new Variant(ovrfunc));
@@ -190,7 +190,7 @@ namespace Girl.LLPML
             }
         }
 
-        protected bool ArgNeededGC(Var.Declare arg)
+        protected bool ArgNeededGC(VarDeclare arg)
         {
             if (arg.Name == "this") return false;
             var tr = arg.Type as TypeReference;
@@ -247,11 +247,11 @@ namespace Girl.LLPML
         }
 
         public override void AddDestructors(
-            OpModule codes, IEnumerable<Var.Declare> ptrs)
+            OpModule codes, IEnumerable<VarDeclare> ptrs)
         {
             base.AddDestructors(codes, ptrs);
 
-            Stack<Var.Declare> args2 = new Stack<Var.Declare>(args);
+            Stack<VarDeclare> args2 = new Stack<VarDeclare>(args);
             while (args2.Count > 0)
             {
                 var arg = args2.Pop();
@@ -305,8 +305,8 @@ namespace Girl.LLPML
             }
         }
 
-        protected List<Var.Declare> autoArgs = new List<Var.Declare>();
-        public Var.Declare[] GetAutoArgs()
+        protected List<VarDeclare> autoArgs = new List<VarDeclare>();
+        public VarDeclare[] GetAutoArgs()
         {
             if (autoArgs.Count == 0) return null;
             return autoArgs.ToArray();
@@ -318,11 +318,11 @@ namespace Girl.LLPML
             autoArgs.Insert(0, arg);
         }
 
-        public override Var.Declare GetVar(string name)
+        public override VarDeclare GetVar(string name)
         {
             if (!isAnonymous) return base.GetVar(name);
 
-            var v = GetMember<Var.Declare>(name);
+            var v = GetMember<VarDeclare>(name);
             if (v != null) return v;
 
             var vp = Parent.GetVar(name);

@@ -16,16 +16,16 @@ namespace Girl.LLPML.Parsing
                 new[]
                 {
                     new VarOperator("="  , (dest, arg) => new Set(parent, dest, arg)),
-                    new VarOperator("+=" , (dest, arg) => new Var.Add(parent, dest, arg)),
-                    new VarOperator("-=" , (dest, arg) => new Var.Sub(parent, dest, arg)),
-                    new VarOperator("*=" , (dest, arg) => new Var.Mul(parent, dest, arg)),
-                    new VarOperator("/=" , (dest, arg) => new Var.Div(parent, dest, arg)),
-                    new VarOperator("%=" , (dest, arg) => new Var.Mod(parent, dest, arg)),
-                    new VarOperator("&=" , (dest, arg) => new Var.And(parent, dest, arg)),
-                    new VarOperator("|=" , (dest, arg) => new Var.Or(parent, dest, arg)),
-                    new VarOperator("^=" , (dest, arg) => new Var.Xor(parent, dest, arg)),
-                    new VarOperator("<<=", (dest, arg) => new Var.ShiftLeft(parent, dest, arg)),
-                    new VarOperator(">>=", (dest, arg) => new Var.ShiftRight(parent, dest, arg)),
+                    new VarOperator("+=" , (dest, arg) => new VarAdd(parent, dest, arg)),
+                    new VarOperator("-=" , (dest, arg) => new VarSub(parent, dest, arg)),
+                    new VarOperator("*=" , (dest, arg) => new VarMul(parent, dest, arg)),
+                    new VarOperator("/=" , (dest, arg) => new VarDiv(parent, dest, arg)),
+                    new VarOperator("%=" , (dest, arg) => new VarMod(parent, dest, arg)),
+                    new VarOperator("&=" , (dest, arg) => new VarAnd(parent, dest, arg)),
+                    new VarOperator("|=" , (dest, arg) => new VarOr(parent, dest, arg)),
+                    new VarOperator("^=" , (dest, arg) => new VarXor(parent, dest, arg)),
+                    new VarOperator("<<=", (dest, arg) => new VarShiftLeft(parent, dest, arg)),
+                    new VarOperator(">>=", (dest, arg) => new VarShiftRight(parent, dest, arg)),
                 },
                 new[]
                 {

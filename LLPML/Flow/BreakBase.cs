@@ -10,13 +10,13 @@ namespace Girl.LLPML
 {
     public abstract class BreakBase : NodeBase
     {
-        public Var.Declare[] UsingPointers { get; protected set; }
+        public VarDeclare[] UsingPointers { get; protected set; }
 
         private void SetUsingPointers()
         {
             if (Parent == null) return;
-            var list = new List<Var.Declare>();
-            foreach (var obj in Parent.GetMembers<Var.Declare>())
+            var list = new List<VarDeclare>();
+            foreach (var obj in Parent.GetMembers<VarDeclare>())
                 if (!(obj is Arg)) list.Add(obj);
             UsingPointers = list.ToArray();
         }

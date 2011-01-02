@@ -172,7 +172,7 @@ namespace Girl.LLPML
         {
             foreach (var s in sentences)
             {
-                var vd = s as Var.Declare;
+                var vd = s as VarDeclare;
                 if (vd != null && vd.IsStatic)
                     vd.Address = Addr32.NewD(m.GetBuffer(vd.FullName, vd.Type.Size));
             }

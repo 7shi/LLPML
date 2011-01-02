@@ -14,12 +14,12 @@ namespace Girl.LLPML
         public const Reg32 DestRegister = Reg32.ECX;
 
         public override TypeBase Type { get { return Reference.Type; } }
-        public Var.Declare Reference { get; protected set; }
+        public VarDeclare Reference { get; protected set; }
 
         public Var() { }
         public Var(BlockBase parent) : base(parent) { }
 
-        public Var(BlockBase parent, Declare var)
+        public Var(BlockBase parent, VarDeclare var)
             : base(parent, var.Name)
         {
             Reference = var;

@@ -89,7 +89,7 @@ namespace Girl.LLPML.Struct
             T ret = GetMember<T>(name);
             if (ret != null || Parent == null) return ret;
             ret = Parent.GetMemberRecursive<T>(name);
-            if (ret == null || !(ret is Var.Declare || ret is Function)) return ret;
+            if (ret == null || !(ret is VarDeclare || ret is Function)) return ret;
             if ((ret as NodeBase).Parent is Root) return ret;
             return null;
         }
@@ -135,9 +135,9 @@ namespace Girl.LLPML.Struct
             return ret + st.GetSizeInternal();
         }
 
-        public Var.Declare GetMember(string name)
+        public VarDeclare GetMember(string name)
         {
-            Var.Declare ret = null;
+            VarDeclare ret = null;
             ForEachMembers((p, pos) =>
             {
                 if (p.Name != name) return false;
@@ -150,9 +150,9 @@ namespace Girl.LLPML.Struct
             return st.GetMember(name);
         }
 
-        public Var.Declare[] GetMembers()
+        public VarDeclare[] GetMembers()
         {
-            List<Var.Declare> list = new List<Var.Declare>();
+            List<VarDeclare> list = new List<VarDeclare>();
             Define st = GetBaseStruct();
             if (st != null) list.AddRange(st.GetMembers());
             ForEachMembers((p, pos) =>
@@ -213,8 +213,8 @@ namespace Girl.LLPML.Struct
 
         public void AddAfterDtor(OpModule codes)
         {
-            var list = new List<Var.Declare>();
-            var poslist = new Dictionary<Var.Declare, int>();
+            var list = new List<VarDeclare>();
+            var poslist = new Dictionary<VarDeclare, int>();
             int offset = 0;
             var st = GetBaseStruct();
             if (st != null) offset = st.GetSizeInternal();
@@ -261,7 +261,7 @@ namespace Girl.LLPML.Struct
         }
 
         public override void AddDestructors(
-            OpModule codes, IEnumerable<Var.Declare> ptrs)
+            OpModule codes, IEnumerable<VarDeclare> ptrs)
         {
         }
 
@@ -274,9 +274,9 @@ namespace Girl.LLPML.Struct
 
                 foreach (var s in sentences)
                 {
-                    if (s is Var.Declare)
+                    if (s is VarDeclare)
                     {
-                        var d = s as Var.Declare;
+                        var d = s as VarDeclare;
                         if (!d.NeedsInit && !d.NeedsCtor)
                             continue;
                     }
@@ -307,7 +307,7 @@ namespace Girl.LLPML.Struct
                     return true;
                 foreach (object obj in members.Values)
                 {
-                    var vd = obj as Var.Declare;
+                    var vd = obj as VarDeclare;
                     if (vd != null && vd.NeedsDtor)
                         return true;
                 }

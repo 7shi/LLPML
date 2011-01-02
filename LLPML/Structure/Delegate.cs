@@ -91,7 +91,7 @@ namespace Girl.LLPML
                 var len = fargs.Length - Args.Length;
                 if (len < 0)
                     throw Abort("delegate: argument mismatched");
-                var args = new Var.Declare[len];
+                var args = new VarDeclare[len];
                 Array.Copy(fargs, Args.Length, args, 0, len);
                 type = new TypeDelegate(Parent.Root, CallType, f.RetType, args);
                 return type;

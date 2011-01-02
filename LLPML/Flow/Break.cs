@@ -34,7 +34,7 @@ namespace Girl.LLPML
         public override void AddCodes(OpModule codes)
         {
             BlockBase b = Parent;
-            Var.Declare[] ptrs = UsingPointers;
+            VarDeclare[] ptrs = UsingPointers;
             for (; ; ptrs = b.UsingPointers, b = b.Parent)
             {
                 if (b == null || b is Function)

@@ -83,21 +83,21 @@ namespace Girl.LLPML
                 case "post-dec":
                     return new PostDec(parent, xr);
                 case "var-add":
-                    return new Var.Add(parent, xr);
+                    return new VarAdd(parent, xr);
                 case "var-sub":
-                    return new Var.Sub(parent, xr);
+                    return new VarSub(parent, xr);
                 case "var-mul":
-                    return new Var.Mul(parent, xr);
+                    return new VarMul(parent, xr);
                 case "var-div":
-                    return new Var.Div(parent, xr);
+                    return new VarDiv(parent, xr);
                 case "var-and":
-                    return new Var.And(parent, xr);
+                    return new VarAnd(parent, xr);
                 case "var-or":
-                    return new Var.Or(parent, xr);
+                    return new VarOr(parent, xr);
                 case "var-shift-left":
-                    return new Var.ShiftLeft(parent, xr);
+                    return new VarShiftLeft(parent, xr);
                 case "var-shift-right":
-                    return new Var.ShiftRight(parent, xr);
+                    return new VarShiftRight(parent, xr);
                 case "add":
                     return new Add(parent, xr);
                 case "sub":

@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Set : Var.Operator
+    public class Set : VarOperator
     {
         public override string Tag { get { return "set"; } }
 

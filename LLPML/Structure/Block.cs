@@ -76,7 +76,7 @@ namespace Girl.LLPML
                             nb = new Set(target, xr);
                             break;
                         case "var-declare":
-                            nb = new Var.Declare(target, xr);
+                            nb = new VarDeclare(target, xr);
                             break;
                         case "expression":
                             nb = new Expression(target, xr);
@@ -94,31 +94,31 @@ namespace Girl.LLPML
                             nb = new PostDec(target, xr);
                             break;
                         case "var-add":
-                            nb = new Var.Add(target, xr);
+                            nb = new VarAdd(target, xr);
                             break;
                         case "var-sub":
-                            nb = new Var.Sub(target, xr);
+                            nb = new VarSub(target, xr);
                             break;
                         case "var-mul":
-                            nb = new Var.Mul(target, xr);
+                            nb = new VarMul(target, xr);
                             break;
                         case "var-div":
-                            nb = new Var.Div(target, xr);
+                            nb = new VarDiv(target, xr);
                             break;
                         case "var-and":
-                            nb = new Var.And(target, xr);
+                            nb = new VarAnd(target, xr);
                             break;
                         case "var-or":
-                            nb = new Var.Or(target, xr);
+                            nb = new VarOr(target, xr);
                             break;
                         case "var-shift-left":
-                            nb = new Var.ShiftLeft(target, xr);
+                            nb = new VarShiftLeft(target, xr);
                             break;
                         case "var-shift-right":
-                            nb = new Var.ShiftRight(target, xr);
+                            nb = new VarShiftRight(target, xr);
                             break;
                         case "ptr-declare":
-                            nb = new Var.Declare(target, xr);
+                            nb = new VarDeclare(target, xr);
                             break;
                         case "struct-define":
                             new Struct.Define(target, xr);

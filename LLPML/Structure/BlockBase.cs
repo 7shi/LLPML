@@ -31,12 +31,12 @@ namespace Girl.LLPML
         public virtual bool AcceptsContinue { get { return false; } }
         public virtual Val32 Continue { get { return null; } }
 
-        protected Var.Declare retVal;
+        protected VarDeclare retVal;
         public bool HasRetVal { get { return retVal != null; } }
         public Var GetRetVal(BlockBase parent)
         {
             if (retVal == null)
-                retVal = new Var.Declare(this, "__retval");
+                retVal = new VarDeclare(this, "__retval");
             return new Var(parent, retVal);
         }
 
@@ -207,8 +207,8 @@ namespace Girl.LLPML
 
         #endregion
 
-        public virtual Var.Declare GetVar(string name) { return GetMemberRecursive<Var.Declare>(name); }
-        public bool AddVar(Var.Declare v) { return AddMember(v.Name, v); }
+        public virtual VarDeclare GetVar(string name) { return GetMemberRecursive<VarDeclare>(name); }
+        public bool AddVar(VarDeclare v) { return AddMember(v.Name, v); }
 
         public Function GetFunction(string name) { return GetMemberRecursive<Function>(name); }
         public bool AddFunction(Function f) { return AddMember(f.Name, f); }
@@ -253,15 +253,15 @@ namespace Girl.LLPML
             }
         }
 
-        protected void ForEachMembers(Func<Var.Declare, int, bool> delg1, Action<int> delg2)
+        protected void ForEachMembers(Func<VarDeclare, int, bool> delg1, Action<int> delg2)
         {
             int pos = 0;
             foreach (var obj in members.Values)
             {
                 Type t = obj.GetType();
-                if (t == typeof(Var.Declare) || t == typeof(Struct.Declare))
+                if (t == typeof(VarDeclare) || t == typeof(Struct.Declare))
                 {
-                    var p = obj as Var.Declare;
+                    var p = obj as VarDeclare;
                     var len = p.Type.Size;
                     /// todo: 64bit長をサポートする
                     if (len > Var.DefaultSize) len = Var.DefaultSize;
@@ -318,7 +318,7 @@ namespace Girl.LLPML
             }
             if (!IsTerminated)
             {
-                var mems = new List<Var.Declare>();
+                var mems = new List<VarDeclare>();
                 ForEachMembers((p, pos) =>
                 {
                     mems.Add(p);
@@ -358,11 +358,11 @@ namespace Girl.LLPML
         }
 
         public virtual void AddDestructors(
-            OpModule codes, IEnumerable<Var.Declare> ptrs)
+            OpModule codes, IEnumerable<VarDeclare> ptrs)
         {
             if (ptrs == null) return;
 
-            Stack<Var.Declare> ptrs2 = new Stack<Var.Declare>(ptrs);
+            Stack<VarDeclare> ptrs2 = new Stack<VarDeclare>(ptrs);
             while (ptrs2.Count > 0)
             {
                 var p = ptrs2.Pop();
@@ -507,8 +507,8 @@ namespace Girl.LLPML
             foreach (var obj in members.Values)
                 if (obj is BlockBase)
                     (obj as BlockBase).MakeUp();
-                else if (obj is Var.Declare)
-                    (obj as Var.Declare).CheckClass();
+                else if (obj is VarDeclare)
+                    (obj as VarDeclare).CheckClass();
         }
 
         protected virtual void MakeUpInternal()
@@ -517,9 +517,9 @@ namespace Girl.LLPML
 
         public void AddSentence(NodeBase nb)
         {
-            if (nb is Var.Declare)
+            if (nb is VarDeclare)
             {
-                if ((nb as Var.Declare).IsStatic)
+                if ((nb as VarDeclare).IsStatic)
                 {
                     Parent.root.sentences.Add(nb);
                     return;

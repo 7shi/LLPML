@@ -8,7 +8,7 @@ using Girl.X86;
 
 namespace Girl.LLPML.Struct
 {
-    public class Declare : Var.Declare
+    public class Declare : VarDeclare
     {
         private List<object> values = new List<object>();
         public List<object> Values { get { return values; } }
@@ -114,7 +114,7 @@ namespace Girl.LLPML.Struct
         {
             if (values.Count == 0) return false;
 
-            Var.Declare[] members = st.GetMembers();
+            VarDeclare[] members = st.GetMembers();
             if (members.Length != values.Count)
                 throw Abort("initializers mismatched: " + st.Name);
 
@@ -122,7 +122,7 @@ namespace Girl.LLPML.Struct
             codes.Add(I386.PushA(ad));
             for (int i = 0; i < values.Count; i++)
             {
-                Var.Declare mem = members[i];
+                VarDeclare mem = members[i];
                 object obj = values[i];
                 if (obj is Declare)
                 {
@@ -133,7 +133,7 @@ namespace Girl.LLPML.Struct
                 }
                 else if (obj is NodeBase)
                 {
-                    if (!(mem is Var.Declare))
+                    if (!(mem is VarDeclare))
                         throw Abort("value required: " + mem.Name);
                     (obj as NodeBase).AddCodes(codes, "mov", null);
                     codes.Add(I386.MovRA(Var.DestRegister, ad));

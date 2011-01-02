@@ -7,14 +7,14 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Arg : Var.Declare
+    public class Arg : VarDeclare
     {
         public Arg(BlockBase parent, string name, TypeBase type) : base(parent, name, type) { }
         public Arg(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
-        private Var.Declare target;
+        private VarDeclare target;
 
-        public Arg(BlockBase parent, Var.Declare target)
+        public Arg(BlockBase parent, VarDeclare target)
             : base(parent, target.Name)
         {
             this.target = target;

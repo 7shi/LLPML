@@ -55,16 +55,16 @@ namespace Girl.LLPML
         }
 
         public TypeBase RetType { get; protected set; }
-        public Var.Declare[] Args { get; protected set; }
+        public VarDeclare[] Args { get; protected set; }
         public CallType CallType { get; protected set; }
         public bool HasParams { get; protected set; }
 
-        public TypeFunction(CallType callType, TypeBase retType, IEnumerable<Var.Declare> args)
+        public TypeFunction(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
         {
             TypeIntBase.AddComparers(funcs, conds);
             CallType = callType;
             RetType = retType;
-            var Args = new List<Var.Declare>();
+            var Args = new List<VarDeclare>();
             if (args == null)
                 HasParams = true;
             else
@@ -125,7 +125,7 @@ namespace Girl.LLPML
         }
 
         public TypeDelegate(
-            BlockBase parent, CallType callType, TypeBase retType, IEnumerable<Var.Declare> args)
+            BlockBase parent, CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
             : base(callType, retType, args)
         {
             Parent = parent;
