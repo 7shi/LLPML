@@ -57,7 +57,7 @@ namespace Girl.LLPML
                 case IMAGE_SUBSYSTEM.WINDOWS_CUI:
                 case IMAGE_SUBSYSTEM.WINDOWS_GUI:
                     if (retVal != null)
-                        GetRetVal(this).AddCodesValue(codes, "push", null);
+                        GetRetVal(this).AddCodesV(codes, "push", null);
                     else
                         codes.Add(I386.PushD(Val32.New(0)));
                     codes.Add(I386.CallA(codes.Module.GetFunction(
@@ -65,7 +65,7 @@ namespace Girl.LLPML
                     break;
                 default:
                     if (retVal != null)
-                        GetRetVal(this).AddCodesValue(codes, "mov", null);
+                        GetRetVal(this).AddCodesV(codes, "mov", null);
                     else
                         codes.Add(I386.Xor(Reg32.EAX, Reg32.EAX));
                     break;

@@ -59,7 +59,7 @@ namespace Girl.LLPML
             }
 
             var v = values[0];
-            v.AddCodesValue(codes, "push", null);
+            v.AddCodesV(codes, "push", null);
             var ad = dest.GetAddress(codes);
             if (!OpModule.NeedsDtor(v))
             {
@@ -84,7 +84,7 @@ namespace Girl.LLPML
             }
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);

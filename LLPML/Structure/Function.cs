@@ -212,9 +212,9 @@ namespace Girl.LLPML
         public override void AddExitCodes(OpModule codes)
         {
             if (thisptr != null && name == Struct.Define.Constructor)
-                thisptr.AddCodesValue(codes, "mov", null);
+                thisptr.AddCodesV(codes, "mov", null);
             else if (retVal != null)
-                GetRetVal(this).AddCodesValue(codes, "mov", null);
+                GetRetVal(this).AddCodesV(codes, "mov", null);
             base.AddExitCodes(codes);
             if (CallType == CallType.Std && argStack > 0)
                 codes.Add(I386.RetW(argStack));
@@ -227,7 +227,7 @@ namespace Girl.LLPML
             return Val32.New2(Val32.New(m.Specific.ImageBase), First);
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, codes.GetAddress(this));
         }

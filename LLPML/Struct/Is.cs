@@ -17,7 +17,7 @@ namespace Girl.LLPML.Struct
 
         public Is(BlockBase parent, NodeBase v1, NodeBase v2) : base(parent, v1, v2) { }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             var f = Parent.GetFunction(Tag);
             if (f == null) throw Abort("is: can not find: {0}", Tag);

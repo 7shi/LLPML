@@ -33,10 +33,10 @@ namespace Girl.LLPML.Struct
 
         public override void AddCodes(OpModule codes)
         {
-            AddCodesValue(codes, "mov", null);
+            AddCodesV(codes, "mov", null);
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             var tt = Type.Type;
             var tts = tt as TypeStruct;
@@ -60,7 +60,7 @@ namespace Girl.LLPML.Struct
             }
             codes.Add(I386.PushD(ctor));
             codes.Add(I386.PushD(izer));
-            Length.AddCodesValue(codes, "push", null);
+            Length.AddCodesV(codes, "push", null);
             codes.Add(I386.PushD(Val32.NewI(tt.Size)));
             codes.Add(I386.PushD(type));
             codes.Add(I386.CallD(f.First));

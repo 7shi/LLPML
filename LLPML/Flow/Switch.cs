@@ -22,7 +22,7 @@ namespace Girl.LLPML
 
             public override void AddCodes(OpModule codes)
             {
-                value.AddCodesValue(codes, "mov", null);
+                value.AddCodesV(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
             }
         }
@@ -51,7 +51,7 @@ namespace Girl.LLPML
                     codes.Add(I386.Push(Reg32.EDX));
                     if (v.Type is TypeString)
                     {
-                        v.AddCodesValue(codes, "push", null);
+                        v.AddCodesV(codes, "push", null);
                         codes.Add(codes.GetCall("case", TypeString.Equal));
                         codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
                         codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
@@ -59,7 +59,7 @@ namespace Girl.LLPML
                     }
                     else
                     {
-                        v.AddCodesValue(codes, "mov", null);
+                        v.AddCodesV(codes, "mov", null);
                         codes.Add(I386.Pop(Reg32.EDX));
                         codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
                         codes.Add(I386.Jcc(Cc.E, Block.First));

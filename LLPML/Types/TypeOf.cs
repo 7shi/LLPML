@@ -20,7 +20,7 @@ namespace Girl.LLPML
 
         public override TypeBase Type { get { return TypeType.Instance; } }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(this, Parent, Target, codes, op, dest);
         }
@@ -57,7 +57,7 @@ namespace Girl.LLPML
             var tts = tt.Type as TypeStruct;
             if (tr != null && (tr.IsArray || (tts != null && tts.IsClass)))
             {
-                target.AddCodesValue(codes, "mov", null);
+                target.AddCodesV(codes, "mov", null);
                 var label = new OpCode();
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.Z, label.Address));

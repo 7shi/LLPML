@@ -156,13 +156,13 @@ namespace Girl.LLPML
             {
                 if (!cleanup)
                 {
-                    val.AddCodesValue(codes, "mov", null);
+                    val.AddCodesV(codes, "mov", null);
                     codes.Add(I386.Call(Reg32.EAX));
                 }
                 else
                 {
                     var ad = Addr32.NewRO(Reg32.ESP, args_array.Length * 4);
-                    val.AddCodesValue(codes, "mov", ad);
+                    val.AddCodesV(codes, "mov", ad);
                     codes.Add(I386.CallA(ad));
                     codes.Add(I386.Push(Reg32.EAX));
                     var ad2 = Addr32.NewRO(Reg32.ESP, 4);
@@ -176,7 +176,7 @@ namespace Girl.LLPML
                 codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
@@ -211,7 +211,7 @@ namespace Girl.LLPML
             var args2 = args.Clone() as NodeBase[];
             Array.Reverse(args2);
             foreach (NodeBase arg in args2)
-                arg.AddCodesValue(codes, "push", null);
+                arg.AddCodesV(codes, "push", null);
             delg();
             if (type == CallType.CDecl && args2.Length > 0)
             {

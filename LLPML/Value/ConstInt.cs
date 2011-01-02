@@ -21,13 +21,13 @@ namespace Girl.LLPML
 
         public override TypeBase Type { get { return TypeInt.Instance; } }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             var v = IntValue.GetValue(Value);
             if (v != null)
-                v.AddCodesValue(codes, op, dest);
+                v.AddCodesV(codes, op, dest);
             else
-                Value.AddCodesValue(codes, op, dest);
+                Value.AddCodesV(codes, op, dest);
         }
     }
 }

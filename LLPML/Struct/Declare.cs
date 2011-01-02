@@ -92,7 +92,7 @@ namespace Girl.LLPML.Struct
                 {
                     if (!(mem is VarDeclare))
                         throw Abort("value required: " + mem.Name);
-                    (obj as NodeBase).AddCodesValue(codes, "mov", null);
+                    (obj as NodeBase).AddCodesV(codes, "mov", null);
                     codes.Add(I386.MovRA(Var.DestRegister, ad));
                     mem.Type.AddSetCodes(codes, Addr32.New(Var.DestRegister));
                 }

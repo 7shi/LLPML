@@ -162,7 +162,7 @@ namespace Girl.LLPML
 
         public void AddOperatorCodes(TypeBase.Func f, Addr32 dest, NodeBase arg, bool pushf)
         {
-            arg.AddCodesValue(this, "mov", null);
+            arg.AddCodesV(this, "mov", null);
             var cleanup = NeedsDtor(arg);
             if (cleanup)
             {

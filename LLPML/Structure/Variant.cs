@@ -52,7 +52,7 @@ namespace Girl.LLPML
             return null;
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             Val32 v;
             var m = codes.Module;
@@ -65,13 +65,13 @@ namespace Girl.LLPML
                 var vv = GetVar();
                 if (vv != null)
                 {
-                    vv.AddCodesValue(codes, op, dest);
+                    vv.AddCodesV(codes, op, dest);
                     return;
                 }
                 var c = GetConst();
                 if (c != null)
                 {
-                    c.AddCodesValue(codes, op, dest);
+                    c.AddCodesV(codes, op, dest);
                     return;
                 }
                 var f = GetFunction();
@@ -80,7 +80,7 @@ namespace Girl.LLPML
                     var g = GetGetter();
                     if (g != null)
                     {
-                        new Call(Parent, g.Name).AddCodesValue(codes, op, dest);
+                        new Call(Parent, g.Name).AddCodesV(codes, op, dest);
                         return;
                     }
                     throw Abort("undefined symbol: " + name);

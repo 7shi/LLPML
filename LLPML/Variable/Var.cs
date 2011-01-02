@@ -45,7 +45,7 @@ namespace Girl.LLPML
             return Reference.GetAddress(codes, Parent);
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }

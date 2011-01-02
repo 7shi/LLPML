@@ -63,7 +63,7 @@ namespace Girl.LLPML
             Calculate(codes);
         }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             var ad = Calculate(codes);
             if (this.dest.Type.Size < Var.DefaultSize)

@@ -58,6 +58,6 @@ namespace Girl.LLPML
         }
 
         public virtual void AddCodes(OpModule codes) { }
-        public virtual void AddCodesValue(OpModule codes, string op, Addr32 dest) { }
+        public virtual void AddCodesV(OpModule codes, string op, Addr32 dest) { }
     }
 }

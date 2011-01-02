@@ -132,12 +132,12 @@ namespace Girl.LLPML
                 }
                 else if (m2 is IntValue)
                 {
-                    m2.AddCodesValue(codes, "mov", null);
+                    m2.AddCodesV(codes, "mov", null);
                     codes.Add(MMX.MovD((Mm)m1m, Reg32.EAX));
                 }
                 else
                 {
-                    m2.AddCodesValue(codes, "mov", null);
+                    m2.AddCodesV(codes, "mov", null);
                     codes.Add(MMX.MovDA((Mm)m1m, Addr32.New(Reg32.EAX)));
                 }
                 return;
@@ -151,12 +151,12 @@ namespace Girl.LLPML
                 }
                 else if (m2 is IntValue)
                 {
-                    m2.AddCodesValue(codes, "mov", null);
+                    m2.AddCodesV(codes, "mov", null);
                     codes.Add(SSE2.MovD((Xmm)m1x, Reg32.EAX));
                 }
                 else
                 {
-                    m2.AddCodesValue(codes, "mov", null);
+                    m2.AddCodesV(codes, "mov", null);
                     codes.Add(SSE2.MovDA((Xmm)m1x, Addr32.New(Reg32.EAX)));
                 }
                 return;
@@ -174,7 +174,7 @@ namespace Girl.LLPML
                 }
                 else
                 {
-                    v.AddCodesValue(codes, "mov", null);
+                    v.AddCodesV(codes, "mov", null);
                     codes.Add(MMX.MovDAM(Addr32.New(Reg32.EAX), (Mm)m2m));
                 }
             }
@@ -187,7 +187,7 @@ namespace Girl.LLPML
                 }
                 else
                 {
-                    v.AddCodesValue(codes, "mov", null);
+                    v.AddCodesV(codes, "mov", null);
                     codes.Add(SSE2.MovDAX(Addr32.New(Reg32.EAX), (Xmm)m2x));
                 }
             }
@@ -207,22 +207,22 @@ namespace Girl.LLPML
                 codes.Add(SSE2.MovQ((Xmm)m1x, (Xmm)m2x));
             else if (m1m != null)
             {
-                m2.AddCodesValue(codes, "mov", null);
+                m2.AddCodesV(codes, "mov", null);
                 codes.Add(MMX.MovQA((Mm)m1m, Addr32.New(Reg32.EAX)));
             }
             else if (m2m != null)
             {
-                m1.AddCodesValue(codes, "mov", null);
+                m1.AddCodesV(codes, "mov", null);
                 codes.Add(MMX.MovQAM(Addr32.New(Reg32.EAX), (Mm)m2m));
             }
             else if (m1x != null)
             {
-                m2.AddCodesValue(codes, "mov", null);
+                m2.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.MovQA((Xmm)m1x, Addr32.New(Reg32.EAX)));
             }
             else if (m2x != null)
             {
-                m1.AddCodesValue(codes, "mov", null);
+                m1.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.MovQAX(Addr32.New(Reg32.EAX), (Xmm)m2x));
             }
             else
@@ -238,12 +238,12 @@ namespace Girl.LLPML
                 codes.Add(SSE2.FromName(op2, (Xmm)m1x, (Xmm)m2x));
             else if (m1x != null)
             {
-                m2.AddCodesValue(codes, "mov", null);
+                m2.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.FromNameA(op2, (Xmm)m1x, Addr32.New(Reg32.EAX)));
             }
             else if (m2x != null)
             {
-                m1.AddCodesValue(codes, "mov", null);
+                m1.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.FromNameAX(op2, Addr32.New(Reg32.EAX), (Xmm)m2x));
             }
             else
@@ -263,7 +263,7 @@ namespace Girl.LLPML
                     codes.Add(MMX.FromName(op2, (Mm)m1m, (Mm)m2m));
                 else
                 {
-                    m2.AddCodesValue(codes, "mov", null);
+                    m2.AddCodesV(codes, "mov", null);
                     codes.Add(MMX.FromNameA(op2, (Mm)m1m, Addr32.New(Reg32.EAX)));
                 }
             }
@@ -273,7 +273,7 @@ namespace Girl.LLPML
                     codes.Add(SSE2.FromName(op2, (Xmm)m1x, (Xmm)m2x));
                 else
                 {
-                    m2.AddCodesValue(codes, "mov", null);
+                    m2.AddCodesV(codes, "mov", null);
                     codes.Add(SSE2.FromNameA(op2, (Xmm)m1x, Addr32.New(Reg32.EAX)));
                 }
             }

@@ -20,7 +20,7 @@ namespace Girl.LLPML
 
         public override TypeBase Type { get { return new TypePointer(Target.Type); } }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             var t = Var.Get(Target);
             if (t == null)

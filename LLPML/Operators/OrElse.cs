@@ -15,14 +15,14 @@ namespace Girl.LLPML
 
         public OrElse(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             if (AddConstCodes(codes, op, dest)) return;
 
             OpCode last = new OpCode();
             for (int i = 0; i < values.Count; i++)
             {
-                values[i].AddCodesValue(codes, "mov", null);
+                values[i].AddCodesV(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 if (i < values.Count - 1)
                     codes.Add(I386.Jcc(Cc.NZ, last.Address));

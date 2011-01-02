@@ -61,7 +61,7 @@ namespace Girl.LLPML
             var v = GetConst();
             if (v == null) return false;
 
-            v.AddCodesValue(codes, op, dest);
+            v.AddCodesV(codes, op, dest);
             return true;
         }
     }

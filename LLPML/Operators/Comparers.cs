@@ -17,7 +17,7 @@ namespace Girl.LLPML
 
         public Equal(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
 
-        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {
             if (AddConstCodes(codes, op, dest)) return;
 
@@ -26,7 +26,7 @@ namespace Girl.LLPML
             var f = GetFunc();
             var c = GetCond();
             var v = values[0];
-            v.AddCodesValue(codes, "push", null);
+            v.AddCodesV(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
             {
                 codes.AddOperatorCodes(f, ad, values[i], true);
