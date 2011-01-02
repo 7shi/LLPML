@@ -18,8 +18,8 @@ namespace Girl.LLPML
         public virtual int Max { get { return int.MaxValue; } }
 
         public Operator(BlockBase parent, params NodeBase[] values)
-            : base(parent)
         {
+            Parent = parent;
             if (values.Length < Min)
                 throw Abort("too few operands");
             else if (values.Length > Max)
@@ -61,7 +61,7 @@ namespace Girl.LLPML
             var v = GetConst();
             if (v == null) return false;
 
-            v.AddCodes(codes, op, dest);
+            v.AddCodesValue(codes, op, dest);
             return true;
         }
     }

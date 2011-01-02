@@ -20,8 +20,8 @@ namespace Girl.LLPML
 
         public VarOperator() { }
         public VarOperator(BlockBase parent, NodeBase dest)
-            : base(parent)
         {
+            Parent = parent;
             this.dest = dest;
         }
 

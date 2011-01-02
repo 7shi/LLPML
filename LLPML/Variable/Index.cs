@@ -61,11 +61,11 @@ namespace Girl.LLPML
                 return ret;
             }
 
-            order.AddCodes(codes, "mov", null);
+            order.AddCodesValue(codes, "mov", null);
             codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(ts)));
             codes.Add(I386.Imul(Reg32.EDX));
             codes.Add(I386.Push(Reg32.EAX));
-            target.AddCodes(codes, "mov", null);
+            target.AddCodesValue(codes, "mov", null);
             codes.Add(I386.Pop(Var.DestRegister));
             codes.Add(I386.Add(Var.DestRegister, Reg32.EAX));
             return Addr32.New(Var.DestRegister);
@@ -90,7 +90,7 @@ namespace Girl.LLPML
             }
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }

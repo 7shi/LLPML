@@ -12,7 +12,7 @@ namespace Girl.LLPML
         public override string Tag { get { return "add"; } }
         public Add(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             if (AddConstCodes(codes, op, dest)) return;
 
@@ -28,12 +28,12 @@ namespace Girl.LLPML
             var tr = v.Type as TypeReference;
             if (tr != null && tr.UseGC && !OpModule.NeedsDtor(v))
             {
-                v.AddCodes(codes, "mov", null);
+                v.AddCodesValue(codes, "mov", null);
                 codes.Add(I386.Push(Reg32.EAX));
                 TypeReference.AddReferenceCodes(codes);
             }
             else
-                v.AddCodes(codes, "push", null);
+                v.AddCodesValue(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
             {
                 var vv = values[i];

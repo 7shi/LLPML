@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
 
@@ -9,7 +10,16 @@ namespace Girl.LLPML
 {
     public abstract class NodeBase
     {
-        public BlockBase Parent { get; set; }
+        private BlockBase parent;
+        public BlockBase Parent
+        {
+            get { return parent; }
+            set
+            {
+                parent = value;
+                root = parent.root;
+            }
+        }
 
         protected string name;
         public string Name { get { return name; } }
@@ -19,23 +29,7 @@ namespace Girl.LLPML
 
         public virtual TypeBase Type { get { return null; } }
 
-        public Parsing.SrcInfo SrcInfo { get; set; }
-
-        public NodeBase()
-        {
-        }
-
-        public NodeBase(BlockBase parent)
-        {
-            Parent = parent;
-            root = parent.root;
-        }
-
-        public NodeBase(BlockBase parent, string name)
-            : this(parent)
-        {
-            this.name = name;
-        }
+        public SrcInfo SrcInfo { get; set; }
 
         private Parsing.SrcInfo GetSrcInfo()
         {
@@ -48,12 +42,13 @@ namespace Girl.LLPML
 
         public Exception Abort(string format, params object[] args)
         {
-            return Abort(GetSrcInfo(), format, args);
+            return AbortInfo(GetSrcInfo(), format, args);
         }
 
-        public Exception Abort(Parsing.SrcInfo si, string format, params object[] args)
+        public Exception AbortInfo(SrcInfo si, string format, params object[] args)
         {
-            string s1 = "", s2 = "";
+            var s1 = "";
+            var s2 = "";
             if (si != null)
             {
                 s1 = si.Source + ": ";
@@ -63,6 +58,6 @@ namespace Girl.LLPML
         }
 
         public virtual void AddCodes(OpModule codes) { }
-        public virtual void AddCodes(OpModule codes, string op, Addr32 dest) { }
+        public virtual void AddCodesValue(OpModule codes, string op, Addr32 dest) { }
     }
 }

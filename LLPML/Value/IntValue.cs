@@ -14,13 +14,13 @@ namespace Girl.LLPML
         private int value;
         public virtual int Value { get { return value; } }
 
-        protected IntValue(BlockBase parent) : base(parent) { }
+        protected IntValue(BlockBase parent) { Parent = parent; }
         public IntValue(int value) { this.value = value; }
         public IntValue(string value) : this(Parse(value)) { }
 
         public override TypeBase Type { get { return TypeInt.Instance; } }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, Val32.NewI(Value));
         }

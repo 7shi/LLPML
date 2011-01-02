@@ -17,7 +17,7 @@ namespace Girl.LLPML
 
         public Neg(BlockBase parent, NodeBase value) : base(parent, value) { }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             if (AddConstCodes(codes, op, dest)) return;
 

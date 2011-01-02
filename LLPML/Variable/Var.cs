@@ -17,17 +17,19 @@ namespace Girl.LLPML
         public VarDeclare Reference { get; protected set; }
 
         public Var() { }
-        public Var(BlockBase parent) : base(parent) { }
+        public Var(BlockBase parent) { Parent = parent; }
 
         public Var(BlockBase parent, VarDeclare var)
-            : base(parent, var.Name)
         {
+            Parent = parent;
+            name = var.Name;
             Reference = var;
         }
 
         public Var(BlockBase parent, string name)
-            : base(parent, name)
         {
+            Parent = parent;
+            this.name = name;
             Reference = parent.GetVar(name);
             if (Reference == null)
                 throw Abort("undefined pointer: " + name);
@@ -43,7 +45,7 @@ namespace Girl.LLPML
             return Reference.GetAddress(codes, Parent);
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             Type.AddGetCodes(codes, op, dest, GetAddress(codes));
         }

@@ -70,7 +70,7 @@ namespace Girl.LLPML.Parsing
                             if (br != null) Rewind();
                         var arg = Expression();
                         if (arg == null)
-                            throw parent.Abort(si, "sizeof: 引数が必要です。");
+                            throw parent.AbortInfo(si, "sizeof: 引数が必要です。");
                         if (br == "(") Check("sizeof", ")");
                         return new SizeOf(parent, arg) { SrcInfo = si };
                     }
@@ -83,7 +83,7 @@ namespace Girl.LLPML.Parsing
                             if (br != null) Rewind();
                         var arg = Expression();
                         if (arg == null)
-                            throw parent.Abort(si, "typeof: 引数が必要です。");
+                            throw parent.AbortInfo(si, "typeof: 引数が必要です。");
                         if (br == "(") Check("typeof", ")");
                         if (arg is TypeOf)
                         {

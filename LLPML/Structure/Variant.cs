@@ -13,7 +13,11 @@ namespace Girl.LLPML
         private Function func;
         private Val32 address;
 
-        public Variant(BlockBase parent, string name) : base(parent, name) { }
+        public Variant(BlockBase parent, string name)
+        {
+            Parent = parent;
+            this.name = name;
+        }
         public Variant(Val32 address) { this.address = address; }
         public Variant(Function func) { this.func = func; }
 
@@ -48,7 +52,7 @@ namespace Girl.LLPML
             return null;
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             Val32 v;
             var m = codes.Module;
@@ -61,13 +65,13 @@ namespace Girl.LLPML
                 var vv = GetVar();
                 if (vv != null)
                 {
-                    vv.AddCodes(codes, op, dest);
+                    vv.AddCodesValue(codes, op, dest);
                     return;
                 }
                 var c = GetConst();
                 if (c != null)
                 {
-                    c.AddCodes(codes, op, dest);
+                    c.AddCodesValue(codes, op, dest);
                     return;
                 }
                 var f = GetFunction();
@@ -76,7 +80,7 @@ namespace Girl.LLPML
                     var g = GetGetter();
                     if (g != null)
                     {
-                        new Call(Parent, g.Name).AddCodes(codes, op, dest);
+                        new Call(Parent, g.Name).AddCodesValue(codes, op, dest);
                         return;
                     }
                     throw Abort("undefined symbol: " + name);

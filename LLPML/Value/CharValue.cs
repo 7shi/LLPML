@@ -14,12 +14,16 @@ namespace Girl.LLPML
         private char value;
         public char Value { get { return value; } }
 
-        protected CharValue(BlockBase parent, string name) : base(parent, name) { }
+        protected CharValue(BlockBase parent, string name)
+        {
+            Parent = parent;
+            this.name = name;
+        }
         public CharValue(char value) { this.value = value; }
 
         public override TypeBase Type { get { return TypeChar.Instance; } }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, Val32.New(Value));
         }

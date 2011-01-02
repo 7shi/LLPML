@@ -22,8 +22,9 @@ namespace Girl.LLPML
         public VarDeclare() { }
 
         public VarDeclare(BlockBase parent, string name)
-            : base(parent, name)
         {
+            Parent = parent;
+            this.name = name;
             Init();
             AddToParent();
         }

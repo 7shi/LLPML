@@ -18,25 +18,25 @@ namespace Girl.LLPML.Struct
         public bool IsArray { get { return !(Length is IntValue && (Length as IntValue).Value == -1); } }
 
         public New(BlockBase parent, string type)
-            : base(parent)
         {
+            Parent = parent;
             this.type = Types.GetVarType(parent, type);
             Length = new IntValue(-1);
         }
 
         public New(BlockBase parent, string type, NodeBase length)
-            : base(parent)
         {
+            Parent = parent;
             this.type = new TypeReference(Types.GetType(parent, type), true);
             Length = length;
         }
 
         public override void AddCodes(OpModule codes)
         {
-            AddCodes(codes, "mov", null);
+            AddCodesValue(codes, "mov", null);
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             var tt = Type.Type;
             var tts = tt as TypeStruct;
@@ -60,7 +60,7 @@ namespace Girl.LLPML.Struct
             }
             codes.Add(I386.PushD(ctor));
             codes.Add(I386.PushD(izer));
-            Length.AddCodes(codes, "push", null);
+            Length.AddCodesValue(codes, "push", null);
             codes.Add(I386.PushD(Val32.NewI(tt.Size)));
             codes.Add(I386.PushD(type));
             codes.Add(I386.CallD(f.First));

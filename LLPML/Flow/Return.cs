@@ -32,7 +32,7 @@ namespace Girl.LLPML
             var f = Parent.GetFunction();
             if (value != null)
             {
-                value.AddCodes(codes, "mov", null);
+                value.AddCodesValue(codes, "mov", null);
                 var retval = f.GetRetVal(Parent);
                 var dest = retval.GetAddress(codes);
                 if (!OpModule.NeedsDtor(value))

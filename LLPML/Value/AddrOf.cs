@@ -12,11 +12,15 @@ namespace Girl.LLPML
     {
         public NodeBase Target { get; private set; }
 
-        public AddrOf(BlockBase parent, NodeBase target) : base(parent) { Target = target; }
+        public AddrOf(BlockBase parent, NodeBase target)
+        {
+            Parent = parent;
+            Target = target;
+        }
 
         public override TypeBase Type { get { return new TypePointer(Target.Type); } }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             var t = Var.Get(Target);
             if (t == null)

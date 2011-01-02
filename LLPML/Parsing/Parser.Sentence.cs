@@ -529,7 +529,7 @@ namespace Girl.LLPML.Parsing
                 if (s != null) ret.AddSentences(s);
             }
             if (ret == null)
-                throw p.Abort(si, "{0}: ブロックが必要です。", type);
+                throw p.AbortInfo(si, "{0}: ブロックが必要です。", type);
             this.parent = p;
             return ret;
         }
@@ -613,7 +613,7 @@ namespace Girl.LLPML.Parsing
             var si = SrcInfo;
             var expr = Expression() as NodeBase;
             if (expr == null)
-                throw parent.Abort(si, "switch: 値が必要です。");
+                throw parent.AbortInfo(si, "switch: 値が必要です。");
 
             Check("switch", ")");
             Check("switch", "{");

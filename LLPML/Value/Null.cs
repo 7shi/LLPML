@@ -10,11 +10,15 @@ namespace Girl.LLPML
 {
     public class Null : NodeBase
     {
-        public Null(BlockBase parent) : base(parent, "null") { }
+        public Null(BlockBase parent)
+        {
+            Parent = parent;
+            name = "null";
+        }
 
         public override TypeBase Type { get { return null; } }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, Val32.New(0));
         }

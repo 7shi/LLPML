@@ -13,8 +13,8 @@ namespace Girl.LLPML
         public string Value { get; private set; }
 
         protected StringValue(BlockBase parent, string value)
-            : base(parent)
         {
+            Parent = parent;
             Value = value;
         }
 
@@ -25,7 +25,7 @@ namespace Girl.LLPML
 
         public override TypeBase Type { get { return TypeConstString.Instance; } }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             codes.AddCodesV(op, dest, codes.GetString(Value));
         }

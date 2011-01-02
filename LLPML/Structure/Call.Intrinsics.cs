@@ -69,9 +69,9 @@ namespace Girl.LLPML
         {
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
-            dest.AddCodes(codes, "push", null);
-            count.AddCodes(codes, "push", null);
-            data.AddCodes(codes, "mov", null);
+            dest.AddCodesValue(codes, "push", null);
+            count.AddCodesValue(codes, "push", null);
+            data.AddCodesValue(codes, "mov", null);
             codes.Add(I386.Pop(Reg32.ECX));
             codes.Add(I386.Pop(Reg32.EDI));
             codes.Add(I386.Cld());
@@ -92,9 +92,9 @@ namespace Girl.LLPML
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
             codes.Add(I386.Push(Reg32.ESI));
-            dest.AddCodes(codes, "push", null);
-            src.AddCodes(codes, "push", null);
-            count.AddCodes(codes, "mov", null);
+            dest.AddCodesValue(codes, "push", null);
+            src.AddCodesValue(codes, "push", null);
+            count.AddCodesValue(codes, "mov", null);
             codes.Add(I386.Pop(Reg32.ESI));
             codes.Add(I386.Pop(Reg32.EDI));
             codes.Add(I386.Mov(Reg32.ECX, Reg32.EAX));
@@ -117,9 +117,9 @@ namespace Girl.LLPML
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
             codes.Add(I386.Push(Reg32.ESI));
-            dest.AddCodes(codes, "push", null);
-            src.AddCodes(codes, "push", null);
-            count.AddCodes(codes, "mov", null);
+            dest.AddCodesValue(codes, "push", null);
+            src.AddCodesValue(codes, "push", null);
+            count.AddCodesValue(codes, "mov", null);
             codes.Add(I386.Pop(Reg32.ESI));
             codes.Add(I386.Pop(Reg32.EDI));
             codes.Add(I386.Mov(Reg32.ECX, Reg32.EAX));
@@ -143,22 +143,22 @@ namespace Girl.LLPML
                 case 0:
                     break;
                 case 1:
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDX));
                     codes.Add(I386.MovBRA(Reg8.AL, Addr32.New(Reg32.EAX)));
                     codes.Add(I386.MovBAR(Addr32.New(Reg32.EDX), Reg8.AL));
                     break;
                 case 2:
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDX));
                     codes.Add(I386.MovWRA(Reg16.AX, Addr32.New(Reg32.EAX)));
                     codes.Add(I386.MovWAR(Addr32.New(Reg32.EDX), Reg16.AX));
                     break;
                 case 3:
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDX));
                     codes.Add(I386.MovWRA(Reg16.CX, Addr32.New(Reg32.EAX)));
                     codes.Add(I386.MovBRA(Reg8.AL, Addr32.NewRO(Reg32.EAX, 2)));
@@ -166,15 +166,15 @@ namespace Girl.LLPML
                     codes.Add(I386.MovBAR(Addr32.NewRO(Reg32.EDX, 2), Reg8.AL));
                     break;
                 case 4:
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDX));
                     codes.Add(I386.MovRA(Reg32.EAX, Addr32.New(Reg32.EAX)));
                     codes.Add(I386.MovAR(Addr32.New(Reg32.EDX), Reg32.EAX));
                     break;
                 case 8:
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDX));
                     codes.Add(I386.MovRA(Reg32.ECX, Addr32.New(Reg32.EAX)));
                     codes.Add(I386.MovRA(Reg32.EAX, Addr32.NewRO(Reg32.EAX, 4)));
@@ -186,8 +186,8 @@ namespace Girl.LLPML
                     codes.Add(I386.Pushf());
                     codes.Add(I386.Push(Reg32.EDI));
                     codes.Add(I386.Push(Reg32.ESI));
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDI));
                     codes.Add(I386.Mov(Reg32.ESI, Reg32.EAX));
                     codes.Add(I386.Cld());
@@ -201,8 +201,8 @@ namespace Girl.LLPML
                     codes.Add(I386.Pushf());
                     codes.Add(I386.Push(Reg32.EDI));
                     codes.Add(I386.Push(Reg32.ESI));
-                    dest.AddCodes(codes, "push", null);
-                    src.AddCodes(codes, "mov", null);
+                    dest.AddCodesValue(codes, "push", null);
+                    src.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Pop(Reg32.EDI));
                     codes.Add(I386.Mov(Reg32.ESI, Reg32.EAX));
                     codes.Add(I386.MovR(Reg32.ECX, Val32.NewI((count >> 2))));
@@ -227,9 +227,9 @@ namespace Girl.LLPML
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
             codes.Add(I386.Push(Reg32.ESI));
-            dest.AddCodes(codes, "push", null);
-            src.AddCodes(codes, "push", null);
-            count.AddCodes(codes, "mov", null);
+            dest.AddCodesValue(codes, "push", null);
+            src.AddCodesValue(codes, "push", null);
+            count.AddCodesValue(codes, "mov", null);
             codes.Add(I386.Pop(Reg32.ESI));
             codes.Add(I386.Pop(Reg32.EDI));
             codes.Add(I386.Mov(Reg32.ECX, Reg32.EAX));
@@ -253,8 +253,8 @@ namespace Girl.LLPML
             codes.Add(I386.Pushf());
             codes.Add(I386.Push(Reg32.EDI));
             codes.Add(I386.Push(Reg32.EBX));
-            result.AddCodes(codes, "push", null);
-            eax.AddCodes(codes, "mov", null);
+            result.AddCodesValue(codes, "push", null);
+            eax.AddCodesValue(codes, "mov", null);
             codes.Add(I386.Pop(Reg32.EDI));
             codes.Add(I586.Cpuid());
             codes.Add(I386.Cld());

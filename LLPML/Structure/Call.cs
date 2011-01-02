@@ -17,8 +17,9 @@ namespace Girl.LLPML
         private CallType callType = CallType.CDecl;
 
         public Call(BlockBase parent, string name)
-            : base(parent, name)
         {
+            Parent = parent;
+            this.name = name;
         }
 
         public Call(BlockBase parent, string name, NodeBase target, params NodeBase[] args)
@@ -31,8 +32,8 @@ namespace Girl.LLPML
         }
 
         public Call(BlockBase parent, NodeBase val, NodeBase target, params NodeBase[] args)
-            : base(parent)
         {
+            Parent = parent;
             this.val = val;
             this.target = target;
             this.args.AddRange(args);
@@ -155,13 +156,13 @@ namespace Girl.LLPML
             {
                 if (!cleanup)
                 {
-                    val.AddCodes(codes, "mov", null);
+                    val.AddCodesValue(codes, "mov", null);
                     codes.Add(I386.Call(Reg32.EAX));
                 }
                 else
                 {
                     var ad = Addr32.NewRO(Reg32.ESP, args_array.Length * 4);
-                    val.AddCodes(codes, "mov", ad);
+                    val.AddCodesValue(codes, "mov", ad);
                     codes.Add(I386.CallA(ad));
                     codes.Add(I386.Push(Reg32.EAX));
                     var ad2 = Addr32.NewRO(Reg32.ESP, 4);
@@ -175,7 +176,7 @@ namespace Girl.LLPML
                 codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
@@ -210,7 +211,7 @@ namespace Girl.LLPML
             var args2 = args.Clone() as NodeBase[];
             Array.Reverse(args2);
             foreach (NodeBase arg in args2)
-                arg.AddCodes(codes, "push", null);
+                arg.AddCodesValue(codes, "push", null);
             delg();
             if (type == CallType.CDecl && args2.Length > 0)
             {

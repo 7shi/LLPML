@@ -14,20 +14,20 @@ namespace Girl.LLPML
         public NodeBase Value { get; private set; }
 
         public ConstInt(BlockBase parent, NodeBase value)
-            : base(parent)
         {
+            Parent = parent;
             Value = value;
         }
 
         public override TypeBase Type { get { return TypeInt.Instance; } }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             var v = IntValue.GetValue(Value);
             if (v != null)
-                v.AddCodes(codes, op, dest);
+                v.AddCodesValue(codes, op, dest);
             else
-                Value.AddCodes(codes, op, dest);
+                Value.AddCodesValue(codes, op, dest);
         }
     }
 }

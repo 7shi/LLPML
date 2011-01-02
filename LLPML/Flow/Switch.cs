@@ -15,14 +15,14 @@ namespace Girl.LLPML
             private NodeBase value;
 
             public Expression(BlockBase parent, NodeBase value)
-                : base(parent)
             {
+                Parent = parent;
                 this.value = value;
             }
 
             public override void AddCodes(OpModule codes)
             {
-                value.AddCodes(codes, "mov", null);
+                value.AddCodesValue(codes, "mov", null);
                 codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
             }
         }
@@ -35,7 +35,7 @@ namespace Girl.LLPML
             public Block Block;
             public bool IsLast;
 
-            public Case(BlockBase parent) : base(parent) { }
+            public Case(BlockBase parent) { Parent = parent; }
 
             public override void AddCodes(OpModule codes)
             {
@@ -51,7 +51,7 @@ namespace Girl.LLPML
                     codes.Add(I386.Push(Reg32.EDX));
                     if (v.Type is TypeString)
                     {
-                        v.AddCodes(codes, "push", null);
+                        v.AddCodesValue(codes, "push", null);
                         codes.Add(codes.GetCall("case", TypeString.Equal));
                         codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
                         codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
@@ -59,7 +59,7 @@ namespace Girl.LLPML
                     }
                     else
                     {
-                        v.AddCodes(codes, "mov", null);
+                        v.AddCodesValue(codes, "mov", null);
                         codes.Add(I386.Pop(Reg32.EDX));
                         codes.Add(I386.Cmp(Reg32.EDX, Reg32.EAX));
                         codes.Add(I386.Jcc(Cc.E, Block.First));

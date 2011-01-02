@@ -19,7 +19,7 @@ namespace Girl.LLPML
             private OpCode first = new OpCode();
             public Val32 First { get { return first.Address; } }
 
-            public CondBlock(If parent) : base(parent) { }
+            public CondBlock(If parent) { Parent = parent; }
             public CondBlock(If parent, Cond cond) : this(parent, cond, null) { }
             public CondBlock(If parent, Block block) : this(parent, null, block) { }
 

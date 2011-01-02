@@ -77,7 +77,7 @@ namespace Girl.LLPML.Struct
             }
             else if (target != null)
             {
-                target.AddCodes(codes, "mov", null);
+                target.AddCodesValue(codes, "mov", null);
                 codes.Add(I386.Mov(Var.DestRegister, Reg32.EAX));
                 ret = Addr32.New(Var.DestRegister);
             }
@@ -86,7 +86,7 @@ namespace Girl.LLPML.Struct
                 var g = Parent.GetFunction("get_" + TargetType);
                 if (g != null)
                 {
-                    new Call(Parent, g.Name).AddCodes(codes, "mov", null);
+                    new Call(Parent, g.Name).AddCodesValue(codes, "mov", null);
                     if (mem != null)
                     {
                         codes.Add(I386.AddR(Reg32.EAX, Val32.NewI(st.GetOffset(name))));
@@ -129,7 +129,7 @@ namespace Girl.LLPML.Struct
             }
             else if (IsGetterInternal)
             {
-                GetCall("get_").AddCodes(codes, "mov", null);
+                GetCall("get_").AddCodesValue(codes, "mov", null);
                 return null;
             }
 
@@ -373,7 +373,7 @@ namespace Girl.LLPML.Struct
                 if (target is Member)
                     (target as Member).AddCodesInternal(codes, "mov", null);
                 else
-                    target.AddCodes(codes, "mov", null);
+                    target.AddCodesValue(codes, "mov", null);
                 codes.Add(I386.MovRA(Reg32.EAX, Addr32.NewRO(Reg32.EAX, -4)));
                 codes.AddCodes(op, dest);
                 return;
@@ -385,7 +385,7 @@ namespace Girl.LLPML.Struct
                     var g = Parent.GetFunction("get_" + TargetType);
                     if (g != null)
                     {
-                        new Call(Parent, g.Name).AddCodes(codes, "mov", null);
+                        new Call(Parent, g.Name).AddCodesValue(codes, "mov", null);
                         var gg = GetFunction("get_");
                         codes.Add(I386.Push(Reg32.EAX));
                         codes.Add(I386.CallD(gg.First));
@@ -395,18 +395,18 @@ namespace Girl.LLPML.Struct
                         return;
                     }
                 }
-                GetCall("get_").AddCodes(codes, op, dest);
+                GetCall("get_").AddCodesValue(codes, op, dest);
                 return;
             }
             else if (IsFunctionInternal)
             {
                 var delg = GetDelegate();
                 if (delg != null)
-                    delg.AddCodes(codes, op, dest);
+                    delg.AddCodesValue(codes, op, dest);
                 else
                 {
                     var fp = new Variant(GetTargetStruct(), name);
-                    fp.AddCodes(codes, op, dest);
+                    fp.AddCodesValue(codes, op, dest);
                 }
                 return;
             }
@@ -415,23 +415,23 @@ namespace Girl.LLPML.Struct
                 var ci = st.GetInt(name);
                 if (ci != null)
                 {
-                    ci.AddCodes(codes, op, dest);
+                    ci.AddCodesValue(codes, op, dest);
                     return;
                 }
                 var cs = st.GetString(name);
                 if (cs != null)
                 {
-                    cs.AddCodes(codes, op, dest);
+                    cs.AddCodesValue(codes, op, dest);
                     return;
                 }
             }
             TypeInternal.AddGetCodes(codes, op, dest, GetAddressInternal(codes));
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             if (Child != null)
-                Child.AddCodes(codes, op, dest);
+                Child.AddCodesValue(codes, op, dest);
             else
                 AddCodesInternal(codes, op, dest);
         }

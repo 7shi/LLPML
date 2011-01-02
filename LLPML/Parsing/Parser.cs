@@ -133,7 +133,7 @@ namespace Girl.LLPML.Parsing
 
         private Exception Abort(string format, params object[] args)
         {
-            return parent.Abort(SrcInfo, format, args);
+            return parent.AbortInfo(SrcInfo, format, args);
         }
 
         private SrcInfo SrcInfo { get { return tokenizer.SrcInfo; } }

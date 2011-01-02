@@ -45,23 +45,23 @@ namespace Girl.LLPML
                     codes.GetString((Source as StringValue).Value)));
             else
             {
-                Source.AddCodes(codes, "mov", null);
+                Source.AddCodesValue(codes, "mov", null);
                 return null;
             }
             return Addr32.New(Var.DestRegister);
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             var t = Type;
             var st = Source.Type;
             if (st is TypeIntBase && t.Size < st.Size)
             {
-                Source.AddCodes(codes, "mov", null);
+                Source.AddCodesValue(codes, "mov", null);
                 t.AddGetCodes(codes, op, dest, null);
             }
             else
-                Source.AddCodes(codes, op, dest);
+                Source.AddCodesValue(codes, op, dest);
         }
 
         public NodeBase GetSource()

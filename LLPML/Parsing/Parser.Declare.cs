@@ -105,7 +105,7 @@ namespace Girl.LLPML.Parsing
                 (name, eq, si, array) =>
                 {
                     if (array != null)
-                        throw parent.Abort(si, "const int: 配列は宣言できません。");
+                        throw parent.AbortInfo(si, "const int: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const int: 等号がありません。");
                     parent.AddInt(name, Expression());
@@ -118,7 +118,7 @@ namespace Girl.LLPML.Parsing
                 (name, eq, si, array) =>
                 {
                     if (array != null)
-                        throw parent.Abort(si, "const string: 配列は宣言できません。");
+                        throw parent.AbortInfo(si, "const string: 配列は宣言できません。");
                     if (!eq)
                         throw Abort("const string: 等号がありません。");
                     var v = String();
@@ -184,14 +184,14 @@ namespace Girl.LLPML.Parsing
                         }
                         catch
                         {
-                            throw parent.Abort(si, "var: 宣言が重複しています: {0}", name);
+                            throw parent.AbortInfo(si, "var: 宣言が重複しています: {0}", name);
                         }
                     }
                     else
                     {
                         /// TODO: 配列を初期化できるようにする
                         if (eq)
-                            throw parent.Abort(si, "var: 配列を初期化できません。");
+                            throw parent.AbortInfo(si, "var: 配列を初期化できません。");
                         v = VarDeclare.Array(parent, name, Types.ToVarType(tb), array);
                     }
                     v.SrcInfo = si;
@@ -232,7 +232,7 @@ namespace Girl.LLPML.Parsing
                     {
                         /// todo: 配列を初期化できるようにする
                         if (eq)
-                            throw parent.Abort(si, "{0}: 配列を初期化できません。", type);
+                            throw parent.AbortInfo(si, "{0}: 配列を初期化できません。", type);
                         if (tb == null) tb = TypeInt.Instance;
                         v = VarDeclare.Array(parent, name, tb, array);
                     }
@@ -286,7 +286,7 @@ namespace Girl.LLPML.Parsing
                     else
                     {
                         if (eq)
-                            throw parent.Abort(si, "var: 配列を初期化できません。");
+                            throw parent.AbortInfo(si, "var: 配列を初期化できません。");
                         v = VarDeclare.Array(parent, name, type, array);
                     }
                     v.SrcInfo = si;

@@ -26,8 +26,8 @@ namespace Girl.LLPML
         public bool Auto { get; set; }
 
         public Delegate(BlockBase parent, CallType callType, NodeBase[] args)
-            : base(parent)
         {
+            Parent = parent;
             var len = args.Length;
             if (len < 1)
                 throw Abort("delegate: arguments required");
@@ -38,8 +38,8 @@ namespace Girl.LLPML
         }
 
         public Delegate(BlockBase parent, CallType callType, NodeBase[] args, NodeBase func)
-            : base(parent)
         {
+            Parent = parent;
             Args = args;
             Function = func;
             CallType = callType;
@@ -70,7 +70,7 @@ namespace Girl.LLPML
             }
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             AddCodes(codes);
             codes.AddCodes(op, dest);
@@ -119,13 +119,13 @@ namespace Girl.LLPML
             Array.Reverse(args);
             foreach (var arg in args)
             {
-                arg.AddCodes(codes, "mov", null);
+                arg.AddCodesValue(codes, "mov", null);
                 // push DWORD
                 codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0x68));
                 codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
                 p += 5;
             }
-            Function.AddCodes(codes, "mov", null);
+            Function.AddCodesValue(codes, "mov", null);
             // mov eax, DWORD
             codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0xb8));
             codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));

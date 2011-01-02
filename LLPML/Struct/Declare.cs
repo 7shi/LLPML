@@ -43,8 +43,7 @@ namespace Girl.LLPML.Struct
 
         public Declare(Declare parent)
         {
-            this.Parent = parent.Parent;
-            this.root = parent.root;
+            Parent = parent.Parent;
         }
 
         public Declare(BlockBase parent, string name, string type)
@@ -93,7 +92,7 @@ namespace Girl.LLPML.Struct
                 {
                     if (!(mem is VarDeclare))
                         throw Abort("value required: " + mem.Name);
-                    (obj as NodeBase).AddCodes(codes, "mov", null);
+                    (obj as NodeBase).AddCodesValue(codes, "mov", null);
                     codes.Add(I386.MovRA(Var.DestRegister, ad));
                     mem.Type.AddSetCodes(codes, Addr32.New(Var.DestRegister));
                 }

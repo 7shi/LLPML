@@ -26,8 +26,8 @@ namespace Girl.LLPML
         }
 
         public BreakBase(BlockBase parent)
-            : base(parent)
         {
+            Parent = parent;
             SetUsingPointers();
         }
     }

@@ -42,7 +42,7 @@ namespace Girl.LLPML
             Calculate(codes);
         }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             var ad = Calculate(codes);
             if (this.dest.Type.Size < Var.DefaultSize)
@@ -64,7 +64,7 @@ namespace Girl.LLPML
 
         public PostInc(BlockBase parent, NodeBase dest) : base(parent, dest) { }
 
-        public override void AddCodes(OpModule codes, string op, Addr32 dest)
+        public override void AddCodesValue(OpModule codes, string op, Addr32 dest)
         {
             var thisdest = Var.Get(this.dest);
             if (thisdest == null)
