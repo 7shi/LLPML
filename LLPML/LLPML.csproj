@@ -106,20 +106,20 @@
     <Compile Include="Root.cs" />
     <Compile Include="Structure\Call.cs" />
     <Compile Include="Structure\Block.cs" />
-    <Compile Include="Variable\Var.Declare.cs" />
+    <Compile Include="Variable\VarDeclare.cs" />
     <Compile Include="Flow\For.cs" />
     <Compile Include="Flow\Break.cs" />
     <Compile Include="Variable\Arg.cs" />
-    <Compile Include="Variable\Var.Operators.0.cs" />
+    <Compile Include="Variable\VarOperators.0.cs" />
     <Compile Include="Flow\Return.cs" />
     <Compile Include="Variable\Var.cs" />
     <Compile Include="Structure\Variant.cs" />
     <Compile Include="Value\IntValue.cs" />
     <Compile Include="Variable\Set.cs" />
-    <Compile Include="Variable\Var.Operators.1.cs" />
+    <Compile Include="Variable\VarOperators.1.cs" />
     <Compile Include="Operators\Operator.cs" />
     <Compile Include="Value\StringValue.cs" />
-    <Compile Include="Variable\Var.Operator.cs" />
+    <Compile Include="Variable\VarOperator.cs" />
     <Compile Include="Structure\BlockBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
