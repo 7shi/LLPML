@@ -38,45 +38,6 @@ namespace Girl.LLPML
             this.args.AddRange(args);
         }
 
-        public Call(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            string name = xr["name"];
-            string var = xr["var"];
-            if (name != null && var == null)
-            {
-                this.name = name;
-            }
-            else if (name == null && var != null)
-            {
-                this.val = new Var(Parent, var);
-                if (xr["type"] == "std") callType = CallType.Std;
-            }
-
-            Parse(xr, delegate
-            {
-                var vs = IntValue.Read(Parent, xr);
-                if (vs == null) return;
-                foreach (var v in vs)
-                {
-                    if (this.name == null && target == null)
-                    {
-                        target = v;
-                        this.name = (target as Struct.Member).GetName();
-                    }
-                    else
-                        args.Add(v);
-                }
-            });
-
-            if (this.name == null && val == null)
-                throw Abort(xr, "either name or var required");
-        }
-
         public NodeBase GetFunction(OpModule codes, NodeBase target, out List<NodeBase> args)
         {
             if (val == null && target is Struct.Member)

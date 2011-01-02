@@ -15,7 +15,6 @@ namespace Girl.LLPML
         public char Value { get { return value; } }
 
         protected CharValue(BlockBase parent, string name) : base(parent, name) { }
-        protected CharValue(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         public CharValue(char value) { this.value = value; }
 
         public override TypeBase Type { get { return TypeChar.Instance; } }

@@ -18,11 +18,6 @@ namespace Girl.LLPML.Parsing
             Position = position;
         }
 
-        public SrcInfo(string source, XmlTextReader xr)
-            : this(source, xr.LineNumber, xr.LinePosition)
-        {
-        }
-
         public override string ToString()
         {
             return string.Format(

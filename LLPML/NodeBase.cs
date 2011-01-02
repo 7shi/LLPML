@@ -37,32 +37,6 @@ namespace Girl.LLPML
             this.name = name;
         }
 
-        public NodeBase(BlockBase parent, XmlTextReader xr)
-            : this(parent)
-        {
-            SrcInfo = new Parsing.SrcInfo(root.Source, xr);
-            Read(xr);
-        }
-
-        public static void Parse(XmlTextReader xr, Action delg)
-        {
-            string self = xr.Name;
-            bool empty = xr.IsEmptyElement;
-            while (!empty && xr.Read())
-            {
-                if (xr.Name == self && xr.NodeType == XmlNodeType.EndElement)
-                {
-                    break;
-                }
-                if (delg != null) delg();
-            }
-        }
-
-        public virtual void Read(XmlTextReader xr)
-        {
-            Parse(xr, null);
-        }
-
         private Parsing.SrcInfo GetSrcInfo()
         {
             var ret = SrcInfo;
@@ -88,29 +62,7 @@ namespace Girl.LLPML
             return new Exception(s1 + s2 + string.Format(format, args));
         }
 
-        public Exception Abort(XmlTextReader xr, string format, params object[] args)
-        {
-            return Abort(new Parsing.SrcInfo(root.Source, xr), format, args);
-        }
-
-        public Exception Abort(XmlTextReader xr)
-        {
-            return Abort(xr, "”FŽ¯‚Å‚«‚Ü‚¹‚ñ: {0}", xr.Name);
-        }
-
         public virtual void AddCodes(OpModule codes) { }
         public virtual void AddCodes(OpModule codes, string op, Addr32 dest) { }
-
-        protected void NoChild(XmlTextReader xr)
-        {
-            if (!xr.IsEmptyElement)
-                throw Abort(xr, "<" + xr.Name + "> can not have any children");
-        }
-
-        protected void RequiresName(XmlTextReader xr)
-        {
-            name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
-        }
     }
 }

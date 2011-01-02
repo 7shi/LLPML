@@ -31,30 +31,6 @@ namespace Girl.LLPML.Struct
             Length = length;
         }
 
-        public New(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            NoChild(xr);
-
-            var type = xr["type"];
-            var length = xr["length"];
-            int len;
-            if (length != null && int.TryParse(length, out len))
-            {
-                this.type = new TypeReference(Types.GetType(Parent, type), true);
-                Length = new IntValue(len);
-            }
-            else
-            {
-                this.type = Types.GetVarType(Parent, type);
-                Length = new IntValue(-1);
-            }
-        }
-
         public override void AddCodes(OpModule codes)
         {
             AddCodes(codes, "mov", null);

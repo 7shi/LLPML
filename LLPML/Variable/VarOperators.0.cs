@@ -15,7 +15,6 @@ namespace Girl.LLPML
         public override int Max { get { return 0; } }
 
         public Inc(BlockBase parent, NodeBase dest) : base(parent, dest) { }
-        public Inc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         private Addr32 Calculate(OpModule codes)
         {
@@ -57,7 +56,6 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "dec"; } }
         public Dec(BlockBase parent, NodeBase dest) : base(parent, dest) { }
-        public Dec(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class PostInc : Inc
@@ -65,7 +63,6 @@ namespace Girl.LLPML
         public override string Tag { get { return "post-inc"; } }
 
         public PostInc(BlockBase parent, NodeBase dest) : base(parent, dest) { }
-        public PostInc(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
@@ -95,6 +92,5 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "post-dec"; } }
         public PostDec(BlockBase parent, NodeBase dest) : base(parent, dest) { }
-        public PostDec(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

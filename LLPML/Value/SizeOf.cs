@@ -18,17 +18,6 @@ namespace Girl.LLPML
             this.target = target;
         }
 
-        public SizeOf(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            NoChild(xr);
-            RequiresName(xr);
-        }
-
         public override int Value
         {
             get

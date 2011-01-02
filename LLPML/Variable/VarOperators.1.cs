@@ -12,7 +12,6 @@ namespace Girl.LLPML
         public override string Tag { get { return "add"; } }
 
         public VarAdd(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarAdd(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         private Addr32 Calculate(OpModule codes)
         {
@@ -78,62 +77,53 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "sub"; } }
         public VarSub(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarSub(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarAnd : VarAdd
     {
         public override string Tag { get { return "and"; } }
         public VarAnd(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarAnd(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarOr : VarAdd
     {
         public override string Tag { get { return "or"; } }
         public VarOr(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarOr(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarXor : VarAdd
     {
         public override string Tag { get { return "xor"; } }
         public VarXor(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarXor(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarShiftLeft : VarAdd
     {
         public override string Tag { get { return "shift-left"; } }
         public VarShiftLeft(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarShiftLeft(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarShiftRight : VarShiftLeft
     {
         public override string Tag { get { return "shift-right"; } }
         public VarShiftRight(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarShiftRight(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarMul : VarAdd
     {
         public override string Tag { get { return "mul"; } }
         public VarMul(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarMul(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarDiv : VarAdd
     {
         public override string Tag { get { return "div"; } }
         public VarDiv(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarDiv(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 
     public class VarMod : VarAdd
     {
         public override string Tag { get { return "mod"; } }
         public VarMod(BlockBase parent, NodeBase dest, params NodeBase[] values) : base(parent, dest, values) { }
-        public VarMod(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
     }
 }

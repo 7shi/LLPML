@@ -45,34 +45,6 @@ namespace Girl.LLPML
             CallType = callType;
         }
 
-        public Delegate(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            CallType = CallType.CDecl;
-            if (xr["type"] == "std") CallType = CallType.Std;
-
-            var args = new List<NodeBase>();
-            NodeBase last = null;
-            Parse(xr, delegate
-            {
-                var vs = IntValue.Read(Parent, xr);
-                if (vs == null) return;
-                foreach (var v in vs)
-                {
-                    if (last != null) args.Add(last);
-                    last = v;
-                }
-            });
-            if (last == null)
-                throw Abort("delegate: arguments required");
-            Args = args.ToArray();
-            Function = last;
-        }
-
         protected TypeBase type;
         protected bool doneInferType = false;
 

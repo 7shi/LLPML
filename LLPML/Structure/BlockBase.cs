@@ -94,50 +94,6 @@ namespace Girl.LLPML
             return AddInt(name, new IntValue(value));
         }
 
-        public int ParseInt(XmlTextReader xr)
-        {
-            string value = null;
-            Parse(xr, delegate
-            {
-                switch (xr.NodeType)
-                {
-                    case XmlNodeType.Text:
-                        value = xr.Value;
-                        break;
-                    case XmlNodeType.Whitespace:
-                        break;
-                    default:
-                        throw Abort(xr, "value required");
-                }
-            });
-            if (value == null) throw Abort(xr, "value required");
-            return IntValue.Parse(value);
-        }
-
-        public NodeBase ReadInt(XmlTextReader xr)
-        {
-            string name = xr["name"];
-            if (name != null)
-            {
-                if (!xr.IsEmptyElement)
-                    throw Abort(xr, "do not specify value with name");
-                var ret = GetInt(name);
-                if (ret == null)
-                    throw Abort(xr, "undefined values: " + name);
-                return ret;
-            }
-            return new IntValue(ParseInt(xr));
-        }
-
-        public void ReadIntDefine(XmlTextReader xr)
-        {
-            string name = xr["name"];
-            if (name == null)
-                throw Abort(xr, "name required");
-            if (!AddInt(name, ParseInt(xr)))
-                throw Abort(xr, "multiple definitions: " + name);
-        }
-
         #endregion
 
         #region string
@@ -150,59 +106,6 @@ namespace Girl.LLPML
         public bool AddString(string name, string value)
         {
             return AddMember(name, new ConstString(this, value));
-        }
-
-        private string ParseString(XmlTextReader xr)
-        {
-            string ret = null;
-            Parse(xr, delegate
-            {
-                switch (xr.NodeType)
-                {
-                    case XmlNodeType.Text:
-                    case XmlNodeType.Whitespace:
-                        ret = xr.Value;
-                        break;
-                    default:
-                        throw Abort(xr, "string required");
-                }
-            });
-            if (ret == null) throw Abort(xr, "string required");
-            return ret;
-        }
-
-        public string ReadString(XmlTextReader xr)
-        {
-            string name = xr["name"];
-            if (name != null)
-            {
-                if (!xr.IsEmptyElement)
-                    throw Abort(xr, "do not specify string with name");
-                var ret = GetString(name);
-                if (ret == null)
-                    throw Abort(xr, "undefined string: " + name);
-                return ret.Value;
-            }
-            return ParseString(xr);
-        }
-
-        public void ReadStringDefine(XmlTextReader xr)
-        {
-            string name = xr["name"];
-            if (name == null)
-                throw Abort(xr, "name required");
-            if (!AddString(name, ParseString(xr)))
-                throw Abort(xr, "multiple definitions: " + name);
-        }
-
-        public int ReadStringLength(XmlTextReader xr)
-        {
-            NoChild(xr);
-
-            string name = xr["name"];
-            if (name == null) throw Abort(xr, "name required");
-
-            return GetString(name).Value.Length;
         }
 
         #endregion
@@ -220,12 +123,6 @@ namespace Girl.LLPML
 
         public BlockBase() { }
         public BlockBase(BlockBase parent) : base(parent) { }
-        public BlockBase(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            base.Read(xr);
-        }
 
         public virtual bool HasStackFrame
         {

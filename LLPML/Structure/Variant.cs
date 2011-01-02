@@ -14,15 +14,8 @@ namespace Girl.LLPML
         private Val32 address;
 
         public Variant(BlockBase parent, string name) : base(parent, name) { }
-        public Variant(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         public Variant(Val32 address) { this.address = address; }
         public Variant(Function func) { this.func = func; }
-
-        public override void Read(XmlTextReader xr)
-        {
-            NoChild(xr);
-            RequiresName(xr);
-        }
 
         public override TypeBase Type
         {

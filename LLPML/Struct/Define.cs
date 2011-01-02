@@ -51,30 +51,6 @@ namespace Girl.LLPML.Struct
             BaseType = baseType;
         }
 
-        public Define(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                isAnonymous = true;
-                name = Parent.GetAnonymousName();
-            }
-
-            BaseType = xr["base"];
-            if (name == BaseType)
-                throw Abort(xr, "can not define recursive base type: " + name);
-
-            thisptr = new Arg(this, "this", Types.ToVarType(Type));
-            base.Read(xr);
-
-            if (!Parent.AddStruct(this))
-                throw Abort("multiple definitions: " + name);
-        }
-
         public override T GetMember<T>(string name)
         {
             object obj;

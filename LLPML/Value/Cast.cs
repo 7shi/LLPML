@@ -33,31 +33,6 @@ namespace Girl.LLPML
             Source = source;
         }
 
-        public Cast(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            name = "__cast";
-            this.type = xr["type"];
-
-            Parse(xr, delegate
-            {
-                NodeBase[] v = IntValue.Read(Parent, xr);
-                if (v != null)
-                {
-                    if (v.Length > 1 || Source != null)
-                        throw Abort(xr, "too many sources");
-                    Source = v[0];
-                }
-            });
-
-            if (Source == null)
-                throw Abort(xr, "requires a source");
-        }
-
         public override Addr32 GetAddress(OpModule codes)
         {
             if (Source is Var)

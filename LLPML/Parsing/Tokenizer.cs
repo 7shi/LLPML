@@ -44,11 +44,6 @@ namespace Girl.LLPML.Parsing
             this.linePosition = linePosition;
         }
 
-        public Tokenizer(string file, XmlTextReader xr)
-            : this(file, xr.Value, xr.LineNumber, xr.LinePosition)
-        {
-        }
-
         public bool CanRead { get { return Peek() != null; } }
 
         public string Read()

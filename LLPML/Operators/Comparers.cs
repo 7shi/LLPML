@@ -16,7 +16,6 @@ namespace Girl.LLPML
         public override TypeBase Type { get { return TypeBool.Instance; } }
 
         public Equal(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public Equal(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {
@@ -71,7 +70,6 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "not-equal"; } }
         public NotEqual(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public NotEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override bool Calculate(int a, int b) { return a != b; }
     }
 
@@ -79,7 +77,6 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "less"; } }
         public Less(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public Less(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override bool Calculate(int a, int b) { return a < b; }
     }
 
@@ -87,7 +84,6 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "greater"; } }
         public Greater(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public Greater(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override bool Calculate(int a, int b) { return a > b; }
     }
 
@@ -95,7 +91,6 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "less-equal"; } }
         public LessEqual(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public LessEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override bool Calculate(int a, int b) { return a <= b; }
     }
 
@@ -103,7 +98,6 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "greater-equal"; } }
         public GreaterEqual(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public GreaterEqual(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
         protected override bool Calculate(int a, int b) { return a >= b; }
     }
 }

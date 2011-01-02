@@ -20,33 +20,6 @@ namespace Girl.LLPML
             this.order = order;
         }
 
-        public Index(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            Parse(xr, delegate
-            {
-                var vs = IntValue.Read(Parent, xr);
-                if (vs == null) return;
-                foreach (var v in vs)
-                {
-                    if (target == null)
-                        target = v;
-                    else if (order == null)
-                        order = v;
-                    else
-                        throw Abort(xr, "too many operands");
-                }
-            });
-            if (target == null)
-                throw Abort(xr, "array required");
-            else if (order == null)
-                throw Abort(xr, "order required");
-        }
-
         public override Addr32 GetAddress(OpModule codes)
         {
             var target = Var.Get(this.target);

@@ -8,19 +8,11 @@ namespace Girl.LLPML.Struct
 {
     public class Base : Var
     {
-        public Base(BlockBase parent) : base(parent) { Init(); }
-        public Base(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        private void Init()
+        public Base(BlockBase parent)
+            : base(parent)
         {
             name = "base";
             Reference = Parent.GetVar("this");
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            NoChild(xr);
-            Init();
         }
 
         protected TypeBase type;

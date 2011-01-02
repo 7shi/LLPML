@@ -14,7 +14,6 @@ namespace Girl.LLPML
         public override TypeBase Type { get { return TypeBool.Instance; } }
 
         public AndAlso(BlockBase parent, params NodeBase[] values) : base(parent, values) { }
-        public AndAlso(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest)
         {

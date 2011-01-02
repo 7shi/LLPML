@@ -27,27 +27,6 @@ namespace Girl.LLPML
             this.values.AddRange(values);
         }
 
-        public Operator(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            Parse(xr, delegate
-            {
-                var vs = IntValue.Read(Parent, xr);
-                if (vs == null) return;
-                foreach (NodeBase v in vs)
-                {
-                    if (values.Count == Max)
-                        throw Abort(xr, "too many operands");
-                    values.Add(v);
-                }
-            });
-            if (Min > 0 && values.Count == 0)
-                throw Abort(xr, "no value specified");
-            else if (values.Count < Min)
-                throw Abort(xr, "too few operands");
-        }
-
         protected TypeBase.Func GetFunc()
         {
             var t = values[0].Type ?? TypeVar.Instance;

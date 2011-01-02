@@ -25,23 +25,6 @@ namespace Girl.LLPML
 
         public Return(BlockBase parent) : base(parent) { }
         public Return(BlockBase parent, NodeBase value) : this(parent) { Value = value; }
-        public Return(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            Parse(xr, delegate
-            {
-                var v = IntValue.Read(Parent, xr);
-                if (v != null)
-                {
-                    if (v.Length > 1 || value != null)
-                        throw Abort(xr, "multiple values");
-                    Value = v[0];
-                }
-            });
-
-            base.Read(xr);
-        }
 
         public override void AddCodes(OpModule codes)
         {

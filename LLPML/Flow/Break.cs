@@ -11,15 +11,6 @@ namespace Girl.LLPML
     public class Break : BreakBase
     {
         public Break(BlockBase parent) : base(parent) { }
-        public Break(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            if (!CanBreak()) throw Abort(xr, "can not break");
-            NoChild(xr);
-
-            base.Read(xr);
-        }
 
         public bool CanBreak()
         {

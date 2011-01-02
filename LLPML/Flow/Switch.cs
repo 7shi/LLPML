@@ -20,28 +20,6 @@ namespace Girl.LLPML
                 this.value = value;
             }
 
-            public Expression(BlockBase parent, XmlTextReader xr)
-                : base(parent, xr)
-            {
-            }
-
-            public override void Read(XmlTextReader xr)
-            {
-                Parse(xr, delegate
-                {
-                    NodeBase[] v = IntValue.Read(Parent, xr);
-                    if (v != null)
-                    {
-                        if (v.Length > 1 || value != null)
-                            throw Abort(xr, "multiple expressions");
-                        else
-                            value = v[0];
-                    }
-                });
-                if (value == null)
-                    throw Abort(xr, "expression required");
-            }
-
             public override void AddCodes(OpModule codes)
             {
                 value.AddCodes(codes, "mov", null);
@@ -58,24 +36,6 @@ namespace Girl.LLPML
             public bool IsLast;
 
             public Case(BlockBase parent) : base(parent) { }
-            public Case(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-            public override void Read(XmlTextReader xr)
-            {
-                Parse(xr, delegate
-                {
-                    var vs = IntValue.Read(Parent, xr);
-                    if (vs == null) return;
-                    foreach (NodeBase v in vs)
-                    {
-                        if (!(v is IntValue))
-                            throw Abort(xr, "constant required");
-                        values.Add(v);
-                    }
-                });
-                if (values.Count == 0)
-                    throw Abort(xr, "value(s) required");
-            }
 
             public override void AddCodes(OpModule codes)
             {
@@ -126,79 +86,6 @@ namespace Girl.LLPML
             : base(parent)
         {
             this.expr = new Expression(this, expr);
-        }
-
-        public Switch(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            base.Read(xr);
-            CaseBlock cb = null;
-            bool stop = false;
-            Parse(xr, delegate
-            {
-                switch (xr.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        switch (xr.Name)
-                        {
-                            case "expr":
-                                {
-                                    expr = new Expression(this, xr);
-                                    break;
-                                }
-                            case "case":
-                                if (expr == null)
-                                    throw Abort(xr, "expression required before case");
-                                else if (stop)
-                                    throw Abort(xr, "block terminated");
-                                else if (cb != null)
-                                    throw Abort(xr, "multiple cases");
-                                cb = new CaseBlock { Case = new Case(this, xr) };
-                                break;
-                            case "block":
-                                if (expr == null)
-                                    throw Abort(xr, "expression required before block");
-                                else if (stop)
-                                    throw Abort(xr, "block terminated");
-                                else if (cb == null)
-                                {
-                                    blocks.Add(new CaseBlock
-                                    {
-                                        Case = new Case(this),
-                                        Block = new Block(this, xr)
-                                    });
-                                    stop = true;
-                                }
-                                else
-                                {
-                                    cb.Block = new Block(this, xr);
-                                    blocks.Add(cb);
-                                    cb = null;
-                                }
-                                break;
-                            default:
-                                throw Abort(xr);
-                        }
-                        break;
-
-                    case XmlNodeType.Whitespace:
-                    case XmlNodeType.Comment:
-                        break;
-
-                    default:
-                        throw Abort(xr, "element required");
-                }
-            });
-            if (expr == null)
-                throw Abort(xr, "expression required");
-            else if (cb != null)
-                throw Abort(xr, "block required");
-            else if (blocks.Count == 0)
-                throw Abort(xr, "case and block required");
         }
 
         public override void AddCodes(OpModule codes)

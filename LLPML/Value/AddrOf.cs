@@ -13,24 +13,6 @@ namespace Girl.LLPML
         public NodeBase Target { get; private set; }
 
         public AddrOf(BlockBase parent, NodeBase target) : base(parent) { Target = target; }
-        public AddrOf(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            Parse(xr, delegate
-            {
-                var vs = IntValue.Read(Parent, xr);
-                if (vs == null) return;
-                foreach (var v in vs)
-                {
-                    if (Target != null)
-                        throw Abort(xr, "too many operands");
-                    Target = v;
-                }
-            });
-            if (Target == null)
-                throw Abort(xr, "target required");
-        }
 
         public override TypeBase Type { get { return new TypePointer(Target.Type); } }
 

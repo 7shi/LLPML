@@ -30,15 +30,5 @@ namespace Girl.LLPML
         {
             SetUsingPointers();
         }
-
-        public BreakBase(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            SetUsingPointers();
-        }
     }
 }

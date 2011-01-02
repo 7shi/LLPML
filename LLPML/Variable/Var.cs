@@ -33,21 +33,6 @@ namespace Girl.LLPML
                 throw Abort("undefined pointer: " + name);
         }
 
-        public Var(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            NoChild(xr);
-            RequiresName(xr);
-
-            Reference = Parent.GetVar(name);
-            if (Reference == null)
-                throw Abort(xr, "undefined variable: " + name);
-        }
-
         public virtual Struct.Define GetStruct()
         {
             return Types.GetStruct(Type);

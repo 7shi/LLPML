@@ -11,15 +11,6 @@ namespace Girl.LLPML
     public class Continue : BreakBase
     {
         public Continue(BlockBase parent) : base(parent) { }
-        public Continue(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            if (!CanContinue()) throw Abort(xr, "can not break");
-            NoChild(xr);
-
-            base.Read(xr);
-        }
 
         public bool CanContinue()
         {

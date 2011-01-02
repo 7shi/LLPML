@@ -109,57 +109,6 @@ namespace Girl.LLPML
             CheckAnonymousMember();
         }
 
-        public Function(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        protected override void ReadBlock(XmlTextReader xr)
-        {
-            if (xr.NodeType == XmlNodeType.Element)
-            {
-                switch (xr.Name)
-                {
-                    case "arg":
-                        args.Add(new Arg(this, xr));
-                        return;
-                    case "arg-ptr":
-                        args.Add(new ArgPtr(this, xr));
-                        return;
-                }
-            }
-            base.ReadBlock(xr);
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            name = xr["name"];
-            if (string.IsNullOrEmpty(name))
-            {
-                isAnonymous = true;
-                name = Parent.GetAnonymousName();
-            }
-
-            if (xr["static"] == "1")
-                IsStatic = true;
-
-            if (xr["virtual"] == "1")
-                IsVirtual = true;
-            else if (xr["override"] == "1")
-                IsOverride = true;
-
-            CheckThisArg();
-            CheckAnonymousMember();
-
-            CallType = CallType.CDecl;
-            if (xr["type"] == "std") CallType = CallType.Std;
-
-            if (!Parent.AddFunction(this))
-                throw Abort(xr, "multiple definitions: " + name);
-
-            base.Read(xr);
-        }
-
         protected bool isAnonymous = false;
 
         public override int Level

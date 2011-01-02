@@ -13,8 +13,6 @@ namespace Girl.LLPML.Struct
         private List<object> values = new List<object>();
         public List<object> Values { get { return values; } }
 
-        private bool isRoot = true;
-
         public override bool NeedsInit
         {
             get
@@ -47,7 +45,6 @@ namespace Girl.LLPML.Struct
         {
             this.Parent = parent.Parent;
             this.root = parent.root;
-            isRoot = false;
         }
 
         public Declare(BlockBase parent, string name, string type)
@@ -55,45 +52,6 @@ namespace Girl.LLPML.Struct
         {
             this.type = Types.GetType(parent, type) as TypeStruct;
             if (this.type == null) throw Abort("type required");
-        }
-
-        public Declare(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public Declare(Declare parent, XmlTextReader xr)
-            : this(parent)
-        {
-            SrcInfo = new Parsing.SrcInfo(root.Source, xr);
-            Read(xr);
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            if (isRoot)
-            {
-                RequiresName(xr);
-                type = Types.GetType(Parent, xr["type"]) as TypeStruct;
-                if (type == null) throw Abort(xr, "type required");
-                if (xr["static"] == "1") IsStatic = true;
-            }
-
-            Parse(xr, delegate
-            {
-                if (xr.NodeType == XmlNodeType.Element && xr.Name == "struct-declare")
-                {
-                    Declare d = new Declare(this, xr);
-                    values.Add(d);
-                }
-                else
-                {
-                    NodeBase[] v = IntValue.Read(Parent, xr);
-                    if (v != null) values.AddRange(v);
-                }
-            });
-
-            if (isRoot) AddToParent();
         }
 
         public override void AddCodes(OpModule codes)

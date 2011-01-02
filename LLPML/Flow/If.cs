@@ -50,62 +50,6 @@ namespace Girl.LLPML
         public List<CondBlock> Blocks { get { return blocks; } }
 
         public If(BlockBase parent) : base(parent) { }
-        public If(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
-        public override void Read(XmlTextReader xr)
-        {
-            base.Read(xr);
-            CondBlock cb = null;
-            bool stop = false;
-            Parse(xr, delegate
-            {
-                switch (xr.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        switch (xr.Name)
-                        {
-                            case "cond":
-                                if (stop)
-                                    throw Abort(xr, "block terminated");
-                                else if (cb != null)
-                                    throw Abort(xr, "multiple contitions");
-                                cb = new CondBlock(this, new Cond(this, xr));
-                                break;
-                            case "block":
-                                if (stop)
-                                    throw Abort(xr, "block terminated");
-                                else if (cb == null)
-                                {
-                                    if (blocks.Count == 0)
-                                        throw Abort(xr, "condition required");
-                                    blocks.Add(new CondBlock(this, new Block(this, xr)));
-                                    stop = true;
-                                }
-                                else
-                                {
-                                    cb.Block = new Block(this, xr);
-                                    blocks.Add(cb);
-                                    cb = null;
-                                }
-                                break;
-                            default:
-                                throw Abort(xr);
-                        }
-                        break;
-
-                    case XmlNodeType.Whitespace:
-                    case XmlNodeType.Comment:
-                        break;
-
-                    default:
-                        throw Abort(xr, "element required");
-                }
-            });
-            if (cb != null)
-                throw Abort(xr, "block required");
-            else if (blocks.Count == 0)
-                throw Abort(xr, "condition and block required");
-        }
 
         public override void AddCodes(OpModule codes)
         {

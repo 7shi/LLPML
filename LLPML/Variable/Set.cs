@@ -28,8 +28,6 @@ namespace Girl.LLPML
         {
         }
 
-        public Set(BlockBase parent, XmlTextReader xr) : base(parent, xr) { }
-
         public override void AddCodes(OpModule codes)
         {
             var dest = Var.Get(this.dest);

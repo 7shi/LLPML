@@ -52,48 +52,11 @@ namespace Girl.LLPML
             return ret;
         }
 
-        public VarDeclare(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-            Init();
-        }
-
         protected virtual void Init()
         {
             if (type == null) type = TypeVar.Instance;
             IsMember = Parent is Struct.Define;
             if (Parent.Parent == null) IsStatic = true;
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            RequiresName(xr);
-
-            var t = Types.GetType(Parent, xr["type"]);
-            if (xr["static"] == "1") IsStatic = true;
-
-            string slen = xr["length"];
-            if (slen != null)
-            {
-                var c = IntValue.Parse(slen);
-                if (t != null) type = new TypeArray(t, c);
-            }
-            else
-            {
-                if (t != null) type = t;
-                Parse(xr, delegate
-                {
-                    NodeBase[] v = IntValue.Read(Parent, xr);
-                    if (v != null)
-                    {
-                        if (v.Length > 1 || Value != null)
-                            throw Abort(xr, "multiple values");
-                        Value = v[0];
-                    }
-                });
-            }
-
-            AddToParent();
         }
 
         public Struct.Define GetStruct()

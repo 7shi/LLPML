@@ -19,8 +19,6 @@ namespace Girl.LLPML
         public Cond(BlockBase parent) : base(parent) { }
         public Cond(BlockBase parent, NodeBase values)
             : base(parent, new NodeBase[] { values }) { }
-        public Cond(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr) { }
 
         public override void AddCodes(OpModule codes, string op, Addr32 dest) { }
 

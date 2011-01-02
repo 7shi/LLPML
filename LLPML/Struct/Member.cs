@@ -30,69 +30,17 @@ namespace Girl.LLPML.Struct
             set
             {
                 target = value;
-                isRoot = true;
             }
         }
 
         public string TargetType { get; set; }
 
-        private bool isRoot = true;
         public Member Child { get; protected set; }
 
         public Member(BlockBase parent, string name)
             : base(parent)
         {
-            isRoot = false;
             this.name = name;
-        }
-
-        public Member(BlockBase parent, XmlTextReader xr)
-            : base(parent, xr)
-        {
-        }
-
-        public Member(Member parent, XmlTextReader xr)
-            : base(parent.Parent)
-        {
-            this.root = parent.root;
-            isRoot = false;
-            SrcInfo = new Parsing.SrcInfo(root.Source, xr);
-            Read(xr);
-        }
-
-        public override void Read(XmlTextReader xr)
-        {
-            RequiresName(xr);
-
-            Parse(xr, delegate
-            {
-                if ((!isRoot || target != null) &&
-                    xr.NodeType == XmlNodeType.Element && xr.Name == "struct-member")
-                {
-                    if (Child != null)
-                        throw Abort(xr, "multiple members");
-                    Append(new Member(this, xr));
-                    return;
-                }
-
-                var vs = IntValue.Read(Parent, xr);
-                if (vs == null) return;
-                foreach (var v in vs)
-                {
-                    if (v is Var)
-                    {
-                        if (!isRoot)
-                            throw Abort(xr, "needless instance");
-                        else if (target != null)
-                            throw Abort(xr, "too many operands");
-                        target = v as Var;
-                    }
-                    else
-                        throw Abort(xr, "invalid element");
-                }
-            });
-            if (isRoot && target == null)
-                target = new Var(Parent, "this");
         }
 
         protected Addr32 GetAddressInternal(OpModule codes)
