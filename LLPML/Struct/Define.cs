@@ -80,7 +80,7 @@ namespace Girl.LLPML.Struct
         protected int GetSizeInternal()
         {
             int ret = 0;
-            ForEachMembers(null, size => ret = size);
+            ForEachMembers(null, delegate(int size) { ret = size; });
             Define st = GetBaseStruct();
             if (st != null) ret += st.GetSizeInternal();
             return ret;
@@ -97,7 +97,7 @@ namespace Girl.LLPML.Struct
         public int GetOffset(string name)
         {
             int ret = -1;
-            ForEachMembers((p, pos) =>
+            ForEachMembers(delegate(VarDeclare p, int pos)
             {
                 if (p.Name != name) return false;
                 ret = pos;
@@ -113,7 +113,7 @@ namespace Girl.LLPML.Struct
         public VarDeclare GetMemberDecl(string name)
         {
             VarDeclare ret = null;
-            ForEachMembers((p, pos) =>
+            ForEachMembers(delegate(VarDeclare p, int pos)
             {
                 if (p.Name != name) return false;
                 ret = p;
@@ -135,7 +135,7 @@ namespace Girl.LLPML.Struct
                 for (int i = 0; i < stmd.Length; i++)
                     list.Add(stmd[i]);
             }
-            ForEachMembers((p, pos) =>
+            ForEachMembers(delegate(VarDeclare p, int pos)
             {
                 list.Add(p);
                 return false;
@@ -201,7 +201,7 @@ namespace Girl.LLPML.Struct
             int offset = 0;
             var st = GetBaseStruct();
             if (st != null) offset = st.GetSizeInternal();
-            ForEachMembers((p, pos) =>
+            ForEachMembers(delegate(VarDeclare p, int pos)
             {
                 if (!p.IsStatic && p.NeedsDtor)
                 {
@@ -354,7 +354,7 @@ namespace Girl.LLPML.Struct
             var bst = GetBaseStruct();
             int offset = 0;
             if (bst != null) offset = bst.GetSizeInternal();
-            ForEachMembers((p, pos) =>
+            ForEachMembers(delegate(VarDeclare p, int pos)
             {
                 if (!p.IsStatic)
                     p.Address = Addr32.NewRO(Var.DestRegister, offset + pos);

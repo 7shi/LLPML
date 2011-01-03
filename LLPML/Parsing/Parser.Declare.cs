@@ -59,9 +59,7 @@ namespace Girl.LLPML.Parsing
             throw Abort("const: 型が指定されていません。");
         }
 
-        private delegate void DeclareHandler(string name, bool eq, SrcInfo si, NodeBase array);
-
-        private void ReadDeclare(string category, Action delg1, DeclareHandler delg2)
+        private void ReadDeclare(string category, Action delg1, Action<string, bool, SrcInfo, NodeBase> delg2)
         {
             if (!CanRead) throw Abort("{0}: 名前が必要です。", category);
 
@@ -104,7 +102,7 @@ namespace Girl.LLPML.Parsing
         private void ConstIntDeclare()
         {
             ReadDeclare("const int", null,
-                (name, eq, si, array) =>
+                delegate(string name, bool eq, SrcInfo si, NodeBase array)
                 {
                     if (array != null)
                         throw parent.AbortInfo(si, "const int: 配列は宣言できません。");
@@ -117,7 +115,7 @@ namespace Girl.LLPML.Parsing
         private void ConstStringDeclare()
         {
             ReadDeclare("const string", null,
-                (name, eq, si, array) =>
+                delegate(string name, bool eq, SrcInfo si, NodeBase array)
                 {
                     if (array != null)
                         throw parent.AbortInfo(si, "const string: 配列は宣言できません。");
@@ -135,7 +133,7 @@ namespace Girl.LLPML.Parsing
             var list = new ArrayList();
             string type = null;
             ReadDeclare("var",
-                () =>
+                delegate()
                 {
                     type = null;
 
@@ -171,7 +169,7 @@ namespace Girl.LLPML.Parsing
                     else if (ar != null)
                         Rewind();
                 },
-                (name, eq, si, array) =>
+                delegate(string name, bool eq, SrcInfo si, NodeBase array)
                 {
                     VarDeclare v;
                     var tb = Types.GetType(parent, type);
@@ -210,7 +208,7 @@ namespace Girl.LLPML.Parsing
         {
             var list = new ArrayList();
             ReadDeclare(type, null,
-                (name, eq, si, array) =>
+                delegate(string name, bool eq, SrcInfo si, NodeBase array)
                 {
                     VarDeclare v;
                     var tb = Types.GetType(parent, type);
@@ -282,7 +280,7 @@ namespace Girl.LLPML.Parsing
             var list = new ArrayList();
             var type = Delegate.GetDefaultType(parent);
             ReadDeclare("delegate", null,
-                (name, eq, si, array) =>
+                delegate(string name, bool eq, SrcInfo si, NodeBase array)
                 {
                     VarDeclare v;
                     if (array == null)

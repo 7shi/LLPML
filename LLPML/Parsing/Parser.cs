@@ -19,7 +19,7 @@ namespace Girl.LLPML.Parsing
             var ret = new Parser();
             ret.tokenizer = tokenizer;
             ret.parent = parent;
-            ret.Init();
+            ret.InitOperator();
             return ret;
         }
 

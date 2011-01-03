@@ -130,7 +130,7 @@ namespace Girl.LLPML
             get
             {
                 bool ret = false;
-                ForEachMembers((p, pos) =>
+                ForEachMembers(delegate(VarDeclare p, int pos)
                 {
                     ret = true;
                     return true;
@@ -181,8 +181,8 @@ namespace Girl.LLPML
             if (HasStackFrame)
             {
                 int stackSize = Level * 4;
-                ForEachMembers(null, size => stackSize += size);
-                ForEachMembers((p, pos) =>
+                ForEachMembers(null, delegate(int size) { stackSize += size; });
+                ForEachMembers(delegate(VarDeclare p, int pos)
                 {
                     if (!p.IsStatic)
                         p.Address = Addr32.NewRO(Reg32.EBP, pos - stackSize);
@@ -220,7 +220,7 @@ namespace Girl.LLPML
             if (!IsTerminated)
             {
                 var list = new ArrayList();
-                ForEachMembers((p, pos) =>
+                ForEachMembers(delegate(VarDeclare p, int pos)
                 {
                     list.Add(p);
                     return false;

@@ -28,7 +28,7 @@ namespace Girl.LLPML
 
         protected override void BeforeAddCodes(OpModule codes)
         {
-            ForEachMembers((p, pos) =>
+            ForEachMembers(delegate(VarDeclare p, int pos)
             {
                 p.Address = Addr32.NewD(codes.Module.GetBuffer(p.Name, p.Type.Size));
                 return false;

@@ -7,7 +7,7 @@ namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
-        private NodeBase ReadCall(NodeBase target, int order)
+        private NodeBase ReadCall(NodeBase target)
         {
             var fn = "call";
             if (target is NodeBase)
@@ -28,7 +28,7 @@ namespace Girl.LLPML.Parsing
             return Call.NewV(parent, target, null, args);
         }
 
-        private NodeBase ReadMember(NodeBase target, int order)
+        private NodeBase ReadMember(NodeBase target)
         {
             var mem = target as Member;
             var t2 = Read();
@@ -50,7 +50,7 @@ namespace Girl.LLPML.Parsing
             return t2m;
         }
 
-        private NodeBase ReadIndex(NodeBase target, int order)
+        private NodeBase ReadIndex(NodeBase target)
         {
             var t = Read();
             if (t == "]" && target is Variant)

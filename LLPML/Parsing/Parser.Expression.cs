@@ -16,7 +16,7 @@ namespace Girl.LLPML.Parsing
         private NodeBase ReadExpressionOrder(int order)
         {
             if (!CanRead) throw Abort("式がありません。");
-            if (order >= operators.Length) return Factor();
+            if (order >= orders.Length) return Factor();
 
             var ret = ReadExpressionOrder(order + 1);
             var si = SrcInfo;
@@ -24,15 +24,13 @@ namespace Girl.LLPML.Parsing
             while (CanRead)
             {
                 var t = Read();
-                if (!orders[order].ContainsKey(t))
+                if (!orders[order].Contains(t))
                 {
                     Rewind();
                     break;
                 }
-                var op = orders[order][t] as OperatorBase;
-                ret = op.Read(ret, order);
-                if (ret is NodeBase)
-                    (ret as NodeBase).SrcInfo = si;
+                ret = ReadOperator(order, t, ret);
+                ret.SrcInfo = si;
                 si = SrcInfo;
             }
             return ret;
@@ -87,7 +85,7 @@ namespace Girl.LLPML.Parsing
 
         private NodeBase ReadUnary(string t)
         {
-            int order = operators.Length - 1;
+            int order = orders.Length - 1;
             switch (t)
             {
                 case "+":
