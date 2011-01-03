@@ -17,7 +17,7 @@ namespace Girl.LLPML
         {
             if (AddConstCodes(codes, op, dest)) return;
 
-            codes.AddOperatorCodes(GetFunc(), dest, values[0], false);
+            codes.AddOperatorCodes(CheckFunc(), Tag, dest, values[0], false);
             codes.AddCodes(op, dest);
         }
 

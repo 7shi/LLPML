@@ -19,21 +19,11 @@ namespace Girl.LLPML
         // check value
         public override bool IsValue { get { return false; } }
 
-        // functions
-        public override Func GetFunc(string key)
-        {
-            return base.GetFunc(key);
-
-            /// todo: operator overload
-            //var f = Type.GetFunction("operator_" + key);
-            //return null;
-        }
-
         // conditions
-        public override CondPair GetCond(string key)
+        public override CondPair GetCond(string op)
         {
             /// todo: operator overload
-            return base.GetCond(key);
+            return base.GetCond(op);
         }
 
         // cast

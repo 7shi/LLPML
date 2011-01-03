@@ -61,7 +61,6 @@ namespace Girl.LLPML
 
         public TypeFunction(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
         {
-            TypeIntBase.AddComparers(funcs, conds);
             CallType = callType;
             RetType = retType;
             var Args = new List<VarDeclare>();

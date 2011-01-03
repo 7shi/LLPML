@@ -20,13 +20,13 @@ namespace Girl.LLPML
 
             OpCode last = new OpCode();
             Addr32 ad = Addr32.New(Reg32.ESP);
-            var f = GetFunc();
+            var tb = CheckFunc();
             var c = GetCond();
             var v = values[0];
             v.AddCodesV(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
             {
-                codes.AddOperatorCodes(f, ad, values[i], true);
+                codes.AddOperatorCodes(tb, Tag, ad, values[i], true);
                 if (i < values.Count - 1)
                 {
                     codes.Add(I386.Jcc(c.NotCondition, last.Address));

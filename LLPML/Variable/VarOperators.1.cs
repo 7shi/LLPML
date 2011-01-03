@@ -16,12 +16,15 @@ namespace Girl.LLPML
                 throw Abort("{0}: destination is not variable", Tag);
             var ad = dest.GetAddress(codes);
             var ad2 = ad;
-            var f = GetFunc();
-            TypeBase.Func schar = null, sint = null;
+            var tb = CheckFunc();
+            var schar = "";
+            var sint = "";
             if (dest.Type is TypeString)
             {
-                schar = dest.Type.GetFunc(Tag + "-char");
-                sint = dest.Type.GetFunc(Tag + "-int");
+                if (dest.Type.CheckFunc(Tag + "-char"))
+                    schar = Tag + "-char";
+                if (dest.Type.CheckFunc(Tag + "-int"))
+                    sint = Tag + "-int";
             }
             var size = dest.Type.Size;
             var cleanup = OpModule.NeedsDtor(dest);
@@ -37,12 +40,12 @@ namespace Girl.LLPML
             foreach (NodeBase v in values)
             {
                 var vv = v;
-                var ff = f;
-                if (schar != null && vv.Type is TypeChar)
-                    ff = schar;
-                else if (sint != null && vv.Type is TypeIntBase)
-                    ff = sint;
-                codes.AddOperatorCodes(ff, ad2, vv, false);
+                var tag = Tag;
+                if (schar != "" && vv.Type is TypeChar)
+                    tag = schar;
+                else if (sint != "" && vv.Type is TypeIntBase)
+                    tag = sint;
+                codes.AddOperatorCodes(tb, tag, ad2, vv, false);
             }
             if (indirect)
             {

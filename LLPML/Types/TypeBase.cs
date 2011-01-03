@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
@@ -18,22 +19,16 @@ namespace Girl.LLPML
         public virtual int Size { get { return Var.DefaultSize; } }
 
         // functions
-        public delegate void Func(OpModule codes, Addr32 dest);
-        protected Dictionary<string, Func> funcs = new Dictionary<string, Func>();
-        public virtual Func GetFunc(string key)
-        {
-            Func f;
-            if (!funcs.TryGetValue(key, out f)) return null;
-            return f;
-        }
+        public virtual bool CheckFunc(string op) { return false; }
+        public virtual void AddOpCodes(string op, OpModule codes, Addr32 dest) { }
 
         // conditions
-        protected Dictionary<string, CondPair> conds = new Dictionary<string, CondPair>();
-        public virtual CondPair GetCond(string key)
+        protected Hashtable conds = new Hashtable();
+        public virtual CondPair GetCond(string op)
         {
-            CondPair c;
-            if (!conds.TryGetValue(key, out c)) return null;
-            return c;
+            if (!conds.ContainsKey(op))
+                return null;
+            return conds[op] as CondPair;
         }
 
         // get value
@@ -111,45 +106,8 @@ namespace Girl.LLPML
         // type check
         public virtual bool Check()
         {
-            try
-            {
-                if (Type != null) return Type.Check();
-            }
-            catch
-            {
-                return false;
-            }
+            if (Type != null) return Type.Check();
             return true;
-        }
-
-        // operator name
-        public static string GetFuncName(string op)
-        {
-            switch (op)
-            {
-                case "++": return "operator_inc";
-                case "--": return "operator_dec";
-                case "+": return "operator_add";
-                case "-": return "operator_sub";
-                case "&": return "operator_and";
-                case "|": return "operator_or";
-                case "^": return "operator_xor";
-                case "<<": return "operator_left";
-                case ">>": return "operator_right";
-                case "*": return "operator_mul";
-                case "/": return "operator_div";
-                case "%": return "operator_mod";
-                case "!": return "operator_not";
-                case "~": return "operator_rev";
-                case "==": return "operator_equal";
-                case "!=": return "operator_not_equal";
-                case ">": return "operator_greater";
-                case ">=": return "operator_greater_equal";
-                case "<": return "operator_less";
-                case "<=": return "operator_less_equal";
-            }
-            // -X => operator_neg
-            return null;
         }
     }
 }

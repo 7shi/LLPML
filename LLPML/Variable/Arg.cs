@@ -37,7 +37,7 @@ namespace Girl.LLPML
 
         protected override void Init()
         {
-            type = new TypeArray(TypeInt.Instance, 1);
+            type = TypeArray.NewInt(TypeInt.Instance, 1);
         }
     }
 }

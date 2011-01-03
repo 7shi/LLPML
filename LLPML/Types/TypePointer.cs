@@ -29,36 +29,65 @@ namespace Girl.LLPML
         {
             Type = type;
 
-            funcs["inc"] = funcs["post-inc"] = (codes, dest) =>
-            {
-                if (Type.Size == 1)
-                    codes.Add(I386.IncA(dest));
-                else
-                    codes.Add(I386.AddA(dest, Val32.NewI(Type.Size)));
-            };
-            funcs["dec"] = funcs["post-dec"] = (codes, dest) =>
-            {
-                if (Type.Size == 1)
-                    codes.Add(I386.DecA(dest));
-                else
-                    codes.Add(I386.SubA(dest, Val32.NewI(Type.Size)));
-            };
-            funcs["add"] = (codes, dest) =>
-            {
-                codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(Type.Size)));
-                codes.Add(I386.Mul(Reg32.EDX));
-                codes.Add(I386.AddAR(dest, Reg32.EAX));
-            };
-            funcs["sub"] = (codes, dest) =>
-            {
-                codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(Type.Size)));
-                codes.Add(I386.Mul(Reg32.EDX));
-                codes.Add(I386.SubAR(dest, Reg32.EAX));
-            };
+            conds["greater"] = CondPair.New(Cc.A, Cc.NA);
+            conds["greater-equal"] = CondPair.New(Cc.AE, Cc.NAE);
+            conds["less"] = CondPair.New(Cc.B, Cc.NB);
+            conds["less-equal"] = CondPair.New(Cc.BE, Cc.NBE);
+        }
 
-            // partial inheritance
-            TypeIntBase.AddComparers(funcs, conds);
-            TypeInt.AddComparers(conds);
+        public override bool CheckFunc(string op)
+        {
+            switch (op)
+            {
+                case "inc":
+                case "post-inc":
+                case "dec":
+                case "post-dec":
+                case "add":
+                case "sub":
+                    return true;
+                default:
+                    return base.CheckFunc(op);
+            }
+        }
+
+        public override void AddOpCodes(string op, OpModule codes, Addr32 dest)
+        {
+            switch (op)
+            {
+                case "inc":
+                case "post-inc":
+                    if (Type.Size == 1)
+                        codes.Add(I386.IncA(dest));
+                    else
+                        codes.Add(I386.AddA(dest, Val32.NewI(Type.Size)));
+                    break;
+                case "dec":
+                case "post-dec":
+                    if (Type.Size == 1)
+                        codes.Add(I386.DecA(dest));
+                    else
+                        codes.Add(I386.SubA(dest, Val32.NewI(Type.Size)));
+                    break;
+                case "add":
+                    codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(Type.Size)));
+                    codes.Add(I386.Mul(Reg32.EDX));
+                    codes.Add(I386.AddAR(dest, Reg32.EAX));
+                    break;
+                case "sub":
+                    codes.Add(I386.MovR(Reg32.EDX, Val32.NewI(Type.Size)));
+                    codes.Add(I386.Mul(Reg32.EDX));
+                    codes.Add(I386.SubAR(dest, Reg32.EAX));
+                    break;
+                default:
+                    base.AddOpCodes(op, codes, dest);
+                    break;
+            }
+        }
+
+        public override CondPair GetCond(string key)
+        {
+            return base.GetCond(key);
         }
     }
 }

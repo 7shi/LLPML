@@ -163,7 +163,7 @@ namespace Girl.LLPML
             Add(I386.AddR(Reg32.ESP, Val32.New(8)));
         }
 
-        public void AddOperatorCodes(TypeBase.Func f, Addr32 dest, NodeBase arg, bool pushf)
+        public void AddOperatorCodes(TypeBase tb, string op, Addr32 dest, NodeBase arg, bool pushf)
         {
             arg.AddCodesV(this, "mov", null);
             var cleanup = NeedsDtor(arg);
@@ -173,7 +173,7 @@ namespace Girl.LLPML
                 if (dest.Register == Reg32.ESP)
                     dest = Addr32.NewRO(dest.Register, dest.Disp + 4);
             }
-            f(this, dest);
+            tb.AddOpCodes(op, this, dest);
             if (cleanup)
             {
                 if (pushf)

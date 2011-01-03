@@ -33,13 +33,13 @@ namespace Girl.LLPML
             return op;
         }
 
-        protected TypeBase.Func GetFunc()
+        protected TypeBase CheckFunc()
         {
-            var t = values[0].Type ?? TypeVar.Instance;
-            var f = t.GetFunc(Tag);
-            if (f == null)
+            var t = values[0].Type;
+            if (t == null) t = TypeVar.Instance;
+            if(!t.CheckFunc(Tag))
                 throw Abort("{0}: {1}: not supported", Tag, t.Name);
-            return f;
+            return t;
         }
 
         protected CondPair GetCond()

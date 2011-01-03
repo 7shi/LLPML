@@ -83,15 +83,17 @@ namespace Girl.LLPML
             }
         }
 
-        public TypeArray(TypeBase type, NodeBase count)
+        public static TypeArray New(TypeBase type, NodeBase count)
         {
-            Type = type;
-            this.count = count;
+            var ret = new TypeArray();
+            ret.Type = type;
+            ret.count = count;
+            return ret;
         }
 
-        public TypeArray(TypeBase type, int count)
-            : this(type, IntValue.New(count))
+        public static TypeArray NewInt(TypeBase type, int count)
         {
+            return New(type, IntValue.New(count));
         }
     }
 }

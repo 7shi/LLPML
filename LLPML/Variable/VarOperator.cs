@@ -31,13 +31,12 @@ namespace Girl.LLPML
             return op;
         }
 
-        protected TypeBase.Func GetFunc()
+        protected TypeBase CheckFunc()
         {
             var t = Type;
-            var f = t.GetFunc(Tag);
-            if (f == null)
+            if (!t.CheckFunc(Tag))
                 throw new Exception(Tag + ": " + t.Name + ": not supported");
-            return f;
+            return t;
         }
 
         public override TypeBase Type { get { return dest.Type; } }

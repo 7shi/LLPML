@@ -16,13 +16,16 @@ namespace Girl.LLPML
             if (AddConstCodes(codes, op, dest)) return;
 
             var ad = Addr32.New(Reg32.ESP);
-            var f = GetFunc();
+            var tb = CheckFunc();
             var v = values[0];
-            TypeBase.Func schar = null, sint = null;
+            var schar = "";
+            var sint = "";
             if (v.Type is TypeString)
             {
-                schar = v.Type.GetFunc(Tag + "-char");
-                sint = v.Type.GetFunc(Tag + "-int");
+                if (v.Type.CheckFunc(Tag + "-char"))
+                    schar = Tag + "-char";
+                if (v.Type.CheckFunc(Tag + "-int"))
+                    sint = Tag + "-int";
             }
             var tr = v.Type as TypeReference;
             if (tr != null && tr.UseGC && !OpModule.NeedsDtor(v))
@@ -36,12 +39,12 @@ namespace Girl.LLPML
             for (int i = 1; i < values.Count; i++)
             {
                 var vv = values[i];
-                var ff = f;
-                if (schar != null && vv.Type is TypeChar)
-                    ff = schar;
-                else if (sint != null && vv.Type is TypeIntBase)
-                    ff = sint;
-                codes.AddOperatorCodes(ff, ad, vv, false);
+                var tag = Tag;
+                if (schar != "" && vv.Type is TypeChar)
+                    tag = schar;
+                else if (sint != "" && vv.Type is TypeIntBase)
+                    tag = sint;
+                codes.AddOperatorCodes(tb, tag, ad, vv, false);
             }
             if (op != "push")
             {

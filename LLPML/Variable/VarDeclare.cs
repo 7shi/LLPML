@@ -50,7 +50,7 @@ namespace Girl.LLPML
         {
             var ret = new VarDeclare(parent, name);
             ret.doneInferType = true;
-            ret.type = new TypeArray(type, count);
+            ret.type = TypeArray.New(type, count);
             return ret;
         }
 

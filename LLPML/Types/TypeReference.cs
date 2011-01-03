@@ -27,18 +27,23 @@ namespace Girl.LLPML
         }
 
         // functions
-        public override Func GetFunc(string key)
+        public override bool CheckFunc(string op)
         {
-            var ret = base.GetFunc(key);
-            if (ret == null) ret = Type.GetFunc(key);
-            return ret;
+            return base.CheckFunc(op) || Type.CheckFunc(op);
+        }
+        public override void AddOpCodes(string op, OpModule codes, Addr32 dest)
+        {
+            if (base.CheckFunc(op))
+                base.AddOpCodes(op, codes, dest);
+            else
+                Type.AddOpCodes(op, codes, dest);
         }
 
         // conditions
-        public override CondPair GetCond(string key)
+        public override CondPair GetCond(string op)
         {
-            var ret = base.GetCond(key);
-            if (ret == null) ret = Type.GetCond(key);
+            var ret = base.GetCond(op);
+            if (ret == null) ret = Type.GetCond(op);
             return ret;
         }
 
@@ -182,7 +187,6 @@ namespace Girl.LLPML
 
         public TypeReference(TypeBase type, bool isArray)
         {
-            TypeIntBase.AddComparers(funcs, conds);
             Type = type;
             this.isArray = isArray;
         }

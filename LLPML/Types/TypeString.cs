@@ -20,26 +20,71 @@ namespace Girl.LLPML
         protected TypeString()
             : base(null, false)
         {
-            funcs["equal"] = funcs["not-equal"] = (codes, dest) =>
-            {
-                codes.Add(I386.PushA(dest));
-                codes.Add(I386.XchgRA(Reg32.EAX, Addr32.New(Reg32.ESP)));
-                codes.Add(I386.Push(Reg32.EAX));
-                codes.Add(codes.GetCall("string", Equal));
-                codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
-                codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
-            };
             conds["equal"] = CondPair.New(Cc.NZ, Cc.Z);
             conds["not-equal"] = CondPair.New(Cc.Z, Cc.NZ);
+        }
 
-            funcs["add"] = (codes, dest) => AddFunc(codes, dest, Add);
-            funcs["add-char"] = (codes, dest) => AddFunc(codes, dest, Add + "_char");
-            funcs["add-int"] = (codes, dest) => AddFunc(codes, dest, Add + "_int");
-            funcs["sub"] = (codes, dest) => AddFunc(codes, dest, Sub);
-            funcs["sub-char"] = (codes, dest) => AddFunc(codes, dest, Sub + "_char");
-            funcs["sub-int"] = (codes, dest) => AddFunc(codes, dest, Sub + "_int");
-            funcs["mul"] = (codes, dest) => AddFunc(codes, dest, Add);
-            funcs["mul-int"] = (codes, dest) => AddFunc(codes, dest, Mul + "_int");
+        public override bool CheckFunc(string op)
+        {
+            switch (op)
+            {
+                case "equal":
+                case "not-equal":
+                case "add":
+                case "add-char":
+                case "add-int":
+                case "sub":
+                case "sub-char":
+                case "sub-int":
+                case "mul":
+                case "mul-int":
+                    return true;
+                default:
+                    return base.CheckFunc(op);
+            }
+        }
+
+        public override void AddOpCodes(string op, OpModule codes, Addr32 dest)
+        {
+            switch (op)
+            {
+                case "equal":
+                case "not-equal":
+                    codes.Add(I386.PushA(dest));
+                    codes.Add(I386.XchgRA(Reg32.EAX, Addr32.New(Reg32.ESP)));
+                    codes.Add(I386.Push(Reg32.EAX));
+                    codes.Add(codes.GetCall("string", Equal));
+                    codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
+                    codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                    break;
+                case "add":
+                    AddFunc(codes, dest, Add);
+                    break;
+                case "add-char":
+                    AddFunc(codes, dest, Add + "_char");
+                    break;
+                case "add-int":
+                    AddFunc(codes, dest, Add + "_int");
+                    break;
+                case "sub":
+                    AddFunc(codes, dest, Sub);
+                    break;
+                case "sub-char":
+                    AddFunc(codes, dest, Sub + "_char");
+                    break;
+                case "sub-int":
+                    AddFunc(codes, dest, Sub + "_int");
+                    break;
+                case "mul":
+                    AddFunc(codes, dest, Add);
+                    break;
+                case "mul-int":
+                    AddFunc(codes, dest, Mul + "_int");
+                    break;
+                default:
+                    base.AddOpCodes(op, codes, dest);
+                    break;
+            }
         }
 
         private void AddFunc(OpModule codes, Addr32 dest, string func)

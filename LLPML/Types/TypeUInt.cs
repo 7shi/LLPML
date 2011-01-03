@@ -26,41 +26,57 @@ namespace Girl.LLPML
 
         protected TypeUInt()
         {
-            AddOperators(funcs);
-            AddComparers(funcs, conds);
-
-            funcs["shift-left"] = (codes, dest) => Shift("shl", codes, dest);
-            funcs["shift-right"] = (codes, dest) => Shift("shr", codes, dest);
-
-            funcs["mul"] = (codes, dest) =>
-            {
-                codes.Add(I386.MulA(dest));
-                codes.Add(I386.MovAR(dest, Reg32.EAX));
-            };
-            funcs["div"] = (codes, dest) =>
-            {
-                codes.Add(I386.XchgRA(Reg32.EAX, dest));
-                codes.Add(I386.Xor(Reg32.EDX, Reg32.EDX));
-                codes.Add(I386.DivA(dest));
-                codes.Add(I386.MovAR(dest, Reg32.EAX));
-            };
-            funcs["mod"] = (codes, dest) =>
-            {
-                codes.Add(I386.XchgRA(Reg32.EAX, dest));
-                codes.Add(I386.Xor(Reg32.EDX, Reg32.EDX));
-                codes.Add(I386.DivA(dest));
-                codes.Add(I386.MovAR(dest, Reg32.EDX));
-            };
-
-            AddComparers(conds);
-        }
-
-        public static void AddComparers(Dictionary<string, CondPair> conds)
-        {
             conds["greater"] = CondPair.New(Cc.A, Cc.NA);
             conds["greater-equal"] = CondPair.New(Cc.AE, Cc.NAE);
             conds["less"] = CondPair.New(Cc.B, Cc.NB);
             conds["less-equal"] = CondPair.New(Cc.BE, Cc.NBE);
+        }
+
+        public override bool CheckFunc(string op)
+        {
+            switch (op)
+            {
+                case "shift-left":
+                case "shift-right":
+                case "mul":
+                case "div":
+                case "mod":
+                    return true;
+                default:
+                    return base.CheckFunc(op);
+            }
+        }
+
+        public override void AddOpCodes(string op, OpModule codes, Addr32 dest)
+        {
+            switch (op)
+            {
+                case "shift-left":
+                    Shift("shl", codes, dest);
+                    break;
+                case "shift-right":
+                    Shift("shr", codes, dest);
+                    break;
+                case "mul":
+                    codes.Add(I386.MulA(dest));
+                    codes.Add(I386.MovAR(dest, Reg32.EAX));
+                    break;
+                case "div":
+                    codes.Add(I386.XchgRA(Reg32.EAX, dest));
+                    codes.Add(I386.Xor(Reg32.EDX, Reg32.EDX));
+                    codes.Add(I386.DivA(dest));
+                    codes.Add(I386.MovAR(dest, Reg32.EAX));
+                    break;
+                case "mod":
+                    codes.Add(I386.XchgRA(Reg32.EAX, dest));
+                    codes.Add(I386.Xor(Reg32.EDX, Reg32.EDX));
+                    codes.Add(I386.DivA(dest));
+                    codes.Add(I386.MovAR(dest, Reg32.EDX));
+                    break;
+                default:
+                    base.AddOpCodes(op, codes, dest);
+                    break;
+            }
         }
     }
 

@@ -36,7 +36,7 @@ namespace Girl.LLPML
                 var p = type.IndexOf('[');
                 var t = GetType(parent, type.Substring(0, p));
                 var n = type.Substring(p + 1, type.Length - p - 2);
-                return new TypeArray(t, int.Parse(n));
+                return TypeArray.NewInt(t, int.Parse(n));
             }
             var ret = Types.GetValueType(type);
             if (ret != null) return ret;

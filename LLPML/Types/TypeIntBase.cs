@@ -9,6 +9,12 @@ namespace Girl.LLPML
 {
     public abstract class TypeVarBase : TypeBase
     {
+        protected TypeVarBase()
+        {
+            conds["equal"] = CondPair.New(Cc.E, Cc.NE);
+            conds["not-equal"] = CondPair.New(Cc.NE, Cc.E);
+        }
+
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
         {
@@ -20,45 +26,112 @@ namespace Girl.LLPML
         {
             codes.Add(I386.MovAR(ad, Reg32.EAX));
         }
+
+        public override bool CheckFunc(string op)
+        {
+            switch (op)
+            {
+                case "equal":
+                case "not-equal":
+                case "greater":
+                case "greater-equal":
+                case "less":
+                case "less-equal":
+                    return true;
+                default:
+                    return base.CheckFunc(op);
+            }
+        }
+
+        public override void AddOpCodes(string op, OpModule codes, Addr32 dest)
+        {
+            switch (op)
+            {
+                case "equal":
+                case "not-equal":
+                case "greater":
+                case "greater-equal":
+                case "less":
+                case "less-equal":
+                    codes.Add(I386.CmpAR(dest, Reg32.EAX));
+                    break;
+                default:
+                    base.AddOpCodes(op, codes, dest);
+                    break;
+            }
+        }
     }
 
     public abstract class TypeIntBase : TypeVarBase
     {
-        public static void AddOperators(Dictionary<string, Func> funcs)
+
+        public override bool CheckFunc(string op)
         {
-            funcs["inc"] = funcs["post-inc"] = (codes, dest) => codes.Add(I386.IncA(dest));
-            funcs["dec"] = funcs["post-dec"] = (codes, dest) => codes.Add(I386.DecA(dest));
-
-            funcs["add"] = (codes, dest) => codes.Add(I386.AddAR(dest, Reg32.EAX));
-            funcs["sub"] = (codes, dest) => codes.Add(I386.SubAR(dest, Reg32.EAX));
-            funcs["and"] = (codes, dest) => codes.Add(I386.AndAR(dest, Reg32.EAX));
-            funcs["or"] = (codes, dest) => codes.Add(I386.OrAR(dest, Reg32.EAX));
-            funcs["xor"] = (codes, dest) => codes.Add(I386.XorAR(dest, Reg32.EAX));
-
-            funcs["not"] = (codes, dest) =>
+            switch (op)
             {
-                codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
-                codes.Add(I386.MovR(Reg32.EAX, Val32.New(0)));
-                codes.Add(I386.Setcc(Cc.Z, Reg8.AL));
-            };
-            funcs["neg"] = (codes, dest) => codes.Add(I386.Neg(Reg32.EAX));
-            funcs["rev"] = (codes, dest) => codes.Add(I386.Not(Reg32.EAX));
+                case "inc":
+                case "post-inc":
+                case "dec":
+                case "post-dec":
+                case "add":
+                case "sub":
+                case "and":
+                case "or":
+                case "xor":
+                case "not":
+                case "neg":
+                case "rev":
+                    return true;
+                default:
+                    return base.CheckFunc(op);
+            }
         }
 
-        public static void AddComparers(Dictionary<string, Func> funcs, Dictionary<string, CondPair> conds)
+        public override void AddOpCodes(string op, OpModule codes, Addr32 dest)
         {
-            funcs["equal"]
-                = funcs["not-equal"]
-                = funcs["greater"]
-                = funcs["greater-equal"]
-                = funcs["less"]
-                = funcs["less-equal"]
-                = (codes, dest) => codes.Add(I386.CmpAR(dest, Reg32.EAX));
-            conds["equal"] = CondPair.New(Cc.E, Cc.NE);
-            conds["not-equal"] = CondPair.New(Cc.NE, Cc.E);
+            switch (op)
+            {
+                case "inc":
+                case "post-inc":
+                    codes.Add(I386.IncA(dest));
+                    break;
+                case "dec":
+                case "post-dec":
+                    codes.Add(I386.DecA(dest));
+                    break;
+                case "add":
+                    codes.Add(I386.AddAR(dest, Reg32.EAX));
+                    break;
+                case "sub":
+                    codes.Add(I386.SubAR(dest, Reg32.EAX));
+                    break;
+                case "and":
+                    codes.Add(I386.AndAR(dest, Reg32.EAX));
+                    break;
+                case "or":
+                    codes.Add(I386.OrAR(dest, Reg32.EAX));
+                    break;
+                case "xor":
+                    codes.Add(I386.XorAR(dest, Reg32.EAX));
+                    break;
+                case "not":
+                    codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
+                    codes.Add(I386.MovR(Reg32.EAX, Val32.New(0)));
+                    codes.Add(I386.Setcc(Cc.Z, Reg8.AL));
+                    break;
+                case "neg":
+                    codes.Add(I386.Neg(Reg32.EAX));
+                    break;
+                case "rev":
+                    codes.Add(I386.Not(Reg32.EAX));
+                    break;
+                default:
+                    base.AddOpCodes(op, codes, dest);
+                    break;
+            }
         }
 
-        public static void Shift(string shift, OpModule codes, Addr32 dest)
+        protected static void Shift(string shift, OpModule codes, Addr32 dest)
         {
             var l1 = new OpCode();
             var l2 = new OpCode();
