@@ -38,7 +38,7 @@ namespace Girl.LLPML
         public Var GetRetVal(BlockBase parent)
         {
             if (retVal == null)
-                retVal = new VarDeclare(this, "__retval");
+                retVal = VarDeclare.New(this, "__retval", null);
             return Var.New(parent, retVal);
         }
 

@@ -110,7 +110,7 @@ namespace Girl.LLPML.Parsing
             else if (t != "=>")
             {
                 Read();
-                ret.Args.Add(new Arg(ret, t, TypeVar.Instance));
+                ret.Args.Add(Arg.New(ret, t, TypeVar.Instance));
             }
             Check(type, "=>");
 

@@ -7,7 +7,7 @@ namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
-        private NodeBase[] Declare(bool isStatic)
+        private NodeBase[] ReadDeclare(bool isStatic)
         {
             if (!CanRead) return null;
 
@@ -179,7 +179,7 @@ namespace Girl.LLPML.Parsing
                         if (tb != null) tb = Types.ToVarType(tb);
                         try
                         {
-                            var vd = new VarDeclare(parent, name, tb);
+                            var vd = VarDeclare.New(parent, name, tb);
                             if (eq) vd.Value = ReadExpression();
                             v = vd;
                         }
@@ -215,12 +215,12 @@ namespace Girl.LLPML.Parsing
                         var vs = Types.GetValueType(type);
                         if (vs == null)
                         {
-                            v = new Declare(parent, name, type);
+                            v = Declare.New(parent, name, type);
                             if (eq) ReadInitializers(v as Declare, type);
                         }
                         else
                         {
-                            var vd = new VarDeclare(parent, name, tb);
+                            var vd = VarDeclare.New(parent, name, tb);
                             if (eq)
                             {
                                 var ex = ReadExpression();
@@ -251,7 +251,7 @@ namespace Girl.LLPML.Parsing
             {
                 if (Peek() == "{")
                 {
-                    var st2 = new Declare(st);
+                    var st2 = Declare.New(st);
                     st2.SrcInfo = SrcInfo;
                     ReadInitializers(st2, type);
                     st.Values.Add(st2);
@@ -280,7 +280,7 @@ namespace Girl.LLPML.Parsing
                     VarDeclare v;
                     if (array == null)
                     {
-                        var vd = new VarDeclare(parent, name, type);
+                        var vd = VarDeclare.New(parent, name, type);
                         if (eq) vd.Value = ReadExpression();
                         v = vd;
                     }

@@ -49,7 +49,7 @@ namespace Girl.LLPML.Parsing
                             return null;
                         }
                         Rewind();
-                        return Declare(true);
+                        return ReadDeclare(true);
                     }
                 case "extern":
                     Extern();
@@ -127,7 +127,7 @@ namespace Girl.LLPML.Parsing
             Rewind();
             if (t == ";") return null;
 
-            var dec = Declare(false);
+            var dec = ReadDeclare(false);
             if (dec != null) return dec;
 
             return SentenceExpression();
@@ -450,7 +450,7 @@ namespace Girl.LLPML.Parsing
                     type = Read();
                     if (type == "params")
                     {
-                        f.Args.Add(new ArgPtr(f, arg));
+                        f.Args.Add(ArgPtr.New(f, arg));
                         continue;
                     }
                     else if (!Tokenizer.IsWord(type))
@@ -479,7 +479,9 @@ namespace Girl.LLPML.Parsing
                     Rewind();
 
                 var argt = Types.GetVarType(parent, type);
-                f.Args.Add(new Arg(f, arg, argt) { SrcInfo = si });
+                var farg = Arg.New(f, arg, argt);
+                farg.SrcInfo = si;
+                f.Args.Add(farg);
             }
         }
 

@@ -20,19 +20,27 @@ namespace Girl.LLPML
         public virtual bool NeedsCtor { get { return type.NeedsCtor; } }
         public virtual bool NeedsDtor { get { return type.NeedsDtor; } }
 
-        protected VarDeclare() { }
+        public static VarDeclare New(BlockBase parent, string name, TypeBase type)
+        {
+            var ret = new VarDeclare();
+            ret.init1(parent, name, type);
+            return ret;
+        }
 
-        public VarDeclare(BlockBase parent, string name)
+        public static VarDeclare Array(BlockBase parent, string name, TypeBase type, NodeBase count)
+        {
+            var ret = New(parent, name, null);
+            ret.doneInferType = true;
+            ret.type = TypeArray.New(type, count);
+            return ret;
+        }
+
+        protected void init1(BlockBase parent, string name, TypeBase type)
         {
             Parent = parent;
             this.name = name;
-            Init();
+            init2();
             AddToParent();
-        }
-
-        public VarDeclare(BlockBase parent, string name, TypeBase type)
-            : this(parent, name)
-        {
             if (type != null)
             {
                 doneInferType = true;
@@ -40,21 +48,7 @@ namespace Girl.LLPML
             }
         }
 
-        public VarDeclare(BlockBase parent, string name, TypeBase type, NodeBase value)
-            : this(parent, name, type)
-        {
-            Value = value;
-        }
-
-        public static VarDeclare Array(BlockBase parent, string name, TypeBase type, NodeBase count)
-        {
-            var ret = new VarDeclare(parent, name);
-            ret.doneInferType = true;
-            ret.type = TypeArray.New(type, count);
-            return ret;
-        }
-
-        protected virtual void Init()
+        protected virtual void init2()
         {
             if (type == null) type = TypeVar.Instance;
             IsMember = Parent is Define;

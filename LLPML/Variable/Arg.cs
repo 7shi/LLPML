@@ -9,17 +9,24 @@ namespace Girl.LLPML
 {
     public class Arg : VarDeclare
     {
-        public Arg(BlockBase parent, string name, TypeBase type) : base(parent, name, type) { }
-
         private VarDeclare target;
 
-        public Arg(BlockBase parent, VarDeclare target)
-            : base(parent, target.Name)
+        public static new Arg New(BlockBase parent, string name, TypeBase type)
         {
-            this.target = target;
+            var ret = new Arg();
+            ret.init1(parent, name, type);
+            return ret;
         }
 
-        protected override void Init() { }
+        public static Arg NewVar(BlockBase parent, VarDeclare target)
+        {
+            var ret = new Arg();
+            ret.init1(parent, target.Name, null);
+            ret.target = target;
+            return ret;
+        }
+
+        protected override void init2() { }
 
         public override TypeBase Type
         {
@@ -33,9 +40,14 @@ namespace Girl.LLPML
 
     public class ArgPtr : Arg
     {
-        public ArgPtr(BlockBase parent, string name) : base(parent, name, null) { }
+        public static ArgPtr New(BlockBase parent, string name)
+        {
+            var ret = new ArgPtr();
+            ret.init1(parent, name, null);
+            return ret;
+        }
 
-        protected override void Init()
+        protected override void init2()
         {
             type = TypeArray.NewInt(TypeInt.Instance, 1);
         }

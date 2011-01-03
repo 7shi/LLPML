@@ -42,7 +42,7 @@ namespace Girl.LLPML.Struct
                 name = Parent.GetAnonymousName();
             }
             this.name = name;
-            thisptr = new Arg(this, "this", Types.ToVarType(Type));
+            thisptr = Arg.New(this, "this", Types.ToVarType(Type));
         }
 
         public Define(BlockBase parent, string name, string baseType)

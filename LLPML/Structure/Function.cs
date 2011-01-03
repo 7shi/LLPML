@@ -41,10 +41,11 @@ namespace Girl.LLPML
                     ovrfunc.SetOverride(this);
                     if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
-                    virtptr = new VarDeclare(
+                    virtptr = VarDeclare.New(
                         Parent, "virtual_" + name,
-                        null, /// todo: delegate type
-                        new Variant(ovrfunc));
+                        null /// todo: delegate type
+                        );
+                    virtptr.Value = new Variant(ovrfunc);
                     Parent.AddSentence(virtptr);
                 }
                 else
@@ -278,7 +279,7 @@ namespace Girl.LLPML
             var vp = Parent.GetVar(name);
             if (vp == null || vp.IsMember || vp.IsStatic) return vp;
 
-            var arg = new Arg(this, vp);
+            var arg = Arg.NewVar(this, vp);
             InsertArg(arg);
             return arg;
         }
@@ -288,7 +289,7 @@ namespace Girl.LLPML
             if (Parent is Define && !IsStatic)
             {
                 var type = Types.ToVarType((Parent as Define).Type);
-                args.Add(new Arg(this, "this", type));
+                args.Add(Arg.New(this, "this", type));
                 thisptr = This.New(this);
             }
         }
@@ -300,7 +301,7 @@ namespace Girl.LLPML
             var f = Parent as Function;
             if (f == null || !f.HasThis) return;
 
-            InsertArg(new Arg(this, "this", f.thisptr.Type));
+            InsertArg(Arg.New(this, "this", f.thisptr.Type));
             thisptr = This.New(this);
         }
 

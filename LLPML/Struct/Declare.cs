@@ -42,16 +42,20 @@ namespace Girl.LLPML.Struct
             }
         }
 
-        public Declare(Declare parent)
+        public static Declare New(Declare parent)
         {
-            Parent = parent.Parent;
+            var ret = new Declare();
+            ret.Parent = parent.Parent;
+            return ret;
         }
 
-        public Declare(BlockBase parent, string name, string type)
-            : base(parent, name)
+        public static Declare New(BlockBase parent, string name, string type)
         {
-            this.type = Types.GetType(parent, type) as TypeStruct;
-            if (this.type == null) throw Abort("type required");
+            var ret = new Declare();
+            ret.init1(parent, name, null);
+            ret.type = Types.GetType(parent, type) as TypeStruct;
+            if (ret.type == null) throw ret.Abort("type required");
+            return ret;
         }
 
         public override void AddCodes(OpModule codes)
