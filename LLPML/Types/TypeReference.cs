@@ -1,6 +1,4 @@
-﻿#define INLINE_REFCOUNT
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
@@ -135,36 +133,16 @@ namespace Girl.LLPML
 
         public static void AddReferenceCodes(OpModule codes)
         {
-#if INLINE_REFCOUNT
-            var label = new OpCode();
-            codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
-            codes.Add(I386.Jcc(Cc.Z, label.Address));
-            codes.Add(I386.IncA(Addr32.NewRO(Reg32.EAX, -12)));
-            codes.Add(label);
-#else
             codes.Add(I386.Push(Reg32.EAX));
-            codes.Add(GetCall("var", Reference));
+            codes.Add(codes.GetCall("var", Reference));
             codes.Add(I386.Pop(Reg32.EAX));
-#endif
         }
 
         public static void AddDereferenceCodes(OpModule codes)
         {
-#if INLINE_REFCOUNT
-            var label = new OpCode();
-            codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
-            codes.Add(I386.Jcc(Cc.Z, label.Address));
-            codes.Add(I386.DecA(Addr32.NewRO(Reg32.EAX, -12)));
-            codes.Add(I386.Jcc(Cc.NZ, label.Address));
             codes.Add(I386.Push(Reg32.EAX));
-            codes.Add(codes.GetCall("var", Delete));
-            codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
-            codes.Add(label);
-#else
-            codes.Add(I386.Push(Reg32.EAX));
-            codes.Add(GetCall("var", Dereference));
+            codes.Add(codes.GetCall("var", Dereference));
             codes.Add(I386.Pop(Reg32.EAX));
-#endif
         }
 
         public virtual bool UseGC
