@@ -25,7 +25,7 @@ namespace Girl.LLPML
             OpCode last = new OpCode();
             for (int i = 0; i < values.Count; i++)
             {
-                values[i].AddCodesV(codes, "mov", null);
+                (values[i] as NodeBase).AddCodesV(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 if (i < values.Count - 1)
                     codes.Add(I386.Jcc(Cc.NZ, last.Address));
@@ -38,15 +38,15 @@ namespace Girl.LLPML
 
         public override IntValue GetConst()
         {
-            var v = IntValue.GetValue(values[0]);
+            var v = IntValue.GetValue(values[0] as NodeBase);
             if (v == null) return null;
 
-            var ret = v.Value == 0 ? false : true;
+            var ret = v.Value != 0;
             for (int i = 1; i < values.Count; i++)
             {
-                var iv = IntValue.GetValue(values[i]);
+                var iv = IntValue.GetValue(values[i] as NodeBase);
                 if (iv == null) return null;
-                ret = Calculate(ret, iv.Value == 0 ? false : true);
+                ret = Calculate(ret, iv.Value != 0);
             }
             if (ret)
                 return IntValue.One;

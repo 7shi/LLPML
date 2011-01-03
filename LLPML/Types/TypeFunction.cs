@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.Binary;
@@ -22,8 +23,9 @@ namespace Girl.LLPML
                 sb.Append("((stdcall))");
             sb.Append("(");
             bool first = true;
-            foreach (var arg in Args)
+            for (int i = 0; i < Args.Length; i++)
             {
+                var arg = Args[i];
                 if (first) first = false; else sb.Append(",");
                 sb.Append(arg.Type.Name);
             }
@@ -59,34 +61,36 @@ namespace Girl.LLPML
         public CallType CallType { get; protected set; }
         public bool HasParams { get; protected set; }
 
-        public static TypeFunction New(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
+        public static TypeFunction New(Function f)
         {
             var ret = new TypeFunction();
-            ret.init(callType, retType, args);
+            var args = new VarDeclare[f.Args.Count];
+            for (int i = 0; i < args.Length; i++)
+                args[i] = f.Args[i] as VarDeclare;
+            ret.init(f.CallType, f.ReturnType, args);
             return ret;
         }
 
-        public static TypeFunction NewFunction(Function f)
-        {
-            return New(f.CallType, f.ReturnType, f.Args);
-        }
-
-        protected void init(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
+        protected void init(CallType callType, TypeBase retType, VarDeclare[] args)
         {
             CallType = callType;
             RetType = retType;
-            var Args = new List<VarDeclare>();
+            var list = new ArrayList();
             if (args == null)
                 HasParams = true;
             else
-                foreach (var arg in args)
+                for (int i = 0; i < args.Length; i++)
                 {
+                    var arg = args[i];
                     if (arg is ArgPtr)
                         HasParams = true;
                     else
-                        Args.Add(arg);
+                        list.Add(arg);
                 }
-            this.Args = Args.ToArray();
+            var ret = new VarDeclare[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as VarDeclare;
+            this.Args = ret;
         }
     }
 
@@ -134,7 +138,7 @@ namespace Girl.LLPML
         }
 
         public static TypeDelegate New(
-            BlockBase parent, CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
+            BlockBase parent, CallType callType, TypeBase retType, VarDeclare[] args)
         {
             var ret = new TypeDelegate();
             ret.init(callType, retType, args);

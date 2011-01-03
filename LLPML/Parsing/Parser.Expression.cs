@@ -24,12 +24,12 @@ namespace Girl.LLPML.Parsing
             while (CanRead)
             {
                 var t = Read();
-                OperatorBase op;
-                if (!orders[order].TryGetValue(t, out op))
+                if (!orders[order].ContainsKey(t))
                 {
                     Rewind();
                     break;
                 }
+                var op = orders[order][t] as OperatorBase;
                 ret = op.Read(ret, order);
                 if (ret is NodeBase)
                     (ret as NodeBase).SrcInfo = si;
@@ -164,7 +164,11 @@ namespace Girl.LLPML.Parsing
 
             // 未定義語を関数ポインタとして解釈
             if (Tokenizer.IsWord(t))
-                return new Variant(parent, t) { SrcInfo = si };
+            {
+                var ret = Variant.NewName(parent, t);
+                ret.SrcInfo = si;
+                return ret;
+            }
 
             //Rewind();
             throw Abort("評価できません: {0}", t);
@@ -178,8 +182,9 @@ namespace Girl.LLPML.Parsing
             IntValue ret;
             if (!t.StartsWith("0x"))
             {
-                foreach (var ch in t)
+                for (int i = 0; i < t.Length; i++)
                 {
+                    var ch = t[i];
                     if (!char.IsDigit(ch))
                     {
                         Rewind();

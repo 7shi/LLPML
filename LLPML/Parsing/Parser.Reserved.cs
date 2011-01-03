@@ -38,7 +38,7 @@ namespace Girl.LLPML.Parsing
                 case "new":
                     return ReadNew();
                 case "function":
-                    return AutoDelegate(Function(t, false));
+                    return AutoDelegate(ReadFunction(t, false));
                 case "delegate":
                     return ReadDelegate();
                 case "\\":
@@ -95,7 +95,7 @@ namespace Girl.LLPML.Parsing
             var args = Arguments(",", ")", false);
             if (args == null)
                 throw Abort("delegate: 引数が不完全です。");
-            return new Delegate(parent, ct, args);
+            return Delegate.NewCurry(parent, ct, args);
         }
 
         private Function Lambda()
@@ -104,7 +104,7 @@ namespace Girl.LLPML.Parsing
             if (t == null) return null;
 
             var type = "ラムダ式";
-            var ret = new Function(this.parent);
+            var ret = Function.New(this.parent, "", false);
             if (t == "(")
                 ReadArgs(type, ret);
             else if (t != "=>")
@@ -144,18 +144,18 @@ namespace Girl.LLPML.Parsing
             {
                 var len = ReadExpression();
                 Check("new", "]");
-                return new New(parent, type, len);
+                return New.New2(parent, type, len);
             }
             else if (br != null)
                 Rewind();
-            if (Peek() != "{") return new New(parent, type);
+            if (Peek() != "{") return New.New1(parent, type);
 
             // 無名クラス
-            var anon = new Define(parent, "", type);
+            var anon = Define.New(parent, "", type);
             anon.IsClass = true;
             ReadBlock("anonymous class", anon);
             parent.AddStruct(anon);
-            return new New(parent, anon.Name);
+            return New.New1(parent, anon.Name);
         }
     }
 }

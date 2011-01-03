@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -12,35 +13,54 @@ namespace Girl.LLPML
     public partial class Call : NodeBase
     {
         private NodeBase target;
-        protected List<NodeBase> args = new List<NodeBase>();
+        protected ArrayList args = new ArrayList();
 
         private NodeBase val;
         private CallType callType = CallType.CDecl;
 
-        public Call(BlockBase parent, string name)
+        public static Call NewName(BlockBase parent, string name)
         {
-            Parent = parent;
-            this.name = name;
+            var ret = new Call();
+            ret.Parent = parent;
+            ret.name = name;
+            return ret;
         }
 
-        public Call(BlockBase parent, string name, NodeBase target, params NodeBase[] args)
-            : this(parent, name)
+        public static Call New(BlockBase parent, string name, NodeBase target, NodeBase[] args)
         {
-            this.target = target;
-            this.args.AddRange(args);
+            var ret = NewName(parent, name);
+            ret.target = target;
+            if (args != null)
+            {
+                for (int i = 0; i < args.Length; i++)
+                    ret.args.Add(args[i]);
+            }
             if (string.IsNullOrEmpty(name) && target is Member)
-                this.name = (target as Member).GetName();
+                ret.name = (target as Member).GetName();
+            return ret;
         }
 
-        public Call(BlockBase parent, NodeBase val, NodeBase target, params NodeBase[] args)
+        public static Call NewV(BlockBase parent, NodeBase val, NodeBase target, NodeBase[] args)
         {
-            Parent = parent;
-            this.val = val;
-            this.target = target;
-            this.args.AddRange(args);
+            var ret = new Call();
+            ret.Parent = parent;
+            ret.val = val;
+            ret.target = target;
+            if (args != null)
+            {
+                for (int i = 0; i < args.Length; i++)
+                    ret.args.Add(args[i]);
+            }
+            return ret;
         }
 
-        public NodeBase GetFunction(OpModule codes, NodeBase target, out List<NodeBase> args)
+        private void AddArgs(ArrayList list)
+        {
+            for (int i = 0; i < args.Count; i++)
+                list.Add(args[i]);
+        }
+
+        public NodeBase GetFunction(OpModule codes, NodeBase target, ArrayList[] args)
         {
             if (val == null && target is Member)
             {
@@ -56,17 +76,17 @@ namespace Girl.LLPML
                         throw Abort("call: undefined function: {0}", mem.FullName);
                 }
                 var memt = mem.GetTarget();
-                args = new List<NodeBase>();
+                args[0] = new ArrayList();
                 if (memt != null && !memf.IsStatic)
-                    args.Add(memt);
-                args.AddRange(this.args);
+                    args[0].Add(memt);
+                AddArgs(args[0]);
                 return memf;
             }
             else if (string.IsNullOrEmpty(name))
             {
-                args = new List<NodeBase>();
-                if (target != null) args.Add(target);
-                args.AddRange(this.args);
+                args[0] = new ArrayList();
+                if (target != null) args[0].Add(target);
+                AddArgs(args[0]);
                 if (val is Function)
                     return val;
                 else if (val is Variant)
@@ -81,8 +101,8 @@ namespace Girl.LLPML
                 if (ret == null)
                     throw Abort("undefined function: {0}", name);
                 else if (ret.HasThis)
-                    return GetFunction(codes, This.New(Parent), out args);
-                args = this.args;
+                    return GetFunction(codes, This.New(Parent), args);
+                args[0] = this.args;
                 return ret;
             }
 
@@ -95,8 +115,8 @@ namespace Girl.LLPML
                     var mem = st.GetMemberDecl(name);
                     if (mem != null)
                     {
-                        args = this.args;
-                        var mem2 = new Member(Parent, name);
+                        args[0] = this.args;
+                        var mem2 = Member.New(Parent, name);
                         if (target is Member)
                         {
                             var mem3 = (target as Member).Duplicate();
@@ -116,28 +136,31 @@ namespace Girl.LLPML
                 else
                     throw Abort("undefined function: {0}", st.GetFullName(name));
             }
-            args = new List<NodeBase>();
-            args.Add(target);
-            args.AddRange(this.args);
+            args[0] = new ArrayList();
+            args[0].Add(target);
+            AddArgs(args[0]);
             return ret;
         }
 
         public override void AddCodes(OpModule codes)
         {
-            var args = new List<NodeBase>();
+            var args = new ArrayList[1];
+            args[0] = new ArrayList();
             if (this.val == null && target is Member)
-                args.Add((target as Member).GetTarget());
+                args[0].Add((target as Member).GetTarget());
             else if (target != null)
-                args.Add(target);
-            args.AddRange(this.args);
+                args[0].Add(target);
+            AddArgs(args[0]);
             if (name != null && name.StartsWith("__"))
             {
-                if (AddIntrinsicCodes(codes, args)) return;
-                if (AddSIMDCodes(codes, args)) return;
+                if (AddIntrinsicCodes(codes, args[0])) return;
+                if (AddSIMDCodes(codes, args[0])) return;
             }
 
-            var f = GetFunction(codes, target, out args);
-            var args_array = args.ToArray();
+            var f = GetFunction(codes, target, args);
+            var args_array = new NodeBase[args[0].Count];
+            for (int i = 0; i < args_array.Length; i++)
+                args_array[i] = args[0][i] as NodeBase;
             if (f is Function)
             {
                 (f.Type as TypeFunction).CheckArgs(this, args_array);
@@ -209,17 +232,16 @@ namespace Girl.LLPML
         public static void AddCallCodes2(
             OpModule codes, NodeBase[] args, CallType type, Action delg)
         {
-            var args2 = args.Clone() as NodeBase[];
-            Array.Reverse(args2);
-            foreach (NodeBase arg in args2)
-                arg.AddCodesV(codes, "push", null);
+            for (int i = args.Length - 1; i >= 0; i--)
+                args[i].AddCodesV(codes, "push", null);
             delg();
-            if (type == CallType.CDecl && args2.Length > 0)
+            if (type == CallType.CDecl && args.Length > 0)
             {
                 int p = 4;
                 bool pop = false;
-                foreach (var arg in args)
+                for (int i = 0; i < args.Length; i++)
                 {
+                    var arg = args[i];
                     if (OpModule.NeedsDtor(arg))
                     {
                         if (!pop)
@@ -232,7 +254,7 @@ namespace Girl.LLPML
                     p += 4;
                 }
                 if (pop) codes.Add(I386.Pop(Reg32.EAX));
-                codes.Add(I386.AddR(Reg32.ESP, Val32.New((byte)(args2.Length * 4))));
+                codes.Add(I386.AddR(Reg32.ESP, Val32.New((byte)(args.Length * 4))));
             }
         }
 
@@ -262,8 +284,8 @@ namespace Girl.LLPML
                 }
                 else
                 {
-                    List<NodeBase> args;
-                    var f = GetFunction(null, target, out args);
+                    var args = new ArrayList[1];
+                    var f = GetFunction(null, target, args);
                     if (f is Function)
                         type = (f as Function).ReturnType;
                     else

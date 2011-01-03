@@ -41,8 +41,8 @@ namespace Girl.LLPML
 
         public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)
         {
-            Parser parser = Parser.New(token, parent);
-            NodeBase[] ret = parser.ParseExpressions();
+            var parser = Parser.Create(token, parent);
+            var ret = parser.ParseExpressions();
             if (token.CanRead) ret = null;
             return ret;
         }

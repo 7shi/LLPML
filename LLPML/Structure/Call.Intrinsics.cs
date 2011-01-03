@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -10,7 +11,7 @@ namespace Girl.LLPML
 {
     public partial class Call
     {
-        public bool AddIntrinsicCodes(OpModule codes, List<NodeBase> args)
+        public bool AddIntrinsicCodes(OpModule codes, ArrayList args)
         {
             switch (name)
             {
@@ -21,7 +22,8 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 3)
                             throw Abort("{0}: argument mismatched", name);
-                        Stos(codes, name.Substring(2), args[0], args[1], args[2]);
+                        Stos(codes, name.Substring(2),
+                            args[0] as NodeBase, args[1] as NodeBase, args[2] as NodeBase);
                     }
                     return true;
                 case "__movsb":
@@ -34,7 +36,8 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 3)
                             throw Abort("{0}: argument mismatched", name);
-                        Movs(codes, name.Substring(2), args[0], args[1], args[2]);
+                        Movs(codes, name.Substring(2),
+                            args[0] as NodeBase, args[1] as NodeBase, args[2] as NodeBase);
                     }
                     return true;
                 case "__memcpy":
@@ -42,7 +45,8 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 3)
                             throw Abort("{0}: argument mismatched", name);
-                        Memcpy(codes, args[0], args[1], args[2]);
+                        Memcpy(codes,
+                            args[0] as NodeBase, args[1] as NodeBase, args[2] as NodeBase);
                     }
                     return true;
                 case "__memcpy_rev":
@@ -50,7 +54,8 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 3)
                             throw Abort("{0}: argument mismatched", name);
-                        MemcpyRev(codes, args[0], args[1], args[2]);
+                        MemcpyRev(codes,
+                            args[0] as NodeBase, args[1] as NodeBase, args[2] as NodeBase);
                     }
                     return true;
                 case "__cpuid":
@@ -58,7 +63,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        Cpuid(codes, args[0], args[1]);
+                        Cpuid(codes, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
             }

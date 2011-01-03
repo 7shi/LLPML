@@ -17,7 +17,7 @@ namespace Girl.LLPML
 
             var ad = Addr32.New(Reg32.ESP);
             var tb = CheckFunc();
-            var v = values[0];
+            var v = values[0] as NodeBase;
             var schar = "";
             var sint = "";
             if (v.Type is TypeString)
@@ -38,7 +38,7 @@ namespace Girl.LLPML
                 v.AddCodesV(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
             {
-                var vv = values[i];
+                var vv = values[i] as NodeBase;
                 var tag = Tag;
                 if (schar != "" && vv.Type is TypeChar)
                     tag = schar;
@@ -55,13 +55,13 @@ namespace Girl.LLPML
 
         public override IntValue GetConst()
         {
-            var v = IntValue.GetValue(values[0]);
+            var v = IntValue.GetValue(values[0] as NodeBase);
             if (v == null) return null;
 
             var ret = v.Value;
             for (int i = 1; i < values.Count; i++)
             {
-                var iv = IntValue.GetValue(values[i]);
+                var iv = IntValue.GetValue(values[i] as NodeBase);
                 if (iv == null) return null;
                 ret = Calculate(ret, iv.Value);
             }

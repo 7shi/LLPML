@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.LLPML.Struct;
@@ -28,7 +29,7 @@ namespace Girl.LLPML.Parsing
                     return null;
                 case "{":
                     Rewind();
-                    nb = new Block(parent);
+                    nb = Block.New(parent);
                     ReadBlock("block", nb as Block);
                     break;
                 case "struct":
@@ -38,21 +39,18 @@ namespace Girl.LLPML.Parsing
                 case "function":
                 case "virtual":
                 case "override":
-                    Function(t, false).SrcInfo = si;
+                    ReadFunction(t, false).SrcInfo = si;
                     return null;
                 case "static":
+                    if (Read() == "function")
                     {
-                        var tt = Read();
-                        if (tt == "function")
-                        {
-                            Function(t, true).SrcInfo = si;
-                            return null;
-                        }
-                        Rewind();
-                        return ReadDeclare(true);
+                        ReadFunction(t, true).SrcInfo = si;
+                        return null;
                     }
+                    Rewind();
+                    return ReadDeclare(true);
                 case "extern":
-                    Extern();
+                    ReadExtern();
                     return null;
                 case "if":
                     nb = ReadIf();
@@ -67,28 +65,34 @@ namespace Girl.LLPML.Parsing
                     nb = ReadSwitch();
                     break;
                 case "new":
-                    {
-                        var n = ReadNew();
-                        n.SrcInfo = si;
-                        nb = Expression.New(parent, n);
-                        break;
-                    }
+                    nb = Expression.New(parent, ReadNew());
+                    break;
             }
             if (nb != null)
             {
                 nb.SrcInfo = si;
-                return new NodeBase[] { nb };
+                var ret = new NodeBase[1];
+                ret[0] = nb;
+                return ret;
             }
             Rewind();
 
-            var list = new List<NodeBase>();
+            var list = new ArrayList();
             var s1 = SentenceBody();
-            if (s1 != null) list.AddRange(s1);
+            if (s1 != null)
+            {
+                for (int i = 0; i < s1.Length; i++)
+                    list.Add(s1[i]);
+            }
             var sep = Read();
             if (sep == ",")
             {
                 var s2 = Sentence();
-                if (s2 != null) list.AddRange(s2);
+                if (s2 != null)
+                {
+                    for (int i = 0; i < s2.Length; i++)
+                        list.Add(s2[i]);
+                }
             }
             else if (string.IsNullOrEmpty(separator))
             {
@@ -100,7 +104,10 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0} が必要です。", separator);
             }
             if (list.Count == 0) return null;
-            return list.ToArray();
+            var ret2 = new NodeBase[list.Count];
+            for (int i = 0; i < ret2.Length; i++)
+                ret2[i] = list[i] as NodeBase;
+            return ret2;
         }
 
         private NodeBase[] SentenceBody()
@@ -120,7 +127,9 @@ namespace Girl.LLPML.Parsing
                 if (nb != null)
                 {
                     nb.SrcInfo = si;
-                    return new NodeBase[] { nb };
+                    var ret = new NodeBase[1];
+                    ret[0] = nb;
+                    return ret;
                 }
             }
 
@@ -137,7 +146,9 @@ namespace Girl.LLPML.Parsing
         {
             var e = Expression.New(parent, ReadExpression());
             e.SrcInfo = SrcInfo;
-            return new NodeBase[] { e };
+            var ret = new NodeBase[1];
+            ret[0] = e;
+            return ret;
         }
 
         private NodeBase CheckReserved(string t)
@@ -201,7 +212,7 @@ namespace Girl.LLPML.Parsing
             var ret = parent.GetStruct(name);
             var first = ret == null;
             if (first)
-                ret = new Define(parent, name, baseType);
+                ret = Define.New(parent, name, baseType);
             else if (baseType != null)
             {
                 if (ret.BaseType == null)
@@ -268,13 +279,12 @@ namespace Girl.LLPML.Parsing
             var args = new NodeBase[autoArgs.Length];
             for (int i = 0; i < args.Length; i++)
                 args[i] = Var.NewName(parent, autoArgs[i].Name);
-            return new Delegate(parent, f.CallType, args, f)
-            {
-                Auto = true,
-            };
+            var ret = Delegate.New(parent, f.CallType, args, f);
+            ret.Auto = true;
+            return ret;
         }
 
-        private Function Function(string type, bool isStatic)
+        private Function ReadFunction(string type, bool isStatic)
         {
             if (!CanRead) throw Abort("{0}: 定義が必要です。", type);
 
@@ -291,7 +301,7 @@ namespace Girl.LLPML.Parsing
                 throw Abort("{0}: 名前が不適切です: {1}", type, name);
             }
 
-            var ret = new Function(this.parent, name, isStatic);
+            var ret = Function.New(this.parent, name, isStatic);
             ret.CallType = ct;
             if (Peek() == "(") ReadArgs(type, ret);
 
@@ -320,7 +330,7 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private Extern[] Extern()
+        private Extern[] ReadExtern()
         {
             if (!CanRead) throw Abort("extern: 名前が必要です。");
 
@@ -335,7 +345,7 @@ namespace Girl.LLPML.Parsing
             var loop = false;
             if (br1 == "{") loop = true; else Rewind();
 
-            var list = new List<Extern>();
+            var list = new ArrayList();
             for (; ; )
             {
                 var si = SrcInfo;
@@ -350,7 +360,7 @@ namespace Girl.LLPML.Parsing
                 string alias = null;
                 if (sfx2 != null) alias = name + sfx2;
 
-                var ex = new Extern(parent, name, module.Value, alias);
+                var ex = Extern.New(parent, name, module.Value, alias);
                 ex.SrcInfo = si;
                 ex.CallType = ct2;
                 if (Peek() == "(") ReadArgs("extern", ex);
@@ -379,7 +389,10 @@ namespace Girl.LLPML.Parsing
                 if (br2 == "}") break;
                 Rewind();
             }
-            return list.ToArray();
+            var ret = new Extern[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as Extern;
+            return ret;
         }
 
         private CallType CheckCallType(CallType ct, ref string t)
@@ -524,7 +537,7 @@ namespace Girl.LLPML.Parsing
             }
             else
             {
-                ret = new Block(parent);
+                ret = Block.New(parent);
                 if (target == null) target = ret;
                 this.parent = target;
                 var s = SentenceWith(separator);
@@ -664,7 +677,7 @@ namespace Girl.LLPML.Parsing
                             if (scb.Case == null)
                                 throw Abort("switch: 条件が必要です。");
                             if (scb.Block == null)
-                                scb.Block = new Block(target);
+                                scb.Block = Block.New(target);
                             var p = parent;
                             parent = target;
                             var s = Sentence();

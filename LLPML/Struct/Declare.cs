@@ -42,7 +42,7 @@ namespace Girl.LLPML.Struct
             }
         }
 
-        public static Declare New(Declare parent)
+        public static Declare NewDecl(Declare parent)
         {
             var ret = new Declare();
             ret.Parent = parent.Parent;
@@ -76,7 +76,7 @@ namespace Girl.LLPML.Struct
         {
             if (values.Count == 0) return false;
 
-            VarDeclare[] members = st.GetMemberDecls();
+            var members = st.GetMemberDecls();
             if (members.Length != values.Count)
                 throw Abort("initializers mismatched: " + st.Name);
 

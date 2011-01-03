@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -10,7 +11,7 @@ namespace Girl.LLPML
 {
     public partial class Call
     {
-        public bool AddSIMDCodes(OpModule codes, List<NodeBase> args)
+        public bool AddSIMDCodes(OpModule codes, ArrayList args)
         {
             switch (name)
             {
@@ -27,7 +28,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __movd(codes, args[0], args[1]);
+                        __movd(codes, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__movq":
@@ -35,7 +36,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __movq(codes, args[0], args[1]);
+                        __movq(codes, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__movdqa":
@@ -44,7 +45,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __movdq(codes, name, args[0], args[1]);
+                        __movdq(codes, name, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__paddb":
@@ -70,7 +71,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __simd(codes, name, args[0], args[1]);
+                        __simd(codes, name, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__psllw":
@@ -85,31 +86,31 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __simd_shift(codes, name, args[0], args[1]);
+                        __simd_shift(codes, name, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
             }
             return false;
         }
 
-        private Mm? GetMm(NodeBase v)
+        private int GetMm(NodeBase v)
         {
             var fp = v as Variant;
             if (fp == null || !fp.Name.StartsWith("__mm") || fp.Name.Length != 5)
-                return null;
+                return -1;
             var n = fp.Name[4];
-            if (n < '0' || n > '9') return null;
-            return (Mm)n - '0';
+            if (n < '0' || n > '9') return -1;
+            return n - '0';
         }
 
-        private Xmm? GetXmm(NodeBase v)
+        private int GetXmm(NodeBase v)
         {
             var fp = v as Variant;
             if (fp == null || !fp.Name.StartsWith("__xmm") || fp.Name.Length != 6)
-                return null;
+                return -1;
             var n = fp.Name[5];
-            if (n < '0' || n > '9') return null;
-            return (Xmm)n - '0';
+            if (n < '0' || n > '9') return -1;
+            return n - '0';
         }
 
         public static void __emms(OpModule codes)
@@ -123,7 +124,7 @@ namespace Girl.LLPML
             var m2m = GetMm(m2);
             var m1x = GetXmm(m1);
             var m2x = GetXmm(m2);
-            if (m1m != null)
+            if (m1m != -1)
             {
                 if (m2 is Var && m2.Type is TypeIntBase)
                 {
@@ -142,7 +143,7 @@ namespace Girl.LLPML
                 }
                 return;
             }
-            else if (m1x != null)
+            else if (m1x != -1)
             {
                 if (m2 is Var && m2.Type is TypeIntBase)
                 {
@@ -165,7 +166,7 @@ namespace Girl.LLPML
             var v = Var.Get(m1);
             if (v == null)
                 throw Abort("__movd: invalid argument 1");
-            if (m2m != null)
+            if (m2m != -1)
             {
                 if (v.Type is TypeIntBase)
                 {
@@ -178,7 +179,7 @@ namespace Girl.LLPML
                     codes.Add(MMX.MovDAM(Addr32.New(Reg32.EAX), (Mm)m2m));
                 }
             }
-            else if (m2x != null)
+            else if (m2x != -1)
             {
                 if (v.Type is TypeIntBase)
                 {
@@ -201,26 +202,26 @@ namespace Girl.LLPML
             var m2m = GetMm(m2);
             var m1x = GetXmm(m1);
             var m2x = GetXmm(m2);
-            if (m1m != null && m2m != null)
+            if (m1m != -1 && m2m != -1)
                 codes.Add(MMX.MovQ((Mm)m1m, (Mm)m2m));
-            else if (m1x != null && m2x != null)
+            else if (m1x != -1 && m2x != -1)
                 codes.Add(SSE2.MovQ((Xmm)m1x, (Xmm)m2x));
-            else if (m1m != null)
+            else if (m1m != -1)
             {
                 m2.AddCodesV(codes, "mov", null);
                 codes.Add(MMX.MovQA((Mm)m1m, Addr32.New(Reg32.EAX)));
             }
-            else if (m2m != null)
+            else if (m2m != -1)
             {
                 m1.AddCodesV(codes, "mov", null);
                 codes.Add(MMX.MovQAM(Addr32.New(Reg32.EAX), (Mm)m2m));
             }
-            else if (m1x != null)
+            else if (m1x != -1)
             {
                 m2.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.MovQA((Xmm)m1x, Addr32.New(Reg32.EAX)));
             }
-            else if (m2x != null)
+            else if (m2x != -1)
             {
                 m1.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.MovQAX(Addr32.New(Reg32.EAX), (Xmm)m2x));
@@ -234,14 +235,14 @@ namespace Girl.LLPML
             var m1x = GetXmm(m1);
             var m2x = GetXmm(m2);
             var op2 = op.Substring(2);
-            if (m1x != null && m2x != null)
+            if (m1x != -1 && m2x != -1)
                 codes.Add(SSE2.FromName(op2, (Xmm)m1x, (Xmm)m2x));
-            else if (m1x != null)
+            else if (m1x != -1)
             {
                 m2.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.FromNameA(op2, (Xmm)m1x, Addr32.New(Reg32.EAX)));
             }
-            else if (m2x != null)
+            else if (m2x != -1)
             {
                 m1.AddCodesV(codes, "mov", null);
                 codes.Add(SSE2.FromNameAX(op2, Addr32.New(Reg32.EAX), (Xmm)m2x));
@@ -257,9 +258,9 @@ namespace Girl.LLPML
             var m1x = GetXmm(m1);
             var m2x = GetXmm(m2);
             var op2 = op.Substring(2);
-            if (m1m != null)
+            if (m1m != -1)
             {
-                if (m2m != null)
+                if (m2m != -1)
                     codes.Add(MMX.FromName(op2, (Mm)m1m, (Mm)m2m));
                 else
                 {
@@ -267,9 +268,9 @@ namespace Girl.LLPML
                     codes.Add(MMX.FromNameA(op2, (Mm)m1m, Addr32.New(Reg32.EAX)));
                 }
             }
-            else if (m1x != null)
+            else if (m1x != -1)
             {
-                if (m2x != null)
+                if (m2x != -1)
                     codes.Add(SSE2.FromName(op2, (Xmm)m1x, (Xmm)m2x));
                 else
                 {
@@ -292,9 +293,9 @@ namespace Girl.LLPML
             var m1m = GetMm(m1);
             var m1x = GetXmm(m1);
             var op2 = op.Substring(2);
-            if (m1m != null)
+            if (m1m != -1)
                 codes.Add(MMX.FromNameB(op2, (Mm)m1m, (byte)m2i.Value));
-            else if (m1x != null)
+            else if (m1x != -1)
                 codes.Add(SSE2.FromNameB(op2, (Xmm)m1x, (byte)m2i.Value));
             else
                 throw Abort("{0}: invalid argument 1", op);

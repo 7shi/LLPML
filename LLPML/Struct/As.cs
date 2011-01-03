@@ -22,8 +22,8 @@ namespace Girl.LLPML.Struct
             var f = Parent.GetFunction(Tag);
             if (f == null) throw Abort("is: can not find: {0}", Tag);
 
-            TypeOf.AddCodes(this, Parent, values[1], codes, "push", null);
-            values[0].AddCodesV(codes, "push", null);
+            TypeOf.AddCodes(this, Parent, values[1] as NodeBase, codes, "push", null);
+            (values[0] as NodeBase).AddCodesV(codes, "push", null);
             codes.Add(I386.CallD(f.First));
             codes.Add(I386.AddR(Reg32.ESP, Val32.New(8)));
             codes.AddCodes(op, dest);
@@ -33,7 +33,7 @@ namespace Girl.LLPML.Struct
         {
             get
             {
-                var ret = TypeOf.GetType(Parent, values[1]);
+                var ret = TypeOf.GetType(Parent, values[1] as NodeBase);
                 if (ret is TypeStruct && (ret as TypeStruct).IsClass)
                     return Types.ToVarType(ret);
                 else

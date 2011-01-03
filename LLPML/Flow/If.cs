@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -23,7 +24,7 @@ namespace Girl.LLPML
 
             public override void AddCodes(OpModule codes)
             {
-                OpCode next = new OpCode();
+                var next = new OpCode();
                 codes.Add(first);
                 if (Cond != null)
                 {
@@ -37,8 +38,8 @@ namespace Girl.LLPML
             }
         }
 
-        private List<CondBlock> blocks = new List<CondBlock>();
-        public List<CondBlock> Blocks { get { return blocks; } }
+        private ArrayList blocks = new ArrayList();
+        public ArrayList Blocks { get { return blocks; } }
 
         public static If New(BlockBase parent)
         {
@@ -53,8 +54,11 @@ namespace Girl.LLPML
             int len = blocks.Count;
             for (int i = 0; i < len; i++)
             {
-                CondBlock cb = blocks[i];
-                cb.Next = i < len - 1 ? blocks[i + 1] : null;
+                var cb = blocks[i] as CondBlock;
+                if (i < len - 1)
+                    cb.Next = blocks[i + 1] as CondBlock;
+                else
+                    cb.Next = null;
                 AddSentence(cb);
             }
             base.AddCodes(codes);

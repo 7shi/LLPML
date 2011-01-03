@@ -14,8 +14,8 @@ namespace Girl.LLPML
     {
         public const string Separator = ".";
 
-        protected List<NodeBase> sentences = new List<NodeBase>();
-        public List<NodeBase> Sentences { get { return sentences; } }
+        protected ArrayList sentences = new ArrayList();
+        public ArrayList Sentences { get { return sentences; } }
 
         protected OpCode first = new OpCode();
         public Val32 First { get { return first.Address; } }
@@ -60,14 +60,20 @@ namespace Girl.LLPML
             return Parent.GetMemberRecursive(name);
         }
 
-        public T[] GetMembers<T>() where T : class
+        public VarDeclare[] GetUsingPointers()
         {
-            var list = new List<T>();
-            foreach (var obj in members.Values)
+            var list = new ArrayList();
+            var mems = members.Values;
+            for (int i = 0; i < mems.Length; i++)
             {
-                if (obj is T) list.Add(obj as T);
+                var mem = mems[i];
+                if (mem is VarDeclare && !(mem is Arg))
+                    list.Add(mem);
             }
-            return list.ToArray();
+            var ret = new VarDeclare[list.Count];
+            for (int i = 0; i < list.Count; i++)
+                ret[i] = list[i] as VarDeclare;
+            return ret;
         }
 
         public bool AddMember(string name, object obj)
@@ -83,17 +89,13 @@ namespace Girl.LLPML
         {
             var obj = GetMember(name);
             if (obj is ConstInt) return obj as ConstInt;
-            return Parent == null ? null : Parent.GetInt(name);
+            if (Parent == null) return null;
+            return Parent.GetInt(name);
         }
 
         public bool AddInt(string name, NodeBase value)
         {
             return AddMember(name, ConstInt.New(this, value));
-        }
-
-        public bool AddInt(string name, int value)
-        {
-            return AddInt(name, IntValue.New(value));
         }
 
         #endregion
@@ -152,8 +154,10 @@ namespace Girl.LLPML
         protected void ForEachMembers(Func<VarDeclare, int, bool> delg1, Action<int> delg2)
         {
             int pos = 0;
-            foreach (var obj in members.Values)
+            var mems = members.Values;
+            for (int i = 0; i < mems.Length; i++)
             {
+                var obj = mems[i];
                 Type t = obj.GetType();
                 if (t == typeof(VarDeclare) || t == typeof(Declare))
                 {
@@ -197,8 +201,9 @@ namespace Girl.LLPML
             codes.Add(first);
             BeforeAddCodes(codes);
             codes.Add(construct);
-            foreach (NodeBase child in sentences)
+            for (int i = 0; i < sentences.Count; i++)
             {
+                var child = sentences[i] as NodeBase;
 #if DEBUG
                 child.AddCodes(codes);
 #else
@@ -214,20 +219,30 @@ namespace Girl.LLPML
             }
             if (!IsTerminated)
             {
-                var mems = new List<VarDeclare>();
+                var list = new ArrayList();
                 ForEachMembers((p, pos) =>
                 {
-                    mems.Add(p);
+                    list.Add(p);
                     return false;
                 }, null);
-                AddDestructors(codes, mems);
+                var args = new VarDeclare[list.Count];
+                for (int i = 0; i < args.Length; i++)
+                    args[i] = list[i] as VarDeclare;
+                AddDestructors(codes, args);
             }
             codes.Add(destruct);
             AfterAddCodes(codes);
-            foreach (Function func in GetMembers<Function>())
-                func.AddCodes(codes);
-            foreach (Define st in GetMembers<Define>())
-                st.AddCodes(codes);
+            var mems = members.Values;
+            for (int i = 0; i < mems.Length; i++)
+            {
+                var func = mems[i] as Function;
+                if (func != null) func.AddCodes(codes);
+            }
+            for (int i = 0; i < mems.Length; i++)
+            {
+                var st = mems[i] as Define;
+                if (st != null) st.AddCodes(codes);
+            }
             codes.Add(last);
         }
 
@@ -235,10 +250,15 @@ namespace Girl.LLPML
         {
             if (IsTerminated) return;
             AddExitCodes(codes);
-            if (GetMembers<Function>().Length > 0
-                || GetMembers<Define>().Length > 0)
+            var mems = members.Values;
+            for (int i = 0; i < mems.Length; i++)
             {
-                codes.Add(I386.JmpD(last.Address));
+                var mem = mems[i];
+                if (mem is Function || mem is Define)
+                {
+                    codes.Add(I386.JmpD(last.Address));
+                    return;
+                }
             }
         }
 
@@ -248,20 +268,18 @@ namespace Girl.LLPML
             {
                 int len = sentences.Count;
                 if (len == 0) return false;
-                NodeBase n = sentences[len - 1];
+                var n = sentences[len - 1] as NodeBase;
                 return n is Break || n is Return;
             }
         }
 
-        public virtual void AddDestructors(
-            OpModule codes, IEnumerable<VarDeclare> ptrs)
+        public virtual void AddDestructors(OpModule codes, VarDeclare[] ptrs)
         {
             if (ptrs == null) return;
 
-            Stack<VarDeclare> ptrs2 = new Stack<VarDeclare>(ptrs);
-            while (ptrs2.Count > 0)
+            for (int i = ptrs.Length - 1; i >= 0; i--)
             {
-                var p = ptrs2.Pop();
+                var p = ptrs[i];
                 if (p.NeedsDtor)
                     p.Type.AddDestructor(codes, p.GetAddress(codes, this));
             }
@@ -272,7 +290,7 @@ namespace Girl.LLPML
             if (HasStackFrame) codes.Add(I386.Leave());
         }
 
-        public BlockBase GetFunction()
+        public BlockBase GetBelongFunction()
         {
             for (BlockBase b = this; b != root; b = b.Parent)
             {
@@ -328,18 +346,18 @@ namespace Girl.LLPML
         {
             codes.Add(I386.Push(Reg32.EAX));
             codes.Add(I386.PushD(codes.GetString(message)));
-            AddDebug(codes, "%s", 1);
+            AddDebugCount(codes, "%s", 1);
             codes.Add(I386.Pop(Reg32.EAX));
         }
 
-        public void AddDebug(OpModule codes, string format, int argCount)
+        public void AddDebugCount(OpModule codes, string format, int argCount)
         {
             codes.Add(I386.PushD(codes.GetString(format)));
             codes.Add(I386.CallD(GetFunction("printfln").First));
             codes.Add(I386.AddR(Reg32.ESP, Val32.NewI(((argCount + 1) * 4))));
         }
 
-        private List<NodeBase> typeInfos = new List<NodeBase>();
+        private ArrayList typeInfos = new ArrayList();
 
         public void AddTypeInfo(NodeBase v)
         {
@@ -358,8 +376,9 @@ namespace Girl.LLPML
                     return returnType;
 
                 doneInferReturnType = true;
-                foreach (var v in typeInfos)
+                for (int i = 0; i < typeInfos.Count; i++)
                 {
+                    var v = typeInfos[i] as NodeBase;
                     var t = returnType;
                     if (!InferType(v))
                     {
@@ -400,11 +419,15 @@ namespace Girl.LLPML
 
             MakeUpInternal();
 
-            foreach (var obj in members.Values)
+            var mems = members.Values;
+            for (int i = 0; i < mems.Length; i++)
+            {
+                var obj = mems[i];
                 if (obj is BlockBase)
                     (obj as BlockBase).MakeUp();
                 else if (obj is VarDeclare)
                     (obj as VarDeclare).CheckClass();
+            }
         }
 
         protected virtual void MakeUpInternal()
@@ -424,9 +447,10 @@ namespace Girl.LLPML
             sentences.Add(nb);
         }
 
-        public void AddSentences(IEnumerable<NodeBase> nbs)
+        public void AddSentences(NodeBase[] nbs)
         {
-            foreach (var nb in nbs) AddSentence(nb);
+            for (int i = 0; i < nbs.Length; i++)
+                AddSentence(nbs[i]);
         }
 
         public class ListDictionary

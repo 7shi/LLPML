@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.LLPML.Struct;
@@ -131,7 +132,7 @@ namespace Girl.LLPML.Parsing
 
         private VarDeclare[] DeclareVar(bool isStatic)
         {
-            var list = new List<VarDeclare>();
+            var list = new ArrayList();
             string type = null;
             ReadDeclare("var",
                 () =>
@@ -199,12 +200,15 @@ namespace Girl.LLPML.Parsing
                     v.IsStatic = isStatic;
                     list.Add(v);
                 });
-            return list.ToArray();
+            var ret = new VarDeclare[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as VarDeclare;
+            return ret;
         }
 
         private VarDeclare[] TypedDeclare(string type, bool isStatic)
         {
-            var list = new List<VarDeclare>();
+            var list = new ArrayList();
             ReadDeclare(type, null,
                 (name, eq, si, array) =>
                 {
@@ -241,7 +245,10 @@ namespace Girl.LLPML.Parsing
                     v.IsStatic = isStatic;
                     list.Add(v);
                 });
-            return list.ToArray();
+            var ret = new VarDeclare[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as VarDeclare;
+            return ret;
         }
 
         private void ReadInitializers(Declare st, string type)
@@ -251,7 +258,7 @@ namespace Girl.LLPML.Parsing
             {
                 if (Peek() == "{")
                 {
-                    var st2 = Declare.New(st);
+                    var st2 = Declare.NewDecl(st);
                     st2.SrcInfo = SrcInfo;
                     ReadInitializers(st2, type);
                     st.Values.Add(st2);
@@ -272,7 +279,7 @@ namespace Girl.LLPML.Parsing
 
         private VarDeclare[] DelegateDeclare(bool isStatic)
         {
-            var list = new List<VarDeclare>();
+            var list = new ArrayList();
             var type = Delegate.GetDefaultType(parent);
             ReadDeclare("delegate", null,
                 (name, eq, si, array) =>
@@ -294,7 +301,10 @@ namespace Girl.LLPML.Parsing
                     v.IsStatic = isStatic;
                     list.Add(v);
                 });
-            return list.ToArray();
+            var ret = new VarDeclare[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as VarDeclare;
+            return ret;
         }
     }
 }

@@ -25,24 +25,28 @@ namespace Girl.LLPML
         public CallType CallType { get; protected set; }
         public bool Auto { get; set; }
 
-        public Delegate(BlockBase parent, CallType callType, NodeBase[] args)
+        public static Delegate NewCurry(BlockBase parent, CallType callType, NodeBase[] args)
         {
-            Parent = parent;
+            var ret = new Delegate();
+            ret.Parent = parent;
             var len = args.Length;
             if (len < 1)
-                throw Abort("delegate: arguments required");
-            Args = new NodeBase[len - 1];
-            Array.Copy(args, Args, len - 1);
-            Function = args[len - 1];
-            CallType = callType;
+                throw ret.Abort("delegate: arguments required");
+            ret.Args = new NodeBase[len - 1];
+            Array.Copy(args, ret.Args, len - 1);
+            ret.Function = args[len - 1];
+            ret.CallType = callType;
+            return ret;
         }
 
-        public Delegate(BlockBase parent, CallType callType, NodeBase[] args, NodeBase func)
+        public static Delegate New(BlockBase parent, CallType callType, NodeBase[] args, NodeBase func)
         {
-            Parent = parent;
-            Args = args;
-            Function = func;
-            CallType = callType;
+            var ret = new Delegate();
+            ret.Parent = parent;
+            ret.Args = args;
+            ret.Function = func;
+            ret.CallType = callType;
+            return ret;
         }
 
         protected TypeBase type;
@@ -97,7 +101,9 @@ namespace Girl.LLPML
             var alloc = Parent.Root.GetFunction(Alloc);
             if (alloc == null)
                 throw Abort("delegate: can not find: {0}", Alloc);
-            Call.AddCallCodes(codes, alloc, new[] { IntValue.New(DefaultSize) });
+            var args = new NodeBase[1];
+            args[0] = IntValue.New(DefaultSize);
+            Call.AddCallCodes(codes, alloc, args);
 
             codes.Add(I386.Push(Reg32.EDI));
             codes.Add(I386.Mov(Reg32.EDI, Reg32.EAX));
@@ -115,11 +121,9 @@ namespace Girl.LLPML
                 codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, 9), 0xfae2));
                 p = 11;
             }
-            var args = Args.Clone() as NodeBase[];
-            Array.Reverse(args);
-            foreach (var arg in args)
+            for (int i = Args.Length - 1; i >= 0; i--)
             {
-                arg.AddCodesV(codes, "mov", null);
+                Args[i].AddCodesV(codes, "mov", null);
                 // push DWORD
                 codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0x68));
                 codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));

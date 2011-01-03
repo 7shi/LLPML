@@ -23,13 +23,13 @@ namespace Girl.LLPML
         {
             if (Next != null)
             {
-                values[0].AddCodesV(codes, "mov", null);
+                (values[0] as NodeBase).AddCodesV(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.Z, Next));
             }
             else if (First != null)
             {
-                values[0].AddCodesV(codes, "mov", null);
+                (values[0] as NodeBase).AddCodesV(codes, "mov", null);
                 codes.Add(I386.Test(Reg32.EAX, Reg32.EAX));
                 codes.Add(I386.Jcc(Cc.NZ, First));
             }
@@ -37,7 +37,7 @@ namespace Girl.LLPML
 
         public override IntValue GetConst()
         {
-            return IntValue.GetValue(values[0]);
+            return IntValue.GetValue(values[0] as NodeBase);
         }
     }
 }

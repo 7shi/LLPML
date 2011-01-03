@@ -12,15 +12,21 @@ namespace Girl.LLPML
     public class Variant : NodeBase
     {
         private Function func;
-        private Val32 address;
 
-        public Variant(BlockBase parent, string name)
+        public static Variant NewName(BlockBase parent, string name)
         {
-            Parent = parent;
-            this.name = name;
+            var ret = new Variant();
+            ret.Parent = parent;
+            ret.name = name;
+            return ret;
         }
-        public Variant(Val32 address) { this.address = address; }
-        public Variant(Function func) { this.func = func; }
+
+        public static Variant New(Function func)
+        {
+            var ret = new Variant();
+            ret.func = func;
+            return ret;
+        }
 
         public override TypeBase Type
         {
@@ -45,10 +51,15 @@ namespace Girl.LLPML
             if (f != null) return f.Type;
 
             var g = GetGetter();
-            if (g != null) return g.ReturnType ?? TypeVar.Instance;
+            if (g != null)
+            {
+                var rt = g.ReturnType;
+                if (rt != null) return rt;
+                return TypeVar.Instance;
+            }
 
             var s = GetSetter();
-            if (s != null) return s.Args[1].Type;
+            if (s != null) return (s.Args[1] as VarDeclare).Type;
 
             return null;
         }
@@ -57,9 +68,7 @@ namespace Girl.LLPML
         {
             Val32 v;
             var m = codes.Module;
-            if (address != null)
-                v = Val32.New2(Val32.New(m.Specific.ImageBase), address);
-            else if (func != null)
+            if (func != null)
                 v = func.GetAddress(m);
             else
             {
@@ -81,7 +90,7 @@ namespace Girl.LLPML
                     var g = GetGetter();
                     if (g != null)
                     {
-                        new Call(Parent, g.Name).AddCodesV(codes, op, dest);
+                        Call.NewName(Parent, g.Name).AddCodesV(codes, op, dest);
                         return;
                     }
                     throw Abort("undefined symbol: " + name);

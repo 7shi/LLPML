@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,7 +14,7 @@ namespace Girl.LLPML.Parsing
         private string Peek() { return tokenizer.Peek(); }
         private void Rewind() { tokenizer.Rewind(); }
 
-        public static Parser New(Tokenizer tokenizer, BlockBase parent)
+        public static Parser Create(Tokenizer tokenizer, BlockBase parent)
         {
             var ret = new Parser();
             ret.tokenizer = tokenizer;
@@ -29,7 +30,7 @@ namespace Girl.LLPML.Parsing
 
         public NodeBase[] Parse()
         {
-            var ret = new List<NodeBase>();
+            var list = new ArrayList();
             while (CanRead)
             {
 #if DEBUG
@@ -45,25 +46,32 @@ namespace Girl.LLPML.Parsing
                     parent.Root.OnError(ex);
                 }
 #endif
-                if (s != null) ret.AddRange(s);
+                if (s != null)
+                {
+                    for (int i = 0; i < s.Length; i++)
+                        list.Add(s[i]);
+                }
             }
-            return ret.ToArray();
+            var ret = new NodeBase[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as NodeBase;
+            return ret;
         }
 
         private NodeBase[] Arguments(string sep, string end, bool mustSep)
         {
             var br = Read();
             if (br == null) return null;
+            if (br == end) return new NodeBase[0];
 
-            var ret = new List<NodeBase>();
-            if (br == end) return ret.ToArray();
+            var list = new ArrayList();
             Rewind();
 
             while (CanRead)
             {
                 var arg = ReadExpression();
                 if (arg == null) return null;
-                ret.Add(arg);
+                list.Add(arg);
                 var t = Read();
                 if (mustSep)
                 {
@@ -74,7 +82,7 @@ namespace Girl.LLPML.Parsing
                     }
                 }
                 else if (t == end)
-                    return ret.ToArray();
+                    break;
                 else if (t == null)
                     return null;
                 else if (sep == null)
@@ -85,15 +93,19 @@ namespace Girl.LLPML.Parsing
                     return null;
                 }
             }
-            return ret.ToArray();
+            var ret = new NodeBase[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as NodeBase;
+            return ret;
         }
 
         public static string GetString(string s)
         {
             var sb = new StringBuilder();
             var esc = false;
-            foreach (var ch in s)
+            for (int i = 0; i < s.Length; i++)
             {
+                var ch = s[i];
                 if (esc)
                 {
                     switch (ch)

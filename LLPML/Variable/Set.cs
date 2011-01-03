@@ -28,7 +28,9 @@ namespace Girl.LLPML
                     var setter = (this.dest as Variant).GetSetter();
                     if (setter != null)
                     {
-                        new Call(Parent, setter, This.New(Parent), values[0])
+                        var args = new NodeBase[1];
+                        args[0] = values[0] as NodeBase;
+                        Call.NewV(Parent, setter, This.New(Parent), args)
                             .AddCodes(codes);
                         return;
                     }
@@ -43,12 +45,12 @@ namespace Girl.LLPML
                 var mem = dest as Member;
                 if (mem.IsSetter)
                 {
-                    mem.AddSetterCodes(codes, values[0]);
+                    mem.AddSetterCodes(codes, values[0] as NodeBase);
                     return;
                 }
             }
 
-            var v = values[0];
+            var v = values[0] as NodeBase;
             v.AddCodesV(codes, "push", null);
             var ad = dest.GetAddress(codes);
             if (!OpModule.NeedsDtor(v))

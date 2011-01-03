@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -11,8 +12,8 @@ namespace Girl.LLPML
 
     public class Case : NodeBase
     {
-        private List<NodeBase> values = new List<NodeBase>();
-        public List<NodeBase> Values { get { return values; } }
+        private ArrayList values = new ArrayList();
+        public ArrayList Values { get { return values; } }
 
         public Block Block;
         public bool IsLast;
@@ -33,8 +34,9 @@ namespace Girl.LLPML
                 return;
             }
 
-            foreach (var v in values)
+            for (int i = 0; i < values.Count; i++)
             {
+                var v = values[i] as NodeBase;
                 codes.Add(I386.Push(Reg32.EDX));
                 if (v.Type is TypeString)
                 {
@@ -85,8 +87,8 @@ namespace Girl.LLPML
 
         private Expression expr;
 
-        private List<CaseBlock> blocks = new List<CaseBlock>();
-        public List<CaseBlock> Blocks { get { return blocks; } }
+        private ArrayList blocks = new ArrayList();
+        public ArrayList Blocks { get { return blocks; } }
 
         public override bool AcceptsBreak { get { return true; } }
 
@@ -104,9 +106,10 @@ namespace Girl.LLPML
             AddSentence(expr);
 
             CaseBlock def = null;
-            var list = new List<CaseBlock>();
-            foreach (var cb in blocks)
+            var list = new ArrayList();
+            for (int i = 0; i < blocks.Count; i++)
             {
+                var cb = blocks[i] as CaseBlock;
                 if (cb.Case.Values.Count == 0)
                 {
                     if (def != null)
@@ -122,13 +125,13 @@ namespace Girl.LLPML
             int len = list.Count;
             for (int i = 0; i < len; i++)
             {
-                var cb = list[i];
+                var cb = list[i] as CaseBlock;
                 cb.Case.Block = cb.Block;
                 cb.Case.IsLast = i == len - 1;
                 AddSentence(cb.Case);
             }
-            foreach (var cb in list)
-                AddSentence(cb.Block);
+            for (int i = 0; i < len; i++)
+                AddSentence((list[i] as CaseBlock).Block);
             base.AddCodes(codes);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -24,9 +25,9 @@ namespace Girl.LLPML.Parsing
         public string Source { get; private set; }
 
         private int pos = 0, lineNumber = 1, linePosition = 1;
-        private Stack<int> linePositions = new Stack<int>();
-        private Stack<Data> tokens = new Stack<Data>();
-        private Stack<Data> results = new Stack<Data>();
+        private List<int> linePositions = new List<int>();
+        private ArrayList tokens = new ArrayList();
+        private ArrayList results = new ArrayList();
 
         private string[] reserved;
         public string[] Reserved { set { reserved = value; } }
@@ -52,8 +53,8 @@ namespace Girl.LLPML.Parsing
                 for (; ; )
                 {
                     var ch = ReadChar();
-                    if (ch == null || ch == '\r' || ch == '\n') break;
-                    sb.Append(ch);
+                    if (ch == -1 || ch == '\r' || ch == '\n') break;
+                    sb.Append((char)ch);
                 }
                 ret.Comment = sb.ToString();
                 return Read();
@@ -65,9 +66,9 @@ namespace Girl.LLPML.Parsing
                 for (; ; )
                 {
                     var ch = ReadChar();
-                    if (ch == null) break;
+                    if (ch == -1) break;
 
-                    sb.Append(ch);
+                    sb.Append((char)ch);
                     if (aster && ch == '/') break;
                     aster = ch == '*';
                 }
@@ -75,7 +76,7 @@ namespace Girl.LLPML.Parsing
                 return Read();
             }
 
-            tokens.Push(ret);
+            tokens.Add(ret);
             return ret.String;
         }
 
@@ -84,7 +85,7 @@ namespace Girl.LLPML.Parsing
             for (; ; )
             {
                 var ch = ReadChar();
-                if (ch == null) break;
+                if (ch == -1) break;
                 if (ch > ' ')
                 {
                     RewindChar();
@@ -95,7 +96,12 @@ namespace Girl.LLPML.Parsing
 
         public void Rewind()
         {
-            if (tokens.Count > 0) results.Push(tokens.Pop());
+            if (tokens.Count > 0)
+            {
+                int last = tokens.Count - 1;
+                results.Add(tokens[last]);
+                tokens.RemoveAt(last);
+            }
         }
 
         public string Peek()
@@ -109,8 +115,10 @@ namespace Girl.LLPML.Parsing
         {
             get
             {
-                if (results.Count > 0) return results.Peek().String;
-                if (tokens.Count > 0) return tokens.Peek().String;
+                if (results.Count > 0)
+                    return (results[results.Count - 1] as Data).String;
+                if (tokens.Count > 0)
+                    return (tokens[tokens.Count - 1] as Data).String;
                 return null;
             }
         }
@@ -121,7 +129,7 @@ namespace Girl.LLPML.Parsing
             {
                 if (results.Count > 0)
                 {
-                    var d = results.Peek();
+                    var d = results[results.Count - 1] as Data;
                     return d.SrcInfo;
                 }
                 SkipSpaces();
@@ -148,8 +156,9 @@ namespace Girl.LLPML.Parsing
         {
             if (string.IsNullOrEmpty(s)) return false;
             bool first = true;
-            foreach (var ch in s)
+            for (int i = 0; i < s.Length; i++)
             {
+                var ch = s[i];
                 if (first)
                 {
                     if (func1 != null && func1(ch)) return false;
@@ -168,13 +177,13 @@ namespace Girl.LLPML.Parsing
             }
         }
 
-        private char? ReadChar()
+        private int ReadChar()
         {
-            if (!CanReadChar) return null;
+            if (!CanReadChar) return -1;
             char ret = Source[pos++];
             if (ret == '\n')
             {
-                linePositions.Push(linePosition);
+                linePositions.Add(linePosition);
                 linePosition = 1;
                 lineNumber++;
             }
@@ -183,9 +192,9 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        public char? PeekChar()
+        public int PeekChar()
         {
-            if (!CanReadChar) return null;
+            if (!CanReadChar) return -1;
             return Source[pos];
         }
 
@@ -197,40 +206,49 @@ namespace Girl.LLPML.Parsing
             linePosition--;
             if (linePosition < 1)
             {
-                linePosition = linePositions.Pop();
+                var last = linePositions.Count - 1;
+                linePosition = linePositions[last];
+                linePositions.RemoveAt(last);
                 lineNumber--;
             }
         }
 
         private Data ReadInternal()
         {
-            if (results.Count > 0) return results.Pop();
+            if (results.Count > 0)
+            {
+                int last = results.Count - 1;
+                var result = results[last] as Data;
+                results.RemoveAt(last);
+                return result;
+            }
 
             SkipSpaces();
             var ret = new Data(pos, SrcInfo);
             StringBuilder sb = new StringBuilder();
-            char? ch, str = null;
+            int chi, str = 0;
             bool isWord = true, useEscape = true;
-            while ((ch = ReadChar()) != null)
+            while ((chi = ReadChar()) != -1)
             {
-                if (str != null && ch == '\\' && useEscape)
+                var ch = (char)chi;
+                if (str != 0 && ch == '\\' && useEscape)
                 {
                     sb.Append(ch);
-                    ch = ReadChar();
-                    if (ch == null) break;
-                    sb.Append(ch);
+                    chi = ReadChar();
+                    if (chi == -1) break;
+                    sb.Append((char)chi);
                 }
                 else if (ch == '@' && sb.Length == 0)
                 {
                     sb.Append(ch);
-                    ch = ReadChar();
-                    if (ch == null)
+                    chi = ReadChar();
+                    if (chi == -1)
                         break;
-                    else if (ch == '"')
+                    else if (chi == '"')
                     {
-                        str = ch;
+                        str = chi;
                         useEscape = false;
-                        sb.Append(ch);
+                        sb.Append((char)chi);
                     }
                     else
                         RewindChar();
@@ -239,7 +257,7 @@ namespace Girl.LLPML.Parsing
                 {
                     if (sb.Length == 0)
                         str = ch;
-                    else if (str == null)
+                    else if (str == 0)
                     {
                         RewindChar();
                         break;
@@ -251,7 +269,7 @@ namespace Girl.LLPML.Parsing
                     }
                     sb.Append(ch);
                 }
-                else if (str != null)
+                else if (str != 0)
                     sb.Append(ch);
                 else if (ch <= ' ')
                 {
@@ -271,12 +289,12 @@ namespace Girl.LLPML.Parsing
                     isWord = false;
                     if (sb.Length > 0)
                     {
-                        bool? b = IsReserved(sb.ToString() + ch);
-                        if (b == false)
+                        var b = IsReserved(sb.ToString() + ch);
+                        if (b == 0)
                             RewindChar();
                         else
                             sb.Append(ch);
-                        if (b != null) break;
+                        if (b != 2) break;
                     }
                     else
                         sb.Append(ch);
@@ -287,14 +305,15 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private bool? IsReserved(string s)
+        private int IsReserved(string s)
         {
-            foreach (string r in reserved)
+            for (int i = 0; i < reserved.Length; i++)
             {
-                if (r == s) return true;
-                if (r.StartsWith(s)) return null;
+                var r = reserved[i];
+                if (r == s) return 1;
+                if (r.StartsWith(s)) return 2;
             }
-            return false;
+            return 0;
         }
 
         public Exception Abort(string msg)

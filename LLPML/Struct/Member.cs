@@ -37,10 +37,12 @@ namespace Girl.LLPML.Struct
 
         public Member Child { get; protected set; }
 
-        public Member(BlockBase parent, string name)
+        public static Member New(BlockBase parent, string name)
         {
-            Parent = parent;
-            this.name = name;
+            var ret = new Member();
+            ret.Parent = parent;
+            ret.name = name;
+            return ret;
         }
 
         protected Addr32 GetAddressInternal(OpModule codes)
@@ -86,7 +88,7 @@ namespace Girl.LLPML.Struct
                 var g = Parent.GetFunction("get_" + TargetType);
                 if (g != null)
                 {
-                    new Call(Parent, g.Name).AddCodesV(codes, "mov", null);
+                    Call.NewName(Parent, g.Name).AddCodesV(codes, "mov", null);
                     if (mem != null)
                     {
                         codes.Add(I386.AddR(Reg32.EAX, Val32.NewI(st.GetOffset(name))));
@@ -99,7 +101,7 @@ namespace Girl.LLPML.Struct
                     }
                     else if (IsGetterInternal)
                     {
-                        var gg = GetFunction("get_");
+                        var gg = GetFunctionPrefix("get_");
                         codes.Add(I386.Push(Reg32.EAX));
                         codes.Add(I386.CallD(gg.First));
                         if (gg.CallType == CallType.CDecl)
@@ -129,7 +131,7 @@ namespace Girl.LLPML.Struct
             }
             else if (IsGetterInternal)
             {
-                GetCall("get_").AddCodesV(codes, "mov", null);
+                GetCall("get_", null).AddCodesV(codes, "mov", null);
                 return null;
             }
 
@@ -167,7 +169,10 @@ namespace Girl.LLPML.Struct
 
         public override Define GetStruct()
         {
-            return Child != null ? Child.GetStruct() : GetStructInternal();
+            if (Child != null)
+                return Child.GetStruct();
+            else
+                return GetStructInternal();
         }
 
         protected bool GetIsStatic()
@@ -207,7 +212,11 @@ namespace Girl.LLPML.Struct
         }
         public override TypeBase Type
         {
-            get { return Child != null ? Child.Type : TypeInternal; }
+            get
+            {
+                if (Child != null) return Child.Type;
+                return TypeInternal;
+            }
         }
 
         public void Append(Member mem)
@@ -262,7 +271,9 @@ namespace Girl.LLPML.Struct
             var f = st.GetFunction(name);
             if (f == null || GetIsStatic()) return null;
 
-            delg = new Delegate(Parent, f.CallType, new[] { Target }, f);
+            var args = new NodeBase[1];
+            args[0] = Target;
+            delg = Delegate.New(Parent, f.CallType, args, f);
             return delg;
         }
 
@@ -279,7 +290,7 @@ namespace Girl.LLPML.Struct
             return ret;
         }
 
-        protected Function GetFunction(string prefix)
+        protected Function GetFunctionPrefix(string prefix)
         {
             var st = GetTargetStruct();
             if (st == null) return null;
@@ -290,25 +301,37 @@ namespace Girl.LLPML.Struct
 
         protected bool CheckFunction(string prefix)
         {
-            return GetFunction(prefix) != null;
+            return GetFunctionPrefix(prefix) != null;
         }
 
         protected bool IsFunctionInternal { get { return CheckFunction(""); } }
         public bool IsFunction
         {
-            get { return Child != null ? Child.IsFunction : IsFunctionInternal; }
+            get
+            {
+                if (Child != null) return Child.IsFunction;
+                return IsFunctionInternal;
+            }
         }
 
         protected bool IsSetterInternal { get { return CheckFunction("set_"); } }
         public bool IsSetter
         {
-            get { return Child != null ? Child.IsSetter : IsSetterInternal; }
+            get
+            {
+                if (Child != null) return Child.IsSetter;
+                return IsSetterInternal;
+            }
         }
 
         protected bool IsGetterInternal { get { return CheckFunction("get_"); } }
         public bool IsGetter
         {
-            get { return Child != null ? Child.IsGetter : IsGetterInternal; }
+            get
+            {
+                if (Child != null) return Child.IsGetter;
+                return IsGetterInternal;
+            }
         }
 
         protected bool IsLengthInternal
@@ -334,7 +357,7 @@ namespace Girl.LLPML.Struct
 
         public Member Duplicate()
         {
-            var m = new Member(Parent, name);
+            var m = Member.New(Parent, name);
             var target = Target;
             if (target is Member)
             {
@@ -346,14 +369,16 @@ namespace Girl.LLPML.Struct
             return m;
         }
 
-        protected Call GetCall(string prefix, params NodeBase[] args)
+        protected Call GetCall(string prefix, NodeBase[] args)
         {
-            return new Call(Parent, GetFunction(prefix), GetTargetInternal(), args);
+            return Call.NewV(Parent, GetFunctionPrefix(prefix), GetTargetInternal(), args);
         }
 
         protected void AddSetterCodesInternal(OpModule codes, NodeBase arg)
         {
-            GetCall("set_", arg).AddCodes(codes);
+            var args = new NodeBase[1];
+            args[0] = arg;
+            GetCall("set_", args).AddCodes(codes);
         }
 
         public void AddSetterCodes(OpModule codes, NodeBase arg)
@@ -385,8 +410,8 @@ namespace Girl.LLPML.Struct
                     var g = Parent.GetFunction("get_" + TargetType);
                     if (g != null)
                     {
-                        new Call(Parent, g.Name).AddCodesV(codes, "mov", null);
-                        var gg = GetFunction("get_");
+                        Call.NewName(Parent, g.Name).AddCodesV(codes, "mov", null);
+                        var gg = GetFunctionPrefix("get_");
                         codes.Add(I386.Push(Reg32.EAX));
                         codes.Add(I386.CallD(gg.First));
                         if (gg.CallType == CallType.CDecl)
@@ -395,7 +420,7 @@ namespace Girl.LLPML.Struct
                         return;
                     }
                 }
-                GetCall("get_").AddCodesV(codes, op, dest);
+                GetCall("get_", null).AddCodesV(codes, op, dest);
                 return;
             }
             else if (IsFunctionInternal)
@@ -405,7 +430,7 @@ namespace Girl.LLPML.Struct
                     delg.AddCodesV(codes, op, dest);
                 else
                 {
-                    var fp = new Variant(GetTargetStruct(), name);
+                    var fp = Variant.NewName(GetTargetStruct(), name);
                     fp.AddCodesV(codes, op, dest);
                 }
                 return;

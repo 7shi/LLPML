@@ -1,10 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Girl.LLPML.Parsing;
 using Girl.PE;
 using Girl.X86;
-using Girl.LLPML.Parsing;
 
 namespace Girl.LLPML
 {
@@ -13,7 +14,7 @@ namespace Girl.LLPML
         public abstract string Tag { get; }
 
         protected NodeBase dest;
-        protected List<NodeBase> values = new List<NodeBase>();
+        protected ArrayList values = new ArrayList();
 
         protected static VarOperator Init0(VarOperator op, BlockBase parent, NodeBase dest)
         {

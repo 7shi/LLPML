@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -32,28 +33,31 @@ namespace Girl.LLPML
             return ret;
         }
 
-        private Dictionary<string, Val32> strings = new Dictionary<string, Val32>();
+        private Hashtable strings = new Hashtable();
 
         public Val32 GetString(string s)
         {
-            if (strings.ContainsKey(s)) return strings[s];
+            if (strings.ContainsKey(s))
+                return strings[s] as Val32;
 
             var block = new Girl.Binary.Block();
             block.AddBytes(Module.EncodeString(s));
             var type = Val32.NewB(0, true);
-            var ret = strings[s] = AddData("string_constant", s, type, 2, s.Length, block);
+            var ret = AddData("string_constant", s, type, 2, s.Length, block);
+            strings[s] = ret;
             type.Reference = GetTypeObject(Root.GetStruct("string"));
             return ret;
         }
 
-        private Dictionary<string, Val32> types = new Dictionary<string, Val32>();
+        private Hashtable types = new Hashtable();
 
         public Val32 GetTypeObject(Define st)
         {
             if (st == null) return Val32.New(0);
 
             var name = st.FullName;
-            if (types.ContainsKey(name)) return types[name];
+            if (types.ContainsKey(name))
+                return types[name] as Val32;
 
             return GetTypeObject(
                 name, st.GetFunction(Define.Destructor),
@@ -62,7 +66,8 @@ namespace Girl.LLPML
 
         public Val32 GetTypeObject(string name, Function dtor, int size, Val32 baseType)
         {
-            if (types.ContainsKey(name)) return types[name];
+            if (types.ContainsKey(name))
+                return types[name] as Val32;
 
             var block = new Girl.Binary.Block();
             var namev = Val32.NewB(0, true);
@@ -75,7 +80,8 @@ namespace Girl.LLPML
             block.AddVal32(baseType);
             var type = Val32.NewB(0, true);
             var tsz = (int)block.Length;
-            var ret = types[name] = AddData("type_object", name, type, tsz, -1, block);
+            var ret = AddData("type_object", name, type, tsz, -1, block);
+            types[name] = ret;
             namev.Reference = GetString(name);
             type.Reference = GetTypeObject(Root.GetStruct("Type"));
             return ret;

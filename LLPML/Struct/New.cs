@@ -17,18 +17,22 @@ namespace Girl.LLPML.Struct
         public NodeBase Length { get; protected set; }
         public bool IsArray { get { return !(Length is IntValue && (Length as IntValue).Value == -1); } }
 
-        public New(BlockBase parent, string type)
+        public static New New1(BlockBase parent, string type)
         {
-            Parent = parent;
-            this.type = Types.GetVarType(parent, type);
-            Length = IntValue.New(-1);
+            var ret = new New();
+            ret.Parent = parent;
+            ret.type = Types.GetVarType(parent, type);
+            ret.Length = IntValue.New(-1);
+            return ret;
         }
 
-        public New(BlockBase parent, string type, NodeBase length)
+        public static New New2(BlockBase parent, string type, NodeBase length)
         {
-            Parent = parent;
-            this.type = TypeReference.New(Types.GetType(parent, type), true);
-            Length = length;
+            var ret = new New();
+            ret.Parent = parent;
+            ret.type = TypeReference.New(Types.GetType(parent, type), true);
+            ret.Length = length;
+            return ret;
         }
 
         public override void AddCodes(OpModule codes)

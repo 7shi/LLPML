@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -12,19 +13,11 @@ namespace Girl.LLPML
     {
         public VarDeclare[] UsingPointers { get; protected set; }
 
-        private void SetUsingPointers()
-        {
-            if (Parent == null) return;
-            var list = new List<VarDeclare>();
-            foreach (var obj in Parent.GetMembers<VarDeclare>())
-                if (!(obj is Arg)) list.Add(obj);
-            UsingPointers = list.ToArray();
-        }
-
         protected void init(BlockBase parent)
         {
             Parent = parent;
-            SetUsingPointers();
+            if (parent != null)
+                UsingPointers = parent.GetUsingPointers();
         }
     }
 }

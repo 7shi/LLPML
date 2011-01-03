@@ -21,16 +21,6 @@ namespace Girl.LLPML
 
         private StringCollection included = new StringCollection();
 
-        private Stack<string> sources = new Stack<string>();
-        public string Source
-        {
-            get
-            {
-                if (sources.Count == 0) return null;
-                return sources.Peek();
-            }
-        }
-
         public Root()
         {
             root = this;
@@ -95,9 +85,9 @@ namespace Girl.LLPML
 
         private void MakeUpStatics(Module m)
         {
-            foreach (var s in sentences)
+            for (int i = 0; i < sentences.Count; i++)
             {
-                var vd = s as VarDeclare;
+                var vd = sentences[i] as VarDeclare;
                 if (vd != null && vd.IsStatic)
                     vd.Address = Addr32.NewD(m.GetBuffer(vd.FullName, vd.Type.Size));
             }

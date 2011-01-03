@@ -37,15 +37,15 @@ namespace Girl.LLPML
                 dest.Type.AddGetCodes(codes, "push", null, ad);
                 ad2 = Addr32.New(Reg32.ESP);
             }
-            foreach (NodeBase v in values)
+            for (int i = 0; i < values.Count; i++)
             {
-                var vv = v;
+                var v = values[i] as NodeBase;
                 var tag = Tag;
-                if (schar != "" && vv.Type is TypeChar)
+                if (schar != "" && v.Type is TypeChar)
                     tag = schar;
-                else if (sint != "" && vv.Type is TypeIntBase)
+                else if (sint != "" && v.Type is TypeIntBase)
                     tag = sint;
-                codes.AddOperatorCodes(tb, tag, ad2, vv, false);
+                codes.AddOperatorCodes(tb, tag, ad2, v, false);
             }
             if (indirect)
             {

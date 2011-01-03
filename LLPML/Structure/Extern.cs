@@ -11,22 +11,22 @@ namespace Girl.LLPML
     {
         private string module, alias;
 
-        public Extern()
+        public static Extern New(BlockBase parent, string name, string module, string alias)
         {
-        }
-
-        public Extern(BlockBase parent, string name, string module, string alias)
-            : base(parent, name, false)
-        {
-            this.module = module;
-            this.alias = alias;
+            var ret = new Extern();
+            ret.init2(parent, name, false);
+            ret.module = module;
+            ret.alias = alias;
+            return ret;
         }
 
         public override void AddCodes(OpModule codes)
         {
             codes.Add(first);
-            string n = alias != null ? alias : name;
-            codes.Add(I386.Jmp(codes.Module.GetFunction(module, n)));
+            if (alias != null)
+                codes.Add(I386.Jmp(codes.Module.GetFunction(module, alias)));
+            else
+                codes.Add(I386.Jmp(codes.Module.GetFunction(module, name)));
         }
     }
 }

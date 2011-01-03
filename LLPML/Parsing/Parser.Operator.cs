@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Girl.LLPML.Struct;
@@ -8,7 +9,7 @@ namespace Girl.LLPML.Parsing
     public partial class Parser
     {
         private OperatorBase[][] operators;
-        private Dictionary<string, OperatorBase>[] orders;
+        private Hashtable[] orders;
 
         private void Init()
         {
@@ -83,26 +84,30 @@ namespace Girl.LLPML.Parsing
                 },
                 new[]
                 {
-                    new WrapOperator("(", Call),
-                    new WrapOperator(".", Member),
+                    new WrapOperator("(", ReadCall),
+                    new WrapOperator(".", ReadMember),
                     new WrapOperator("[", ReadIndex),
                     new WrapOperator("++", (target, order) => PostInc.New(parent, target)),
                     new WrapOperator("--", (target, order) => PostDec.New(parent, target)),
                 },
             };
 
-            orders = new Dictionary<string, OperatorBase>[operators.Length];
+            orders = new Hashtable[operators.Length];
             var reserved = new List<string>();
-            for (var i = 0; i < operators.Length; i++)
+            for (int i = 0; i < operators.Length; i++)
             {
-                orders[i] = new Dictionary<string, OperatorBase>();
-                foreach (var op in operators[i])
+                orders[i] = new Hashtable();
+                for (int j = 0; j < operators[i].Length; j++)
                 {
+                    var op = operators[i][j];
                     orders[i].Add(op.Name, op);
                     if (op.Name.Length > 1) reserved.Add(op.Name);
                 }
             }
-            reserved.AddRange(new[] { "//", "/*", "=>", "::" });
+            reserved.Add("//");
+            reserved.Add("/*");
+            reserved.Add("=>");
+            reserved.Add("::");
             tokenizer.Reserved = reserved.ToArray();
         }
 

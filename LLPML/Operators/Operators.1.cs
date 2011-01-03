@@ -17,13 +17,13 @@ namespace Girl.LLPML
         {
             if (AddConstCodes(codes, op, dest)) return;
 
-            codes.AddOperatorCodes(CheckFunc(), Tag, dest, values[0], false);
+            codes.AddOperatorCodes(CheckFunc(), Tag, dest, values[0] as NodeBase, false);
             codes.AddCodes(op, dest);
         }
 
         public override IntValue GetConst()
         {
-            var v = IntValue.GetValue(values[0]);
+            var v = IntValue.GetValue(values[0] as NodeBase);
             if (v == null) return null;
             return IntValue.New(Calculate(v.Value));
         }
@@ -55,7 +55,11 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "not"; } }
         public override TypeBase Type { get { return TypeBool.Instance; } }
-        protected override int Calculate(int v) { return v != 0 ? 0 : 1; }
+
+        protected override int Calculate(int v)
+        {
+            if (v != 0) return 0; else return 1;
+        }
 
         public static Not New(BlockBase parent, NodeBase arg)
         {

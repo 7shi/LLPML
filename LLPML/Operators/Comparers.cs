@@ -22,11 +22,11 @@ namespace Girl.LLPML
             Addr32 ad = Addr32.New(Reg32.ESP);
             var tb = CheckFunc();
             var c = GetCond();
-            var v = values[0];
+            var v = values[0] as NodeBase;
             v.AddCodesV(codes, "push", null);
             for (int i = 1; i < values.Count; i++)
             {
-                codes.AddOperatorCodes(tb, Tag, ad, values[i], true);
+                codes.AddOperatorCodes(tb, Tag, ad, values[i] as NodeBase, true);
                 if (i < values.Count - 1)
                 {
                     codes.Add(I386.Jcc(c.NotCondition, last.Address));
@@ -52,8 +52,8 @@ namespace Girl.LLPML
         {
             for (int i = 0; i < values.Count - 1; i++)
             {
-                var a = IntValue.GetValue(values[i]);
-                var b = IntValue.GetValue(values[i + 1]);
+                var a = IntValue.GetValue(values[i] as NodeBase);
+                var b = IntValue.GetValue(values[i + 1] as NodeBase);
                 if (a == null || b == null) return null;
                 if (!Calculate(a.Value, b.Value)) return IntValue.Zero;
             }

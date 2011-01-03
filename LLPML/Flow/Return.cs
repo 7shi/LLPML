@@ -19,7 +19,7 @@ namespace Girl.LLPML
             set
             {
                 this.value = value;
-                Parent.GetFunction().AddTypeInfo(value);
+                Parent.GetBelongFunction().AddTypeInfo(value);
             }
         }
 
@@ -34,7 +34,7 @@ namespace Girl.LLPML
         public override void AddCodes(OpModule codes)
         {
             ///if (castFailed != null) throw Abort(castFailed);
-            var f = Parent.GetFunction();
+            var f = Parent.GetBelongFunction();
             if (value != null)
             {
                 value.AddCodesV(codes, "mov", null);

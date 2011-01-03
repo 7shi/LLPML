@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -12,7 +13,7 @@ namespace Girl.LLPML
     {
         public abstract string Tag { get; }
 
-        protected List<NodeBase> values = new List<NodeBase>();
+        protected ArrayList values = new ArrayList();
 
         protected static Operator Init1(Operator op, BlockBase parent, NodeBase arg1)
         {
@@ -29,16 +30,17 @@ namespace Girl.LLPML
 
         protected TypeBase CheckFunc()
         {
-            var t = values[0].Type;
+            var t = (values[0] as NodeBase).Type;
             if (t == null) t = TypeVar.Instance;
-            if(!t.CheckFunc(Tag))
+            if (!t.CheckFunc(Tag))
                 throw Abort("{0}: {1}: not supported", Tag, t.Name);
             return t;
         }
 
         protected CondPair GetCond()
         {
-            var t = values[0].Type ?? TypeVar.Instance;
+            var t = (values[0] as NodeBase).Type;
+            if (t == null) t = TypeVar.Instance;
             var c = t.GetCond(Tag);
             if (c == null)
                 throw Abort("{0}: {1}: no conditions", Tag, t.Name);
@@ -50,7 +52,7 @@ namespace Girl.LLPML
             get
             {
                 if (values.Count == 0) throw new Exception(Tag + ": no arguments");
-                return values[0].Type;
+                return (values[0] as NodeBase).Type;
             }
         }
 

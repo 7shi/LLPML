@@ -7,7 +7,7 @@ namespace Girl.LLPML.Parsing
 {
     public partial class Parser
     {
-        private NodeBase Call(NodeBase target, int order)
+        private NodeBase ReadCall(NodeBase target, int order)
         {
             var fn = "call";
             if (target is NodeBase)
@@ -19,16 +19,16 @@ namespace Girl.LLPML.Parsing
             if (args == null)
                 throw Abort("{0}: 引数が不完全です。", fn);
             if (target is Variant)
-                return new Call(parent, fn, null, args);
+                return Call.New(parent, fn, null, args);
             if (target is Member)
             {
                 var mem = target as Member;
-                return new Call(parent, "", mem, args);
+                return Call.New(parent, "", mem, args);
             }
-            return new Call(parent, target, null, args);
+            return Call.NewV(parent, target, null, args);
         }
 
-        private NodeBase Member(NodeBase target, int order)
+        private NodeBase ReadMember(NodeBase target, int order)
         {
             var mem = target as Member;
             var t2 = Read();
@@ -37,7 +37,7 @@ namespace Girl.LLPML.Parsing
                 //Rewind();
                 throw Abort("名前が不適切です: {0}", t2);
             }
-            var t2m = new Member(parent, t2);
+            var t2m = Member.New(parent, t2);
             if (mem != null)
             {
                 mem.Append(t2m);
@@ -54,7 +54,7 @@ namespace Girl.LLPML.Parsing
         {
             var t = Read();
             if (t == "]" && target is Variant)
-                return TypeOf.New(parent, new Variant(parent, (target as Variant).Name + "[]"));
+                return TypeOf.New(parent, Variant.NewName(parent, (target as Variant).Name + "[]"));
             else if (t != null)
                 Rewind();
             var ret = Index.New(parent, target, ReadExpression());
@@ -67,11 +67,11 @@ namespace Girl.LLPML.Parsing
             if (v is Call)
                 return v as Call;
             if (v is Variant)
-                return new Call(parent, (v as Variant).Name);
+                return Call.NewName(parent, (v as Variant).Name);
             if (!(v is Member))
-                return new Call(parent, v, null);
+                return Call.NewV(parent, v, null, null);
             var mem = v as Member;
-            return new Call(parent, mem.GetName(), mem.GetTarget());
+            return Call.New(parent, mem.GetName(), mem.GetTarget(), null);
         }
 
         private NodeBase PipeForward(NodeBase arg1, NodeBase arg2)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -14,9 +15,8 @@ namespace Girl.LLPML
         public CallType CallType { get; set; }
         public bool IsStatic { get; protected set; }
 
-        protected List<VarDeclare> args
-            = new List<VarDeclare>();
-        public List<VarDeclare> Args { get { return args; } }
+        protected ArrayList args = new ArrayList();
+        public ArrayList Args { get { return args; } }
 
         private Var thisptr;
         public bool HasThis { get { return thisptr != null; } }
@@ -37,7 +37,7 @@ namespace Girl.LLPML
                 }
                 else if (Parent is Define)
                 {
-                    var ovrfunc = new Function(Parent, "override_" + name, IsStatic);
+                    var ovrfunc = Function.New(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
                     if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
@@ -45,7 +45,7 @@ namespace Girl.LLPML
                         Parent, "virtual_" + name,
                         null /// todo: delegate type
                         );
-                    virtptr.Value = new Variant(ovrfunc);
+                    virtptr.Value = Variant.New(ovrfunc);
                     Parent.AddSentence(virtptr);
                 }
                 else
@@ -69,7 +69,7 @@ namespace Girl.LLPML
                 }
                 else if (Parent is Define)
                 {
-                    ovrfunc = new Function(Parent, "override_" + name, IsStatic);
+                    ovrfunc = Function.New(Parent, "override_" + name, IsStatic);
                     ovrfunc.SetOverride(this);
                     if (!Parent.AddFunction(ovrfunc))
                         throw Abort("multiple definitions: " + ovrfunc.Name);
@@ -92,20 +92,24 @@ namespace Girl.LLPML
             last = virtfunc.last;
         }
 
-        public Function() { }
-        public Function(BlockBase parent) : this(parent, "", false) { }
-
-        public Function(BlockBase parent, string name, bool isStatic)
-            : base(parent)
+        public static Function New(BlockBase parent, string name, bool isStatic)
         {
+            var ret = new Function();
+            ret.init2(parent, name, isStatic);
+            return ret;
+        }
+
+        protected void init2(BlockBase parent, string name, bool isStatic)
+        {
+            init(parent);
             if (string.IsNullOrEmpty(name))
             {
                 isAnonymous = true;
-                name = this.Parent.GetAnonymousName();
+                this.name = Parent.GetAnonymousName();
             }
-            this.name = name;
+            else
+                this.name = name;
             CallType = CallType.CDecl;
-
             IsStatic = isStatic;
             CheckThisArg();
             CheckAnonymousMember();
@@ -151,22 +155,24 @@ namespace Girl.LLPML
         protected override void BeforeAddCodes(OpModule codes)
         {
             argStack = 0;
-            foreach (var arg in args)
+            for (int i = 0; i < args.Count; i++)
             {
+                var arg = args[i] as VarDeclare;
                 arg.Address = Addr32.NewRO(Reg32.EBP, argStack + 8);
                 argStack += 4;
             }
 
             for (int i = 0; i < sentences.Count; i++)
             {
-                NodeBase n = sentences[i];
+                var n = sentences[i] as NodeBase;
                 if (n is Return)
                     (n as Return).IsLast = i == sentences.Count - 1;
             }
 
             base.BeforeAddCodes(codes);
-            foreach (var arg in args)
+            for (int i = 0; i < args.Count; i++)
             {
+                var arg = args[i] as VarDeclare;
                 if (!arg.Type.Check())
                     throw arg.Abort("undefined type: {0}: {1}", arg.Name, arg.Type.Name);
                 if (ArgNeededGC(arg))
@@ -197,15 +203,14 @@ namespace Girl.LLPML
             AddExitCodes(codes);
         }
 
-        public override void AddDestructors(
-            OpModule codes, IEnumerable<VarDeclare> ptrs)
+        public override void AddDestructors(OpModule codes, VarDeclare[] ptrs)
         {
             base.AddDestructors(codes, ptrs);
 
-            Stack<VarDeclare> args2 = new Stack<VarDeclare>(args);
-            while (args2.Count > 0)
+            var args2 = args.ToArray();
+            for (int i = args2.Length - 1; i >= 0; i--)
             {
-                var arg = args2.Pop();
+                var arg = args2[i] as VarDeclare;
                 if (ArgNeededGC(arg))
                     arg.Type.AddDestructor(codes, arg.GetAddress(codes, this));
             }
@@ -251,16 +256,19 @@ namespace Girl.LLPML
                     return type;
 
                 doneInferType = true;
-                type = TypeFunction.NewFunction(this);
+                type = TypeFunction.New(this);
                 return type;
             }
         }
 
-        protected List<VarDeclare> autoArgs = new List<VarDeclare>();
+        protected ArrayList autoArgs = new ArrayList();
         public VarDeclare[] GetAutoArgs()
         {
             if (autoArgs.Count == 0) return null;
-            return autoArgs.ToArray();
+            var ret = new VarDeclare[autoArgs.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = autoArgs[i] as VarDeclare;
+            return ret;
         }
 
         protected void InsertArg(Arg arg)
@@ -322,7 +330,7 @@ namespace Girl.LLPML
                     throw Abort("can not find virtual: {0}", name);
                 first = vf.first;
                 ovrptr = Var.NewName(Parent, "virtual_" + name);
-                var setvp = Set.New(Parent, ovrptr, new Variant(ovrfunc));
+                var setvp = Set.New(Parent, ovrptr, Variant.New(ovrfunc));
                 Parent.AddSentence(setvp);
             }
         }

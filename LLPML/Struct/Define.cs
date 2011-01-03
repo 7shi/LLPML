@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -33,22 +34,20 @@ namespace Girl.LLPML.Struct
         private Arg thisptr;
         private bool isAnonymous;
 
-        public Define(BlockBase parent, string name)
-            : base(parent)
+        public static Define New(BlockBase parent, string name, string baseType)
         {
+            var ret = new Define();
+            ret.init(parent);
             if (string.IsNullOrEmpty(name))
             {
-                isAnonymous = true;
-                name = Parent.GetAnonymousName();
+                ret.isAnonymous = true;
+                ret.name = parent.GetAnonymousName();
             }
-            this.name = name;
-            thisptr = Arg.New(this, "this", Types.ToVarType(Type));
-        }
-
-        public Define(BlockBase parent, string name, string baseType)
-            : this(parent, name)
-        {
-            BaseType = baseType;
+            else
+                ret.name = name;
+            ret.thisptr = Arg.New(ret, "this", Types.ToVarType(ret.Type));
+            ret.BaseType = baseType;
+            return ret;
         }
 
         public override object GetMember(string name)
@@ -128,15 +127,23 @@ namespace Girl.LLPML.Struct
 
         public VarDeclare[] GetMemberDecls()
         {
-            List<VarDeclare> list = new List<VarDeclare>();
-            Define st = GetBaseStruct();
-            if (st != null) list.AddRange(st.GetMemberDecls());
+            var list = new ArrayList();
+            var st = GetBaseStruct();
+            if (st != null)
+            {
+                var stmd = st.GetMemberDecls();
+                for (int i = 0; i < stmd.Length; i++)
+                    list.Add(stmd[i]);
+            }
             ForEachMembers((p, pos) =>
             {
                 list.Add(p);
                 return false;
             }, null);
-            return list.ToArray();
+            var ret = new VarDeclare[list.Count];
+            for (int i = 0; i < ret.Length; i++)
+                ret[i] = list[i] as VarDeclare;
+            return ret;
         }
 
         public override Define ThisStruct { get { return this; } }
@@ -189,8 +196,8 @@ namespace Girl.LLPML.Struct
 
         public void AddAfterDtor(OpModule codes)
         {
-            var list = new List<VarDeclare>();
-            var poslist = new Dictionary<VarDeclare, int>();
+            var list = new ArrayList();
+            var poslist = new List<int>();
             int offset = 0;
             var st = GetBaseStruct();
             if (st != null) offset = st.GetSizeInternal();
@@ -199,16 +206,16 @@ namespace Girl.LLPML.Struct
                 if (!p.IsStatic && p.NeedsDtor)
                 {
                     list.Add(p);
-                    poslist[p] = offset + pos;
+                    poslist.Add(offset + pos);
                 }
                 return false;
             }, null);
-            list.Reverse();
             var ad = Addr32.NewRO(Reg32.EBP, 8);
-            foreach (var p in list)
+            for (int i = list.Count - 1; i >= 0; i--)
             {
+                var p = list[i] as VarDeclare;
                 codes.Add(I386.MovRA(Var.DestRegister, ad));
-                p.Type.AddDestructor(codes, Addr32.NewRO(Var.DestRegister, poslist[p]));
+                p.Type.AddDestructor(codes, Addr32.NewRO(Var.DestRegister, poslist[i]));
             }
             if (st != null)
                 st.AddDestructor(codes, ad);
@@ -236,8 +243,7 @@ namespace Girl.LLPML.Struct
             codes.Add(I386.Ret());
         }
 
-        public override void AddDestructors(
-            OpModule codes, IEnumerable<VarDeclare> ptrs)
+        public override void AddDestructors(OpModule codes, VarDeclare[] ptrs)
         {
         }
 
@@ -248,8 +254,9 @@ namespace Girl.LLPML.Struct
                 var st = GetBaseStruct();
                 if (st != null && st.NeedsInit) return true;
 
-                foreach (var s in sentences)
+                for (int i = 0; i < sentences.Count; i++)
                 {
+                    var s = sentences[i];
                     if (s is VarDeclare)
                     {
                         var d = s as VarDeclare;
@@ -281,9 +288,10 @@ namespace Girl.LLPML.Struct
                 var dtor = GetFunction(Destructor);
                 if (dtor.IsVirtual || dtor.Sentences.Count > 0)
                     return true;
-                foreach (object obj in members.Values)
+                var mems = members.Values;
+                for (int i = 0; i < mems.Length; i++)
                 {
-                    var vd = obj as VarDeclare;
+                    var vd = mems[i] as VarDeclare;
                     if (vd != null && vd.NeedsDtor)
                         return true;
                 }
@@ -300,16 +308,16 @@ namespace Girl.LLPML.Struct
 
             if (IsClass && BaseType == null && FullName != "object")
                 BaseType = "object";
-            var list = new List<Define>();
+            var list = new ArrayList();
             CheckStruct(list);
             CheckField();
         }
 
-        private void CheckStruct(List<Define> list)
+        private void CheckStruct(ArrayList list)
         {
             MakeUp();
             if (list.Contains(this))
-                throw Abort("can not define recursive type: {0}", list[0].name);
+                throw Abort("can not define recursive type: {0}", (list[0] as Define).name);
             list.Add(this);
             var b = GetBaseStruct();
             if (b == null) return;
@@ -330,9 +338,10 @@ namespace Girl.LLPML.Struct
             doneCheckField = true;
 
             IsEmpty = isAnonymous && members.Count <= 1;
-            foreach (var obj in members.Values)
+            var mems = members.Values;
+            for (int i = 0; i < mems.Length; i++)
             {
-                var field = obj as Declare;
+                var field = mems[i] as Declare;
                 if (field == null) continue;
 
                 var t = field.Type;
@@ -358,13 +367,13 @@ namespace Girl.LLPML.Struct
             CheckStruct();
 
             var f1 = base.GetMember(Initializer) as Function;
-            if (f1 == null) AddFunction(new Function(this, Initializer, false));
+            if (f1 == null) AddFunction(Function.New(this, Initializer, false));
 
             var f2 = base.GetMember(Constructor) as Function;
-            if (f2 == null) AddFunction(new Function(this, Constructor, false));
+            if (f2 == null) AddFunction(Function.New(this, Constructor, false));
 
             var f3 = base.GetMember(Destructor) as Function;
-            if (f3 == null) AddFunction(new Function(this, Destructor, false));
+            if (f3 == null) AddFunction(Function.New(this, Destructor, false));
         }
 
         public bool CanUpCast(Define st)

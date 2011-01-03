@@ -11,14 +11,18 @@ namespace Girl.LLPML
 {
     public class Block : BlockBase
     {
-        protected Block() { }
-        public Block(BlockBase parent) { init(parent); }
+        public static Block New(BlockBase parent)
+        {
+            var ret = new Block();
+            ret.init(parent);
+            return ret;
+        }
 
         public BlockBase Target { get; set; }
 
         public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)
         {
-            var parser = Parser.New(token, parent);
+            var parser = Parser.Create(token, parent);
             var ret = parser.Parse();
             if (token.CanRead) ret = null;
             return ret;
@@ -27,7 +31,9 @@ namespace Girl.LLPML
         public void ReadText(string file, string src)
         {
             var t = Tokenizer.New(file, src);
-            var sents = Block.ReadText(Target ?? this, t);
+            var target = Target;
+            if (target == null) target = this;
+            var sents = Block.ReadText(target, t);
             if (sents != null) AddSentences(sents);
         }
     }
