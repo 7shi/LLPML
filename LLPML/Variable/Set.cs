@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml;
 using Girl.Binary;
 using Girl.LLPML.Struct;
 using Girl.PE;

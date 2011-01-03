@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
-using System.Xml;
 using Girl.Binary;
 using Girl.PE;
 using Girl.X86;
