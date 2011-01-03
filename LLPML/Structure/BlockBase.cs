@@ -53,11 +53,11 @@ namespace Girl.LLPML
             return null;
         }
 
-        public virtual object GetMemberRecursive(string name)
+        public virtual object GetMemberRecursive(string name, Func<object, object> conv)
         {
-            var ret = GetMember(name);
+            var ret = conv(GetMember(name));
             if (ret != null || Parent == null) return ret;
-            return Parent.GetMemberRecursive(name);
+            return Parent.GetMemberRecursive(name, conv);
         }
 
         public VarDeclare[] GetUsingPointers()
@@ -104,7 +104,8 @@ namespace Girl.LLPML
 
         public ConstString GetString(string name)
         {
-            return GetMemberRecursive(name) as ConstString;
+            return GetMemberRecursive(name,
+                delegate(object o) { return o as ConstString; }) as ConstString;
         }
 
         public bool AddString(string name, string value)
@@ -114,13 +115,25 @@ namespace Girl.LLPML
 
         #endregion
 
-        public virtual VarDeclare GetVar(string name) { return GetMemberRecursive(name) as VarDeclare; }
+        public virtual VarDeclare GetVar(string name)
+        {
+            return GetMemberRecursive(name,
+                delegate(object o) { return o as VarDeclare; }) as VarDeclare;
+        }
         public bool AddVar(VarDeclare v) { return AddMember(v.Name, v); }
 
-        public Function GetFunction(string name) { return GetMemberRecursive(name) as Function; }
+        public Function GetFunction(string name)
+        {
+            return GetMemberRecursive(name,
+                delegate(object o) { return o as Function; }) as Function;
+        }
         public bool AddFunction(Function f) { return AddMember(f.Name, f); }
 
-        public Define GetStruct(string name) { return GetMemberRecursive(name) as Define; }
+        public Define GetStruct(string name)
+        {
+            return GetMemberRecursive(name,
+                delegate(object o) { return o as Define; }) as Define;
+        }
         public bool AddStruct(Define s) { return AddMember(s.Name, s); }
 
         #endregion

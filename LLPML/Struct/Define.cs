@@ -59,11 +59,11 @@ namespace Girl.LLPML.Struct
             return st.GetMember(name);
         }
 
-        public override object GetMemberRecursive(string name)
+        public override object GetMemberRecursive(string name, Func<object, object> conv)
         {
-            var ret = GetMember(name);
+            var ret = conv(GetMember(name));
             if (ret != null || Parent == null) return ret;
-            ret = Parent.GetMemberRecursive(name);
+            ret = Parent.GetMemberRecursive(name, conv);
             if (ret == null || !(ret is VarDeclare || ret is Function)) return ret;
             if ((ret as NodeBase).Parent is Root) return ret;
             return null;
