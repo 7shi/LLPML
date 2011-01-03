@@ -50,9 +50,9 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "inc"; } }
 
-        public static Inc New(BlockBase parent, NodeBase dest, SrcInfo si)
+        public static Inc New(BlockBase parent, NodeBase dest)
         {
-            return Init0(new Inc(), parent, dest, si) as Inc;
+            return Init0(new Inc(), parent, dest) as Inc;
         }
     }
 
@@ -60,9 +60,9 @@ namespace Girl.LLPML
     {
         public override string Tag { get { return "dec"; } }
 
-        public static Dec New(BlockBase parent, NodeBase dest, SrcInfo si)
+        public static Dec New(BlockBase parent, NodeBase dest)
         {
-            return Init0(new Dec(), parent, dest, si) as Dec;
+            return Init0(new Dec(), parent, dest) as Dec;
         }
     }
 
@@ -98,7 +98,7 @@ namespace Girl.LLPML
 
         public static PostInc New(BlockBase parent, NodeBase dest)
         {
-            return Init0(new PostInc(), parent, dest, null) as PostInc;
+            return Init0(new PostInc(), parent, dest) as PostInc;
         }
     }
 
@@ -108,7 +108,7 @@ namespace Girl.LLPML
 
         public static PostDec New(BlockBase parent, NodeBase dest)
         {
-            return Init0(new PostDec(), parent, dest, null) as PostDec;
+            return Init0(new PostDec(), parent, dest) as PostDec;
         }
     }
 }

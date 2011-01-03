@@ -75,39 +75,50 @@ namespace Girl.LLPML.Parsing
             // 前置演算子
             var si = SrcInfo;
             var t = Read();
+            var ret = ReadUnary(t);
+            if (ret != null)
+            {
+                ret.SrcInfo = si;
+                return ret;
+            }
+            Rewind();
+            return Value();
+        }
+
+        private NodeBase ReadUnary(string t)
+        {
             int order = operators.Length - 1;
             switch (t)
             {
                 case "+":
                 case "-":
-                    {
-                        var v = Integer();
-                        if (v != null)
-                        {
-                            if (t == "-")
-                            {
-                                var ret = IntValue.New(-v.Value);
-                                ret.SrcInfo = si;
-                                return ret;
-                            }
-                            else
-                                return v;
-                        }
-                        var n = ReadExpressionOrder(order);
-                        if (t == "-") return Neg.New(parent, n, si);
-                        return n;
-                    }
+                    return ReadSign(t, order);
                 case "!":
-                    return Not.New(parent, ReadExpressionOrder(order), si);
+                    return Not.New(parent, ReadExpressionOrder(order));
                 case "~":
-                    return Rev.New(parent, ReadExpressionOrder(order), si);
+                    return Rev.New(parent, ReadExpressionOrder(order));
                 case "++":
-                    return Inc.New(parent, ReadExpressionOrder(order), si);
+                    return Inc.New(parent, ReadExpressionOrder(order));
                 case "--":
-                    return Dec.New(parent, ReadExpressionOrder(order), si);
+                    return Dec.New(parent, ReadExpressionOrder(order));
+                default:
+                    return null;
             }
-            Rewind();
-            return Value();
+        }
+
+        private NodeBase ReadSign(string t, int order)
+        {
+            var v = Integer();
+            if (v != null)
+            {
+                if (t == "-")
+                    return IntValue.New(-v.Value);
+                else
+                    return v;
+            }
+            var n = ReadExpressionOrder(order);
+            if (t == "-") return Neg.New(parent, n);
+            return n;
         }
 
         private NodeBase Value()
@@ -243,7 +254,11 @@ namespace Girl.LLPML.Parsing
                         Rewind();
                 }
                 if (br2 == ")")
-                    return Cast.New(parent, type, ReadExpression(), si);
+                {
+                    var ret = Cast.New(parent, type, ReadExpression());
+                    ret.SrcInfo = si;
+                    return ret;
+                }
                 Rewind();
             }
             Rewind();

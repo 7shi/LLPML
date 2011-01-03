@@ -34,9 +34,9 @@ namespace Girl.LLPML
         public override string Tag { get { return "neg"; } }
         protected override int Calculate(int v) { return -v; }
 
-        public static Neg New(BlockBase parent, NodeBase arg, SrcInfo si)
+        public static Neg New(BlockBase parent, NodeBase arg)
         {
-            return Init3(new Neg(), parent, arg, null, si) as Neg;
+            return Init1(new Neg(), parent, arg) as Neg;
         }
     }
 
@@ -45,9 +45,9 @@ namespace Girl.LLPML
         public override string Tag { get { return "rev"; } }
         protected override int Calculate(int v) { return ~v; }
 
-        public static Rev New(BlockBase parent, NodeBase arg, SrcInfo si)
+        public static Rev New(BlockBase parent, NodeBase arg)
         {
-            return Init3(new Rev(), parent, arg, null, si) as Rev;
+            return Init1(new Rev(), parent, arg) as Rev;
         }
     }
 
@@ -57,9 +57,9 @@ namespace Girl.LLPML
         public override TypeBase Type { get { return TypeBool.Instance; } }
         protected override int Calculate(int v) { return v != 0 ? 0 : 1; }
 
-        public static Not New(BlockBase parent, NodeBase arg, SrcInfo si)
+        public static Not New(BlockBase parent, NodeBase arg)
         {
-            return Init3(new Not(), parent, arg, null, si) as Not;
+            return Init1(new Not(), parent, arg) as Not;
         }
     }
 }

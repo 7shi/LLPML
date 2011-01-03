@@ -16,20 +16,14 @@ namespace Girl.LLPML
 
         protected static Operator Init1(Operator op, BlockBase parent, NodeBase arg1)
         {
-            return Init3(op, parent, arg1, null, null);
+            return Init2(op, parent, arg1, null);
         }
 
         protected static Operator Init2(Operator op, BlockBase parent, NodeBase arg1, NodeBase arg2)
         {
-            return Init3(op, parent, arg1, arg2, null);
-        }
-
-        protected static Operator Init3(Operator op, BlockBase parent, NodeBase arg1, NodeBase arg2, SrcInfo si)
-        {
             op.Parent = parent;
             if (arg1 != null) op.values.Add(arg1);
             if (arg2 != null) op.values.Add(arg2);
-            if (si != null) op.SrcInfo = si;
             return op;
         }
 

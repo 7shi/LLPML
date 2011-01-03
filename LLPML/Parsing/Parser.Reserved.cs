@@ -13,88 +13,55 @@ namespace Girl.LLPML.Parsing
         {
             var si = SrcInfo;
             var t = Read();
+            var ret = ReservedInternal(si, t);
+            if (ret != null)
+                ret.SrcInfo = si;
+            else if (t != null)
+                Rewind();
+            return ret;
+        }
+
+        private NodeBase ReservedInternal(SrcInfo si, string t)
+        {
+            string t2;
+            NodeBase arg;
             switch (t)
             {
                 case "null":
-                    return Null.New(parent, si);
+                    return Null.New(parent);
                 case "true":
-                    return Cast.New(parent, "bool", IntValue.New(1), si);
+                    return Cast.New(parent, "bool", IntValue.One);
                 case "false":
-                    return Cast.New(parent, "bool", IntValue.New(0), si);
+                    return Cast.New(parent, "bool", IntValue.Zero);
                 case "base":
-                    return Base.New(parent, si);
+                    return Base.New(parent);
                 case "new":
-                    {
-                        var n = ReadNew();
-                        n.SrcInfo = si;
-                        return n;
-                    }
+                    return ReadNew();
                 case "function":
-                    {
-                        var f = Function(t, false);
-                        f.SrcInfo = si;
-                        return AutoDelegate(f);
-                    }
+                    return AutoDelegate(Function(t, false));
                 case "delegate":
-                    {
-                        Check("delegate", "(");
-                        CallType ct = CallType.CDecl;
-                        if (Read() == "(")
-                        {
-                            var cts = Read();
-                            if (cts == "stdcall")
-                                ct = CallType.Std;
-                            else
-                                throw Abort("delegate: 不明な属性です: {0}", cts);
-                            Check("delegate", ")");
-                            Check("delegate", ")");
-                            Check("delegate", "(");
-                        }
-                        else
-                            Rewind();
-                        var args = Arguments(",", ")", false);
-                        if (args == null)
-                            throw Abort("delegate: 引数が不完全です。");
-                        return new Delegate(parent, ct, args) { SrcInfo = si };
-                    }
+                    return ReadDelegate();
                 case "\\":
-                    {
-                        var lambda = Lambda();
-                        if (lambda == null) break;
-                        lambda.SrcInfo = si;
-                        return AutoDelegate(lambda);
-                    }
+                    return AutoDelegate(Lambda());
                 case "sizeof":
-                    {
-                        var br = Read();
-                        if (br != "(")
-                            if (br != null) Rewind();
-                        var arg = ReadExpression();
-                        if (arg == null)
-                            throw parent.AbortInfo(si, "sizeof: 引数が必要です。");
-                        if (br == "(") Check("sizeof", ")");
-                        return SizeOf.New(parent, arg, si);
-                    }
+                    t2 = Read();
+                    if (t2 != "(" && t2 != null) Rewind();
+                    arg = ReadExpression();
+                    if (arg == null)
+                        throw parent.AbortInfo(si, "sizeof: 引数が必要です。");
+                    if (t2 == "(") Check("sizeof", ")");
+                    return SizeOf.New(parent, arg);
                 case "addrof":
-                    return AddrOf.New(parent, ReadExpression(), si);
+                    return AddrOf.New(parent, ReadExpression());
                 case "typeof":
-                    {
-                        var br = Read();
-                        if (br != "(")
-                            if (br != null) Rewind();
-                        var arg = ReadExpression();
-                        if (arg == null)
-                            throw parent.AbortInfo(si, "typeof: 引数が必要です。");
-                        if (br == "(") Check("typeof", ")");
-                        if (arg is TypeOf)
-                        {
-                            (arg as TypeOf).SrcInfo = si;
-                            return arg;
-                        }
-                        var ret = TypeOf.New(parent, arg);
-                        ret.SrcInfo = si;
-                        return ret;
-                    }
+                    t2 = Read();
+                    if (t2 != "(" && t2 != null) Rewind();
+                    arg = ReadExpression();
+                    if (arg == null)
+                        throw parent.AbortInfo(si, "typeof: 引数が必要です。");
+                    if (t2 == "(") Check("typeof", ")");
+                    if (arg is TypeOf) return arg;
+                    return TypeOf.New(parent, arg);
                 case "__FUNCTION__":
                     return StringValue.New(parent.FullName);
                 case "__FILE__":
@@ -103,9 +70,32 @@ namespace Girl.LLPML.Parsing
                     return IntValue.New(si.Number);
                 case "__VERSION__":
                     return StringValue.New("LLPML ver." + Root.VERSION);
+                default:
+                    return null;
             }
-            if (t != null) Rewind();
-            return null;
+        }
+
+        private NodeBase ReadDelegate()
+        {
+            Check("delegate", "(");
+            var ct = CallType.CDecl;
+            if (Read() == "(")
+            {
+                var t = Read();
+                if (t == "stdcall")
+                    ct = CallType.Std;
+                else
+                    throw Abort("delegate: 不明な属性です: {0}", t);
+                Check("delegate", ")");
+                Check("delegate", ")");
+                Check("delegate", "(");
+            }
+            else
+                Rewind();
+            var args = Arguments(",", ")", false);
+            if (args == null)
+                throw Abort("delegate: 引数が不完全です。");
+            return new Delegate(parent, ct, args);
         }
 
         private Function Lambda()

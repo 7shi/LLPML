@@ -13,12 +13,11 @@ namespace Girl.LLPML
     {
         public NodeBase target;
 
-        public static SizeOf New(BlockBase parent, NodeBase target, SrcInfo si)
+        public static SizeOf New(BlockBase parent, NodeBase target)
         {
             var ret = new SizeOf();
             ret.Parent = parent;
             ret.target = target;
-            ret.SrcInfo = si;
             return ret;
         }
 

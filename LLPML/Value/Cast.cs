@@ -26,14 +26,13 @@ namespace Girl.LLPML
             }
         }
 
-        public static Cast New(BlockBase parent, string type, NodeBase source, SrcInfo si)
+        public static Cast New(BlockBase parent, string type, NodeBase source)
         {
             var ret = new Cast();
             ret.Parent = parent;
             ret.name = "__cast";
             ret.type = type;
             ret.Source = source;
-            ret.SrcInfo = si;
             return ret;
         }
 

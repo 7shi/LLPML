@@ -13,12 +13,11 @@ namespace Girl.LLPML
     {
         public NodeBase Target { get; private set; }
 
-        public static AddrOf New(BlockBase parent, NodeBase target, SrcInfo si)
+        public static AddrOf New(BlockBase parent, NodeBase target)
         {
             var ret = new AddrOf();
             ret.Parent = parent;
             ret.Target = target;
-            ret.SrcInfo = si;
             return ret;
         }
 

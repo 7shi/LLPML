@@ -8,13 +8,12 @@ namespace Girl.LLPML.Struct
 {
     public class Base : Var
     {
-        public static Base New(BlockBase parent, SrcInfo si)
+        public static Base New(BlockBase parent)
         {
             var ret = new Base();
             ret.Parent = parent;
             ret.name = "base";
             ret.Reference = parent.GetVar("this");
-            ret.SrcInfo = si;
             return ret;
         }
 

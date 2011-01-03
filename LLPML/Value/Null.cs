@@ -11,12 +11,11 @@ namespace Girl.LLPML
 {
     public class Null : NodeBase
     {
-        public static Null New(BlockBase parent, SrcInfo si)
+        public static Null New(BlockBase parent)
         {
             var ret = new Null();
             ret.Parent = parent;
             ret.name = "null";
-            ret.SrcInfo = si;
             return ret;
         }
 

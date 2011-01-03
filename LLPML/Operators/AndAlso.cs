@@ -47,9 +47,9 @@ namespace Girl.LLPML
                 ret = Calculate(ret, iv.Value == 0 ? false : true);
             }
             if (ret)
-                return IntValue.New(1);
+                return IntValue.One;
             else
-                return IntValue.New(0);
+                return IntValue.Zero;
         }
 
         protected bool Calculate(bool a, bool b) { return a && b; }

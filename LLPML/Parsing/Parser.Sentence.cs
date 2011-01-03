@@ -270,7 +270,6 @@ namespace Girl.LLPML.Parsing
                 args[i] = Var.NewName(parent, autoArgs[i].Name);
             return new Delegate(parent, f.CallType, args, f)
             {
-                SrcInfo = f.SrcInfo,
                 Auto = true,
             };
         }

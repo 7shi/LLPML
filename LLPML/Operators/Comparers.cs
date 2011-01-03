@@ -55,9 +55,9 @@ namespace Girl.LLPML
                 var a = IntValue.GetValue(values[i]);
                 var b = IntValue.GetValue(values[i + 1]);
                 if (a == null || b == null) return null;
-                if (!Calculate(a.Value, b.Value)) return IntValue.New(0);
+                if (!Calculate(a.Value, b.Value)) return IntValue.Zero;
             }
-            return IntValue.New(1);
+            return IntValue.One;
         }
     }
 

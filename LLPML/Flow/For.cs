@@ -41,7 +41,7 @@ namespace Girl.LLPML
             AddSentence(Block);
             if (Loop != null) AddSentence(Loop);
             if (Cond == null)
-                Cond = Cond.New(this, IntValue.New(1));
+                Cond = Cond.New(this, IntValue.One);
             Cond.First = Block.First;
             AddSentence(Cond);
             base.AddCodes(codes);

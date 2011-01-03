@@ -14,6 +14,12 @@ namespace Girl.LLPML
         private int value;
         public virtual int Value { get { return value; } }
 
+        private static IntValue zero = New(0);
+        public static IntValue Zero { get { return zero; } }
+
+        private static IntValue one = New(1);
+        public static IntValue One { get { return one; } }
+
         public static IntValue New(int value)
         {
             var ret = new IntValue();

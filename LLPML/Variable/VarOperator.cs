@@ -15,11 +15,10 @@ namespace Girl.LLPML
         protected NodeBase dest;
         protected List<NodeBase> values = new List<NodeBase>();
 
-        protected static VarOperator Init0(VarOperator op, BlockBase parent, NodeBase dest, SrcInfo si)
+        protected static VarOperator Init0(VarOperator op, BlockBase parent, NodeBase dest)
         {
             op.Parent = parent;
             op.dest = dest;
-            if (si != null) op.SrcInfo = si;
             return op;
         }
 
@@ -27,7 +26,7 @@ namespace Girl.LLPML
         {
             op.Parent = parent;
             op.dest = dest;
-            if (arg != null) op.values.Add(arg);
+            op.values.Add(arg);
             return op;
         }
 
