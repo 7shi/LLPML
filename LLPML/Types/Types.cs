@@ -8,7 +8,7 @@ namespace Girl.LLPML
 {
     public class Types
     {
-        public static TypeBase GetType(string type)
+        public static TypeBase GetTypeRoot(string type)
         {
             return GetType(OpModule.Root, type);
         }
@@ -24,12 +24,12 @@ namespace Girl.LLPML
             else if (type.EndsWith("*"))
             {
                 var t = type.Substring(0, type.Length - 1).TrimEnd();
-                return new TypePointer(GetType(parent, t));
+                return TypePointer.New(GetType(parent, t));
             }
             else if (type.EndsWith("[]"))
             {
                 var t = type.Substring(0, type.Length - 2).TrimEnd();
-                return new TypeReference(GetType(parent, t), true);
+                return TypeReference.New(GetType(parent, t), true);
             }
             else if (type.EndsWith("]"))
             {
@@ -40,7 +40,7 @@ namespace Girl.LLPML
             }
             var ret = Types.GetValueType(type);
             if (ret != null) return ret;
-            return new TypeStruct(parent, type);
+            return TypeStruct.New(parent, type);
         }
 
         public static TypeBase GetValueType(string type)
@@ -79,10 +79,10 @@ namespace Girl.LLPML
                 if (t.Name == "string")
                     return TypeString.Instance;
                 else
-                    return new TypeReference(t);
+                    return TypeReference.New(t, false);
             }
             else if (t is TypeArray)
-                return new TypePointer(t.Type);
+                return TypePointer.New(t.Type);
             else if (t is TypeConstString)
                 return TypeString.Instance;
             else

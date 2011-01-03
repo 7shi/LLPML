@@ -250,7 +250,7 @@ namespace Girl.LLPML
                     return type;
 
                 doneInferType = true;
-                type = new TypeFunction(this);
+                type = TypeFunction.NewFunction(this);
                 return type;
             }
         }

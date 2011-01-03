@@ -23,7 +23,7 @@ namespace Girl.LLPML.Struct
             get
             {
                 if (type == null)
-                    type = new TypeStruct(this, name);
+                    type = TypeStruct.New(this, name);
                 return type;
             }
         }

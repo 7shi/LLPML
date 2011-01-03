@@ -25,14 +25,15 @@ namespace Girl.LLPML
             return base.Cast(type);
         }
 
-        public TypePointer(TypeBase type)
+        public static TypePointer New(TypeBase type)
         {
-            Type = type;
-
-            conds["greater"] = CondPair.New(Cc.A, Cc.NA);
-            conds["greater-equal"] = CondPair.New(Cc.AE, Cc.NAE);
-            conds["less"] = CondPair.New(Cc.B, Cc.NB);
-            conds["less-equal"] = CondPair.New(Cc.BE, Cc.NBE);
+            var ret = new TypePointer();
+            ret.Type = type;
+            ret.conds["greater"] = CondPair.New(Cc.A, Cc.NA);
+            ret.conds["greater-equal"] = CondPair.New(Cc.AE, Cc.NAE);
+            ret.conds["less"] = CondPair.New(Cc.B, Cc.NB);
+            ret.conds["less-equal"] = CondPair.New(Cc.BE, Cc.NBE);
+            return ret;
         }
 
         public override bool CheckFunc(string op)

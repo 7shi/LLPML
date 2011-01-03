@@ -54,7 +54,7 @@ namespace Girl.LLPML.Parsing
         {
             var t = Read();
             if (t == "]" && target is Variant)
-                return new TypeOf(parent, new Variant(parent, (target as Variant).Name + "[]"));
+                return TypeOf.New(parent, new Variant(parent, (target as Variant).Name + "[]"));
             else if (t != null)
                 Rewind();
             var ret = Index.New(parent, target, ReadExpression());

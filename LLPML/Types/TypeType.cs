@@ -11,7 +11,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeType instance = new TypeType();
         public static TypeType Instance { get { return instance; } }
-        protected TypeType() : base(null, false) { }
 
         // recursive type
         private static TypeBase type;
@@ -21,7 +20,7 @@ namespace Girl.LLPML
             get
             {
                 if (type != null) return type;
-                return type = Types.GetType("Type");
+                return type = Types.GetTypeRoot("Type");
             }
         }
     }

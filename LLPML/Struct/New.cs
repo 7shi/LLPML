@@ -27,7 +27,7 @@ namespace Girl.LLPML.Struct
         public New(BlockBase parent, string type, NodeBase length)
         {
             Parent = parent;
-            this.type = new TypeReference(Types.GetType(parent, type), true);
+            this.type = TypeReference.New(Types.GetType(parent, type), true);
             Length = length;
         }
 

@@ -22,7 +22,7 @@ namespace Girl.LLPML
             return ret;
         }
 
-        public override TypeBase Type { get { return new TypePointer(Target.Type); } }
+        public override TypeBase Type { get { return TypePointer.New(Target.Type); } }
 
         public override void AddCodesV(OpModule codes, string op, Addr32 dest)
         {

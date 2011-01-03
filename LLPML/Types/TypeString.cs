@@ -18,7 +18,6 @@ namespace Girl.LLPML
         public static TypeString Instance { get { return instance; } }
 
         protected TypeString()
-            : base(null, false)
         {
             conds["equal"] = CondPair.New(Cc.NZ, Cc.Z);
             conds["not-equal"] = CondPair.New(Cc.Z, Cc.NZ);
@@ -115,7 +114,7 @@ namespace Girl.LLPML
             get
             {
                 if (type != null) return type;
-                return type = Types.GetType("string");
+                return type = Types.GetTypeRoot("string");
             }
         }
 

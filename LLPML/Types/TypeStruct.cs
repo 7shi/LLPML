@@ -96,13 +96,14 @@ namespace Girl.LLPML
             }
         }
 
-        public TypeStruct(BlockBase parent, string name)
+        public static TypeStruct New(BlockBase parent, string name)
         {
             if (name.EndsWith("]"))
                 throw new Exception("TypeStruct: invalid type: " + name);
-            Parent = parent;
-            this.name = name;
-            //TypeIntBase.AddComparers(funcs, conds);
+            var ret = new TypeStruct();
+            ret.Parent = parent;
+            ret.name = name;
+            return ret;
         }
     }
 }

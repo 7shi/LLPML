@@ -17,7 +17,7 @@ namespace Girl.LLPML
 
         public static TypeFunction GetDefaultType(BlockBase parent)
         {
-            return new TypeDelegate(parent.Root, CallType.CDecl, TypeVar.Instance, null);
+            return TypeDelegate.New(parent.Root, CallType.CDecl, TypeVar.Instance, null);
         }
 
         public NodeBase[] Args { get; protected set; }
@@ -65,7 +65,7 @@ namespace Girl.LLPML
                     throw Abort("delegate: argument mismatched");
                 var args = new VarDeclare[len];
                 Array.Copy(fargs, Args.Length, args, 0, len);
-                type = new TypeDelegate(Parent.Root, CallType, f.RetType, args);
+                type = TypeDelegate.New(Parent.Root, CallType, f.RetType, args);
                 return type;
             }
         }

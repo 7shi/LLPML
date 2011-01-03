@@ -12,10 +12,12 @@ namespace Girl.LLPML
     {
         public NodeBase Target { get; private set; }
 
-        public TypeOf(BlockBase parent, NodeBase target)
+        public static TypeOf New(BlockBase parent, NodeBase target)
         {
-            Parent = parent;
-            Target = target;
+            var ret = new TypeOf();
+            ret.Parent = parent;
+            ret.Target = target;
+            return ret;
         }
 
         public override TypeBase Type { get { return TypeType.Instance; } }

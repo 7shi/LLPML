@@ -180,15 +180,12 @@ namespace Girl.LLPML
         private bool isArray = false;
         public override bool IsArray { get { return isArray; } }
 
-        public TypeReference(TypeBase type)
-            : this(type, false)
+        public static TypeReference New(TypeBase type, bool isArray)
         {
-        }
-
-        public TypeReference(TypeBase type, bool isArray)
-        {
-            Type = type;
-            this.isArray = isArray;
+            var ret = new TypeReference();
+            ret.Type = type;
+            ret.isArray = isArray;
+            return ret;
         }
     }
 }

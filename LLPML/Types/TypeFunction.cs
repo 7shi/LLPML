@@ -59,7 +59,19 @@ namespace Girl.LLPML
         public CallType CallType { get; protected set; }
         public bool HasParams { get; protected set; }
 
-        public TypeFunction(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
+        public static TypeFunction New(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
+        {
+            var ret = new TypeFunction();
+            ret.init(callType, retType, args);
+            return ret;
+        }
+
+        public static TypeFunction NewFunction(Function f)
+        {
+            return New(f.CallType, f.ReturnType, f.Args);
+        }
+
+        protected void init(CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
         {
             CallType = callType;
             RetType = retType;
@@ -76,8 +88,6 @@ namespace Girl.LLPML
                 }
             this.Args = Args.ToArray();
         }
-
-        public TypeFunction(Function f) : this(f.CallType, f.ReturnType, f.Args) { }
     }
 
     public class TypeDelegate : TypeFunction
@@ -123,11 +133,13 @@ namespace Girl.LLPML
             codes.Add(I386.AddR(Reg32.ESP, Val32.New(4)));
         }
 
-        public TypeDelegate(
+        public static TypeDelegate New(
             BlockBase parent, CallType callType, TypeBase retType, IEnumerable<VarDeclare> args)
-            : base(callType, retType, args)
         {
-            Parent = parent;
+            var ret = new TypeDelegate();
+            ret.init(callType, retType, args);
+            ret.Parent = parent;
+            return ret;
         }
     }
 }

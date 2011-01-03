@@ -91,7 +91,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeUShort instance = new TypeUShort();
         public static new TypeUShort Instance { get { return instance; } }
-        protected TypeUShort() { }
 
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
@@ -126,7 +125,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeChar instance = new TypeChar();
         public static new TypeChar Instance { get { return instance; } }
-        protected TypeChar() { }
     }
 
     public class TypeByte : TypeUInt
@@ -140,7 +138,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeByte instance = new TypeByte();
         public static new TypeByte Instance { get { return instance; } }
-        protected TypeByte() { }
 
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)

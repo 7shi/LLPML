@@ -88,7 +88,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeVar instance = new TypeVar();
         public static new TypeVar Instance { get { return instance; } }
-        protected TypeVar() { }
 
         // cast
         public override TypeBase Cast(TypeBase type)
@@ -105,7 +104,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeBool instance = new TypeBool();
         public static new TypeBool Instance { get { return instance; } }
-        protected TypeBool() { }
     }
 
     public class TypeShort : TypeInt
@@ -119,7 +117,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeShort instance = new TypeShort();
         public static new TypeShort Instance { get { return instance; } }
-        protected TypeShort() { }
 
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)
@@ -157,7 +154,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeSByte instance = new TypeSByte();
         public static new TypeSByte Instance { get { return instance; } }
-        protected TypeSByte() { }
 
         // get value
         public override void AddGetCodes(OpModule codes, string op, Addr32 dest, Addr32 src)

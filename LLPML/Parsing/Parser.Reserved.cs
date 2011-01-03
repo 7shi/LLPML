@@ -91,7 +91,9 @@ namespace Girl.LLPML.Parsing
                             (arg as TypeOf).SrcInfo = si;
                             return arg;
                         }
-                        return new TypeOf(parent, arg) { SrcInfo = si };
+                        var ret = TypeOf.New(parent, arg);
+                        ret.SrcInfo = si;
+                        return ret;
                     }
                 case "__FUNCTION__":
                     return StringValue.New(parent.FullName);
