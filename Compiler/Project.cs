@@ -117,7 +117,7 @@ namespace Compiler
                 module.Specific.SubSystem = root.Subsystem;
 
                 if (verbose) Console.WriteLine("コンパイルしています。");
-                var codes = OpModule.New(module);
+                var codes = OpModule.Create(module);
                 root.AddCodes(codes);
                 if (ret.Exceptions.Count > 0) return ret;
                 module.Text.OpCodes = codes.ToArray();

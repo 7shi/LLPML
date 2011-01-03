@@ -26,7 +26,7 @@ namespace Girl.LLPML
             }
         }
 
-        public static OpModule New(Module m)
+        public static OpModule Create(Module m)
         {
             var ret = new OpModule();
             ret.Module = m;
@@ -101,7 +101,7 @@ namespace Girl.LLPML
                 Val32 targetType = Val32.New(0);
                 if (tt is TypeReference)
                 {
-                    dtor = OpModule.Root.GetFunction(Struct.New.DereferencePtr);
+                    dtor = OpModule.Root.GetFunction(New.DereferencePtr);
                     var at = tt.Type as TypeStruct;
                     if (at != null)
                     {
