@@ -17,10 +17,10 @@ printfln("%d: b >= a", b >= a);
 
 // less
 
-printfln("%d: a < b", a lt b);
-printfln("%d: b < a", b lt a);
+printfln("%d: a < b", a < b);
+printfln("%d: b < a", b < a);
 
 // less equal
 
-printfln("%d: a <= b", a le b);
-printfln("%d: b <= a", b le a);
+printfln("%d: a <= b", a <= b);
+printfln("%d: b <= a", b <= a);
