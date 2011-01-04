@@ -30,7 +30,7 @@ namespace Girl.Binary
         public static Int New(int v) { var ret = new Int(); ret.Value = v; return ret; }
     }
 
-    public class Block
+    public class Block32
     {
         private ArrayList data;
         private uint length;
@@ -41,13 +41,13 @@ namespace Girl.Binary
         public uint Current { get { return Address + length; } }
         public uint[] Relocations { get { return relocs.ToArray(); } }
 
-        public Block()
+        public Block32()
         {
             data = new ArrayList();
             relocs = new List<uint>();
         }
 
-        public static Block New(uint addr) { var ret = new Block(); ret.Address = addr; return ret; }
+        public static Block32 New(uint addr) { var ret = new Block32(); ret.Address = addr; return ret; }
 
         public void AddByte(byte v) { data.Add(Byte.New(v)); length += sizeof(byte); }
         public void AddByte2(Byte v) { data.Add(v); length += sizeof(byte); }
@@ -67,7 +67,7 @@ namespace Girl.Binary
             length += sizeof(uint);
         }
 
-        public void AddBlock(Block block)
+        public void AddBlock(Block32 block)
         {
             for (int i = 0; i < block.data.Count; i++)
             {
@@ -79,7 +79,7 @@ namespace Girl.Binary
                 else if (obj is byte[]) AddBytes((byte[])obj);
                 else if (obj is char[]) AddChars((char[])obj);
                 else if (obj is string) AddString((string)obj);
-                else if (obj is Block) AddBlock((Block)obj);
+                else if (obj is Block32) AddBlock((Block32)obj);
                 else if (obj is Val32) AddVal32((Val32)obj);
                 else throw new Exception("The method or operation is not implemented.");
             }
@@ -98,7 +98,7 @@ namespace Girl.Binary
                 else if (obj is byte[]) bw.Write((byte[])obj);
                 else if (obj is char[]) bw.Write((char[])obj);
                 else if (obj is string) bw.Write(((string)obj).ToCharArray());
-                else if (obj is Block) (obj as Block).Write(bw);
+                else if (obj is Block32) (obj as Block32).Write(bw);
                 else if (obj is Val32) bw.Write(((Val32)obj).Value);
                 else throw new Exception("The method or operation is not implemented.");
             }

@@ -56,7 +56,7 @@ namespace Girl.LLPML.Struct
                 {
                     init = st.First;
                     st = st.GetBaseStruct();
-                    type = codes.GetTypeObject(st);
+                    type = codes.GetTypeObjectD(st);
                 }
                 izer = codes.GetAddress(st.GetFunction(Define.Initializer));
                 ctor = codes.GetAddress(st.GetFunction(Define.Constructor));

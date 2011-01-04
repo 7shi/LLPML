@@ -145,7 +145,7 @@ namespace Girl.X86
             return data;
         }
 
-        public void Write(Block block)
+        public void Write(Block32 block)
         {
             if (this.op1 is Val32 && relative)
             {
@@ -175,7 +175,7 @@ namespace Girl.X86
                     "[Test 1 failed] {0}\r\n\tOK: {1}\r\n\tNG: {2}",
                     mnemonic, data, datastr));
             }
-            Block block = new Block();
+            Block32 block = new Block32();
             Write(block);
             string datastr2 = BitConverter.ToString(block.ToByteArray());
             if (data != datastr2)

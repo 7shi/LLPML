@@ -12,7 +12,7 @@ namespace Girl.PE
 
         public OpCode[] OpCodes;
 
-        public override void Write(Block block)
+        public override void Write(Block32 block)
         {
             for (int i = 0; i < OpCodes.Length; i++)
             {

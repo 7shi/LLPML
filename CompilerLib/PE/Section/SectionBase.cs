@@ -10,14 +10,14 @@ namespace Girl.PE
         public SectionHeader Header;
 
         public abstract string Name { get; }
-        public abstract void Write(Block block);
+        public abstract void Write(Block32 block);
 
-        private Block block;
-        public Block Block { get { return block; } }
+        private Block32 block;
+        public Block32 Block { get { return block; } }
 
-        public Block ToBlock(uint vaddr)
+        public Block32 ToBlock(uint vaddr)
         {
-            Block ret = Block.New(vaddr);
+            Block32 ret = Block32.New(vaddr);
             Write(ret);
             block = ret;
             return ret;

@@ -20,7 +20,7 @@ namespace Girl.PE
             return ret;
         }
 
-        public override void Write(Block block)
+        public override void Write(Block32 block)
         {
             block.AddBytes(data);
         }

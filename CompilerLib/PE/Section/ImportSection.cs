@@ -28,7 +28,7 @@ namespace Girl.PE
             return lib.Add(sym);
         }
 
-        public override void Write(Block block)
+        public override void Write(Block32 block)
         {
             foreach (Library lib in libraries.Values) lib.WriteImportTable(block);
             new ImportTable().WriteBlock(block);

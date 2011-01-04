@@ -308,11 +308,11 @@ namespace Girl.LLPML.Struct
             if (IsClass && BaseType == null && FullName != "object")
                 BaseType = "object";
             var list = new ArrayList();
-            CheckStruct(list);
+            CheckStructList(list);
             CheckField();
         }
 
-        private void CheckStruct(ArrayList list)
+        private void CheckStructList(ArrayList list)
         {
             MakeUp();
             if (list.Contains(this))
@@ -325,7 +325,7 @@ namespace Girl.LLPML.Struct
                 throw Abort("class: can not inherit from struct: {0} <= {1}", FullName, b.FullName);
             else if (!IsClass && b.IsClass)
                 throw Abort("struct: can not inherit from class: {0} <= {1}", FullName, b.FullName);
-            b.CheckStruct(list);
+            b.CheckStructList(list);
         }
 
         public bool IsEmpty { get; private set; }

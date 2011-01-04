@@ -32,13 +32,13 @@ namespace Girl.PE
             }
         }
 
-        public void WriteLookup(Block block, bool lookup)
+        public void WriteLookup(Block32 block, bool lookup)
         {
             if (!lookup) importRef.Value = block.Current;
             block.AddVal32(hintAddress);
         }
 
-        public void Write(Block block)
+        public void Write(Block32 block)
         {
             hintAddress.Value = block.Current;
             block.AddUShort(Hint);

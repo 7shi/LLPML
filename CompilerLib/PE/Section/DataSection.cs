@@ -12,8 +12,8 @@ namespace Girl.PE
         private Val32 address = Val32.NewB(0, true);
         public Val32 Address { get { return address; } }
 
-        private Block block = new Block();
-        public Block Block { get { return block; } }
+        private Block32 block = new Block32();
+        public Block32 Block { get { return block; } }
 
         public static DataBlock New(byte[] d)
         {
@@ -22,7 +22,7 @@ namespace Girl.PE
             return ret;
         }
 
-        public void Write(Block block)
+        public void Write(Block32 block)
         {
             address.Value = block.Current;
             block.AddBlock(Block);
@@ -82,7 +82,7 @@ namespace Girl.PE
             return Add("buffer", name, new byte[size]);
         }
 
-        public override void Write(Block block)
+        public override void Write(Block32 block)
         {
             foreach (Hashtable ctg in data.Values)
                 foreach (var db in ctg.Values)

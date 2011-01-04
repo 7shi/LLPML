@@ -19,7 +19,7 @@ namespace Girl.LLPML
 
         public BlockBase Target { get; set; }
 
-        public static NodeBase[] ReadText(BlockBase parent, Tokenizer token)
+        public static NodeBase[] Parse(BlockBase parent, Tokenizer token)
         {
             var parser = Parser.Create(token, parent);
             var ret = parser.Parse();
@@ -32,7 +32,7 @@ namespace Girl.LLPML
             var t = Tokenizer.New(file, src);
             var target = Target;
             if (target == null) target = this;
-            var sents = Block.ReadText(target, t);
+            var sents = Block.Parse(target, t);
             if (sents != null) AddSentences(sents);
         }
     }

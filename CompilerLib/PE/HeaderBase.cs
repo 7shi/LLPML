@@ -10,7 +10,7 @@ namespace Girl.PE
     {
         public uint Address, Size;
 
-        public void WriteBlock(Block block)
+        public void WriteBlock(Block32 block)
         {
             block.AddUInt(Address);
             block.AddUInt(Size);

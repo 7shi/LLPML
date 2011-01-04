@@ -45,12 +45,12 @@ namespace Girl.PE
             }
         }
 
-        public void WriteImportTable(Block block)
+        public void WriteImportTable(Block32 block)
         {
             table.WriteBlock(block);
         }
 
-        public void WriteImportLookupTable(Block block)
+        public void WriteImportLookupTable(Block32 block)
         {
             table.ImportLookupTable = block.Current;
             foreach (var sym in symbols.Values)
@@ -58,7 +58,7 @@ namespace Girl.PE
             block.AddInt(0);
         }
 
-        public void WriteImportAddressTable(Block block)
+        public void WriteImportAddressTable(Block32 block)
         {
             table.ImportAddressTable = block.Current;
             foreach (var sym in symbols.Values)
@@ -66,13 +66,13 @@ namespace Girl.PE
             block.AddInt(0);
         }
 
-        public void WriteSymbols(Block block)
+        public void WriteSymbols(Block32 block)
         {
             foreach (var sym in symbols.Values)
                 (sym as Symbol).Write(block);
         }
 
-        public void WriteName(Block block)
+        public void WriteName(Block32 block)
         {
             table.Name = block.Current;
             block.AddString(HeaderBase.Pad(NameSize, name));

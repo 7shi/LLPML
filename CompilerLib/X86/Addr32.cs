@@ -75,7 +75,7 @@ namespace Girl.X86
             return ret;
         }
 
-        public void Write(Block block)
+        public void Write(Block32 block)
         {
             if (address != null)
             {

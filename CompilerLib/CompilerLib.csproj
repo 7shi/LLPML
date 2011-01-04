@@ -38,7 +38,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binary\Block.cs" />
+    <Compile Include="Binary\Block32.cs" />
     <Compile Include="Binary\Util.cs" />
     <Compile Include="Binary\WriterBase.cs" />
     <Compile Include="Binary\Val32.cs" />

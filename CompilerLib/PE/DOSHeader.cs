@@ -21,7 +21,7 @@ namespace Girl.PE
         public ushort reloc_table_offset = 0x40;
         public ushort overlay_number = 0;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             block.AddString(signature);
             block.AddUShort(bytes_in_last_block);

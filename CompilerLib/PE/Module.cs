@@ -56,7 +56,7 @@ namespace Girl.PE
             return null;
         }
 
-        public Block CreateBlock(SectionBase sb)
+        public Block32 CreateBlock(SectionBase sb)
         {
             if (sb.Header != null)
                 return sb.ToBlock(sb.Header.VirtualAddress);

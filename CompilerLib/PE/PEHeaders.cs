@@ -30,7 +30,7 @@ namespace Girl.PE
         public ushort OptionalHeaderSize = 0xe0;
         public ushort Characteristics = 0x10e;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             block.AddUShort(Machine);
             block.AddUShort(NumberOfSections);
@@ -54,7 +54,7 @@ namespace Girl.PE
         public uint BaseOfCode;
         public uint BaseOfData;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             block.AddUShort(Magic);
             block.AddByte(LMajor);
@@ -92,7 +92,7 @@ namespace Girl.PE
         public uint LoaderFlags = 0;
         public uint NumberOfDataDirectories = 0x10;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             block.AddUInt(ImageBase);
             block.AddUInt(SectionAlignment);
@@ -137,7 +137,7 @@ namespace Girl.PE
         public Table CLIHeader;
         public Table Reserved;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             ExportTable.WriteBlock(block);
             ImportTable.WriteBlock(block);
@@ -177,7 +177,7 @@ namespace Girl.PE
         public ushort NumberOfLinenumbers = 0;
         public uint Characteristics;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             block.AddString(name);
             block.AddUInt(VirtualSize);
@@ -200,7 +200,7 @@ namespace Girl.PE
         public uint Name = 0;
         public uint ImportAddressTable = 0;
 
-        public override void WriteBlock(Block block)
+        public override void WriteBlock(Block32 block)
         {
             block.AddUInt(ImportLookupTable);
             block.AddUInt(DateTimeStamp);

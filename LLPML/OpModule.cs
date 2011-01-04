@@ -40,18 +40,18 @@ namespace Girl.LLPML
             if (strings.ContainsKey(s))
                 return strings[s] as Val32;
 
-            var block = new Girl.Binary.Block();
+            var block = new Block32();
             block.AddBytes(Module.EncodeString(s));
             var type = Val32.NewB(0, true);
             var ret = AddData("string_constant", s, type, 2, s.Length, block);
             strings[s] = ret;
-            type.Reference = GetTypeObject(Root.GetStruct("string"));
+            type.Reference = GetTypeObjectD(Root.GetStruct("string"));
             return ret;
         }
 
         private Hashtable types = new Hashtable();
 
-        public Val32 GetTypeObject(Define st)
+        public Val32 GetTypeObjectD(Define st)
         {
             if (st == null) return Val32.New(0);
 
@@ -59,17 +59,17 @@ namespace Girl.LLPML
             if (types.ContainsKey(name))
                 return types[name] as Val32;
 
-            return GetTypeObject(
+            return GetTypeObjectV(
                 name, st.GetFunction(Define.Destructor),
-                st.GetSize(), GetTypeObject(st.GetBaseStruct()));
+                st.GetSize(), GetTypeObjectD(st.GetBaseStruct()));
         }
 
-        public Val32 GetTypeObject(string name, Function dtor, int size, Val32 baseType)
+        public Val32 GetTypeObjectV(string name, Function dtor, int size, Val32 baseType)
         {
             if (types.ContainsKey(name))
                 return types[name] as Val32;
 
-            var block = new Girl.Binary.Block();
+            var block = new Block32();
             var namev = Val32.NewB(0, true);
             block.AddVal32(namev);
             if (dtor == null || name == "string" || name == "Type")
@@ -83,7 +83,7 @@ namespace Girl.LLPML
             var ret = AddData("type_object", name, type, tsz, -1, block);
             types[name] = ret;
             namev.Reference = GetString(name);
-            type.Reference = GetTypeObject(Root.GetStruct("Type"));
+            type.Reference = GetTypeObjectD(Root.GetStruct("Type"));
             return ret;
         }
 
@@ -106,28 +106,28 @@ namespace Girl.LLPML
                     if (at != null)
                     {
                         name = at.Name;
-                        targetType = GetTypeObject(at.GetStruct());
+                        targetType = GetTypeObjectD(at.GetStruct());
                     }
                 }
                 else if (tts != null)
                 {
                     name = tts.Name;
-                    targetType = GetTypeObject(tts.GetStruct());
+                    targetType = GetTypeObjectD(tts.GetStruct());
                 }
-                return GetTypeObject(name + "[]", dtor, tt.Size, targetType);
+                return GetTypeObjectV(name + "[]", dtor, tt.Size, targetType);
             }
 
             var ts = type as TypeStruct;
             if (ts != null)
             {
                 var st = ts.GetStruct();
-                return GetTypeObject(st);
+                return GetTypeObjectD(st);
             }
 
-            return GetTypeObject(type.Name, null, type.Size, Val32.New(0));
+            return GetTypeObjectV(type.Name, null, type.Size, Val32.New(0));
         }
 
-        public Val32 AddData(string category, string name, Val32 type, int size, int len, Girl.Binary.Block data)
+        public Val32 AddData(string category, string name, Val32 type, int size, int len, Block32 data)
         {
             var db = new DataBlock();
             db.Block.AddVal32(type);
