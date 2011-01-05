@@ -95,7 +95,7 @@ namespace Girl.LLPML.Parsing
             var args = Arguments(",", ")", false);
             if (args == null)
                 throw Abort("delegate: 引数が不完全です。");
-            return Delegate.NewCurry(parent, ct, args);
+            return DelgFunc.NewCurry(parent, ct, args);
         }
 
         private Function Lambda()

@@ -279,7 +279,7 @@ namespace Girl.LLPML.Parsing
             var args = new NodeBase[autoArgs.Length];
             for (int i = 0; i < args.Length; i++)
                 args[i] = Var.NewName(parent, autoArgs[i].Name);
-            var ret = Delegate.New(parent, f.CallType, args, f);
+            var ret = DelgFunc.New(parent, f.CallType, args, f);
             ret.Auto = true;
             return ret;
         }

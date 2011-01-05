@@ -7,7 +7,7 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class Delegate : NodeBase
+    public class DelgFunc : NodeBase
     {
         public const string Alloc = "__jit_alloc";
         public const string Free = "__jit_free";
@@ -24,9 +24,9 @@ namespace Girl.LLPML
         public CallType CallType { get; protected set; }
         public bool Auto { get; set; }
 
-        public static Delegate NewCurry(BlockBase parent, CallType callType, NodeBase[] args)
+        public static DelgFunc NewCurry(BlockBase parent, CallType callType, NodeBase[] args)
         {
-            var ret = new Delegate();
+            var ret = new DelgFunc();
             ret.Parent = parent;
             var len = args.Length;
             if (len < 1)
@@ -38,9 +38,9 @@ namespace Girl.LLPML
             return ret;
         }
 
-        public static Delegate New(BlockBase parent, CallType callType, NodeBase[] args, NodeBase func)
+        public static DelgFunc New(BlockBase parent, CallType callType, NodeBase[] args, NodeBase func)
         {
-            var ret = new Delegate();
+            var ret = new DelgFunc();
             ret.Parent = parent;
             ret.Args = args;
             ret.Function = func;

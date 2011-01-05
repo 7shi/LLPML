@@ -278,7 +278,7 @@ namespace Girl.LLPML.Parsing
         private VarDeclare[] DelegateDeclare(bool isStatic)
         {
             var list = new ArrayList();
-            var type = Delegate.GetDefaultType(parent);
+            var type = DelgFunc.GetDefaultType(parent);
             ReadDeclare("delegate", null,
                 delegate(string name, bool eq, SrcInfo si, NodeBase array)
                 {

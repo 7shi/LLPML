@@ -252,9 +252,9 @@ namespace Girl.LLPML.Struct
         }
 
         private bool flgDelg;
-        private Delegate delg;
+        private DelgFunc delg;
 
-        public Delegate GetDelegate()
+        public DelgFunc GetDelegate()
         {
             if (Child != null) return Child.GetDelegate();
 
@@ -272,7 +272,7 @@ namespace Girl.LLPML.Struct
 
             var args = new NodeBase[1];
             args[0] = Target;
-            delg = Delegate.New(Parent, f.CallType, args, f);
+            delg = DelgFunc.New(Parent, f.CallType, args, f);
             return delg;
         }
 

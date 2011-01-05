@@ -215,7 +215,7 @@ namespace Girl.LLPML
 
         public static bool NeedsDtor(NodeBase arg)
         {
-            if (arg is Call || arg is Delegate)
+            if (arg is Call || arg is DelgFunc)
             {
                 var t = arg.Type;
                 if (t != null) return t.NeedsDtor;

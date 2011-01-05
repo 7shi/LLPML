@@ -53,7 +53,7 @@
     <Compile Include="Parsing\Parser.Operator.Impl.cs" />
     <Compile Include="Structure\Call.Intrinsics.cs" />
     <Compile Include="Structure\Call.SIMD.cs" />
-    <Compile Include="Structure\Delegate.cs" />
+    <Compile Include="Structure\DelgFunc.cs" />
     <Compile Include="Struct\Declare.cs" />
     <Compile Include="Struct\Define.cs" />
     <Compile Include="Struct\Member.cs" />

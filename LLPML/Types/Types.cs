@@ -18,7 +18,7 @@ namespace Girl.LLPML
             if (type == null)
                 return null;
             else if (type == "delegate")
-                return Delegate.GetDefaultType(parent);
+                return DelgFunc.GetDefaultType(parent);
             else if (type.StartsWith("var:"))
                 return ToVarType(GetType(parent, type.Substring(4)));
             else if (type.EndsWith("*"))

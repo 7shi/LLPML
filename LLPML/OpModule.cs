@@ -158,7 +158,7 @@ namespace Girl.LLPML
 
             var mem = v as Member;
             return vt.NeedsDtor && !(v is As)
-                && (v is Call || v is New || v is Delegate || v is Operator
+                && (v is Call || v is New || v is DelgFunc || v is Operator
                 || (mem != null && mem.IsGetter));
         }
 
