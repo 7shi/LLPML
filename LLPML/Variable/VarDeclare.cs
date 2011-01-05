@@ -94,7 +94,7 @@ namespace Girl.LLPML
                 var tr = type as TypeReference;
                 if (tr != null && tr.UseGC) return;
             }
-            type.AddConstructor(codes, GetAddress(codes, Parent));
+            type.AddConstructorA(codes, GetAddress(codes, Parent));
         }
 
         public override void AddCodes(OpModule codes)

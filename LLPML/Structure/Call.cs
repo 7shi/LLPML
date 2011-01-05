@@ -191,7 +191,7 @@ namespace Girl.LLPML
                     var ad2 = Addr32.NewRO(Reg32.ESP, 4);
                     if (callType == CallType.CDecl)
                         ad2.Add(args_array.Length * 4);
-                    val.Type.AddDestructor(codes, ad2);
+                    val.Type.AddDestructorA(codes, ad2);
                     codes.Add(I386.Pop(Reg32.EAX));
                 }
             });
@@ -248,7 +248,7 @@ namespace Girl.LLPML
                             codes.Add(I386.Push(Reg32.EAX));
                             pop = true;
                         }
-                        arg.Type.AddDestructor(codes, Addr32.NewRO(Reg32.ESP, p));
+                        arg.Type.AddDestructorA(codes, Addr32.NewRO(Reg32.ESP, p));
                     }
                     p += 4;
                 }

@@ -81,7 +81,7 @@ namespace Girl.LLPML
         public virtual bool NeedsCtor { get { return false; } }
         public virtual void AddConstructor(OpModule codes) { }
 
-        public void AddConstructor(OpModule codes, Addr32 ad)
+        public void AddConstructorA(OpModule codes, Addr32 ad)
         {
             if (ad != null)
                 codes.Add(I386.Lea(Reg32.EAX, ad));
@@ -94,7 +94,7 @@ namespace Girl.LLPML
         public virtual bool NeedsDtor { get { return false; } }
         public virtual void AddDestructor(OpModule codes) { }
 
-        public void AddDestructor(OpModule codes, Addr32 ad)
+        public void AddDestructorA(OpModule codes, Addr32 ad)
         {
             if (ad != null)
                 codes.Add(I386.Lea(Reg32.EAX, ad));

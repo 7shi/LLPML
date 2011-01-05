@@ -214,7 +214,7 @@ namespace Girl.LLPML.Struct
             {
                 var p = list[i] as VarDeclare;
                 codes.Add(I386.MovRA(Var.DestRegister, ad));
-                p.Type.AddDestructor(codes, Addr32.NewRO(Var.DestRegister, poslist[i]));
+                p.Type.AddDestructorA(codes, Addr32.NewRO(Var.DestRegister, poslist[i]));
             }
             if (st != null)
                 st.AddDestructor(codes, ad);

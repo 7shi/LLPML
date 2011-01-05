@@ -132,7 +132,6 @@ namespace Girl.LLPML
         // singleton
         private static TypeConstString instance = new TypeConstString();
         public static new TypeConstString Instance { get { return instance; } }
-        private TypeConstString() : base() { }
     }
 
     public class TypeConstChar : TypeChar
@@ -143,6 +142,5 @@ namespace Girl.LLPML
         // singleton
         private static TypeConstChar instance = new TypeConstChar();
         public static new TypeConstChar Instance { get { return instance; } }
-        protected TypeConstChar() { }
     }
 }

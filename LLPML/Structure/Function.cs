@@ -211,7 +211,7 @@ namespace Girl.LLPML
             {
                 var arg = args2[i] as VarDeclare;
                 if (ArgNeededGC(arg))
-                    arg.Type.AddDestructor(codes, arg.GetAddress(codes, this));
+                    arg.Type.AddDestructorA(codes, arg.GetAddress(codes, this));
             }
         }
 

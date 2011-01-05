@@ -293,7 +293,7 @@ namespace Girl.LLPML
             {
                 var p = ptrs[i];
                 if (p.NeedsDtor)
-                    p.Type.AddDestructor(codes, p.GetAddress(codes, this));
+                    p.Type.AddDestructorA(codes, p.GetAddress(codes, this));
             }
         }
 
