@@ -16,8 +16,6 @@ namespace Girl.LLPML
         public string Output = "output.exe";
         public ushort Subsystem = IMAGE_SUBSYSTEM.WINDOWS_CUI;
 
-        public Func<string, TextReader> StreamDelegate;
-
         private StringCollection included = new StringCollection();
 
         public Root()

@@ -153,6 +153,8 @@ namespace Girl.LLPML.Parsing
 
         private NodeBase CheckReserved(string t)
         {
+            Break brk;
+            Continue cnt;
             switch (t)
             {
                 case "do":
@@ -163,19 +165,15 @@ namespace Girl.LLPML.Parsing
                     else
                         return Return.New(parent, null);
                 case "break":
-                    {
-                        var brk = Break.New(parent);
-                        if (!brk.CanBreak())
-                            throw Abort("break: ここでは使用できません。");
-                        return brk;
-                    }
+                    brk = Break.New(parent);
+                    if (!(brk as Break).CanBreak())
+                        throw Abort("break: ここでは使用できません。");
+                    return brk;
                 case "continue":
-                    {
-                        var con = Continue.New(parent);
-                        if (!con.CanContinue())
-                            throw Abort("continue: ここでは使用できません。");
-                        return con;
-                    }
+                    cnt = Continue.New(parent);
+                    if (!(cnt as Continue).CanContinue())
+                        throw Abort("continue: ここでは使用できません。");
+                    return cnt;
             }
             return null;
         }
@@ -288,8 +286,10 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("{0}: 定義が必要です。", type);
 
-            var name = Read();
-            CallType ct = CheckCallType(CallType.CDecl, ref name);
+            var refname = new string[1];
+            refname[0] = Read();
+            var ct = CheckCallType(CallType.CDecl, refname);
+            var name = refname[0];
             if (name == "(" || name == ":" || name == "{")
             {
                 name = "";
@@ -334,13 +334,14 @@ namespace Girl.LLPML.Parsing
         {
             if (!CanRead) throw Abort("extern: 名前が必要です。");
 
-            var module = String();
+            var module = ReadString();
             if (module == null) throw Abort("extern: モジュール名が必要です。");
 
-            var t = Peek();
-            CallType ct1 = CheckCallType(CallType.CDecl, ref t);
-            t = Peek();
-            var sfx1 = CheckSuffix(null, ref t);
+            var reft = new string[1];
+            reft[0] = Peek();
+            var ct1 = CheckCallType(CallType.CDecl, reft);
+            reft[0] = Peek();
+            var sfx1 = CheckSuffix(null, reft);
             var br1 = Read();
             var loop = false;
             if (br1 == "{") loop = true; else Rewind();
@@ -349,9 +350,11 @@ namespace Girl.LLPML.Parsing
             for (; ; )
             {
                 var si = SrcInfo;
-                var name = Read();
-                CallType ct2 = CheckCallType(ct1, ref name);
-                var sfx2 = CheckSuffix(sfx1, ref name);
+                var refname = new string[1];
+                refname[0] = Read();
+                var ct2 = CheckCallType(ct1, refname);
+                var sfx2 = CheckSuffix(sfx1, refname);
+                var name = refname[0];
                 if (!Tokenizer.IsWord(name))
                 {
                     //Rewind();
@@ -395,36 +398,36 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private CallType CheckCallType(CallType ct, ref string t)
+        private CallType CheckCallType(CallType ct, string[] t)
         {
-            if (t == "__stdcall")
+            if (t[0] == "__stdcall")
             {
-                t = Read();
+                t[0] = Read();
                 return CallType.Std;
             }
-            else if (t == "__cdecl")
+            else if (t[0] == "__cdecl")
             {
-                t = Read();
+                t[0] = Read();
                 return CallType.CDecl;
             }
             return ct;
         }
 
-        private string CheckSuffix(string sfx, ref string t)
+        private string CheckSuffix(string sfx, string[] t)
         {
-            if (t == "__widecharset")
+            if (t[0] == "__widecharset")
             {
-                t = Read();
+                t[0] = Read();
                 return "W";
             }
-            else if (t == "__ansicharset")
+            else if (t[0] == "__ansicharset")
             {
-                t = Read();
+                t[0] = Read();
                 return "A";
             }
-            else if (t == "__nocharset")
+            else if (t[0] == "__nocharset")
             {
-                t = Read();
+                t[0] = Read();
                 return null;
             }
             return sfx;
@@ -580,7 +583,7 @@ namespace Girl.LLPML.Parsing
 
         private void ReadIfInternal(If target)
         {
-            var cb1 = new If.CondBlock(target);
+            var cb1 = CondBlock.New(target);
             cb1.Cond = ReadCond(target, "if");
             cb1.Block = ReadSentenceBlock(target, "if");
             target.Blocks.Add(cb1);
@@ -600,7 +603,7 @@ namespace Girl.LLPML.Parsing
             }
 
             Rewind();
-            var cb2 = new If.CondBlock(target);
+            var cb2 = CondBlock.New(target);
             cb2.Block = ReadSentenceBlock(target, "else");
             target.Blocks.Add(cb2);
         }
@@ -641,6 +644,8 @@ namespace Girl.LLPML.Parsing
         private void ReadCase(Switch target)
         {
             var scb = new CaseBlock();
+            BlockBase p;
+            NodeBase[] s;
             for (; ; )
             {
                 var t = Read();
@@ -672,19 +677,17 @@ namespace Girl.LLPML.Parsing
                         if (scb.Block != null) target.Blocks.Add(scb);
                         return;
                     default:
-                        {
-                            Rewind();
-                            if (scb.Case == null)
-                                throw Abort("switch: 条件が必要です。");
-                            if (scb.Block == null)
-                                scb.Block = Block.New(target);
-                            var p = parent;
-                            parent = target;
-                            var s = Sentence();
-                            if (s != null) scb.Block.AddSentences(s);
-                            parent = p;
-                            break;
-                        }
+                        Rewind();
+                        if (scb.Case == null)
+                            throw Abort("switch: 条件が必要です。");
+                        if (scb.Block == null)
+                            scb.Block = Block.New(target);
+                        p = parent;
+                        parent = target;
+                        s = Sentence();
+                        if (s != null) scb.Block.AddSentences(s);
+                        parent = p;
+                        break;
                 }
             }
         }
@@ -739,7 +742,7 @@ namespace Girl.LLPML.Parsing
         {
             Check("pragma: output", "(");
 
-            var output = String();
+            var output = ReadString();
             if (output == null)
                 throw Abort("pragma: output: 出力名を文字列で指定してください。");
 

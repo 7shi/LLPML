@@ -114,7 +114,7 @@ namespace Girl.LLPML
         {
             if (count is IntValue)
             {
-                Memcpy(codes, dest, src, (count as IntValue).Value);
+                MemcpyInt(codes, dest, src, (count as IntValue).Value);
                 return;
             }
 
@@ -140,7 +140,7 @@ namespace Girl.LLPML
             codes.Add(I386.Popf());
         }
 
-        public static void Memcpy(OpModule codes, NodeBase dest, NodeBase src, int count)
+        public static void MemcpyInt(OpModule codes, NodeBase dest, NodeBase src, int count)
         {
             switch (count)
             {

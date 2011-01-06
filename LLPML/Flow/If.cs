@@ -8,35 +8,40 @@ using Girl.X86;
 
 namespace Girl.LLPML
 {
-    public class If : BlockBase
+    public class CondBlock : NodeBase
     {
-        public class CondBlock : NodeBase
+        public Cond Cond { get; set; }
+        public Block Block { get; set; }
+        public CondBlock Next { get; set; }
+
+        private OpCode first = new OpCode();
+        public Val32 First { get { return first.Address; } }
+
+        public static CondBlock New(If parent)
         {
-            public Cond Cond { get; set; }
-            public Block Block { get; set; }
-            public CondBlock Next { get; set; }
-
-            private OpCode first = new OpCode();
-            public Val32 First { get { return first.Address; } }
-
-            public CondBlock(If parent) { Parent = parent; }
-
-            public override void AddCodes(OpModule codes)
-            {
-                var next = new OpCode();
-                codes.Add(first);
-                if (Cond != null)
-                {
-                    Cond.Next = next.Address;
-                    Cond.AddCodes(codes);
-                }
-                Block.AddCodes(codes);
-                if (Next != null)
-                    codes.Add(I386.JmpD(Parent.Destruct));
-                codes.Add(next);
-            }
+            var ret = new CondBlock();
+            ret.Parent = parent;
+            return ret;
         }
 
+        public override void AddCodes(OpModule codes)
+        {
+            var next = new OpCode();
+            codes.Add(first);
+            if (Cond != null)
+            {
+                Cond.Next = next.Address;
+                Cond.AddCodes(codes);
+            }
+            Block.AddCodes(codes);
+            if (Next != null)
+                codes.Add(I386.JmpD(Parent.Destruct));
+            codes.Add(next);
+        }
+    }
+
+    public class If : BlockBase
+    {
         private ArrayList blocks = new ArrayList();
         public ArrayList Blocks { get { return blocks; } }
 

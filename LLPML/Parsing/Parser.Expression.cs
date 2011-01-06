@@ -126,7 +126,7 @@ namespace Girl.LLPML.Parsing
             var iv = Integer();
             if (iv != null) return iv;
 
-            var sv = String();
+            var sv = ReadString();
             if (sv != null) return sv;
 
             var cv = Char();
@@ -195,7 +195,7 @@ namespace Girl.LLPML.Parsing
             return ret;
         }
 
-        private StringValue String()
+        private StringValue ReadString()
         {
             var si = SrcInfo;
             var t = Read();

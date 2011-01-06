@@ -19,9 +19,10 @@ namespace Girl.LLPML
             return TypeDelegate.New(parent.Root, CallType.CDecl, TypeVar.Instance, null);
         }
 
-        public NodeBase[] Args { get; protected set; }
-        public NodeBase Function { get; protected set; }
-        public CallType CallType { get; protected set; }
+        private NodeBase[] args;
+        private NodeBase func;
+        private CallType ctype;
+
         public bool Auto { get; set; }
 
         public static DelgFunc NewCurry(BlockBase parent, CallType callType, NodeBase[] args)
@@ -31,10 +32,11 @@ namespace Girl.LLPML
             var len = args.Length;
             if (len < 1)
                 throw ret.Abort("delegate: arguments required");
-            ret.Args = new NodeBase[len - 1];
-            Array.Copy(args, ret.Args, len - 1);
-            ret.Function = args[len - 1];
-            ret.CallType = callType;
+            ret.args = new NodeBase[len - 1];
+            for (int i = 0; i < len - 1; i++)
+                ret.args[i] = args[i];
+            ret.func = args[len - 1];
+            ret.ctype = callType;
             return ret;
         }
 
@@ -42,9 +44,9 @@ namespace Girl.LLPML
         {
             var ret = new DelgFunc();
             ret.Parent = parent;
-            ret.Args = args;
-            ret.Function = func;
-            ret.CallType = callType;
+            ret.args = args;
+            ret.func = func;
+            ret.ctype = callType;
             return ret;
         }
 
@@ -59,16 +61,18 @@ namespace Girl.LLPML
                     return type;
 
                 doneInferType = true;
-                var f = Function.Type as TypeFunction;
+                var f = func.Type as TypeFunction;
                 if (f == null)
                     throw Abort("delegate: invalid target");
                 var fargs = f.Args;
-                var len = fargs.Length - Args.Length;
+                var len = fargs.Length - this.args.Length;
                 if (len < 0)
                     throw Abort("delegate: argument mismatched");
                 var args = new VarDeclare[len];
-                Array.Copy(fargs, Args.Length, args, 0, len);
-                type = TypeDelegate.New(Parent.Root, CallType, f.RetType, args);
+                var src = this.args.Length;
+                for (int i = 0; i < len; i++)
+                    args[i] = fargs[src + i];
+                type = TypeDelegate.New(Parent.Root, ctype, f.RetType, args);
                 return type;
             }
         }
@@ -81,19 +85,19 @@ namespace Girl.LLPML
 
         public override void AddCodes(OpModule codes)
         {
-            var f = Function.Type as TypeFunction;
+            var f = func.Type as TypeFunction;
             if (f == null)
                 throw Abort("delegate: invalid target");
 
             var fargs = f.Args;
-            var len = fargs.Length - Args.Length;
+            var len = fargs.Length - this.args.Length;
             if (len < 0)
                 throw Abort("delegate: argument mismatched");
 
-            int length = Args.Length * 5 + 8;
+            int length = this.args.Length * 5 + 8;
             if (len > 0) length += 11;
             if (f.CallType == CallType.CDecl) length += 6;
-            if (CallType == CallType.Std) length += 2;
+            if (ctype == CallType.Std) length += 2;
             if (length > 64)
                 throw Abort("delegate: too many arguments");
 
@@ -120,15 +124,15 @@ namespace Girl.LLPML
                 codes.Add(I386.MovWA(Addr32.NewRO(Reg32.EDI, 9), 0xfae2));
                 p = 11;
             }
-            for (int i = Args.Length - 1; i >= 0; i--)
+            for (int i = this.args.Length - 1; i >= 0; i--)
             {
-                Args[i].AddCodesV(codes, "mov", null);
+                this.args[i].AddCodesV(codes, "mov", null);
                 // push DWORD
                 codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0x68));
                 codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
                 p += 5;
             }
-            Function.AddCodesV(codes, "mov", null);
+            func.AddCodesV(codes, "mov", null);
             // mov eax, DWORD
             codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0xb8));
             codes.Add(I386.MovAR(Addr32.NewRO(Reg32.EDI, p + 1), Reg32.EAX));
@@ -142,7 +146,7 @@ namespace Girl.LLPML
                 codes.Add(I386.MovA(Addr32.NewRO(Reg32.EDI, p + 2), Val32.NewI((fargs.Length * 4))));
                 p += 6;
             }
-            if (CallType == CallType.CDecl)
+            if (ctype == CallType.CDecl)
             {
                 // ret
                 codes.Add(I386.MovBA(Addr32.NewRO(Reg32.EDI, p), 0xc3));

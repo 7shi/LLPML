@@ -63,28 +63,28 @@ namespace Girl.LLPML
         public Block Block { get; set; }
     }
 
-    public class Switch : BlockBase
+    public class SwitchExpr : NodeBase
     {
-        private class Expression : NodeBase
+        private NodeBase value;
+
+        public static SwitchExpr New(BlockBase parent, NodeBase value)
         {
-            private NodeBase value;
-
-            public static Expression New(BlockBase parent, NodeBase value)
-            {
-                var ret = new Expression();
-                ret.Parent = parent;
-                ret.value = value;
-                return ret;
-            }
-
-            public override void AddCodes(OpModule codes)
-            {
-                value.AddCodesV(codes, "mov", null);
-                codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
-            }
+            var ret = new SwitchExpr();
+            ret.Parent = parent;
+            ret.value = value;
+            return ret;
         }
 
-        private Expression expr;
+        public override void AddCodes(OpModule codes)
+        {
+            value.AddCodesV(codes, "mov", null);
+            codes.Add(I386.Mov(Reg32.EDX, Reg32.EAX));
+        }
+    }
+
+    public class Switch : BlockBase
+    {
+        private SwitchExpr expr;
 
         private ArrayList blocks = new ArrayList();
         public ArrayList Blocks { get { return blocks; } }
@@ -95,7 +95,7 @@ namespace Girl.LLPML
         {
             var ret = new Switch();
             ret.init(parent);
-            ret.expr = Expression.New(ret, expr);
+            ret.expr = SwitchExpr.New(ret, expr);
             return ret;
         }
 

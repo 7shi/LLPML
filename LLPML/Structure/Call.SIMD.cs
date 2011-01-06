@@ -19,7 +19,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 0)
                             throw Abort("{0}: argument mismatched", name);
-                        __emms(codes);
+                        Emms(codes);
                     }
                     return true;
                 case "__movd":
@@ -27,7 +27,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __movd(codes, args[0] as NodeBase, args[1] as NodeBase);
+                        Movd(codes, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__movq":
@@ -35,7 +35,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __movq(codes, args[0] as NodeBase, args[1] as NodeBase);
+                        Movq(codes, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__movdqa":
@@ -44,7 +44,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __movdq(codes, name, args[0] as NodeBase, args[1] as NodeBase);
+                        Movdq(codes, name, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__paddb":
@@ -70,7 +70,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __simd(codes, name, args[0] as NodeBase, args[1] as NodeBase);
+                        Simd(codes, name, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
                 case "__psllw":
@@ -85,7 +85,7 @@ namespace Girl.LLPML
                     {
                         if (args.Count != 2)
                             throw Abort("{0}: argument mismatched", name);
-                        __simd_shift(codes, name, args[0] as NodeBase, args[1] as NodeBase);
+                        SimdShift(codes, name, args[0] as NodeBase, args[1] as NodeBase);
                     }
                     return true;
             }
@@ -112,12 +112,12 @@ namespace Girl.LLPML
             return n - '0';
         }
 
-        public static void __emms(OpModule codes)
+        public static void Emms(OpModule codes)
         {
             codes.Add(MMX.EMMS());
         }
 
-        private void __movd(OpModule codes, NodeBase m1, NodeBase m2)
+        private void Movd(OpModule codes, NodeBase m1, NodeBase m2)
         {
             var m1m = GetMm(m1);
             var m2m = GetMm(m2);
@@ -195,7 +195,7 @@ namespace Girl.LLPML
                 throw Abort("__movd: invalid argument 2");
         }
 
-        private void __movq(OpModule codes, NodeBase m1, NodeBase m2)
+        private void Movq(OpModule codes, NodeBase m1, NodeBase m2)
         {
             var m1m = GetMm(m1);
             var m2m = GetMm(m2);
@@ -229,7 +229,7 @@ namespace Girl.LLPML
                 throw Abort("__movq: invalid arguments");
         }
 
-        private void __movdq(OpModule codes, string op, NodeBase m1, NodeBase m2)
+        private void Movdq(OpModule codes, string op, NodeBase m1, NodeBase m2)
         {
             var m1x = GetXmm(m1);
             var m2x = GetXmm(m2);
@@ -250,7 +250,7 @@ namespace Girl.LLPML
                 throw Abort("{0}: invalid arguments", op);
         }
 
-        private void __simd(OpModule codes, string op, NodeBase m1, NodeBase m2)
+        private void Simd(OpModule codes, string op, NodeBase m1, NodeBase m2)
         {
             var m1m = GetMm(m1);
             var m2m = GetMm(m2);
@@ -281,12 +281,12 @@ namespace Girl.LLPML
                 throw Abort("{0}: invalid argument 1", op);
         }
 
-        private void __simd_shift(OpModule codes, string op, NodeBase m1, NodeBase m2)
+        private void SimdShift(OpModule codes, string op, NodeBase m1, NodeBase m2)
         {
             IntValue m2i = m2 as IntValue;
             if (m2i == null)
             {
-                __simd(codes, op, m1, m2);
+                Simd(codes, op, m1, m2);
                 return;
             }
             var m1m = GetMm(m1);

@@ -7,16 +7,18 @@ namespace Girl.LLPML.Parsing
 {
     public class Tokenizer
     {
-        private class Data
+        private class TokenData
         {
             public int Pos;
             public string String, Comment;
             public SrcInfo SrcInfo;
 
-            public Data(int pos, SrcInfo si)
+            public static TokenData New(int pos, SrcInfo si)
             {
-                Pos = pos;
-                SrcInfo = si;
+                var ret = new TokenData();
+                ret.Pos = pos;
+                ret.SrcInfo = si;
+                return ret;
             }
         }
 
@@ -43,7 +45,7 @@ namespace Girl.LLPML.Parsing
 
         public string Read()
         {
-            Data ret = ReadInternal();
+            TokenData ret = ReadInternal();
             if (ret == null) return null;
 
             if (ret.String == "//")
@@ -115,9 +117,9 @@ namespace Girl.LLPML.Parsing
             get
             {
                 if (results.Count > 0)
-                    return (results[results.Count - 1] as Data).String;
+                    return (results[results.Count - 1] as TokenData).String;
                 if (tokens.Count > 0)
-                    return (tokens[tokens.Count - 1] as Data).String;
+                    return (tokens[tokens.Count - 1] as TokenData).String;
                 return null;
             }
         }
@@ -128,7 +130,7 @@ namespace Girl.LLPML.Parsing
             {
                 if (results.Count > 0)
                 {
-                    var d = results[results.Count - 1] as Data;
+                    var d = results[results.Count - 1] as TokenData;
                     return d.SrcInfo;
                 }
                 SkipSpaces();
@@ -136,19 +138,29 @@ namespace Girl.LLPML.Parsing
             }
         }
 
+        public static bool IsLetterChar(char ch)
+        {
+            return ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z');
+        }
+
+        public static bool IsDigitChar(char ch)
+        {
+            return '0' <= ch && ch <= '9';
+        }
+
         public static bool IsWordChar(char ch)
         {
-            return ch > 128 || ch == '_' || char.IsLetterOrDigit(ch);
+            return ch > 128 || ch == '_' || IsLetterChar(ch) || IsDigitChar(ch);
         }
 
         public static bool IsWord(string s)
         {
-            return CheckString(s, char.IsDigit, IsWordChar);
+            return CheckString(s, IsDigitChar, IsWordChar);
         }
 
         public static bool IsDigit(string s)
         {
-            return CheckString(s, null, char.IsDigit);
+            return CheckString(s, null, IsDigitChar);
         }
 
         public static bool CheckString(string s, Func<char, bool> func1, Func<char, bool> func2)
@@ -212,18 +224,18 @@ namespace Girl.LLPML.Parsing
             }
         }
 
-        private Data ReadInternal()
+        private TokenData ReadInternal()
         {
             if (results.Count > 0)
             {
                 int last = results.Count - 1;
-                var result = results[last] as Data;
+                var result = results[last] as TokenData;
                 results.RemoveAt(last);
                 return result;
             }
 
             SkipSpaces();
-            var ret = new Data(pos, SrcInfo);
+            var ret = TokenData.New(pos, SrcInfo);
             StringBuilder sb = new StringBuilder();
             int chi, str = 0;
             bool isWord = true, useEscape = true;

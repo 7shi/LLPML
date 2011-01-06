@@ -175,7 +175,7 @@ namespace Girl.LLPML
             bool cleanup = NeedsDtor(val);
             if (cleanup)
                 codes.Add(I386.SubR(Reg32.ESP, Val32.New(4)));
-            AddCallCodes2(codes, args_array, callType, delegate
+            AddCallCodes2(codes, args_array, callType, delegate()
             {
                 if (!cleanup)
                 {
@@ -207,7 +207,7 @@ namespace Girl.LLPML
 
         public static void AddCallCodes(OpModule codes, Function f, NodeBase[] args)
         {
-            AddCallCodes2(codes, args, f.CallType, delegate
+            AddCallCodes2(codes, args, f.CallType, delegate()
             {
                 codes.Add(I386.CallD(f.First));
             });
