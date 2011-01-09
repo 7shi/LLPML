@@ -464,37 +464,5 @@ namespace Girl.LLPML
             for (int i = 0; i < nbs.Length; i++)
                 AddSentence(nbs[i]);
         }
-
-        public class ListDictionary
-        {
-            private Hashtable dict = new Hashtable();
-            private ArrayList list = new ArrayList();
-
-            public void Add(string key, object value)
-            {
-                dict.Add(key, value);
-                list.Add(value);
-            }
-
-            public int Count { get { return list.Count; } }
-
-            public Object[] Values
-            {
-                get { return list.ToArray(); }
-            }
-
-            public object Get(string name)
-            {
-                if (dict.ContainsKey(name))
-                    return dict[name];
-                else
-                    return null;
-            }
-
-            public bool ContainsKey(string name)
-            {
-                return dict.ContainsKey(name);
-            }
-        }
     }
 }

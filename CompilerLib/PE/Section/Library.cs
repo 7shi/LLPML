@@ -13,7 +13,7 @@ namespace Girl.PE
         public string Name { get { return name; } }
 
         private ImportTable table = new ImportTable();
-        private Hashtable symbols = new Hashtable();
+        private ListDictionary symbols = new ListDictionary();
 
         public static Library New(string name)
         {
@@ -27,7 +27,7 @@ namespace Girl.PE
             Symbol sym;
             if (symbols.ContainsKey(name))
             {
-                sym = symbols[name] as Symbol;
+                sym = symbols.Get(name) as Symbol;
             }
             else
             {

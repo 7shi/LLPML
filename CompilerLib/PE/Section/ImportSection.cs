@@ -11,14 +11,14 @@ namespace Girl.PE
     {
         public override string Name { get { return ".idata"; } }
 
-        private Hashtable libraries = new Hashtable();
+        private ListDictionary libraries = new ListDictionary();
 
         public Symbol Add(string libname, string sym)
         {
             Library lib;
             if (libraries.ContainsKey(libname))
             {
-                lib = libraries[libname] as Library;
+                lib = libraries.Get(libname) as Library;
             }
             else
             {

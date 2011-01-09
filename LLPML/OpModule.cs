@@ -33,23 +33,23 @@ namespace Girl.LLPML
             return ret;
         }
 
-        private Hashtable strings = new Hashtable();
+        private ListDictionary strings = new ListDictionary();
 
         public Val32 GetString(string s)
         {
             if (strings.ContainsKey(s))
-                return strings[s] as Val32;
+                return strings.Get(s) as Val32;
 
             var block = new Block32();
             block.AddBytes(Module.EncodeString(s));
             var type = Val32.NewB(0, true);
             var ret = AddData("string_constant", s, type, 2, s.Length, block);
-            strings[s] = ret;
+            strings.Add(s, ret);
             type.Reference = GetTypeObjectD(Root.GetStruct("string"));
             return ret;
         }
 
-        private Hashtable types = new Hashtable();
+        private ListDictionary types = new ListDictionary();
 
         public Val32 GetTypeObjectD(Define st)
         {
@@ -57,7 +57,7 @@ namespace Girl.LLPML
 
             var name = st.FullName;
             if (types.ContainsKey(name))
-                return types[name] as Val32;
+                return types.Get(name) as Val32;
 
             return GetTypeObjectV(
                 name, st.GetFunction(Define.Destructor),
@@ -67,7 +67,7 @@ namespace Girl.LLPML
         public Val32 GetTypeObjectV(string name, Function dtor, int size, Val32 baseType)
         {
             if (types.ContainsKey(name))
-                return types[name] as Val32;
+                return types.Get(name) as Val32;
 
             var block = new Block32();
             var namev = Val32.NewB(0, true);
@@ -81,7 +81,7 @@ namespace Girl.LLPML
             var type = Val32.NewB(0, true);
             var tsz = (int)block.Length;
             var ret = AddData("type_object", name, type, tsz, -1, block);
-            types[name] = ret;
+            types.Add(name, ret);
             namev.Reference = GetString(name);
             type.Reference = GetTypeObjectD(Root.GetStruct("Type"));
             return ret;
