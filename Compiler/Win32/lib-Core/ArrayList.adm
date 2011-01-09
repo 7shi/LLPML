@@ -4,7 +4,7 @@
 	{
 		for (int i = 0; i < Count; i++)
 			__dereference(buffer[i]);
-		base.Clear();
+		base.override_Clear();
 	}
 	
 	function ToArray
@@ -32,6 +32,12 @@
 	{
 		__reference(obj);
 		base.Add(obj);
+	}
+
+	function Insert(order, obj : object)
+	{
+		__reference(obj);
+		base.Insert(order, obj);
 	}
 	
 	function Remove(obj : object)

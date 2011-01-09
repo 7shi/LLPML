@@ -50,6 +50,19 @@
 	{
 		Set(Count, v);
 	}
+
+	function Insert(order, v)
+	{
+		if (order >= Count)
+			Set(order, v);
+		else
+		{
+			Set(Count, 0);
+			var p : var* = addrof buffer[Count - 1];
+			__movsd_rev(p, p - 1, Count - order - 1);
+			buffer[order] = v;
+		}
+	}
 	
 	function Remove(v)
 	{

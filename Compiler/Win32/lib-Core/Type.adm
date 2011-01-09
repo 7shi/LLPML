@@ -21,7 +21,10 @@ function __type_is(a : Type, b : Type)
 function __type_as(a, b : Type)
 {
 	//printfln("%s(%p, %p{%s})", __FUNCTION__, a, b, b.Name);
-	var h = (var*)(a - 16);
-	if (__type_is(h[0], b)) return a;
+	if (a != null)
+	{
+		var h = (var*)(a - 16);
+		if (__type_is(h[0], b)) return a;
+	}
 	return null;
 }
